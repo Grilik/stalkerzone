@@ -1,0 +1,12 @@
+build/
+.gradle/
+run/
+out/
+*.iml
+.idea/
+.vscode/
+eclipse/
+__pycache__/
+*.pyc
+javac.*.args
+/StalkerZone-Textures.zip

@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.vss.name",
+  "display": "szguns:vss_display",
+  "data": "szguns:vss_data",
+  "tooltip": "szguns.gun.vss.desc",
+  "type": "sniper",
+  "item_type": "modern_kinetic",
+  "sort": 6
+}

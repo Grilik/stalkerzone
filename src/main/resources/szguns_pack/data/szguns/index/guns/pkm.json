@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.pkm.name",
+  "display": "szguns:pkm_display",
+  "data": "szguns:pkm_data",
+  "tooltip": "szguns.gun.pkm.desc",
+  "type": "mg",
+  "item_type": "modern_kinetic",
+  "sort": 1
+}

@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.toz_obrez.name",
+  "display": "szguns:toz_obrez_display",
+  "data": "szguns:toz_obrez_data",
+  "tooltip": "szguns.gun.toz_obrez.desc",
+  "type": "shotgun",
+  "item_type": "modern_kinetic",
+  "sort": 1
+}

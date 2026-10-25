@@ -1,0 +1,31 @@
+{
+  "dimensions": {
+    "minecraft:overworld": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "minecraft:noise",
+        "settings": "stalkerzone:zone",
+        "biome_source": {
+          "type": "stalkerzone:zone",
+          "biomes": [
+            "stalkerzone:kordon",
+            "stalkerzone:garbage",
+            "stalkerzone:agroprom",
+            "stalkerzone:dark_valley",
+            "stalkerzone:bar",
+            "stalkerzone:wild_territory",
+            "stalkerzone:army_warehouses",
+            "stalkerzone:yantar",
+            "stalkerzone:radar",
+            "stalkerzone:psi_field",
+            "stalkerzone:chaes",
+            "stalkerzone:perimeter",
+            "stalkerzone:red_forest",
+            "stalkerzone:outskirts",
+            "stalkerzone:pripyat"
+          ]
+        }
+      }
+    }
+  }
+}

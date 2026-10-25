@@ -1,0 +1,17 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_lab_table.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "lab_glass": "stalkerzone:block/prop/lab_glass",
+  "steel": "stalkerzone:block/prop/steel",
+  "tile_white": "stalkerzone:block/prop/tile_white",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

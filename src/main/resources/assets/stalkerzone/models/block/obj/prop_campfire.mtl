@@ -1,0 +1,12 @@
+newmtl embers
+Kd 1 1 1
+map_Kd #embers
+
+newmtl pole
+Kd 1 1 1
+map_Kd #pole
+
+newmtl rubble
+Kd 1 1 1
+map_Kd #rubble
+

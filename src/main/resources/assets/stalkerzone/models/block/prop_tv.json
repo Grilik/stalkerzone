@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_tv.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "screen": "stalkerzone:block/prop/screen",
+  "wood_vlak": "stalkerzone:block/prop/wood_vlak",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

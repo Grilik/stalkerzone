@@ -1,0 +1,12 @@
+newmtl concrete
+Kd 1 1 1
+map_Kd #concrete
+
+newmtl mosaic
+Kd 1 1 1
+map_Kd #mosaic
+
+newmtl wood
+Kd 1 1 1
+map_Kd #wood
+

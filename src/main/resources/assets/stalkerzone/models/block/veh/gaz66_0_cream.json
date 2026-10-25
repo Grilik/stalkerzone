@@ -1,0 +1,22 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/veh_gaz66_0.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "glass": "stalkerzone:block/prop/glass",
+  "grille": "stalkerzone:block/prop/grille",
+  "headlight": "stalkerzone:block/prop/headlight",
+  "paint": "stalkerzone:block/prop/paint_cream",
+  "paint2": "stalkerzone:block/prop/paint_olive",
+  "rim": "stalkerzone:block/prop/rim",
+  "rust": "stalkerzone:block/prop/rust",
+  "tire": "stalkerzone:block/prop/tire",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

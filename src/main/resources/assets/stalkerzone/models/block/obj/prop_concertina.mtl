@@ -1,0 +1,8 @@
+newmtl pole
+Kd 1 1 1
+map_Kd #pole
+
+newmtl wire
+Kd 1 1 1
+map_Kd #wire
+

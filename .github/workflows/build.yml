@@ -1,0 +1,25 @@
+name: build
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Sim tests (pure Java)
+        run: |
+          mkdir -p out
+          javac --release 17 -encoding UTF-8 -d out src/main/java/ru/stalkerzone/sim/*.java src/main/java/ru/stalkerzone/world/ZoneBounds.java src/test/java/*.java
+          java -Dfile.encoding=UTF-8 -cp out BoundsTest
+          java -Dfile.encoding=UTF-8 -cp out SocietyTest
+      - name: Build mod
+        run: ./gradlew build --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stalkerzone-mod
+          path: build/libs/*.jar

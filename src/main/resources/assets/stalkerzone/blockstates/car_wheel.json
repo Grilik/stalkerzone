@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "axis=y": {
+   "model": "stalkerzone:block/car_wheel"
+  },
+  "axis=z": {
+   "model": "stalkerzone:block/car_wheel_horizontal",
+   "x": 90
+  },
+  "axis=x": {
+   "model": "stalkerzone:block/car_wheel_horizontal",
+   "x": 90,
+   "y": 90
+  }
+ }
+}

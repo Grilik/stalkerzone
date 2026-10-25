@@ -1,0 +1,206 @@
+package ru.stalkerzone.npc;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.AABB;
+import ru.stalkerzone.ZoneData;
+import ru.stalkerzone.sim.Faction;
+import ru.stalkerzone.sim.Node;
+import ru.stalkerzone.sim.Simulation;
+import ru.stalkerzone.world.SpawnFinder;
+import ru.stalkerzone.world.ZoneBounds;
+import ru.stalkerzone.world.ZoneWorld;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Держит число видимых NPC на точке равным тому, что говорит симуляция. Работает только рядом с игроками,
+ * чтобы не грузить чанки без нужды. Лишних NPC убирает без последствий для симуляции, а вот гибель в бою
+ * уменьшает численность фракции.
+ */
+public final class NpcManager {
+    /** Радиус, в котором NPC привязаны к точке (блоки). */
+    private static final int AREA = 48;
+    /** Пока игрок ближе этого расстояния к точке, её NPC поддерживаются. */
+    private static final int ACTIVE = 110;
+    private static final int MAX_PER_NODE = 8;
+
+    private static final String[] CALLSIGNS = {"Лис", "Грач", "Бродяга", "Седой", "Хмурый", "Дым", "Шрам", "Курсант", "Топор", "Весёлый",
+            "Тихий", "Бык", "Север", "Сыч", "Ворон", "Гвоздь", "Малой", "Кащей", "Доцент", "Рыжий", "Бахмач", "Ёж", "Угрюмый", "Сапёр"};
+    private static String traderName(Node n) {
+        return switch (n.name) {
+            case "Кордон" -> "Сидорович";
+            case "Бар" -> "Бармен";
+            case "Янтарь" -> "Профессор Сахаров";
+            default -> "Торговец";
+        };
+    }
+
+    /** Звание рядового по среднему опыту фракции. */
+    private static String rankFor(Faction f) {
+        double v = f.exp + RND.nextGaussian() * 25;
+        int r = v < 30 ? 0 : v < 60 ? 1 : v < 85 ? 2 : 3;
+        return ru.stalkerzone.sim.Person.RANKS[r];
+    }
+
+    private static final Random RND = new Random();
+
+    private NpcManager() {}
+
+    /** Вызывать раз в секунду. */
+    public static void tick(MinecraftServer server) {
+        ServerLevel level = server.overworld();
+        List<ServerPlayer> players = level.players();
+        if (players.isEmpty()) return;
+        Simulation sim = ZoneData.get(server).sim;
+        for (Node n : sim.nodes) {
+            if (!near(players, n)) continue;
+            ensure(level, sim, n);
+        }
+    }
+
+    private static boolean near(List<ServerPlayer> players, Node n) {
+        double cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        for (ServerPlayer p : players) {
+            if (Math.hypot(p.getX() - cx, p.getZ() - cz) <= ACTIVE) return true;
+        }
+        return false;
+    }
+
+    /** Сколько NPC показывать на точке. */
+    public static int target(Simulation sim, Node n) {
+        if (n.owner < 0) return 0;
+        Faction f = sim.factions.get(n.owner);
+        int owned = Math.max(1, sim.ownedCount(f));
+        double share = f.members * 0.35 / owned / 3.0 * (n.id == f.baseNode ? 1.5 : 1.0);
+        return Math.max(1, Math.min(MAX_PER_NODE, (int) Math.round(share)));
+    }
+
+    private static void ensure(ServerLevel level, Simulation sim, Node n) {
+        int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        if (!level.hasChunk(cx >> 4, cz >> 4)) return;
+        AABB box = new AABB(cx - AREA, level.getMinBuildHeight(), cz - AREA, cx + AREA, level.getMaxBuildHeight(), cz + AREA);
+        List<StalkerEntity> here = level.getEntitiesOfClass(StalkerEntity.class, box, e -> e.homeNode() == n.id && e.isAlive());
+
+        List<StalkerEntity> stalkers = new ArrayList<>();
+        List<StalkerEntity> builders = new ArrayList<>();
+        StalkerEntity trader = null;
+        for (StalkerEntity e : here) {
+            if (e.isTrader()) {
+                if (trader == null) trader = e; else e.discard();
+            } else if (e.isBuilder()) {
+                builders.add(e);
+            } else {
+                stalkers.add(e);
+            }
+        }
+        builders(level, sim, n, builders);
+
+        if (n.trader && trader == null) spawn(level, sim, n, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), cx, cz, 0);
+
+        int wanted = target(sim, n);
+        // чужие фракции на точке больше не живут: она сменила владельца
+        stalkers.removeIf(e -> {
+            if (n.owner < 0 || e.faction() != n.owner) {
+                e.discard();
+                return true;
+            }
+            return false;
+        });
+        if (stalkers.size() < wanted) {
+            StalkerEntity e = spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+            if (e != null) assignPerson(sim, n, e, stalkers);
+        } else if (stalkers.size() > wanted + 1) {
+            // рядовых убирать раньше именных
+            StalkerEntity drop = stalkers.get(0);
+            for (StalkerEntity e : stalkers) if (e.personId() == 0) { drop = e; break; }
+            drop.discard();
+        }
+    }
+
+    /** На базе фракции появляются её именные сталкеры: сначала лидер и заместитель, потом остальные. */
+    private static void assignPerson(Simulation sim, Node n, StalkerEntity e, List<StalkerEntity> present) {
+        Faction f = sim.factions.get(e.faction());
+        java.util.Set<Integer> here = new java.util.HashSet<>();
+        for (StalkerEntity o : present) if (o.personId() > 0) here.add(o.personId());
+        ru.stalkerzone.sim.Person pick = null;
+        if (n.id == f.baseNode) {
+            for (ru.stalkerzone.sim.Person p : sim.people.of(f.id)) {
+                if (here.contains(p.id) || p.injury > 0) continue;
+                if (pick == null || p.role.ordinal() > pick.role.ordinal()) pick = p;
+            }
+            if (pick != null && pick.role.ordinal() < ru.stalkerzone.sim.Person.Role.SQUAD_LEADER.ordinal() && RND.nextDouble() < 0.5) pick = null;
+        } else if (RND.nextDouble() < 0.25) {
+            for (ru.stalkerzone.sim.Person p : sim.people.of(f.id)) {
+                if (here.contains(p.id) || p.injury > 0 || p.role == ru.stalkerzone.sim.Person.Role.LEADER || p.role == ru.stalkerzone.sim.Person.Role.DEPUTY) continue;
+                pick = p;
+                break;
+            }
+        }
+        if (pick != null) {
+            e.setPerson(pick.id);
+            e.setCustomName(Component.literal(pick.name + " [" + pick.rankRu() + ", " + pick.role.ru + "]"));
+            e.setMedic(pick.cls == ru.stalkerzone.sim.Person.Cls.MEDIC || pick.cls == ru.stalkerzone.sim.Person.Cls.DOCTOR);
+            if (pick.role == ru.stalkerzone.sim.Person.Role.LEADER || pick.role == ru.stalkerzone.sim.Person.Role.DEPUTY) e.equipLeader();
+        } else {
+            e.setMedic(RND.nextDouble() < (sim.people.medics(f.id) > 0 ? 0.18 : 0.08));
+        }
+    }
+
+    /** Строители чинят повреждённые постройки своей точки (v1.6): по одному у каждой ремонтируемой. */
+    private static void builders(ServerLevel level, Simulation sim, Node n, List<StalkerEntity> builders) {
+        List<ru.stalkerzone.sim.Building> broken = new ArrayList<>();
+        if (n.owner >= 0) for (ru.stalkerzone.sim.Building b : sim.buildingsAt(n.id)) if (ru.stalkerzone.world.StructureManager.repairing(sim, n, b)) broken.add(b);
+        builders.removeIf(e -> {
+            if (broken.isEmpty() || e.faction() != n.owner || builders.indexOf(e) >= broken.size()) {
+                e.discard();
+                return true;
+            }
+            return false;
+        });
+        if (builders.size() >= Math.min(2, broken.size()) || broken.isEmpty()) return;
+        ru.stalkerzone.sim.Building b = broken.get(builders.size());
+        BlockPos site = ru.stalkerzone.world.StructureManager.siteCenter(level, sim, n, b.type);
+        if (site == null) return;
+        spawnAt(level, StalkerEntity.ROLE_BUILDER, n.owner, n, site, Component.literal("Строитель"));
+    }
+
+    private static void spawnAt(ServerLevel level, int role, int faction, Node n, BlockPos around, Component name) {
+        int x = around.getX() + RND.nextInt(7) - 3, z = around.getZ() + RND.nextInt(7) - 3;
+        if (!level.hasChunk(x >> 4, z >> 4)) return;
+        BlockPos pos = SpawnFinder.groundAt(level, x, z);
+        StalkerEntity e = ModEntities.STALKER.get().create(level);
+        if (e == null) return;
+        e.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
+        e.configure(faction, role, n.id, pos, name);
+        level.addFreshEntity(e);
+    }
+
+    private static StalkerEntity spawn(ServerLevel level, Simulation sim, Node n, int role, int faction, int cx, int cz, int radius) {
+        int x = cx + (radius == 0 ? 0 : RND.nextInt(radius * 2 + 1) - radius);
+        int z = cz + (radius == 0 ? 0 : RND.nextInt(radius * 2 + 1) - radius);
+        ZoneBounds b = ZoneWorld.bounds();
+        if (!b.inside(x, z) || !level.hasChunk(x >> 4, z >> 4)) return null;
+        BlockPos pos = SpawnFinder.groundAt(level, x, z);
+        if (!level.getFluidState(pos.below()).isEmpty()) return null;
+        // жители стоят только на естественной земле, не на крышах построек
+        net.minecraft.world.level.block.state.BlockState below = level.getBlockState(pos.below());
+        if (!(below.is(net.minecraft.tags.BlockTags.DIRT) || below.is(net.minecraft.tags.BlockTags.SAND)
+                || below.is(net.minecraft.world.level.block.Blocks.GRAVEL) || below.is(net.minecraft.world.level.block.Blocks.STONE)
+                || below.is(net.minecraft.world.level.block.Blocks.MUD) || below.is(net.minecraft.world.level.block.Blocks.PODZOL))) return null;
+
+        StalkerEntity e = ModEntities.STALKER.get().create(level);
+        if (e == null) return null;
+        String name = role == StalkerEntity.ROLE_TRADER ? traderName(n)
+                : CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " [" + rankFor(sim.factions.get(faction)) + "]";
+        e.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
+        e.configure(faction, role, n.id, pos, Component.literal(role == StalkerEntity.ROLE_TRADER ? "Торговец " + name : name));
+        level.addFreshEntity(e);
+        return e;
+    }
+}

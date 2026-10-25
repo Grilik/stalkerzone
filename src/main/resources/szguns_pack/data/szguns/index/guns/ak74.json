@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.ak74.name",
+  "display": "szguns:ak74_display",
+  "data": "szguns:ak74_data",
+  "tooltip": "szguns.gun.ak74.desc",
+  "type": "rifle",
+  "item_type": "modern_kinetic",
+  "sort": 1
+}

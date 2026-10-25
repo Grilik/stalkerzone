@@ -1,0 +1,15 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_barrel_green.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "barrel_green": "stalkerzone:block/prop/barrel_green",
+  "steel": "stalkerzone:block/prop/steel",
+  "particle": "stalkerzone:block/prop/barrel_green"
+ }
+}

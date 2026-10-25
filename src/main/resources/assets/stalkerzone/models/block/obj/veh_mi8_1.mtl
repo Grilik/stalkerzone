@@ -1,0 +1,16 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl interior
+Kd 1 1 1
+map_Kd #interior
+
+newmtl paint
+Kd 1 1 1
+map_Kd #paint
+
+newmtl steel_dark
+Kd 1 1 1
+map_Kd #steel_dark
+

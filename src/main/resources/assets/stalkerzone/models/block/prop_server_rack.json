@@ -1,0 +1,17 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_server_rack.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "console_body": "stalkerzone:block/prop/console_body",
+  "console_panel": "stalkerzone:block/prop/console_panel",
+  "steel": "stalkerzone:block/prop/steel",
+  "tape": "stalkerzone:block/prop/tape",
+  "particle": "stalkerzone:block/prop/console_body"
+ }
+}
