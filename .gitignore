@@ -1,11 +1,11 @@
-build/
+/build/
 .gradle/
-run/
-out/
+/run/
+/out/
 *.iml
 .idea/
 .vscode/
-eclipse/
+/eclipse/
 __pycache__/
 *.pyc
 javac.*.args
