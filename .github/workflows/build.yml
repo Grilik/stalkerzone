@@ -6,17 +6,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
       - name: Sim tests (pure Java)
         run: |
           mkdir -p out
-          javac --release 17 -encoding UTF-8 -d out src/main/java/ru/stalkerzone/sim/*.java src/main/java/ru/stalkerzone/world/ZoneBounds.java src/test/java/*.java
-          java -Dfile.encoding=UTF-8 -cp out BoundsTest
-          java -Dfile.encoding=UTF-8 -cp out SocietyTest
+          javac --release 17 -encoding UTF-8 -d out \
+            $(find src/main/java/ru/stalkerzone/sim src/main/java/ru/stalkerzone/zonemap -name '*.java') \
+            src/main/java/ru/stalkerzone/world/ZoneBounds.java src/test/java/*.java
+          for f in src/test/java/*Test.java; do
+            t=$(basename "$f" .java)
+            echo "::group::$t"
+            java -Dfile.encoding=UTF-8 -cp out "$t"
+            echo "::endgroup::"
+          done
       - name: Build mod
         run: ./gradlew build --no-daemon
       - uses: actions/upload-artifact@v4
