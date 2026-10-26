@@ -72,6 +72,7 @@ public class StalkerZoneMod {
         ru.stalkerzone.anomaly.AnomalyManager.tick(server);
         ru.stalkerzone.anomaly.Artifacts.tick(server);
         ru.stalkerzone.pda.ZoneLifeService.tick(server);
+        ru.stalkerzone.world.Perimeter.tick(server);
         ru.stalkerzone.anomaly.EmissionEvent.tick(server);
 
         ZoneData data = ZoneData.get(server);

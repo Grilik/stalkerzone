@@ -183,7 +183,10 @@ public final class ZoneLife {
         st.note = LAST_WORDS[r.nextInt(LAST_WORDS.length)];
         stashes.add(st);
         // старые нетронутые тайники Зона забирает (хабар уже списан со склада при гибели)
-        while (stashes.size() > MAX_STASHES) stashes.remove(0);
+        while (stashes.size() > MAX_STASHES) {
+            int gone = stashes.remove(0).id;
+            rumors.removeIf(x -> x.truth && x.stash == gone);   // слух о пропавшем тайнике забывается
+        }
         return st;
     }
 

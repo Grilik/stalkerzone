@@ -1233,23 +1233,61 @@ public final class Simulation {
 
     /** Цена, по которой торговец покупает у сталкера. */
     public long buyPrice(Node n, Good g) {
-        return Math.max(1, Math.round(midPrice(n, g) * 0.9));
+        // v1.14: скупщик берёт артефакты дёшево — его маржа 15–20%, за Периметром они дороже
+        return Math.max(1, Math.round(midPrice(n, g) * (g == Good.ARTIFACT ? 0.8 : 0.9)));
     }
 
     /** Цена, по которой торговец продаёт сталкеру. */
     public long sellPrice(Node n, Good g) {
-        return Math.max(1, Math.round(midPrice(n, g) * 1.1));
+        return Math.max(1, Math.round(midPrice(n, g) * (g == Good.ARTIFACT ? 1.2 : 1.1)));
     }
 
+    /** v1.14: сколько торговцы за всё время отдали «крыше», военным и вывезли за Периметр. */
+    public long traderDues, traderBribes, traderExport;
+
+    /**
+     * Касса торговца по канону течёт наружу (v1.14): дань группировке, на чьей земле лавка («крыша», охрана — Долг
+     * в Баре), взятки военным за проход колонн через Периметр и вывоз прибыли на Большую землю. Первые два — переводы
+     * внутри Зоны (деньги приходят группировкам), третье выводит деньги из Зоны через учёт.
+     */
     private void traderDaily(Node n) {
         Stock s = n.market;
-        // накладные расходы: налоги, взятки и вывоз прибыли на Большую землю (стоки денег, чтобы касса не копилась бесконечно)
-        if (s.money > 30000) {
-            long tax = (s.money - 30000) / 50;
-            s.money -= tax;
-            ledger.moneyBurned += tax;
+        long free = s.money - 6000;
+        if (free > 0) {
+            Faction roof = n.owner >= 0 && n.owner < factions.size() ? factions.get(n.owner) : null;
+            if (roof != null && !roof.fanatic) {
+                long dues = free * 3 / 200;
+                Stock.moveMoney(s, roof.stock, dues);
+                traderDues += dues;
+            }
+            Faction mil = military();
+            if (mil != null && mil != roof) {
+                long bribe = free / 100;
+                Stock.moveMoney(s, mil.stock, bribe);
+                traderBribes += bribe;
+            }
+        }
+        if (s.money > 25000) {
+            long out = (s.money - 25000) * 6 / 100;
+            s.money -= out;
+            ledger.moneyBurned += out;
+            traderExport += out;
         }
         world.traderDaily(this, n, rng);
+    }
+
+    /** Игрок дал взятку на посту военных: деньги приходят в Зону извне. */
+    public void playerBribe(Faction mil, long amount) {
+        if (mil == null || amount <= 0) return;
+        mil.stock.money += amount;
+        ledger.moneyMinted += amount;
+    }
+
+    /** У игрока конфисковали хабар: товар уходит на склад военных (входит в Зону через учёт). */
+    public void playerConfiscated(Faction mil, Good g, int qty) {
+        if (mil == null || qty <= 0) return;
+        mil.stock.add(g, qty);
+        ledger.imported[g.ordinal()] += qty;
     }
 
     /**

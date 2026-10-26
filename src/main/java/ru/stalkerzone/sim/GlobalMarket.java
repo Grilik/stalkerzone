@@ -82,6 +82,8 @@ public final class GlobalMarket {
     public final List<Event> events = new ArrayList<>();
     public final List<Order> orders = new ArrayList<>();
     public long turnoverBuy, turnoverSell;
+    /** Сколько событий Большой земли было за игру (не сохраняется, для проверок). */
+    public int eventsTotal;
     public int waited, bought;
 
     public GlobalMarket() {
@@ -106,6 +108,7 @@ public final class GlobalMarket {
             for (Event e : events) if (e.good == g) dup = true;
             if (!dup) {
                 events.add(new Event(ev[0], g, Double.parseDouble(ev[2]), s.day + 20 + r.nextInt(30)));
+                eventsTotal++;
                 s.log("Большая земля: " + ev[0]);
             }
         }

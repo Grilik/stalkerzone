@@ -54,7 +54,7 @@ public class MarketTest {
                     minR = Math.min(minR, r); maxR = Math.max(maxR, r);
                 }
             }
-            events += (int) t.events.stream().filter(e -> e.startsWith("[день") && e.contains("Большая земля:")).count();
+            events += t.world.eventsTotal;   // журнал держит 300 строк — считаем по счётчику
             armySpent += t.logistics.armySpent;
             System.out.printf("seed %d: оборот покупок %d, продаж %d руб.; ждали %d раз, купили %d; для армии %d руб.; армия %d, учёные %d%n",
                     seed, t.world.turnoverBuy, t.world.turnoverSell, t.world.waited, t.world.bought, t.logistics.armySpent,
