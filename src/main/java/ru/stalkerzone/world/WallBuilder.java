@@ -35,21 +35,21 @@ public final class WallBuilder {
 
                 if (kind == ZoneBounds.Kind.BARRIER) {
                     if (chunk.getBlockState(p.set(x, minY, z)).is(Blocks.BARRIER)) continue; // уже стоит
-                    for (int y = minY; y < maxY; y++) chunk.setBlockState(p.set(x, y, z), barrier, false);
+                    for (int y = minY; y < maxY; y++) ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.set(x, y, z), barrier);
                     changed = true;
                 } else {
                     int floor = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, lx, lz); // первый свободный блок над дном
                     if (chunk.getBlockState(p.set(x, floor, z)).is(Blocks.STONE_BRICKS)) continue; // уже стоит
                     boolean post = Math.floorMod(x + z, POST_STEP) == 0;
-                    chunk.setBlockState(p.set(x, floor - 1, z), Blocks.STONE_BRICKS.defaultBlockState(), false);
-                    chunk.setBlockState(p.set(x, floor, z), Blocks.STONE_BRICKS.defaultBlockState(), false);
+                    ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.set(x, floor - 1, z), Blocks.STONE_BRICKS.defaultBlockState());
+                    ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.set(x, floor, z), Blocks.STONE_BRICKS.defaultBlockState());
                     BlockState bars = bars(b, x, z);
                     for (int i = 1; i <= BARS_HEIGHT + 1; i++) {
                         BlockState s;
                         if (post) s = Blocks.COBBLESTONE_WALL.defaultBlockState();
                         else if (i <= BARS_HEIGHT) s = bars;
                         else continue;
-                        chunk.setBlockState(p.set(x, floor + i, z), s, false);
+                        ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.set(x, floor + i, z), s);
                     }
                     changed = true;
                 }

@@ -117,6 +117,30 @@ public final class ZoneCommands {
                 .then(Commands.literal("anomalies")
                         .executes(c -> send(c, Report.anomalies(sim(c))))
                         .then(Commands.literal("near").executes(ZoneCommands::anomaliesNear)))
+                .then(Commands.literal("feed").executes(c -> send(c, ru.stalkerzone.pda.ZoneLifeService.feed(ZoneData.get(c.getSource().getServer()), 12))))
+                .then(Commands.literal("rumors").executes(c -> {
+                    try {
+                        return send(c, ru.stalkerzone.pda.ZoneLifeService.rumors(c.getSource().getPlayerOrException(), ZoneData.get(c.getSource().getServer())));
+                    } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+                        return send(c, "Команда только для игрока.");
+                    }
+                }))
+                .then(Commands.literal("guide").then(Commands.argument("place", com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(c -> {
+                    try {
+                        return send(c, ru.stalkerzone.pda.ZoneLifeService.guide(c.getSource().getPlayerOrException(), ZoneData.get(c.getSource().getServer()),
+                                com.mojang.brigadier.arguments.StringArgumentType.getString(c, "place")));
+                    } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+                        return send(c, "Команда только для игрока.");
+                    }
+                })))
+                .then(Commands.literal("stashes").requires(s -> s.hasPermission(2)).executes(c -> {
+                    ZoneData data = ZoneData.get(c.getSource().getServer());
+                    StringBuilder sb = new StringBuilder("Тайников погибших: " + data.life.stashes.size());
+                    for (ru.stalkerzone.sim.ZoneLife.Stash st : data.life.stashes)
+                        sb.append("\n").append(st.owner).append(": КПК ").append(st.pdaX).append(' ').append(st.pdaZ).append(", тайник ").append(st.x).append(' ').append(st.z)
+                                .append(st.known ? " (известен)" : "").append(st.placed ? " (найден)" : "");
+                    return send(c, sb.toString());
+                }))
                 .then(Commands.literal("artifacts").requires(s -> s.hasPermission(2)).executes(c -> {
                     ZoneData data = ZoneData.get(c.getSource().getServer());
                     StringBuilder sb = new StringBuilder("Спрятано артефактов: " + data.hidden.size());
@@ -215,7 +239,9 @@ public final class ZoneCommands {
                         .then(Commands.argument("days", IntegerArgumentType.integer(1, 365))
                                 .executes(c -> {
                                     ZoneData data = ZoneData.get(c.getSource().getServer());
-                                    data.sim.step(IntegerArgumentType.getInteger(c, "days"));
+                                    int days = IntegerArgumentType.getInteger(c, "days");
+                                    java.util.Random lr = new java.util.Random();
+                                    for (int i = 0; i < days; i++) { data.sim.step(); data.life.daily(data.sim, lr); }
                                     data.setDirty();
                                     return send(c, "Симуляция продвинута, сейчас день " + data.sim.day);
                                 })))

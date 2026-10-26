@@ -283,5 +283,6 @@
  "item.stalkerzone.poltergeist_spawn_egg": "Poltergeist Spawn Egg",
  "entity.stalkerzone.pseudogiant": "Pseudogiant",
  "item.stalkerzone.pseudogiant_hand": "Pseudogiant hand",
- "item.stalkerzone.pseudogiant_spawn_egg": "Pseudogiant Spawn Egg"
+ "item.stalkerzone.pseudogiant_spawn_egg": "Pseudogiant Spawn Egg",
+ "item.stalkerzone.dead_pda": "Dead stalker's PDA"
 }

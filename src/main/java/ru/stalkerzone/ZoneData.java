@@ -22,6 +22,8 @@ public class ZoneData extends SavedData {
 
     /** v1.14: спрятанные в аномалиях артефакты: x, y, z, тип (см. anomaly.Artifacts). */
     public final java.util.List<int[]> hidden = new java.util.ArrayList<>();
+    /** v1.14: живая Зона — лента КПК, тайники погибших, слухи. */
+    public ru.stalkerzone.sim.ZoneLife life = new ru.stalkerzone.sim.ZoneLife();
 
     private ZoneData(Simulation sim, int tickCounter) {
         this.sim = sim;
@@ -47,6 +49,13 @@ public class ZoneData extends SavedData {
         for (int i = 0; i + 1 < rd.length; i += 2) d.rendered.put(rd[i], rd[i + 1]);
         int[] hd = tag.getIntArray("hidden");
         for (int i = 0; i + 3 < hd.length; i += 4) d.hidden.add(new int[] {hd[i], hd[i + 1], hd[i + 2], hd[i + 3]});
+        if (tag.contains("life")) {
+            try {
+                d.life = ru.stalkerzone.sim.ZoneLife.read(new java.io.DataInputStream(new java.io.ByteArrayInputStream(tag.getByteArray("life"))));
+            } catch (java.io.IOException e) {
+                d.life = new ru.stalkerzone.sim.ZoneLife();
+            }
+        }
         return d;
     }
 
@@ -60,6 +69,12 @@ public class ZoneData extends SavedData {
         int[] hd = new int[hidden.size() * 4];
         for (int i = 0; i < hidden.size(); i++) System.arraycopy(hidden.get(i), 0, hd, i * 4, 4);
         tag.putIntArray("hidden", hd);
+        try {
+            java.io.ByteArrayOutputStream bo = new java.io.ByteArrayOutputStream();
+            life.write(new java.io.DataOutputStream(bo));
+            tag.putByteArray("life", bo.toByteArray());
+        } catch (java.io.IOException ignored) {
+        }
         return tag;
     }
 
@@ -75,6 +90,8 @@ public class ZoneData extends SavedData {
 
     public void reset(long seed) {
         sim = ZoneScenario.create(seed);
+        life = new ru.stalkerzone.sim.ZoneLife();
+        hidden.clear();
         tickCounter = 0;
         setDirty();
     }

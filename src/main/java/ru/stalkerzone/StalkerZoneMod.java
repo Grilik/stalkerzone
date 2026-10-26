@@ -71,6 +71,7 @@ public class StalkerZoneMod {
         ru.stalkerzone.lab.LabManager.tickDownloads(server);
         ru.stalkerzone.anomaly.AnomalyManager.tick(server);
         ru.stalkerzone.anomaly.Artifacts.tick(server);
+        ru.stalkerzone.pda.ZoneLifeService.tick(server);
         ru.stalkerzone.anomaly.EmissionEvent.tick(server);
 
         ZoneData data = ZoneData.get(server);
@@ -78,6 +79,7 @@ public class StalkerZoneMod {
         if (data.tickCounter < TICKS_PER_SIM_DAY) return;
         data.tickCounter = 0;
         data.sim.step();
+        ru.stalkerzone.pda.ZoneLifeService.daily(server, data);
         data.setDirty();
         if (data.sim.lastEmissionDay == data.sim.day) ru.stalkerzone.anomaly.EmissionEvent.start(server);
 

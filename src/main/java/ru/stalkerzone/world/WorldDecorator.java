@@ -46,7 +46,7 @@ public final class WorldDecorator {
         BlockPos marker = new BlockPos(cp.getMinBlockX(), minY, cp.getMinBlockZ());
         if (chunk.getBlockState(marker).is(Blocks.REINFORCED_DEEPSLATE)) return;
         int cx = cp.getMiddleBlockX(), cz = cp.getMiddleBlockZ();
-        chunk.setBlockState(marker, Blocks.REINFORCED_DEEPSLATE.defaultBlockState(), false);
+        ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, marker, Blocks.REINFORCED_DEEPSLATE.defaultBlockState());
         if (!b.inside(cp.getMinBlockX() - 8, cp.getMinBlockZ() - 8) || !b.inside(cp.getMaxBlockX() + 8, cp.getMaxBlockZ() + 8)) return;
         Random r = new Random(cp.toLong() * 341873128712L + 132897987541L);
         int biome = ZoneBiomes.index(cx, cz);
@@ -201,7 +201,7 @@ public final class WorldDecorator {
     private static void set(ChunkAccess c, int x, int y, int z, BlockState s) {
         ChunkPos cp = c.getPos();
         if (x < cp.getMinBlockX() || x > cp.getMaxBlockX() || z < cp.getMinBlockZ() || z > cp.getMaxBlockZ()) return;
-        c.setBlockState(new BlockPos(x, y, z), s, false);
+        ru.stalkerzone.block.ObjPropBlock.safeSet(c, new BlockPos(x, y, z), s);
     }
 
     private static BlockState b(Block b) { return b.defaultBlockState(); }

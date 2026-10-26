@@ -283,5 +283,6 @@
  "item.stalkerzone.poltergeist_spawn_egg": "Яйцо призыва: Полтергейст",
  "entity.stalkerzone.pseudogiant": "Псевдогигант",
  "item.stalkerzone.pseudogiant_hand": "Рука псевдогиганта",
- "item.stalkerzone.pseudogiant_spawn_egg": "Яйцо призыва: Псевдогигант"
+ "item.stalkerzone.pseudogiant_spawn_egg": "Яйцо призыва: Псевдогигант",
+ "item.stalkerzone.dead_pda": "КПК погибшего"
 }

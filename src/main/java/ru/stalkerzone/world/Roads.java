@@ -85,7 +85,7 @@ public final class Roads {
         BlockPos p = new BlockPos(x, y, z);
         BlockState top = c.getBlockState(p);
         if (top.is(Blocks.WATER)) {   // гать через воду
-            c.setBlockState(p, Blocks.GRAVEL.defaultBlockState(), false);
+            ru.stalkerzone.block.ObjPropBlock.safeSet(c, p, Blocks.GRAVEL.defaultBlockState());
             return;
         }
         BlockState s;
@@ -93,13 +93,13 @@ public final class Roads {
         if (asphalt) s = edge ? (v < 0.6 ? Blocks.GRAVEL : Blocks.COARSE_DIRT).defaultBlockState()
                 : (v < 0.06 ? Blocks.GRAVEL : v < 0.1 ? Blocks.COARSE_DIRT : Blocks.BLACK_CONCRETE).defaultBlockState();
         else s = (v < 0.45 ? Blocks.COARSE_DIRT : v < 0.75 ? Blocks.DIRT_PATH : Blocks.GRAVEL).defaultBlockState();
-        c.setBlockState(p, s, false);
+        ru.stalkerzone.block.ObjPropBlock.safeSet(c, p, s);
         for (int k = 1; k <= 4; k++) {   // расчистить кусты, траву и стволы над дорогой
             BlockPos q = p.above(k);
             BlockState at = c.getBlockState(q);
             if (at.isAir()) break;
             if (at.canBeReplaced() || at.is(BlockTags.LOGS) || at.is(BlockTags.LEAVES) || at.is(Blocks.SWEET_BERRY_BUSH))
-                c.setBlockState(q, Blocks.AIR.defaultBlockState(), false);
+                ru.stalkerzone.block.ObjPropBlock.safeSet(c, q, Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -139,7 +139,7 @@ public final class Roads {
         int wx = l.alongX() ? x + 1 : x, wz = l.alongX() ? z : z + 1;
         if (wx > cp.getMaxBlockX() || wz > cp.getMaxBlockZ()) return;
         BlockState ws = ru.stalkerzone.world.Dressing.prop(wires + (dy + 3), along);
-        if (ws != null) c.setBlockState(new BlockPos(wx, y, wz), ws, false);
+        if (ws != null) ru.stalkerzone.block.ObjPropBlock.safeSet(c, new BlockPos(wx, y, wz), ws);
     }
 
     /** Газопровод: участки по 4 блока, каждые 96 блоков — П-образный компенсатор; у чужих дорог пропуск. */

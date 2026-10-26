@@ -69,6 +69,16 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
 
     private static final ThreadLocal<Boolean> PLACING = ThreadLocal.withInitial(() -> false);
 
+    /**
+     * Поставить блок при загрузке чанка, не трогая блоки с BlockEntity (улей, сундук, спавнер): их снятие
+     * лезет за чанком через Level и подвешивает сервер, пока чанк ещё не готов. Вернёт false, если пропустили.
+     */
+    public static boolean safeSet(net.minecraft.world.level.chunk.ChunkAccess c, BlockPos pos, BlockState s) {
+        if (c.getBlockState(pos).hasBlockEntity()) return false;
+        c.setBlockState(pos, s, false);
+        return true;
+    }
+
     /** Выполнить декор чанка при загрузке: onPlace/onRemove пропсов не лезут в соседние чанки (иначе зависание). */
     public static void worldgen(Runnable r) {
         boolean was = PLACING.get();
@@ -83,7 +93,8 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
     public static void placeInChunk(net.minecraft.world.level.chunk.ChunkAccess c, BlockPos pos, BlockState s) {
         net.minecraft.world.level.ChunkPos cp = c.getPos();
         if ((pos.getX() >> 4) != cp.x || (pos.getZ() >> 4) != cp.z) return;
-        if (!(s.getBlock() instanceof ObjPropBlock ob)) { c.setBlockState(pos, s, false); return; }
+        if (!(s.getBlock() instanceof ObjPropBlock ob)) { safeSet(c, pos, s); return; }
+        if (c.getBlockState(pos).hasBlockEntity()) return;
         // LevelChunk.setBlockState вызывает onPlace, а тот полез бы в соседний, ещё не готовый чанк и подвесил
         // серверный поток (так и было при загрузке чанков с дорогами). Корпуса ставим сами, только в своём чанке.
         worldgen(() -> c.setBlockState(pos, s, false));

@@ -50,6 +50,9 @@ public final class ModItems {
     public static final RegistryObject<Item> CONTAINER_LEAD = ITEMS.register("container_lead", () -> new ru.stalkerzone.artifact.ContainerItem(false));
     public static final RegistryObject<Item> CONTAINER_PORCELAIN = ITEMS.register("container_porcelain", () -> new ru.stalkerzone.artifact.ContainerItem(true));
 
+    /** v1.14: КПК погибшего сталкера (с отметкой тайника). */
+    public static final RegistryObject<Item> DEAD_PDA = ITEMS.register("dead_pda", ru.stalkerzone.pda.DeadPdaItem::new);
+
     /** v1.14: болты и детекторы артефактов. */
     public static final RegistryObject<Item> BOLT = ITEMS.register("bolt", BoltItem::new);
     @SuppressWarnings("unchecked")
