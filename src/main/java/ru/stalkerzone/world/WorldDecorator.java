@@ -40,7 +40,7 @@ public final class WorldDecorator {
         return false;
     }
 
-    public static void decorate(ChunkAccess chunk, ZoneBounds b) {
+    public static void decorate(ChunkAccess chunk, ZoneBounds b, net.minecraft.server.level.ServerLevel level) {
         ChunkPos cp = chunk.getPos();
         int minY = chunk.getMinBuildHeight();
         BlockPos marker = new BlockPos(cp.getMinBlockX(), minY, cp.getMinBlockZ());
@@ -48,9 +48,11 @@ public final class WorldDecorator {
         int cx = cp.getMiddleBlockX(), cz = cp.getMiddleBlockZ();
         chunk.setBlockState(marker, Blocks.REINFORCED_DEEPSLATE.defaultBlockState(), false);
         if (!b.inside(cp.getMinBlockX() - 8, cp.getMinBlockZ() - 8) || !b.inside(cp.getMaxBlockX() + 8, cp.getMaxBlockZ() + 8)) return;
-        if (nearCamp(cx, cz)) return;
         Random r = new Random(cp.toLong() * 341873128712L + 132897987541L);
         int biome = ZoneBiomes.index(cx, cz);
+        // v1.14: дороги между локациями, столбы с проводами, ЛЭП, газопроводы (доходят и до лагерей)
+        Roads.decorate(chunk, level, new Random(r.nextLong()), biome == ZoneBiomes.PRIPYAT);
+        if (nearCamp(cx, cz)) return;
         if (biome == ZoneBiomes.PRIPYAT) {
             city(chunk, cp, r);
             cityProps(chunk, cp, r);
@@ -81,7 +83,7 @@ public final class WorldDecorator {
         else if (p < 0.075) barrels(chunk, cp, r);
         else if (p < 0.095) slabs(chunk, cp, r);
         else if (p < 0.115) tires(chunk, cp, r);
-        if (r.nextDouble() < 0.04) pole(chunk, cp, r);
+        if (r.nextDouble() < 0.015) pole(chunk, cp, r);
         // v1.13: места крушения вертолётов, брошенные стоянки сталкеров, армейские позиции, вагоны на запасных путях
         double q = r.nextDouble();
         if (q < 0.005) crash(chunk, cp, r);
@@ -90,6 +92,17 @@ public final class WorldDecorator {
             armyPosition(chunk, cp, r);
         else if (q < 0.029 && (biome == ZoneBiomes.AGROPROM || biome == ZoneBiomes.GARBAGE || biome == ZoneBiomes.KORDON))
             wagons(chunk, cp, r);
+        // v1.14: водокачки и ангары колхозов, экскаваторы на Свалке
+        double w = r.nextDouble();
+        if (w < 0.006 && (biome == ZoneBiomes.KORDON || biome == ZoneBiomes.AGROPROM || biome == ZoneBiomes.GARBAGE || biome == ZoneBiomes.WILD))
+            landmark(chunk, cp, r, "prop_water_tower");
+        else if (w < 0.010 && (biome == ZoneBiomes.KORDON || biome == ZoneBiomes.AGROPROM || biome == ZoneBiomes.ARMY || biome == ZoneBiomes.WILD))
+            landmark(chunk, cp, r, "prop_hangar");
+        else if (w < 0.016 && biome == ZoneBiomes.GARBAGE) {
+            int x = cp.getMinBlockX() + 8, z = cp.getMinBlockZ() + 8, y = ground(chunk, x, z);
+            BlockState s = Dressing.vehicle("veh_excavator", Dressing.dir(r), r, 1);
+            if (s != null && dry(chunk, x, y, z)) ru.stalkerzone.block.ObjPropBlock.placeInChunk(chunk, new BlockPos(x, y, z), s);
+        }
         if ((biome == ZoneBiomes.PSI || biome == ZoneBiomes.CHAES || biome == ZoneBiomes.RADAR) && r.nextDouble() < 0.06) {
             int x = cp.getMinBlockX() + 2 + r.nextInt(12), z = cp.getMinBlockZ() + 2 + r.nextInt(12), y = ground(chunk, x, z);
             if (dry(chunk, x, y, z)) Dressing.chunkProp(chunk, x, y, z, "prop_sign_rad", r);
@@ -97,6 +110,14 @@ public final class WorldDecorator {
     }
 
     // ---------------------------------------------------------------- v1.13: места и объекты
+
+    /** Крупный объект (водокачка, ангар): ставим так, чтобы хитбокс целиком уместился в чанке, и не на дороге. */
+    private static void landmark(ChunkAccess c, ChunkPos cp, Random r, String name) {
+        int x = cp.getMinBlockX() + 7, z = cp.getMinBlockZ() + 6, y = ground(c, x, z);
+        if (!dry(c, x, y, z) || Roads.roadDist(x, z) < 12) return;
+        BlockState s = Dressing.prop(name, Direction.EAST);
+        if (s != null) ru.stalkerzone.block.ObjPropBlock.placeInChunk(c, new BlockPos(x, y, z), s);
+    }
 
     /** Разбитый Ми-8 или Ми-24 с обломками вокруг: обгоревший, винт сломан. */
     private static void crash(ChunkAccess c, ChunkPos cp, Random r) {
@@ -132,13 +153,19 @@ public final class WorldDecorator {
             int x = cp.getMinBlockX() + 2 + r.nextInt(12), z = cp.getMinBlockZ() + 2 + r.nextInt(12), y = ground(c, x, z);
             if (dry(c, x, y, z)) Dressing.chunkProp(c, x, y, z, kinds[i == 0 ? 3 : r.nextInt(kinds.length)], r);
         }
+        if (r.nextDouble() < 0.6) {   // брошенная техника
+            String[] tech = {"veh_brdm2", "veh_t72", "veh_zil131", "veh_uaz452", "veh_btr", "veh_gaz66"};
+            int x = cp.getMinBlockX() + 8, z = cp.getMinBlockZ() + 8, y = ground(c, x, z);
+            BlockState s = Dressing.vehicle(tech[r.nextInt(tech.length)], Dressing.dir(r), r, 1 + r.nextInt(2));
+            if (s != null && dry(c, x, y, z)) ru.stalkerzone.block.ObjPropBlock.placeInChunk(c, new BlockPos(x, y, z), s);
+        }
     }
 
     /** Ржавые товарные вагоны на заросшем запасном пути. */
     private static void wagons(ChunkAccess c, ChunkPos cp, Random r) {
         int x = cp.getMinBlockX() + 8, z = cp.getMinBlockZ() + 8, y = ground(c, x, z);
         if (!dry(c, x, y, z)) return;
-        BlockState s = Dressing.vehicle("veh_wagon", r.nextBoolean() ? Direction.EAST : Direction.SOUTH, r, 1);
+        BlockState s = Dressing.vehicle(r.nextInt(3) == 0 ? "veh_tank_wagon" : "veh_wagon", r.nextBoolean() ? Direction.EAST : Direction.SOUTH, r, 1);
         if (s != null) ru.stalkerzone.block.ObjPropBlock.placeInChunk(c, new BlockPos(x, y, z), s);
     }
 
@@ -322,6 +349,14 @@ public final class WorldDecorator {
         int bx = cp.getMinBlockX() + 5, bz = cp.getMinBlockZ() + 12, by = ground(c, bx, bz);
         for (int k = 0; k < 3; k++) set(c, bx + k, by, bz, b(Blocks.SPRUCE_STAIRS).setValue(net.minecraft.world.level.block.StairBlock.FACING, Direction.NORTH));
         int sx = cp.getMinBlockX() + 10, sz = cp.getMinBlockZ() + 6, sy = ground(c, sx, sz);
+        // v1.14: детская площадка — качели, карусель, горка (ржавые, облезлые)
+        String[] play = {"prop_swing", "prop_carousel", "prop_slide"};
+        if (r.nextDouble() < 0.7 && dry(c, sx, sy, sz) && Dressing.chunkProp(c, sx, sy, sz, play[r.nextInt(3)], r)) {
+            int px = cp.getMinBlockX() + 12, pz = cp.getMinBlockZ() + 10, py = ground(c, px, pz);
+            if (r.nextBoolean() && dry(c, px, py, pz)) Dressing.chunkProp(c, px, py, pz, play[r.nextInt(3)], r);
+            if (r.nextBoolean()) barrels(c, cp, r);
+            return;
+        }
         set(c, sx, sy, sz, b(Blocks.IRON_BARS));
         set(c, sx, sy + 1, sz, b(Blocks.IRON_BARS));
         set(c, sx + 2, sy, sz, b(Blocks.IRON_BARS));
@@ -351,6 +386,11 @@ public final class WorldDecorator {
         if (!Dressing.chunkProp(c, x0 + rad + 1, y, z0, "prop_barrel_lying", r)) set(c, x0 + rad + 1, y, z0, b(ModBlocks.RUSTY_BARREL.get()));
         int yr = ground(c, x0 - rad - 1, z0 + 1);
         Dressing.chunkProp(c, x0 - rad - 1, yr, z0 + 1, r.nextBoolean() ? "prop_rubble" : "prop_gas_lying", r);
+        String[] house = {"prop_fridge_lying", "prop_bathtub", "prop_trash_bags", "prop_radiator", "prop_fridge", "prop_trash_bags"};
+        for (int i = 0; i < 2; i++) {
+            int x = x0 + r.nextInt(2 * rad + 1) - rad, z = z0 + rad + 1 + r.nextInt(2), yy = ground(c, x, z);
+            if (dry(c, x, yy, z)) Dressing.chunkProp(c, x, yy, z, house[r.nextInt(house.length)], r);
+        }
     }
 
     /** Остов машины: ржавый кузов, пустые окна, колёса. */

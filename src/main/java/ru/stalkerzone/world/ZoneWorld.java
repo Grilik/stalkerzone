@@ -46,9 +46,10 @@ public final class ZoneWorld {
             if (!(e.getLevel() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD) return;
             ChunkAccess chunk = e.getChunk();
             ZoneBounds b = bounds();
-            WorldDecorator.decorate(chunk, b);
-            if (!b.touchesChunk(chunk.getPos().x, chunk.getPos().z)) return;
-            WallBuilder.build(chunk, b);
+            ru.stalkerzone.block.ObjPropBlock.worldgen(() -> {
+                WorldDecorator.decorate(chunk, b, level);
+                if (b.touchesChunk(chunk.getPos().x, chunk.getPos().z)) WallBuilder.build(chunk, b);
+            });
         }
 
         @SubscribeEvent

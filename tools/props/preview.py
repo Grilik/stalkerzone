@@ -13,7 +13,7 @@ for n in names:
     else:
         dmg = 0
         m = models.PROPS[n][0](); M = mats()
-    tiles.append(mesh.render(m, M, mesh.view(-35, 22), (420, 300)))
+    tiles.append(mesh.render(m, M, mesh.view(-35, 22), (420, 300), cull=-1))
 W = 3; H = (len(tiles) + W - 1) // W
 im = Image.new('RGBA', (420 * W, 300 * H), (90, 90, 90, 255))
 for i, t in enumerate(tiles): im.paste(t, ((i % W) * 420, (i // W) * 300))

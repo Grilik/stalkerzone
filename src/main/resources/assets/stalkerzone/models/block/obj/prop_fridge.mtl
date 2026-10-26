@@ -1,0 +1,12 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl chrome
+Kd 1 1 1
+map_Kd #chrome
+
+newmtl enamel
+Kd 1 1 1
+map_Kd #enamel
+

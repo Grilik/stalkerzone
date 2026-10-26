@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_gas_loop.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "concrete": "stalkerzone:block/prop/concrete",
+  "gas_yellow": "stalkerzone:block/prop/gas_yellow",
+  "rust": "stalkerzone:block/prop/rust",
+  "particle": "stalkerzone:block/prop/concrete"
+ }
+}

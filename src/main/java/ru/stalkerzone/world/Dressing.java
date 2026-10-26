@@ -24,7 +24,7 @@ public final class Dressing {
 
     private static final Direction[] DIRS = {Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
     static final String[] CARS = {"veh_zhiguli", "veh_moskvich", "veh_zaporozhets", "veh_niva", "veh_uaz"};
-    static final String[] BIG = {"veh_raf", "veh_paz", "veh_zil", "veh_kamaz", "veh_laz", "veh_zil_fire", "veh_tractor"};
+    static final String[] BIG = {"veh_raf", "veh_paz", "veh_zil", "veh_kamaz", "veh_laz", "veh_zil_fire", "veh_tractor", "veh_uaz452", "veh_zil131"};
 
     /** Состояние 3D-пропса по имени (prop_barrel, veh_uaz…) или null, если такого нет. */
     public static BlockState prop(String name, Direction f) {

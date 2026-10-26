@@ -129,6 +129,16 @@ def main():
                                                                                       "conditions": [{"condition": "minecraft:survives_explosion"}]}]})
     wjson(os.path.join(A, 'blockstates', 'prop_hitbox.json'), {"variants": {"": {"model": f"{NS}:block/prop_hitbox"}}})
     wjson(os.path.join(A, 'models', 'block', 'prop_hitbox.json'), {"textures": {"particle": f"{NS}:block/prop/rust"}, "elements": []})
+    # металл фонит: вся техника и металлические пропсы в теге radioactive (дописываем, ничего не убирая)
+    tp = os.path.join(ROOT, 'src', 'main', 'resources', 'data', NS, 'tags', 'blocks', 'radioactive.json')
+    tag = json.load(open(tp, encoding='utf-8'))
+    metal_words = ('barrel', 'gas_', 'transformer', 'tire', 'el_cabinet', 'generator', 'pylon', 'pipe', 'fridge', 'bathtub',
+                   'radiator', 'water_tower', 'hangar', 'swing', 'carousel', 'slide', 'chainlink', 'trash_bin', 'stove', 'locker')
+    add = [f"{NS}:{x[0]}" for x in java_veh] + [f"{NS}:{x[0]}" for x in java_props if any(w in x[0] for w in metal_words)
+                                                and 'concrete' not in x[0]]
+    for a in add:
+        if a not in tag['values']: tag['values'].append(a)
+    wjson(tp, tag)
     write_java(java_props, java_veh)
     print('props:', len(java_props), 'vehicles:', len(java_veh))
 

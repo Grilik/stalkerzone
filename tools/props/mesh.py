@@ -66,10 +66,12 @@ class Mesh:
         n = len(R[0])
         # v1.14: обход колец приводим к одному правилу (нормаль Ньюэлла против направления лофта), иначе
         # грани смотрят внутрь и Minecraft отсекает их как задние (вертикальные цилиндры были вывернуты).
-        if len(R) > 1 and not caps:
+        def newell(r):
+            return sum(np.cross(r[j], r[(j + 1) % n]) for j in range(n))
+        if len(R) > 1:
             d = R[1].mean(0) - R[0].mean(0)
-            nw = sum(np.cross(R[0][j], R[0][(j + 1) % n]) for j in range(n))
-            if np.linalg.norm(d) > 1e-9 and np.dot(nw, d) > 0:
+            if np.linalg.norm(d) < 1e-6: d = R[-1].mean(0) - R[0].mean(0)
+            if np.linalg.norm(d) > 1e-9 and np.dot(newell(R[0]), d) > 0:
                 R = [r[::-1].copy() for r in R]
         # длины для uv
         per = [np.r_[0, np.cumsum(np.linalg.norm(np.diff(np.vstack([r, r[:1]]), axis=0), axis=1))] for r in R]
@@ -113,22 +115,20 @@ class Mesh:
             cm = cap_mat or mat
             for r, flip in ((R[0], True), (R[-1], False)):
                 c = r.mean(0)
+                # наружу: у первого торца — по нормали Ньюэлла кольца (она смотрит назад), у последнего — против
+                out = newell(r) * (1 if flip else -1)
                 ext = np.ptp(r, axis=0); s = max(ext.max(), 1e-6)
                 # проекция на плоскость кольца для uv
                 for j in range(n):
                     a, b = r[j], r[(j + 1) % n]
-                    tri = [c, a, b, b] if not flip else [c, b, a, a]
+                    tri = [c, a, b, b]
+                    if np.dot(np.cross(a - c, b - c), out) < 0: tri = [c, b, a, a]
                     uv = []
                     for q in tri:
                         d = (q - c) / s + 0.5
                         idx = np.argsort(ext)[::-1][:2]
                         uv.append((min(max(d[idx[0]], 0), 1), min(max(d[idx[1]], 0), 1)))
                     self.quad(tri, uv, cm)
-            # замкнутое тело: если объём со знаком отрицательный, грани вывернуты — переворачиваем обход
-            if self._volume(f0) < 0:
-                for k in range(f0, len(self.faces)):
-                    mt, idx = self.faces[k]
-                    self.faces[k] = (mt, idx[::-1])
         return self
 
 
@@ -271,7 +271,7 @@ def bounds(mesh):
 
 
 # ---------------------------------------------------------------- превью
-def render(mesh, textures, view, size=(600, 400), bg=(160, 170, 175, 255), margin=0.08):
+def render(mesh, textures, view, size=(600, 400), bg=(160, 170, 175, 255), margin=0.08, cull=0):
     """textures: материал -> numpy RGBA. Перспективы нет, только поворот."""
     from PIL import Image
     W, H = size
@@ -297,6 +297,7 @@ def render(mesh, textures, view, size=(600, 400), bg=(160, 170, 175, 255), margi
             if x1 < x0 or y1 < y0: continue
             d = (ys[1] - ys[2]) * (xs[0] - xs[2]) + (xs[2] - xs[1]) * (ys[0] - ys[2])
             if abs(d) < 1e-12: continue
+            if cull and d * cull < 0: continue   # отсечение задних граней, как в игре
             gx, gy = np.meshgrid(np.arange(x0, x1 + 1) + 0.5, np.arange(y0, y1 + 1) + 0.5)
             l0 = ((ys[1] - ys[2]) * (gx - xs[2]) + (xs[2] - xs[1]) * (gy - ys[2])) / d
             l1 = ((ys[2] - ys[0]) * (gx - xs[2]) + (xs[0] - xs[2]) * (gy - ys[2])) / d

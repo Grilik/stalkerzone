@@ -67,6 +67,15 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
 
     public int[][] cells() { return cells; }
 
+    private static final ThreadLocal<Boolean> PLACING = ThreadLocal.withInitial(() -> false);
+
+    /** Выполнить декор чанка при загрузке: onPlace/onRemove пропсов не лезут в соседние чанки (иначе зависание). */
+    public static void worldgen(Runnable r) {
+        boolean was = PLACING.get();
+        PLACING.set(true);
+        try { r.run(); } finally { PLACING.set(was); }
+    }
+
     /**
      * Поставить пропс при генерации чанка (там onPlace не вызывается): сам блок и его корпуса,
      * но только в пределах этого чанка и только на месте воздуха или травы.
@@ -75,7 +84,9 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
         net.minecraft.world.level.ChunkPos cp = c.getPos();
         if ((pos.getX() >> 4) != cp.x || (pos.getZ() >> 4) != cp.z) return;
         if (!(s.getBlock() instanceof ObjPropBlock ob)) { c.setBlockState(pos, s, false); return; }
-        c.setBlockState(pos, s, false);
+        // LevelChunk.setBlockState вызывает onPlace, а тот полез бы в соседний, ещё не готовый чанк и подвесил
+        // серверный поток (так и было при загрузке чанков с дорогами). Корпуса ставим сами, только в своём чанке.
+        worldgen(() -> c.setBlockState(pos, s, false));
         BlockState hull = ModBlocks.HITBOX.get().defaultBlockState();
         Direction f = s.getValue(FACING);
         for (int[] q : ob.cells) {
@@ -99,7 +110,7 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
     @Override
     public void onPlace(BlockState s, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(s, level, pos, old, moving);
-        if (level.isClientSide || old.is(this)) return;
+        if (level.isClientSide || old.is(this) || PLACING.get()) return;
         BlockState hull = ModBlocks.HITBOX.get().defaultBlockState();
         Direction f = s.getValue(FACING);
         for (int[] c : cells) {
@@ -111,7 +122,7 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
 
     @Override
     public void onRemove(BlockState s, Level level, BlockPos pos, BlockState now, boolean moving) {
-        if (!level.isClientSide && !now.is(this)) {
+        if (!level.isClientSide && !now.is(this) && !PLACING.get()) {
             Direction f = s.getValue(FACING);
             for (int[] c : cells) {
                 BlockPos q = cell(pos, f, c[0], c[1], c[2]);
