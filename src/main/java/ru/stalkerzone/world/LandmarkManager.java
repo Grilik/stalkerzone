@@ -22,6 +22,12 @@ public final class LandmarkManager {
             new Spot("Припять: центр", 48, 42, "wheel", 16),
             new Spot("ЧАЭС", 80, -55, "cooling", 18),
             new Spot("Янтарь", 52, -62, "yantar", 22),
+            // v1.14: знаковые места новых локаций
+            new Spot("Собачья деревня", 0, 0, "dog_village", 26),
+            new Spot("Кордон Лесника", 0, 0, "forester", 8),
+            new Spot("Хутор Болотного Доктора", 0, 0, "doctor", 8),
+            new Spot("Болота", 58, -46, "church", 10),
+            new Spot("Мёртвый город", 60, 50, "dead_city", 30),
     };
 
     private LandmarkManager() {}
@@ -53,6 +59,10 @@ public final class LandmarkManager {
                 case "scorcher" -> Landmarks.scorcherTower(pt);
                 case "wheel" -> Landmarks.ferrisWheel(pt);
                 case "cooling" -> Landmarks.coolingTower(pt);
+                case "dog_village" -> Landmarks.dogVillage(pt, new Random(i * 31L));
+                case "forester", "doctor" -> Landmarks.hut(pt, sp.id().equals("doctor"));
+                case "church" -> Landmarks.swampChurch(pt);
+                case "dead_city" -> Landmarks.deadCity(pt, new Random(i * 31L));
                 default -> Landmarks.yantarFactory(pt, new Random(i * 31L));
             }
             data.built.add(KEY + i);

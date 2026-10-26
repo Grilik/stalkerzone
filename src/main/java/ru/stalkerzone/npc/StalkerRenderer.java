@@ -37,7 +37,8 @@ public class StalkerRenderer extends HumanoidMobRenderer<StalkerEntity, Humanoid
 
     @Override
     public ResourceLocation getTextureLocation(StalkerEntity e) {
-        String name = e.isTrader() ? "trader" : SKINS[Math.floorMod(e.faction(), SKINS.length)];
+        String name = e.isHermit() ? (e.getCustomName() != null && e.getCustomName().getString().contains("Лесник") ? "forester" : "doctor")
+                : e.isTrader() ? "trader" : SKINS[Math.floorMod(e.faction(), SKINS.length)];
         return new ResourceLocation(StalkerZoneMod.MOD_ID, "textures/entity/" + name + ".png");
     }
 }

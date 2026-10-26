@@ -39,7 +39,7 @@ import ru.stalkerzone.sim.Simulation;
  * гибель сталкера уменьшает численность фракции, торговец показывает цены своего рынка.
  */
 public class StalkerEntity extends PathfinderMob {
-    public static final int ROLE_STALKER = 0, ROLE_TRADER = 1, ROLE_BUILDER = 2;
+    public static final int ROLE_STALKER = 0, ROLE_TRADER = 1, ROLE_BUILDER = 2, ROLE_HERMIT = 3;
 
     private static final EntityDataAccessor<Integer> FACTION = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ROLE = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
@@ -78,7 +78,9 @@ public class StalkerEntity extends PathfinderMob {
     public int faction() { return this.entityData.get(FACTION); }
     public int role() { return this.entityData.get(ROLE); }
     public int homeNode() { return homeNode; }
-    public boolean isTrader() { return role() == ROLE_TRADER; }
+    /** Торговец или отшельник (Лесник, Болотный Доктор): неуязвим, стоит на месте, его не трогают. */
+    public boolean isTrader() { return role() == ROLE_TRADER || role() == ROLE_HERMIT; }
+    public boolean isHermit() { return role() == ROLE_HERMIT; }
     public boolean isBuilder() { return role() == ROLE_BUILDER; }
     public boolean isDowned() { return this.entityData.get(DOWNED); }
     public boolean isMedic() { return medic; }
@@ -96,9 +98,9 @@ public class StalkerEntity extends PathfinderMob {
         this.homeY = home.getY();
         this.homeZ = home.getZ();
         this.setCustomName(name);
-        this.setCustomNameVisible(role == ROLE_TRADER);
-        this.restrictTo(home, role == ROLE_TRADER ? 4 : role == ROLE_BUILDER ? 6 : 28);
-        if (role == ROLE_TRADER) {
+        this.setCustomNameVisible(role == ROLE_TRADER || role == ROLE_HERMIT);
+        this.restrictTo(home, role == ROLE_TRADER || role == ROLE_HERMIT ? 4 : role == ROLE_BUILDER ? 6 : 28);
+        if (role == ROLE_TRADER || role == ROLE_HERMIT) {
             this.setNoAi(true);
             this.setInvulnerable(true);
         } else if (role == ROLE_BUILDER) {
@@ -299,6 +301,10 @@ public class StalkerEntity extends PathfinderMob {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
+        if (isHermit()) {
+            if (!this.level().isClientSide && player instanceof net.minecraft.server.level.ServerPlayer sp) Hermits.talk(sp, this);
+            return InteractionResult.SUCCESS;
+        }
         if (!this.level().isClientSide && isDowned()) {
             ItemStack held = player.getItemInHand(hand);
             if (held.getItem() instanceof ru.stalkerzone.item.GoodItem gi && gi.good == ru.stalkerzone.sim.Good.MEDS) {

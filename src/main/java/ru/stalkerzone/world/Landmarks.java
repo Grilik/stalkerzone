@@ -563,6 +563,123 @@ public final class Landmarks {
         pt.fill(-14, 0, 14, -12, 18, 16, b(Blocks.BRICKS));
     }
 
+    // ---------------------------------------------------------------- v1.14: новые места
+
+    /** Разорённый дом: стены с проломами, обвалившаяся крыша, пустые окна. */
+    private static void ruinHouse(Painter pt, int x0, int z0, int w, int d, Random r, Block wall) {
+        for (int x = x0; x <= x0 + w; x++) for (int z = z0; z <= z0 + d; z++) {
+            boolean edge = x == x0 || x == x0 + w || z == z0 || z == z0 + d;
+            pt.set(x, 0, z, b(edge ? Blocks.COBBLESTONE : r.nextDouble() < 0.3 ? Blocks.COARSE_DIRT : Blocks.SPRUCE_PLANKS));
+            if (!edge) continue;
+            int h = r.nextDouble() < 0.25 ? r.nextInt(2) : 3;
+            for (int y = 1; y <= h; y++) {
+                boolean window = y == 2 && (x + z) % 3 == 0;
+                pt.set(x, y, z, window ? b(Blocks.AIR) : b(r.nextDouble() < 0.15 ? Blocks.MOSSY_COBBLESTONE : wall));
+            }
+        }
+        // остатки крыши
+        for (int x = x0; x <= x0 + w; x++) if (r.nextDouble() < 0.5)
+            pt.set(x, 4, z0 + d / 2, b(Blocks.SPRUCE_SLAB));
+    }
+
+    /** Собачья деревня: брошенные дома, колодец, кости и норы псов у Периметра. */
+    public static void dogVillage(Painter pt, Random r) {
+        int[][] houses = {{-20, -16}, {-6, -18}, {9, -15}, {-18, 4}, {8, 6}, {-4, 14}};
+        for (int[] h : houses) ruinHouse(pt, h[0], h[1], 6 + r.nextInt(2), 5 + r.nextInt(2), r, r.nextBoolean() ? Blocks.SPRUCE_PLANKS : Blocks.STRIPPED_SPRUCE_LOG);
+        // колодец
+        pt.fill(-1, 0, -1, 1, 1, 1, b(Blocks.COBBLESTONE));
+        pt.set(0, 1, 0, b(Blocks.WATER));
+        pt.fill(-1, 2, -1, -1, 3, -1, b(Blocks.SPRUCE_FENCE));
+        pt.fill(1, 2, 1, 1, 3, 1, b(Blocks.SPRUCE_FENCE));
+        pt.fill(-1, 4, -1, 1, 4, 1, b(Blocks.SPRUCE_SLAB));
+        // кости и норы
+        for (int i = 0; i < 14; i++) {
+            int x = r.nextInt(44) - 22, z = r.nextInt(44) - 22;
+            pt.set(x, 1, z, b(r.nextDouble() < 0.5 ? Blocks.BONE_BLOCK : Blocks.COARSE_DIRT));
+        }
+        // покосившийся забор
+        for (int x = -24; x <= 24; x++) if (r.nextDouble() < 0.55) pt.set(x, 1, -24, b(Blocks.SPRUCE_FENCE));
+        for (int x = -24; x <= 24; x++) if (r.nextDouble() < 0.55) pt.set(x, 1, 24, b(Blocks.SPRUCE_FENCE));
+    }
+
+    /** Избушка отшельника: сруб с крыльцом, печной трубой, лавкой (Лесник) или грядкой и сушёными травами (Доктор). */
+    public static void hut(Painter pt, boolean doctor) {
+        pt.fill(-4, 0, -4, 4, 0, 4, b(Blocks.SPRUCE_PLANKS));
+        for (int y = 1; y <= 3; y++) for (int x = -4; x <= 4; x++) for (int z = -4; z <= 4; z++) {
+            boolean edge = Math.abs(x) == 4 || Math.abs(z) == 4;
+            if (!edge) { pt.set(x, y, z, b(Blocks.AIR)); continue; }
+            boolean corner = Math.abs(x) == 4 && Math.abs(z) == 4;
+            boolean window = y == 2 && (x == 0 || z == 0) && !(z == 4 && x == 0);
+            pt.set(x, y, z, corner ? b(Blocks.STRIPPED_SPRUCE_LOG) : window ? b(Blocks.GLASS_PANE) : b(Blocks.SPRUCE_LOG));
+        }
+        pt.set(0, 1, 4, b(Blocks.AIR));
+        pt.set(0, 2, 4, b(Blocks.AIR));
+        for (int k = 0; k <= 4; k++) {
+            int y = 4 + k / 2;
+            for (int x = -5 + k; x <= 5 - k; x++) for (int z = -5; z <= 5; z++) if (Math.abs(x) == 5 - k)
+                pt.set(x, y, z, b(Blocks.DARK_OAK_PLANKS));
+        }
+        pt.fill(-1, 6, -5, 1, 6, 5, b(Blocks.DARK_OAK_SLAB));
+        pt.fill(3, 4, -3, 3, 8, -3, b(Blocks.BRICKS));
+        pt.set(3, 9, -3, b(Blocks.CAMPFIRE));
+        pt.set(-3, 1, -3, b(Blocks.FURNACE));
+        pt.set(-3, 1, 3, b(Blocks.RED_BED));
+        pt.set(2, 1, 3, b(Blocks.CRAFTING_TABLE));
+        if (doctor) {
+            for (int x = -3; x <= 3; x++) pt.set(x, 3, -3, b(Blocks.HANGING_ROOTS));
+            pt.set(3, 1, 2, b(Blocks.BREWING_STAND));
+            for (int x = -3; x <= 3; x++) { pt.set(x, 0, 7, b(Blocks.FARMLAND)); pt.set(x, 1, 7, b(Blocks.POTATOES)); }
+        } else {
+            pt.fill(-2, 1, 5, 2, 1, 6, b(Blocks.SPRUCE_PLANKS));
+            pt.set(-2, 2, 6, b(Blocks.SPRUCE_FENCE));
+            pt.set(2, 2, 6, b(Blocks.SPRUCE_FENCE));
+            pt.set(3, 1, 2, b(Blocks.BARREL));
+        }
+    }
+
+    /** Старая церковь на Болотах: кирпичный сруб с луковичным куполом и колокольней. */
+    public static void swampChurch(Painter pt) {
+        pt.fill(-5, 0, -8, 5, 0, 8, b(Blocks.STONE_BRICKS));
+        for (int y = 1; y <= 7; y++) for (int x = -5; x <= 5; x++) for (int z = -8; z <= 8; z++) {
+            boolean edge = Math.abs(x) == 5 || Math.abs(z) == 8;
+            if (!edge) { pt.set(x, y, z, b(Blocks.AIR)); continue; }
+            boolean window = (y == 4 || y == 5) && (z % 4 == 0 || x == 0);
+            pt.set(x, y, z, window ? b(Blocks.AIR) : b(y < 3 ? Blocks.MOSSY_STONE_BRICKS : Blocks.WHITE_TERRACOTTA));
+        }
+        pt.set(0, 1, 8, b(Blocks.AIR)); pt.set(0, 2, 8, b(Blocks.AIR)); pt.set(0, 3, 8, b(Blocks.AIR));
+        pt.fill(-5, 8, -8, 5, 8, 8, b(Blocks.GREEN_TERRACOTTA));
+        // барабан и купол
+        pt.fill(-2, 9, -2, 2, 12, 2, b(Blocks.WHITE_TERRACOTTA));
+        for (int y = 13; y <= 17; y++) {
+            int rr = y <= 14 ? 3 : y == 15 ? 2 : y == 16 ? 1 : 0;
+            pt.fill(-rr, y, -rr, rr, y, rr, b(Blocks.GREEN_TERRACOTTA));
+        }
+        pt.set(0, 18, 0, b(Blocks.GOLD_BLOCK));
+        pt.set(0, 19, 0, b(Blocks.IRON_BARS));
+        pt.set(0, 20, 0, b(Blocks.IRON_BARS));
+        pt.set(-1, 19, 0, b(Blocks.IRON_BARS));
+        pt.set(1, 19, 0, b(Blocks.IRON_BARS));
+    }
+
+    /** Мёртвый город: пустые пятиэтажки без окон, обрушенный подъезд, ржавые машины. */
+    public static void deadCity(Painter pt, Random r) {
+        int[][] blocks = {{-28, -20, 22, 9}, {-28, 6, 22, 9}, {4, -20, 10, 26}};
+        for (int[] q : blocks) {
+            int x0 = q[0], z0 = q[1], w = q[2], d = q[3], h = 12 + r.nextInt(4);
+            for (int y = 0; y <= h; y++) for (int x = x0; x <= x0 + w; x++) for (int z = z0; z <= z0 + d; z++) {
+                boolean edge = x == x0 || x == x0 + w || z == z0 || z == z0 + d;
+                boolean floor = y % 3 == 0;
+                if (!edge && !floor) continue;
+                if (edge && !floor && (x + z) % 3 == 1 && y % 3 == 2) continue;   // окна
+                if (y > h - 3 && r.nextDouble() < 0.4) continue;                       // осыпавшийся верх
+                pt.set(x, y, z, b(r.nextDouble() < 0.12 ? Blocks.CRACKED_STONE_BRICKS : edge ? Blocks.LIGHT_GRAY_CONCRETE : Blocks.SMOOTH_STONE));
+            }
+            // обрушенный подъезд — щебень
+            int cx = x0 + w / 2;
+            for (int k = 0; k < 18; k++) pt.set(cx + r.nextInt(5) - 2, r.nextInt(3), z0 - 1 - r.nextInt(3), b(Blocks.GRAVEL));
+        }
+    }
+
     /** Антенна Выжигателя на пси-поле. */
     public static void scorcherTower(Painter pt) {
         for (int y = 0; y <= 36; y++) {
