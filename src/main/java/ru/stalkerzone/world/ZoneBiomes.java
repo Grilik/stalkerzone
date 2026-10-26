@@ -12,9 +12,9 @@ import java.util.List;
  */
 public final class ZoneBiomes {
     public static final String[] IDS = {"kordon", "garbage", "agroprom", "dark_valley", "bar", "wild_territory", "army_warehouses",
-            "yantar", "radar", "psi_field", "chaes", "perimeter", "red_forest", "outskirts", "pripyat"};
+            "yantar", "radar", "psi_field", "chaes", "perimeter", "red_forest", "outskirts", "pripyat", "swamps"};
     public static final int KORDON = 0, GARBAGE = 1, AGROPROM = 2, DARK = 3, BAR = 4, WILD = 5, ARMY = 6, YANTAR = 7, RADAR = 8,
-            PSI = 9, CHAES = 10, PERIMETER = 11, RED_FOREST = 12, OUTSKIRTS = 13, PRIPYAT = 14;
+            PSI = 9, CHAES = 10, PERIMETER = 11, RED_FOREST = 12, OUTSKIRTS = 13, PRIPYAT = 14, SWAMPS = 15;
     /** Источник пси-излучения Выжигателя: к северу от Радара. Смертельная зона и «выжженная» земля вокруг. */
     public static final int PSI_OFFSET_Z = -200, PSI_LETHAL = 140, PSI_REACH = 260;
 
@@ -46,6 +46,10 @@ public final class ZoneBiomes {
                 case "Военная база «Периметр»" -> PERIMETER;
                 case "База военных «Агропром»" -> AGROPROM;
                 case "База военных «Янтарь»" -> YANTAR;
+                case "Болота", "Хутор Болотного Доктора" -> SWAMPS;
+                case "Мёртвый город" -> WILD;
+                case "Собачья деревня" -> KORDON;
+                case "Кордон Лесника" -> RED_FOREST;
                 default -> n.type == ru.stalkerzone.sim.NodeType.CITY ? PRIPYAT : OUTSKIRTS;
             };
             if (n.name.equals("Армейские склады")) { armyX = x[i]; armyZ = z[i]; }

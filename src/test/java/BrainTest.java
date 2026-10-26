@@ -14,9 +14,9 @@ public class BrainTest {
         int days = 1440;
         // 1. поведение на нескольких сидах
         Map<String, int[]> goalDays = new TreeMap<>();
-        int[] totalWars = new int[7];
+        int[] totalWars = new int[16];
         int dormantWars = 0;
-        int[] totalCaptured = new int[7];
+        int[] totalCaptured = new int[16];
         int minMembers = Integer.MAX_VALUE;
         boolean auditOk = true;
         for (long seed = 1; seed <= 6; seed++) {

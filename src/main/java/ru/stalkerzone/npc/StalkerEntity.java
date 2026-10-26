@@ -200,7 +200,7 @@ public class StalkerEntity extends PathfinderMob {
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, StalkerEntity.class, 10, true, false, this::isEnemyNpc));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, p -> hostileToPlayers()));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, p -> hostileToPlayers() || hostileTo(p)));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, ru.stalkerzone.mutant.MutantEntity.class, 10, true, false, m -> !isTrader()));
         // существа других модов, стоящие в логовах вместо наших мутантов
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false,
@@ -218,6 +218,12 @@ public class StalkerEntity extends PathfinderMob {
         Simulation sim = sim();
         if (sim == null || faction() >= sim.factions.size()) return false;
         return sim.hostilityTo(sim.factions.get(faction()), o.faction()) >= 0.6;
+    }
+
+    /** v1.14: игрок с плохой репутацией у этой группировки — враг. */
+    private boolean hostileTo(LivingEntity p) {
+        if (isTrader() || !(p instanceof net.minecraft.server.level.ServerPlayer sp)) return false;
+        return Reputation.hostile(sp, faction());
     }
 
     private boolean hostileToPlayers() {
@@ -299,6 +305,9 @@ public class StalkerEntity extends PathfinderMob {
                 held.shrink(1);
                 revive(0.5f);
                 player.sendSystemMessage(Component.literal("Вы перевязали сталкера, он снова на ногах."));
+                // сталкерский кодекс: раненому помогают все
+                Simulation simR = sim();
+                if (simR != null && player instanceof net.minecraft.server.level.ServerPlayer spR) Reputation.add(spR, simR, faction(), 10, "помогли раненому");
             } else {
                 player.sendSystemMessage(Component.literal("Сталкер тяжело ранен. Аптечка в руке и ПКМ, чтобы помочь."));
             }
@@ -366,6 +375,7 @@ public class StalkerEntity extends PathfinderMob {
                     sim.npcKilled(faction());
                 }
                 if (source.getEntity() instanceof Player) dropLoot(sim);
+                if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer spK) Reputation.killed(spK, sim, faction());
                 MinecraftServer server = this.getServer();
                 if (server != null) ZoneData.get(server).setDirty();
             }

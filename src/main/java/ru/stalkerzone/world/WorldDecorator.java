@@ -71,6 +71,13 @@ public final class WorldDecorator {
                 if (r.nextDouble() < 0.35) deadTree(chunk, cp, r);
                 if (r.nextDouble() < 0.15) slabs(chunk, cp, r);
             }
+            case ZoneBiomes.SWAMPS -> {
+                // v1.14: Болота — протоки и бочаги, камыш, топь, сухие деревья
+                marsh(chunk, cp, r);
+                int n = 1 + r.nextInt(3);
+                for (int i = 0; i < n; i++) pond(chunk, cp, r);
+                if (r.nextDouble() < 0.4) deadTree(chunk, cp, r);
+            }
             case ZoneBiomes.YANTAR, ZoneBiomes.AGROPROM, ZoneBiomes.DARK, ZoneBiomes.RADAR -> {
                 if (r.nextDouble() < 0.45) deadTree(chunk, cp, r);
             }
@@ -184,6 +191,63 @@ public final class WorldDecorator {
         } else if (v < 0.18) {
             int x = x0 + 13, z = z0 + 13, y = ground(c, x, z);
             if (dry(c, x, y, z)) Dressing.chunkProp(c, x, y, z, "prop_kiosk", r);
+        }
+    }
+
+    /** Сглаженный шум 0..1 для островков топи. */
+    private static double marshNoise(int x, int z) {
+        double v = Math.sin(x * 0.11 + Math.sin(z * 0.07) * 2.1) + Math.sin(z * 0.13 + Math.sin(x * 0.05) * 1.7)
+                + 0.5 * Math.sin((x + z) * 0.23);
+        return (v + 2.5) / 5.0;
+    }
+
+    /**
+     * Топь вместо озера: где вода по сторону островов, поднимаем илистое дно до уровня воды и кладём траву —
+     * получаются кочки и острова, между ними протоки (база «Чистого неба» стоит на острове).
+     */
+    private static void marsh(ChunkAccess c, ChunkPos cp, Random r) {
+        for (int dx = 0; dx < 16; dx++) for (int dz = 0; dz < 16; dz++) {
+            int x = cp.getMinBlockX() + dx, z = cp.getMinBlockZ() + dz;
+            int top = ground(c, x, z) - 1;
+            if (!c.getBlockState(new BlockPos(x, top, z)).is(Blocks.WATER)) continue;
+            double n = marshNoise(x, z);
+            if (n < 0.47) continue;
+            int bottom = top;
+            while (bottom > top - 8 && c.getBlockState(new BlockPos(x, bottom, z)).is(Blocks.WATER)) bottom--;
+            for (int y = bottom + 1; y < top; y++) set(c, x, y, z, b(Blocks.MUD));
+            set(c, x, top, z, b(n > 0.6 ? Blocks.GRASS_BLOCK : Blocks.MUD));
+            if (n < 0.52 && r.nextDouble() < 0.5) {
+                set(c, x, top + 1, z, b(Blocks.SUGAR_CANE));
+                if (r.nextBoolean()) set(c, x, top + 2, z, b(Blocks.SUGAR_CANE));
+            } else if (n > 0.6 && r.nextDouble() < 0.25) {
+                set(c, x, top + 1, z, b(Blocks.GRASS));
+            }
+        }
+    }
+
+    /** Бочаг: мелкая вода с илистым дном, камыш по берегу. */
+    private static void pond(ChunkAccess c, ChunkPos cp, Random r) {
+        int cx = cp.getMinBlockX() + 3 + r.nextInt(10), cz = cp.getMinBlockZ() + 3 + r.nextInt(10);
+        int rad = 2 + r.nextInt(3);
+        int y0 = ground(c, cx, cz) - 1;
+        for (int dx = -rad - 1; dx <= rad + 1; dx++) for (int dz = -rad - 1; dz <= rad + 1; dz++) {
+            int x = cx + dx, z = cz + dz;
+            if ((x >> 4) != cp.x || (z >> 4) != cp.z) continue;
+            double d = Math.hypot(dx, dz) + r.nextDouble() * 0.8;
+            int top = ground(c, x, z) - 1;
+            if (Math.abs(top - y0) > 2) continue;
+            if (d <= rad) {
+                for (int k = 1; k <= 3; k++) set(c, x, top + k, z, b(Blocks.AIR));
+                set(c, x, y0, z, b(Blocks.WATER));
+                set(c, x, y0 - 1, z, b(Blocks.MUD));
+                if (top > y0) for (int y = y0 + 1; y <= top; y++) set(c, x, y, z, b(Blocks.AIR));
+            } else if (d <= rad + 1.2 && r.nextDouble() < 0.5) {
+                set(c, x, top, z, b(Blocks.MUD));
+                if (r.nextDouble() < 0.6) {
+                    set(c, x, top + 1, z, b(Blocks.SUGAR_CANE));
+                    if (r.nextBoolean()) set(c, x, top + 2, z, b(Blocks.SUGAR_CANE));
+                }
+            }
         }
     }
 

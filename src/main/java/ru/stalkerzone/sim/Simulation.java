@@ -500,7 +500,8 @@ public final class Simulation {
 
     /** Фракция чинит повреждённое, ведёт стройки и закладывает новые, когда есть деньги на бригаду. */
     private void buildingsDaily(Faction f) {
-        if (f.members < 5) return;
+        if (f.members < 5) { f.matWant = 0; return; }   // иначе устаревшая нужда в материалах живёт до загрузки
+
         // ремонт: по 10% за шаг; на ремонт идут стройматериалы, а без них детали
         for (Building b : buildings) {
             if (nodes.get(b.node).owner != f.id || b.hp >= 100 || b.level == 0 || b.building()) continue;
@@ -754,7 +755,10 @@ public final class Simulation {
         Random r = new Random(seed * 7919L + 17);
         for (Node n : nodes) {
             if (n.owner >= 0 || n.type == NodeType.BASE) continue;
-            Lair l = new Lair(n.id, pickKind(n.type, r), n.defense, r.nextDouble() < 0.15);
+            LairKind kind = pickKind(n.type, r);
+            if (n.name.equals("Собачья деревня")) kind = LairKind.DOGS;     // крепость слепых псов у Периметра
+            if (n.name.equals("Кордон Лесника") || n.name.startsWith("Хутор")) continue;   // Лесника и Доктора звери не трогают
+            Lair l = new Lair(n.id, kind, n.defense, r.nextDouble() < 0.15);
             l.strength = Math.min(l.strength, l.cap());
             lairs.add(l);
         }
@@ -1820,7 +1824,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(11);
+            out.writeInt(12);
             out.writeLong(seed);
             out.writeInt(day);
             ledger.write(out);
@@ -1955,10 +1959,11 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 11) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 12) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v9–10: полевые базы армии, склады точек, стройматериалы, глобальный рынок; старые сохранения не переносятся
-            if (version < 10) return ZoneScenario.create(seed);
+            // v12 (v1.14): новые локации и группировки — старая Зона не переносится, начинается заново
+            if (version < 12) return ZoneScenario.create(seed);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = ZoneScenario.create(seed);

@@ -284,5 +284,6 @@
  "entity.stalkerzone.pseudogiant": "Псевдогигант",
  "item.stalkerzone.pseudogiant_hand": "Рука псевдогиганта",
  "item.stalkerzone.pseudogiant_spawn_egg": "Яйцо призыва: Псевдогигант",
- "item.stalkerzone.dead_pda": "КПК погибшего"
+ "item.stalkerzone.dead_pda": "КПК погибшего",
+ "biome.stalkerzone.swamps": "Болота"
 }

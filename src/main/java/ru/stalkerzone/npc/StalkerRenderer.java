@@ -9,7 +9,7 @@ import ru.stalkerzone.StalkerZoneMod;
 
 /** Гуманоидная модель со скином по фракции. */
 public class StalkerRenderer extends HumanoidMobRenderer<StalkerEntity, HumanoidModel<StalkerEntity>> {
-    private static final String[] SKINS = {"loner", "duty", "freedom", "bandit", "scientist", "military", "monolith"};
+    private static final String[] SKINS = {"loner", "duty", "freedom", "bandit", "scientist", "military", "monolith", "merc", "clearsky", "sin"};
 
     public StalkerRenderer(EntityRendererProvider.Context ctx) {
         super(ctx, new HumanoidModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), 0.5f);

@@ -117,6 +117,13 @@ public final class ZoneCommands {
                 .then(Commands.literal("anomalies")
                         .executes(c -> send(c, Report.anomalies(sim(c))))
                         .then(Commands.literal("near").executes(ZoneCommands::anomaliesNear)))
+                .then(Commands.literal("rep").executes(c -> {
+                    try {
+                        return send(c, ru.stalkerzone.npc.Reputation.describe(c.getSource().getPlayerOrException(), ZoneData.get(c.getSource().getServer()).sim));
+                    } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+                        return send(c, "Команда только для игрока.");
+                    }
+                }))
                 .then(Commands.literal("bribe").executes(c -> {
                     try {
                         return send(c, ru.stalkerzone.world.Perimeter.bribe(c.getSource().getPlayerOrException(), ZoneData.get(c.getSource().getServer())));

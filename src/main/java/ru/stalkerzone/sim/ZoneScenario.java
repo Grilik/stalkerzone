@@ -5,7 +5,8 @@ import java.util.List;
 
 /** Стартовый мир: карта Зоны, семь фракций, три торговца с выходом на Большую землю, север с Выжигателем. */
 public final class ZoneScenario {
-    public static final int LONERS = 0, DUTY = 1, FREEDOM = 2, BANDITS = 3, SCIENTISTS = 4, MILITARY = 5, MONOLITH = 6;
+    public static final int LONERS = 0, DUTY = 1, FREEDOM = 2, BANDITS = 3, SCIENTISTS = 4, MILITARY = 5, MONOLITH = 6,
+            MERCS = 7, CLEAR_SKY = 8, SIN = 9;
 
     private ZoneScenario() {}
 
@@ -78,6 +79,19 @@ public final class ZoneScenario {
         Node fbYantar = node(nodes, "База военных «Янтарь»", NodeType.OUTPOST, -95, -92);
         fbYantar.housing = 14; fbYantar.defense = 22; fbYantar.partsCap = 3;
 
+        // v1.14: новые локации (только в конец списка)
+        Node swamps = node(nodes, "Болота", NodeType.BASE, -85, 20);
+        swamps.farmCap = 20; swamps.partsCap = 5; swamps.artifactCap = 2; swamps.housing = 35;
+        trader(swamps, 1.15, 0.90, caps(25, 5, 40, 8, 1, 15));
+        Node deadCity = node(nodes, "Мёртвый город", NodeType.RUINS, -85, -165);
+        deadCity.farmCap = 5; deadCity.partsCap = 25; deadCity.artifactCap = 2; deadCity.housing = 30; deadCity.defense = 30;
+        Node dogVillage = node(nodes, "Собачья деревня", NodeType.RUINS, 50, 15);
+        dogVillage.farmCap = 8; dogVillage.partsCap = 10; dogVillage.artifactCap = 1; dogVillage.housing = 10; dogVillage.defense = 26;
+        Node forester = node(nodes, "Кордон Лесника", NodeType.SETTLEMENT, -45, -185);
+        forester.farmCap = 6; forester.partsCap = 3; forester.artifactCap = 3; forester.housing = 6; forester.defense = 30;
+        Node doctor = node(nodes, "Хутор Болотного Доктора", NodeType.SETTLEMENT, -115, 45);
+        doctor.farmCap = 6; doctor.housing = 4; doctor.defense = 40;
+
         ZoneGraph g = new ZoneGraph(nodes.size());
         g.connect(0, 1, 1, 0.02);    // Кордон - Свалка
         g.connect(0, 2, 2, 0.03);    // Кордон - Агропром
@@ -107,6 +121,16 @@ public final class ZoneScenario {
         g.connect(11, 17, 2, 0.02);  // КПП «Периметр» - база «Агропром» (военная дорога)
         g.connect(17, 18, 1, 0.03);  // база «Агропром» - база «Янтарь»
         g.connect(18, 7, 1, 0.03);   // база «Янтарь» - Янтарь
+        g.connect(19, 0, 2, 0.04);   // Болота - Кордон
+        g.connect(19, 2, 2, 0.05);   // Болота - Агропром
+        g.connect(19, 23, 1, 0.05);  // Болота - хутор Доктора
+        g.connect(20, 5, 2, 0.07);   // Мёртвый город - Дикая территория
+        g.connect(20, 7, 2, 0.07);   // Мёртвый город - Янтарь
+        g.connect(20, 22, 2, 0.08);  // Мёртвый город - Лесник
+        g.connect(21, 0, 1, 0.05);   // Собачья деревня - Кордон
+        g.connect(21, 3, 2, 0.05);   // Собачья деревня - Тёмная долина
+        g.connect(22, 8, 1, 0.09);   // Лесник - Радар
+        g.connect(22, 7, 2, 0.08);   // Лесник - Янтарь
         g.build();
 
         List<Faction> factions = new ArrayList<>();
@@ -117,6 +141,10 @@ public final class ZoneScenario {
         factions.add(new Faction(SCIENTISTS, "Учёные", 7, 0.0, false, 24, new Doctrine(0.1, 0.0, 0.9, 0.9, 0.0, 0.1)));
         factions.add(new Faction(MILITARY, "Военные", 11, 0.25, false, 70, new Doctrine(0.3, 0.5, 0.7, 0.3, 1.0, 1.0)));
         factions.add(new Faction(MONOLITH, "Монолит", 10, 0.9, true, 55, new Doctrine(0.5, 0.0, 0.2, 0.0, 0.0, 1.0)));
+        // v1.14: наёмники в Дикой территории (как в ТЧ), Чистое небо на Болотах, секта «Грех» в Мёртвом городе
+        factions.add(new Faction(MERCS, "Наёмники", 5, 0.6, false, 30, new Doctrine(1.0, 0.8, 0.4, 0.5, 0.3, 0.7)));
+        factions.add(new Faction(CLEAR_SKY, "Чистое небо", 19, 0.3, false, 30, new Doctrine(0.5, 0.4, 0.8, 0.8, 0.2, 0.4)));
+        factions.add(new Faction(SIN, "Грех", 20, 0.85, true, 25, new Doctrine(1.2, 1.0, 0.1, 0.1, 0.0, 0.5)));
         factions.get(LONERS).mercenary = true;
         // кого притягивает фракция: преданность и жадность характера новичка
         double[][] ideals = {{0.0, 0.0}, {0.7, -0.4}, {-0.6, 0.1}, {-0.3, 0.8}};
@@ -139,8 +167,13 @@ public final class ZoneScenario {
         // своих мастерских почти нет: прототипы у торговцев закрывают часть снаряжения
         factions.get(LONERS).protoBuyer = true;
         factions.get(BANDITS).protoBuyer = true;
+        factions.get(MERCS).eliteShare = 0.3;       // профессионалы на импортном
+        factions.get(CLEAR_SKY).eliteShare = 0.1;
+        factions.get(CLEAR_SKY).protoBuyer = true;
+        factions.get(SIN).eliteShare = 0.05;
+        factions.get(SIN).protoBuyer = true;
 
-        double[][] h = new double[7][7];
+        double[][] h = new double[10][10];
         rel(h, DUTY, FREEDOM, 1.0);
         rel(h, BANDITS, LONERS, 0.7);
         rel(h, BANDITS, DUTY, 0.8);
@@ -152,12 +185,30 @@ public final class ZoneScenario {
         rel(h, MILITARY, LONERS, 0.2);
         rel(h, MILITARY, DUTY, 0.1);
         for (int i = 0; i < 6; i++) rel(h, MONOLITH, i, 1.0);
+        // v1.14: Долг и Свобода — главная вражда (уже 1.0); наёмники работают на всех и против всех
+        rel(h, MERCS, DUTY, 0.6);
+        rel(h, MERCS, LONERS, 0.4);
+        rel(h, MERCS, MILITARY, 0.5);
+        rel(h, MERCS, FREEDOM, 0.3);
+        rel(h, MERCS, BANDITS, 0.3);
+        rel(h, MERCS, SCIENTISTS, 0.2);
+        rel(h, MERCS, CLEAR_SKY, 0.6);
+        rel(h, CLEAR_SKY, BANDITS, 0.7);
+        rel(h, CLEAR_SKY, MILITARY, 0.3);
+        rel(h, CLEAR_SKY, DUTY, 0.1);
+        rel(h, CLEAR_SKY, FREEDOM, 0.1);
+        for (int i = 0; i < 9; i++) if (i != MONOLITH) rel(h, SIN, i, 1.0);
+        rel(h, SIN, MONOLITH, 0.5);
+        rel(h, MONOLITH, MERCS, 1.0);
+        rel(h, MONOLITH, CLEAR_SKY, 1.0);
 
         // начальное владение
         kordon.owner = LONERS;
         svalka.owner = LONERS;
         bar.owner = DUTY;
-        wild.owner = DUTY;
+        wild.owner = MERCS;
+        swamps.owner = CLEAR_SKY;
+        deadCity.owner = SIN;
         army.owner = FREEDOM;
         yantar.owner = SCIENTISTS;
         dark.owner = BANDITS;

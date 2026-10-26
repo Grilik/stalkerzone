@@ -75,6 +75,14 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
      */
     public static boolean safeSet(net.minecraft.world.level.chunk.ChunkAccess c, BlockPos pos, BlockState s) {
         if (c.getBlockState(pos).hasBlockEntity()) return false;
+        if (!s.getFluidState().isEmpty() && c instanceof net.minecraft.world.level.chunk.LevelChunk) {
+            // жидкость: её onPlace смотрит соседей через Level (чанк ещё не готов — зависание); ставим прямо в секцию
+            int idx = c.getSectionIndex(pos.getY());
+            if (idx < 0 || idx >= c.getSections().length) return false;
+            c.getSections()[idx].setBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, s, false);
+            c.setUnsaved(true);
+            return true;
+        }
         c.setBlockState(pos, s, false);
         return true;
     }

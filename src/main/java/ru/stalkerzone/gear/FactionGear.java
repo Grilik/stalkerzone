@@ -38,7 +38,10 @@ public final class FactionGear {
             "Бандиты", p(Suit.BANDIT, 6, Suit.JACKET, 3),
             "Учёные", p(Suit.ECOLOG, 6),
             "Военные", p(Suit.BERILL, 7),
-            "Монолит", p(Suit.MONOLITH, 7));
+            "Монолит", p(Suit.MONOLITH, 7),
+            "Наёмники", p(Suit.MERC, 6, Suit.ZARYA, 1),
+            "Чистое небо", p(Suit.ZARYA, 4, Suit.SEVA, 1),
+            "Грех", p(Suit.BANDIT, 4, Suit.ZARYA, 2, Suit.DUTY, 1));   // «Грех» носит броню мертвецов, чья бы ни была
 
     private static final Map<String, Pick> ELITE = Map.of(
             "Одиночки", p(Suit.SEVA, 3, Suit.PROTO_GUARD, 1, Suit.EXO, 1),
@@ -47,7 +50,10 @@ public final class FactionGear {
             "Бандиты", p(Suit.ZARYA, 2, Suit.PROTO_SCOUT, 1, Suit.MERC, 1),
             "Учёные", p(Suit.ECOLOG_M, 2, Suit.PROTO_GUARD, 2, Suit.BERILL, 1),
             "Военные", p(Suit.BULAT, 3, Suit.SKAT, 2),
-            "Монолит", p(Suit.MONOLITH, 2, Suit.EXO, 1));
+            "Монолит", p(Suit.MONOLITH, 2, Suit.EXO, 1),
+            "Наёмники", p(Suit.SKAT, 2, Suit.MERC, 2, Suit.EXO, 1),
+            "Чистое небо", p(Suit.SEVA, 3, Suit.PROTO_GUARD, 1),
+            "Грех", p(Suit.FREEDOM_GUARD, 1, Suit.DUTY_HEAVY, 1, Suit.EXO, 1));
 
     /** Входит ли боец в профессиональную группу (лидеры и заместители — всегда). */
     public static boolean elite(Faction f, boolean leader, Random r) {
