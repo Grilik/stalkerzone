@@ -98,7 +98,7 @@ public final class MutantManager {
             // v1.14: после выброса мутанты сперва затихают, потом пик на 3–4-е сутки
             double act = ru.stalkerzone.anomaly.EmissionEvent.mutantActivity(sim);
             if (here.size() + foreign >= Math.max(1, (int) Math.round(wanted(l, night) * act))) continue;
-            boolean leader = here.stream().anyMatch(m -> m.kind() == MutantType.CONTROLLER);
+            boolean leader = here.stream().anyMatch(m -> m.kind().leader());
             spawn(level, l, den, MutantType.pick(l.kind, leader, RND));
             COOLDOWN.put(l.node, SPAWN_EVERY);
         }
@@ -112,6 +112,22 @@ public final class MutantManager {
         // не спавнить прямо на глазах у игрока
         for (ServerPlayer p : level.players()) if (p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 18 * 18) return;
         if (spawnForeign(level, l, den, t, pos)) return;
+        // v1.14: свита контролёра — зомбированные сталкеры
+        if (l.kind == ru.stalkerzone.sim.LairKind.CONTROLLERS && t == MutantType.SNORK && RND.nextDouble() < 0.6) {
+            net.minecraft.world.entity.monster.Zombie zb = net.minecraft.world.entity.EntityType.ZOMBIE.create(level);
+            if (zb != null) {
+                zb.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
+                zb.setCustomName(net.minecraft.network.chat.Component.literal("Зомбированный сталкер"));
+                zb.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.LEATHER_CHESTPLATE));
+                zb.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.LEATHER_HELMET));   // капюшон: не горит на солнце
+                zb.getPersistentData().putInt(TAG_LAIR, l.node);
+                zb.getPersistentData().putInt(TAG_KIND, MutantType.SNORK.ordinal());
+                zb.restrictTo(SpawnFinder.groundAt(level, den.getX(), den.getZ()), 30);
+                zb.setPersistenceRequired();
+                level.addFreshEntity(zb);
+                return;
+            }
+        }
         MutantEntity m = MutantRegistry.TYPES[t.ordinal()].get().create(level);
         if (m == null) return;
         m.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RND.nextFloat() * 360f, 0f);

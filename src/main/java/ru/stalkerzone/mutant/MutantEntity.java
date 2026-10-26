@@ -62,13 +62,14 @@ public class MutantEntity extends Monster {
                 .add(Attributes.ATTACK_DAMAGE, t.damage)
                 .add(Attributes.ARMOR, t.armor)
                 .add(Attributes.FOLLOW_RANGE, t == MutantType.CONTROLLER ? 32 : 24)
-                .add(Attributes.KNOCKBACK_RESISTANCE, t == MutantType.CHIMERA || t == MutantType.BOAR ? 0.6 : 0.1);
+                .add(Attributes.KNOCKBACK_RESISTANCE, t == MutantType.PSEUDOGIANT ? 1.0 : t == MutantType.CHIMERA || t == MutantType.BOAR ? 0.6 : 0.1);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        if (kind() == MutantType.DOG || kind() == MutantType.SNORK || kind() == MutantType.CHIMERA) {
+        MutantType k0 = kind();
+        if (k0 == MutantType.DOG || k0 == MutantType.SNORK || k0 == MutantType.CHIMERA || k0 == MutantType.PSEUDODOG || k0 == MutantType.TUSHKAN) {
             this.goalSelector.addGoal(2, new LeapAtTargetGoal(this, kind() == MutantType.CHIMERA ? 0.55f : 0.4f));
         }
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, kind() == MutantType.CONTROLLER ? 0.8 : 1.2, true));
@@ -105,7 +106,26 @@ public class MutantEntity extends Monster {
             if (!close) addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 30, 0, false, false));
             else removeEffect(MobEffects.INVISIBILITY);
         }
-        if (kind() == MutantType.CONTROLLER && target != null && --psiCooldown <= 0) {
+        MutantType k = kind();
+        if (phantom() && level() instanceof net.minecraft.server.level.ServerLevel sl0 && sl0.getGameTime() > getPersistentData().getLong(PHANTOM)) {
+            sl0.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH, getX(), getY() + 0.5, getZ(), 10, 0.3, 0.3, 0.3, 0.02);
+            discard();
+            return;
+        }
+        if (k == MutantType.POLTERGEIST) poltergeistTick(target);
+        if (k == MutantType.PSYDOG && target != null && --psiCooldown <= 0 && distanceTo(target) < 16) {
+            psiCooldown = 200 + random.nextInt(100);
+            psyDogIllusions(target);
+        }
+        if (k == MutantType.BURER && target != null && --psiCooldown <= 0 && distanceTo(target) < 14 && hasLineOfSight(target)) {
+            psiCooldown = 90 + random.nextInt(50);
+            burerTelekinesis(target);
+        }
+        if (k == MutantType.PSEUDOGIANT && target != null && --psiCooldown <= 0 && distanceTo(target) < 5) {
+            psiCooldown = 70 + random.nextInt(30);
+            giantStomp();
+        }
+        if (k == MutantType.CONTROLLER && target != null && --psiCooldown <= 0) {
             psiCooldown = 80 + random.nextInt(40);
             if (distanceTo(target) < 28 && hasLineOfSight(target)) {
                 target.hurt(damageSources().indirectMagic(this, this), 5.0f);
@@ -120,8 +140,95 @@ public class MutantEntity extends Monster {
         }
     }
 
+    // ------------------------------------------------------------------ v1.14: новые умения
+
+    static final String PHANTOM = "sz_phantom";
+
+    public boolean phantom() { return getPersistentData().contains(PHANTOM); }
+
+    /** Пси-собака морочит голову: вокруг цели появляются двойники-призраки, пропадающие от первого удара. */
+    private void psyDogIllusions(LivingEntity target) {
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        int n = 2 + random.nextInt(2);
+        for (int i = 0; i < n; i++) {
+            MutantEntity d = MutantRegistry.TYPES[MutantType.DOG.ordinal()].get().create(sl);
+            if (d == null) continue;
+            double a = random.nextDouble() * Math.PI * 2;
+            d.moveTo(getX() + Math.cos(a) * 3, getY(), getZ() + Math.sin(a) * 3, random.nextFloat() * 360, 0);
+            d.getPersistentData().putLong(PHANTOM, sl.getGameTime() + 300);
+            d.getAttribute(Attributes.MAX_HEALTH).setBaseValue(1);
+            d.setHealth(1);
+            d.setTarget(target);
+            sl.addFreshEntity(d);
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH, d.getX(), d.getY() + 0.5, d.getZ(), 10, 0.3, 0.3, 0.3, 0.02);
+        }
+        playSound(SoundEvents.WOLF_HOWL, 1.5f, 0.6f);
+        if (target instanceof ServerPlayer sp) sp.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
+    }
+
+    /** Бюрер: телекинез — отшвыривает, давит и порой вырывает оружие из рук. */
+    private void burerTelekinesis(LivingEntity target) {
+        playSound(SoundEvents.EVOKER_CAST_SPELL, 1.5f, 0.5f);
+        double dx = target.getX() - getX(), dz = target.getZ() - getZ(), d = Math.max(0.5, Math.hypot(dx, dz));
+        target.push(dx / d * 1.6, 0.5, dz / d * 1.6);
+        target.hurtMarked = true;
+        target.hurt(damageSources().indirectMagic(this, this), 3.0f);
+        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));
+        if (target instanceof ServerPlayer sp && random.nextDouble() < 0.2 && !sp.getMainHandItem().isEmpty()) {
+            ItemStack held = sp.getMainHandItem().copy();
+            sp.getInventory().removeItem(sp.getInventory().selected, held.getCount());
+            sp.drop(held, true);
+            sp.displayClientMessage(Component.literal("Бюрер вырвал оружие из рук!").withStyle(ChatFormatting.RED), true);
+        } else if (target instanceof ServerPlayer sp) {
+            sp.displayClientMessage(Component.literal("Невидимая сила швыряет вас: рядом бюрер!").withStyle(ChatFormatting.GOLD), true);
+        }
+        if (level() instanceof net.minecraft.server.level.ServerLevel sl)
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.SONIC_BOOM, (getX() + target.getX()) / 2, target.getY() + 1, (getZ() + target.getZ()) / 2, 1, 0, 0, 0, 0);
+    }
+
+    /** Полтергейст: невидим, висит в воздухе, швыряет предметы (удар издали) и светится огоньком. */
+    private void poltergeistTick(LivingEntity target) {
+        setNoGravity(true);
+        addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 40, 0, false, false));
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        if (tickCount % 4 == 0) sl.sendParticles(net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME, getX(), getY() + 1.0, getZ(), 2, 0.1, 0.1, 0.1, 0.01);
+        // держится на высоте 2-3 блока над землёй
+        int ground = sl.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, getBlockX(), getBlockZ());
+        double want = ground + 2.5 - getY();
+        setDeltaMovement(getDeltaMovement().x, Math.max(-0.1, Math.min(0.1, want * 0.1)), getDeltaMovement().z);
+        if (target != null && --psiCooldown <= 0 && distanceTo(target) < 20 && hasLineOfSight(target)) {
+            psiCooldown = 50 + random.nextInt(30);
+            target.hurt(damageSources().indirectMagic(this, this), 4.0f);
+            target.knockback(0.6, getX() - target.getX(), getZ() - target.getZ());
+            sl.playSound(null, target.getX(), target.getY(), target.getZ(), random.nextBoolean() ? SoundEvents.ANVIL_LAND : SoundEvents.GLASS_BREAK,
+                    net.minecraft.sounds.SoundSource.HOSTILE, 0.8f, 0.8f + random.nextFloat() * 0.4f);
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, target.getX(), target.getY() + 1, target.getZ(), 12, 0.3, 0.5, 0.3, 0.2);
+        }
+    }
+
+    /** Псевдогигант: удар о землю — волна, подбрасывает и бьёт всех вокруг. */
+    private void giantStomp() {
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        playSound(SoundEvents.RAVAGER_ROAR, 2.0f, 0.5f);
+        sl.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION, getX(), getY() + 0.2, getZ(), 6, 3, 0.2, 3, 0);
+        for (LivingEntity e : sl.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(6), x -> x != this && !(x instanceof MutantEntity))) {
+            if (e instanceof ServerPlayer p && (p.isCreative() || p.isSpectator())) continue;
+            double dist = e.distanceTo(this);
+            if (dist > 6 || !e.onGround()) continue;
+            e.hurt(damageSources().mobAttack(this), (float) (12 * (1 - dist / 8)));
+            e.push(0, 0.7, 0);
+            e.hurtMarked = true;
+        }
+    }
+
     @Override
     public void die(DamageSource source) {
+        if (phantom()) {   // двойник пси-собаки просто тает
+            if (level() instanceof net.minecraft.server.level.ServerLevel sl)
+                sl.sendParticles(net.minecraft.core.particles.ParticleTypes.WITCH, getX(), getY() + 0.5, getZ(), 15, 0.3, 0.3, 0.3, 0.02);
+            discard();
+            return;
+        }
         super.die(source);
         if (level().isClientSide || lairNode < 0) return;
         // гибель в аномалии или от падения логово не ослабляет: считаем только убийства
@@ -154,13 +261,21 @@ public class MutantEntity extends Monster {
             case BLOODSUCKER -> SoundEvents.ZOMBIE_AMBIENT;
             case CHIMERA -> SoundEvents.RAVAGER_AMBIENT;
             case CONTROLLER -> SoundEvents.ZOMBIE_VILLAGER_AMBIENT;
+            case PSEUDODOG, PSYDOG -> SoundEvents.WOLF_GROWL;
+            case TUSHKAN -> SoundEvents.SILVERFISH_AMBIENT;
+            case BURER -> SoundEvents.PIGLIN_BRUTE_AMBIENT;
+            case POLTERGEIST -> SoundEvents.VEX_AMBIENT;
+            case PSEUDOGIANT -> SoundEvents.RAVAGER_AMBIENT;
         };
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         return switch (kind()) {
-            case DOG -> SoundEvents.WOLF_HURT;
+            case DOG, PSEUDODOG, PSYDOG -> SoundEvents.WOLF_HURT;
+            case TUSHKAN -> SoundEvents.SILVERFISH_HURT;
+            case POLTERGEIST -> SoundEvents.VEX_HURT;
+            case PSEUDOGIANT -> SoundEvents.RAVAGER_HURT;
             case FLESH -> SoundEvents.PIG_HURT;
             case BOAR -> SoundEvents.HOGLIN_HURT;
             case CHIMERA -> SoundEvents.RAVAGER_HURT;
@@ -171,7 +286,10 @@ public class MutantEntity extends Monster {
     @Override
     protected SoundEvent getDeathSound() {
         return switch (kind()) {
-            case DOG -> SoundEvents.WOLF_DEATH;
+            case DOG, PSEUDODOG, PSYDOG -> SoundEvents.WOLF_DEATH;
+            case TUSHKAN -> SoundEvents.SILVERFISH_DEATH;
+            case POLTERGEIST -> SoundEvents.VEX_DEATH;
+            case PSEUDOGIANT -> SoundEvents.RAVAGER_DEATH;
             case FLESH -> SoundEvents.PIG_DEATH;
             case BOAR -> SoundEvents.HOGLIN_DEATH;
             case CHIMERA -> SoundEvents.RAVAGER_DEATH;

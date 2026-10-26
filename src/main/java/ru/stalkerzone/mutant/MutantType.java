@@ -12,7 +12,17 @@ public enum MutantType {
     SNORK("snork",        "Снорк",        Model.HUMANOID,  0.6f, 1.6f, 22, 0.33, 5, 2,   7,  "snork_foot",          "Ступня снорка",            2, 0.5, 0.85f),
     BLOODSUCKER("bloodsucker", "Кровосос", Model.HUMANOID, 0.7f, 2.0f, 42, 0.30, 8, 4,  12,  "bloodsucker_tentacle", "Щупальца кровососа",       3, 0.4, 1.05f),
     CHIMERA("chimera",    "Химера",       Model.QUAD,      1.3f, 1.4f, 70, 0.38, 11, 6, 20,  "chimera_claw",        "Коготь химеры",            6, 0.8, 1.9f),
-    CONTROLLER("controller", "Контролёр", Model.HUMANOID,  0.7f, 1.9f, 55, 0.22, 4, 2,  25,  "controller_hand",     "Рука контролёра",          8, 0.7, 1.0f);
+    CONTROLLER("controller", "Контролёр", Model.HUMANOID,  0.7f, 1.9f, 55, 0.22, 4, 2,  25,  "controller_hand",     "Рука контролёра",          8, 0.7, 1.0f),
+    // v1.14: новые (добавлять только в конец)
+    PSEUDODOG("pseudodog", "Псевдособака", Model.QUAD,     0.9f, 1.0f, 26, 0.37, 5, 1,   8,  "pseudodog_tail",      "Хвост псевдособаки",       2, 0.4, 1.3f),
+    PSYDOG("psydog",      "Пси-собака",   Model.QUAD,      0.9f, 1.0f, 34, 0.34, 5, 1,  14,  "psydog_tail",         "Хвост пси-собаки",         4, 0.4, 1.2f),
+    TUSHKAN("tushkan",    "Тушкан",       Model.QUAD,      0.4f, 0.4f, 6,  0.40, 2, 0,   2,  "tushkan_paw",         "Лапа тушкана",             1, 0.1, 0.5f),
+    BURER("burer",        "Бюрер",        Model.HUMANOID,  0.7f, 1.3f, 50, 0.24, 5, 3,  18,  "burer_hand",          "Рука бюрера",              5, 0.6, 0.72f),
+    POLTERGEIST("poltergeist", "Полтергейст", Model.HUMANOID, 0.6f, 1.2f, 30, 0.28, 3, 0, 15, "poltergeist_core",    "Ядро полтергейста",        5, 0.3, 0.8f),
+    PSEUDOGIANT("pseudogiant", "Псевдогигант", Model.PIG,  2.2f, 2.4f, 160, 0.21, 14, 8, 40, "pseudogiant_hand",    "Рука псевдогиганта",       9, 1.5, 2.6f);
+
+    /** Вожак логова: пока он жив, логово выпускает свиту. */
+    public boolean leader() { return this == CONTROLLER || this == PSEUDOGIANT || this == PSYDOG; }
 
     public enum Model { QUAD, PIG, HUMANOID }
 
@@ -49,22 +59,31 @@ public enum MutantType {
     /** Кого выпускает логово данного вида. */
     public static MutantType pick(ru.stalkerzone.sim.LairKind kind, boolean leaderPresent, java.util.Random r) {
         return switch (kind) {
-            case DOGS -> DOG;
+            // стая слепых псов с псевдособаками; изредка её водит пси-собака
+            case DOGS -> { double v = r.nextDouble(); yield v < 0.7 ? DOG : v < 0.93 || leaderPresent ? PSEUDODOG : PSYDOG; }
             case FLESH -> r.nextDouble() < 0.6 ? FLESH : BOAR;
             case BLOODSUCKERS -> r.nextDouble() < 0.7 ? BLOODSUCKER : SNORK;
-            case CHIMERA -> r.nextDouble() < 0.5 ? CHIMERA : DOG;
+            case CHIMERA -> r.nextDouble() < 0.5 ? CHIMERA : PSEUDODOG;
             case CONTROLLERS -> leaderPresent ? SNORK : CONTROLLER;
+            case RODENTS -> TUSHKAN;
+            case BURERS -> r.nextDouble() < 0.75 ? BURER : SNORK;
+            case GIANTS -> leaderPresent ? (r.nextBoolean() ? FLESH : BOAR) : PSEUDOGIANT;
+            case POLTERGEISTS -> POLTERGEIST;
         };
     }
 
     /** Средняя «цена» мутанта логова: по ней считаем, сколько их показывать. */
     public static double avgValue(ru.stalkerzone.sim.LairKind kind) {
         return switch (kind) {
-            case DOGS -> DOG.value;
+            case DOGS -> DOG.value * 0.7 + PSEUDODOG.value * 0.25 + PSYDOG.value * 0.05;
             case FLESH -> FLESH.value * 0.6 + BOAR.value * 0.4;
             case BLOODSUCKERS -> BLOODSUCKER.value * 0.7 + SNORK.value * 0.3;
-            case CHIMERA -> (CHIMERA.value + DOG.value) / 2;
+            case CHIMERA -> (CHIMERA.value + PSEUDODOG.value) / 2;
             case CONTROLLERS -> SNORK.value * 1.5;
+            case RODENTS -> TUSHKAN.value;
+            case BURERS -> BURER.value * 0.75 + SNORK.value * 0.25;
+            case GIANTS -> FLESH.value * 2;
+            case POLTERGEISTS -> POLTERGEIST.value;
         };
     }
 }

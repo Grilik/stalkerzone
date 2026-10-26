@@ -719,7 +719,7 @@ public final class Simulation {
 
     /** Находка в выбитом игроком логове: артефакты (в лабораториях больше). Создаются и сразу уходят игроку. */
     public int lairClearReward(Lair l) {
-        int art = 1 + (l.lab ? 2 : 0) + (l.kind == LairKind.CHIMERA || l.kind == LairKind.CONTROLLERS ? 1 : 0);
+        int art = 1 + (l.lab ? 2 : 0) + (l.kind == LairKind.CHIMERA || l.kind == LairKind.CONTROLLERS || l.kind == LairKind.GIANTS ? 1 : 0);
         ledger.created[Good.ARTIFACT.ordinal()] += art;
         ledger.exported[Good.ARTIFACT.ordinal()] += art;
         return art;
@@ -739,11 +739,12 @@ public final class Simulation {
 
     private LairKind pickKind(NodeType t, Random r) {
         switch (t) {
-            case PSI: return r.nextBoolean() ? LairKind.CONTROLLERS : LairKind.CHIMERA;
-            case ANOMALY: LairKind[] a = {LairKind.BLOODSUCKERS, LairKind.CHIMERA, LairKind.FLESH}; return a[r.nextInt(3)];
-            case RUINS: return r.nextBoolean() ? LairKind.DOGS : LairKind.BLOODSUCKERS;
-            case CITY: LairKind[] c = {LairKind.BLOODSUCKERS, LairKind.CONTROLLERS, LairKind.DOGS}; return c[r.nextInt(3)];
-            default: return r.nextBoolean() ? LairKind.DOGS : LairKind.FLESH;
+            // v1.14: псевдогиганты на севере, бюреры в руинах и подвалах, полтергейсты в мёртвых домах, тушканы где угодно
+            case PSI: LairKind[] p = {LairKind.CONTROLLERS, LairKind.CHIMERA, LairKind.GIANTS}; return p[r.nextInt(3)];
+            case ANOMALY: LairKind[] a = {LairKind.BLOODSUCKERS, LairKind.CHIMERA, LairKind.FLESH, LairKind.GIANTS}; return a[r.nextInt(4)];
+            case RUINS: LairKind[] u = {LairKind.DOGS, LairKind.BLOODSUCKERS, LairKind.BURERS, LairKind.RODENTS}; return u[r.nextInt(4)];
+            case CITY: LairKind[] c = {LairKind.BLOODSUCKERS, LairKind.CONTROLLERS, LairKind.DOGS, LairKind.POLTERGEISTS, LairKind.BURERS}; return c[r.nextInt(5)];
+            default: LairKind[] d = {LairKind.DOGS, LairKind.FLESH, LairKind.DOGS, LairKind.FLESH, LairKind.RODENTS}; return d[r.nextInt(5)];
         }
     }
 

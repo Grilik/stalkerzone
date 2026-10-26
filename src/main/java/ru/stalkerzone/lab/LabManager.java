@@ -139,8 +139,9 @@ public final class LabManager {
         Lab l = lay.lab;
         double v = RND.nextDouble();
         switch (l.code) {
-            case "agroprom" -> mutant(level, lay, pos, v < 0.6 ? MutantType.SNORK : MutantType.DOG);
-            case "x18" -> mutant(level, lay, pos, v < 0.5 ? MutantType.BLOODSUCKER : MutantType.SNORK);
+            // v1.14: в подземельях Агропрома бюреры и тушканы, в X-18 полтергейсты (как в ТЧ)
+            case "agroprom" -> mutant(level, lay, pos, v < 0.35 ? MutantType.SNORK : v < 0.65 ? MutantType.BURER : v < 0.85 ? MutantType.TUSHKAN : MutantType.DOG);
+            case "x18" -> mutant(level, lay, pos, v < 0.4 ? MutantType.BLOODSUCKER : v < 0.7 ? MutantType.POLTERGEIST : MutantType.SNORK);
             case "x16" -> {
                 if (v < 0.45) zombie(level, pos);
                 else mutant(level, lay, pos, v < 0.85 ? MutantType.SNORK : MutantType.CONTROLLER);
