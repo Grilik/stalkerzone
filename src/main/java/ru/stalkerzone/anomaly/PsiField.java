@@ -81,6 +81,9 @@ public final class PsiField {
         ItemStack suit = p.getItemBySlot(EquipmentSlot.CHEST);
         if (suit.getItem() instanceof ru.stalkerzone.gear.SuitItem si && si.suit.psi > 0)
             prot = 1 - (1 - prot) * (1 - si.suit.psi * ru.stalkerzone.gear.SuitItem.condition(suit));
+        // v1.14: Каменный цветок, Лунный свет и другие пси-артефакты на поясе
+        double art = ru.stalkerzone.artifact.Belt.psi(p);
+        if (art > 0) prot = 1 - (1 - prot) * (1 - art);
         int tier = PsiHelmetItem.tier(p);
         ItemStack helmet = p.getItemBySlot(EquipmentSlot.HEAD);
         if (helmet.getItem() instanceof PsiHelmetItem) helmet.hurtAndBreak(lv, p, x -> x.broadcastBreakEvent(EquipmentSlot.HEAD));

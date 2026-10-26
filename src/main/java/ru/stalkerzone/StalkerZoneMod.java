@@ -40,6 +40,7 @@ public class StalkerZoneMod {
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.survival.PlayerNeeds());
         MinecraftForge.EVENT_BUS.register(ru.stalkerzone.survival.Radiation.events());
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.gear.Carry());
+        MinecraftForge.EVENT_BUS.register(ru.stalkerzone.artifact.Belt.events());
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.npc.ZombieManager.Events());
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.mutant.MutantManager.Events());
     }

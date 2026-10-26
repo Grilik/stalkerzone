@@ -34,16 +34,21 @@ public final class ModItems {
     public static final RegistryObject<Item> AMMO_PRO = ITEMS.register("good_ammo_pro", () -> new GoodItem(Good.AMMO_PRO));
     public static final RegistryObject<Item> GEAR_PRO = ITEMS.register("good_gear_pro", () -> new GoodItem(Good.GEAR_PRO));
 
-    /** Артефакты по типам аномалий (порядок как в AnomalyType); все продаются как товар «Артефакты». */
-    public static final String[] ARTIFACT_IDS = {"kolobok", "stone_flower", "stone_blood", "soul", "fireball", "drop", "flash", "thorn"};
+    /** Артефакты по каталогу {@link ru.stalkerzone.artifact.ArtifactDef}; все продаются как товар «Артефакты». */
+    public static final String[] ARTIFACT_IDS = java.util.Arrays.stream(ru.stalkerzone.artifact.ArtifactDef.ALL).map(d -> d.id).toArray(String[]::new);
     @SuppressWarnings("unchecked")
     public static final RegistryObject<Item>[] ARTIFACTS = new RegistryObject[ARTIFACT_IDS.length];
 
     static {
         for (int i = 0; i < ARTIFACT_IDS.length; i++) {
-            ARTIFACTS[i] = ITEMS.register("artifact_" + ARTIFACT_IDS[i], () -> new GoodItem(Good.ARTIFACT));
+            final int idx = i;
+            ARTIFACTS[i] = ITEMS.register("artifact_" + ARTIFACT_IDS[i], () -> new ru.stalkerzone.artifact.ArtifactItem(idx));
         }
     }
+
+    /** v1.14: контейнеры для артефактов. */
+    public static final RegistryObject<Item> CONTAINER_LEAD = ITEMS.register("container_lead", () -> new ru.stalkerzone.artifact.ContainerItem(false));
+    public static final RegistryObject<Item> CONTAINER_PORCELAIN = ITEMS.register("container_porcelain", () -> new ru.stalkerzone.artifact.ContainerItem(true));
 
     /** v1.14: болты и детекторы артефактов. */
     public static final RegistryObject<Item> BOLT = ITEMS.register("bolt", BoltItem::new);

@@ -162,10 +162,11 @@ public final class Simulation {
     private AnomalyType pickAnomaly(Node n, Random r) {
         AnomalyType[] pool;
         switch (n.type) {
-            case PSI: pool = new AnomalyType[] {AnomalyType.ELECTRA, AnomalyType.MOSQUITO, AnomalyType.GRINDER, AnomalyType.FOG, AnomalyType.ELECTRA}; break;
-            case RUINS: pool = new AnomalyType[] {AnomalyType.FRY, AnomalyType.FLUFF, AnomalyType.MOSQUITO, AnomalyType.SPRINGBOARD}; break;
-            case CITY: pool = new AnomalyType[] {AnomalyType.ELECTRA, AnomalyType.WHIRLIGIG, AnomalyType.FRY, AnomalyType.SPRINGBOARD, AnomalyType.FOG}; break;
-            default: pool = AnomalyType.ALL;
+            case PSI: pool = new AnomalyType[] {AnomalyType.ELECTRA, AnomalyType.MOSQUITO, AnomalyType.GRINDER, AnomalyType.FOG, AnomalyType.ELECTRA, AnomalyType.WEB, AnomalyType.LIFT}; break;
+            case RUINS: pool = new AnomalyType[] {AnomalyType.FRY, AnomalyType.FLUFF, AnomalyType.MOSQUITO, AnomalyType.SPRINGBOARD, AnomalyType.RUST, AnomalyType.BRAZIER}; break;
+            case CITY: pool = new AnomalyType[] {AnomalyType.ELECTRA, AnomalyType.WHIRLIGIG, AnomalyType.FRY, AnomalyType.SPRINGBOARD, AnomalyType.FOG, AnomalyType.COMET, AnomalyType.RUST}; break;
+            default: pool = new AnomalyType[] {AnomalyType.SPRINGBOARD, AnomalyType.WHIRLIGIG, AnomalyType.GRINDER, AnomalyType.MOSQUITO,
+                    AnomalyType.FRY, AnomalyType.FLUFF, AnomalyType.ELECTRA, AnomalyType.FOG, AnomalyType.JELLY, AnomalyType.LIFT, AnomalyType.WEB, AnomalyType.COMET};
         }
         return pool[r.nextInt(pool.length)];
     }

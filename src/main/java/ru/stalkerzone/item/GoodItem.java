@@ -14,8 +14,10 @@ import ru.stalkerzone.sim.Good;
 public class GoodItem extends Item {
     public final Good good;
 
-    public GoodItem(Good good) {
-        super(new Item.Properties().stacksTo(64));
+    public GoodItem(Good good) { this(good, 64); }
+
+    public GoodItem(Good good, int stack) {
+        super(new Item.Properties().stacksTo(stack));
         this.good = good;
     }
 

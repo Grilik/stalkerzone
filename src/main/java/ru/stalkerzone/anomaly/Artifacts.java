@@ -22,14 +22,15 @@ import java.util.Iterator;
  * Детектор пищит чаще по мере приближения; старшие показывают направление, место и выдают аномалии рядом.
  */
 public final class Artifacts {
-    /** Уровень артефакта (порядок как в AnomalyType): 1 — простые, 3 — редкие. Детектор берёт свой уровень и ниже. */
-    public static final int[] TIER = {3, 2, 1, 3, 2, 1, 2, 1};
     /** Больше стольких спрятанных артефактов у одной аномалии не копится (остальные «ждут» в симуляции). */
     public static final int CAP_PER_FIELD = 3;
 
     private Artifacts() {}
 
-    public static int tierOf(int type) { return type >= 0 && type < TIER.length ? TIER[type] : 1; }
+    /** Уровень артефакта по номеру в каталоге: 1 — простые, 3 — редкие. Детектор берёт свой уровень и ниже. */
+    public static int tierOf(int art) {
+        return art >= 0 && art < ru.stalkerzone.artifact.ArtifactDef.ALL.length ? ru.stalkerzone.artifact.ArtifactDef.ALL[art].tier : 1;
+    }
 
     /** Сколько спрятанных артефактов уже лежит в радиусе r от точки. */
     public static int hiddenNear(ZoneData d, double x, double z, double r) {

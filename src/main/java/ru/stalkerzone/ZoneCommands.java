@@ -270,6 +270,8 @@ public final class ZoneCommands {
         }
         // КПК и накопители данных продаёт любой торговец, пси-шлем только учёные
         for (String name : new String[] {"кпк", "pda"}) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.PDA.get(), 1)));
+        for (String name : new String[] {"контейнер", "container"}) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.CONTAINER_LEAD.get(), 2)));
+        for (String name : new String[] {"фарфор", "porcelain"}) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.CONTAINER_PORCELAIN.get(), 4)));
         for (String name : new String[] {"болты", "bolts"}) buy.then(Commands.literal(name).executes(c -> buyBolts(c)));
         String[][] det = {{"отклик", "echo"}, {"медведь", "bear"}, {"велес", "veles"}, {"сварог", "svarog"}};
         int[] detUnits = {1, 3, 6, 12};

@@ -79,7 +79,7 @@ public final class AnomalyManager {
     public static boolean trigger(ServerLevel level, Hit h, net.minecraft.world.entity.Entity bolt) {
         long now = level.getServer().getTickCount();
         REVEALED.put(h.key(), now + 400);
-        int calm = switch (h.type()) { case ELECTRA -> 60; case FOG -> 0; case GRINDER -> 140; default -> 100; };
+        int calm = switch (h.type()) { case ELECTRA -> 60; case FOG, WEB, JELLY -> 0; case GRINDER -> 140; case COMET -> 160; default -> 100; };
         if (calm > 0) DISCHARGED.put(h.key(), now + calm);
         double x = bolt.getX(), y = bolt.getY(), z = bolt.getZ();
         switch (h.type()) {
@@ -121,6 +121,31 @@ public final class AnomalyManager {
                 level.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 20, 0.5, 0.5, 0.5, 0.02);
                 level.playSound(null, x, y, z, SoundEvents.BREWING_STAND_BREW, SoundSource.AMBIENT, 0.6f, 0.8f);
             }
+            case COMET, BRAZIER -> {
+                level.sendParticles(ParticleTypes.FLAME, x, y, z, 30, 0.3, 0.6, 0.3, 0.08);
+                level.playSound(null, x, y, z, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.8f, 0.7f);
+                return true;
+            }
+            case JELLY -> {
+                level.sendParticles(ParticleTypes.ITEM_SLIME, x, h.y() + 0.2, z, 20, 0.4, 0.1, 0.4, 0.05);
+                level.playSound(null, x, y, z, SoundEvents.SLIME_SQUISH, SoundSource.AMBIENT, 0.8f, 0.5f);
+                return true;   // растворился
+            }
+            case RUST -> {
+                level.sendParticles(ParticleTypes.MYCELIUM, x, y, z, 20, 0.5, 0.5, 0.5, 0.02);
+                level.playSound(null, x, y, z, SoundEvents.CHAIN_HIT, SoundSource.AMBIENT, 0.6f, 0.5f);
+                bolt.setDeltaMovement(bolt.getDeltaMovement().scale(0.2));
+            }
+            case LIFT -> {
+                level.sendParticles(ParticleTypes.REVERSE_PORTAL, x, y, z, 30, 0.3, 1.0, 0.3, 0.1);
+                level.playSound(null, x, y, z, SoundEvents.SHULKER_BULLET_HIT, SoundSource.AMBIENT, 0.8f, 0.6f);
+                bolt.setDeltaMovement(0, 1.6, 0);
+            }
+            case WEB -> {
+                level.sendParticles(ParticleTypes.END_ROD, x, y, z, 12, 0.6, 0.6, 0.6, 0.01);
+                level.playSound(null, x, y, z, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.AMBIENT, 0.8f, 1.6f);
+                return true;   // болт повис в паутине
+            }
         }
         bolt.hurtMarked = true;
         return false;
@@ -160,6 +185,7 @@ public final class AnomalyManager {
         ZoneData data = ZoneData.get(server);
         boolean omen = t % 20 == 0 ? (OMEN_CACHE = EmissionEvent.omen(server)) : OMEN_CACHE;
         Simulation sim = ZoneData.get(server).sim;
+        if (t % 20 == 0) webDoom(level, t);
         int index = 0;
         for (Anomaly a : sim.anomalies) {
             index++;
@@ -248,14 +274,53 @@ public final class AnomalyManager {
                 emit(level, to, ParticleTypes.COMPOSTER, x, y + 0.5, z, 6, r * 0.5, 0.4, r * 0.5, 0.01);
                 emit(level, to, ParticleTypes.SPORE_BLOSSOM_AIR, x, y + 1.2, z, 6, r * 0.5, 0.8, r * 0.5, 0.01);
             }
+            // v1.14: новые аномалии
+            case COMET -> {
+                double[] c = comet(x, y, z, r, t);
+                emit(level, to, ParticleTypes.FLAME, c[0], c[1], c[2], 8, 0.25, 0.25, 0.25, 0.02);
+                emit(level, to, ParticleTypes.LAVA, c[0], c[1], c[2], 1, 0.1, 0.1, 0.1, 0);
+                double[] tail = comet(x, y, z, r, t - 4);
+                emit(level, to, ParticleTypes.SMOKE, tail[0], tail[1], tail[2], 3, 0.15, 0.15, 0.15, 0.01);
+            }
+            case JELLY -> {
+                emit(level, to, ParticleTypes.ITEM_SLIME, x, y + 0.1, z, 5, r * 0.45, 0.02, r * 0.45, 0.01);
+                if (t % 6 == 0) emit(level, to, ParticleTypes.BUBBLE_POP, x, y + 0.2, z, 3, r * 0.4, 0.05, r * 0.4, 0.01);
+                emit(level, to, ParticleTypes.SNEEZE, x, y + 0.3, z, 1, r * 0.4, 0.1, r * 0.4, 0.005);
+            }
+            case RUST -> {
+                emit(level, to, new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.FALLING_DUST,
+                        net.minecraft.world.level.block.Blocks.RED_SAND.defaultBlockState()), x, y + 2.6, z, 6, r * 0.5, 0.4, r * 0.5, 0);
+                emit(level, to, ParticleTypes.MYCELIUM, x, y + 1.2, z, 4, r * 0.5, 1.0, r * 0.5, 0);
+            }
+            case LIFT -> {
+                emit(level, to, ParticleTypes.REVERSE_PORTAL, x, y + 0.2, z, 6, r * 0.4, 0.1, r * 0.4, 0.05);
+                emit(level, to, ParticleTypes.END_ROD, x, y + (t % 40) * 0.15, z, 1, r * 0.3, 0.1, r * 0.3, 0.01);
+            }
+            case BRAZIER -> {
+                emit(level, to, ParticleTypes.SMALL_FLAME, x, y + 0.3, z, 4, r * 0.3, 0.05, r * 0.3, 0.01);
+                emit(level, to, ParticleTypes.WHITE_ASH, x, y + 1.5, z, 6, r * 0.3, 1.2, r * 0.3, 0.02);
+                if (t % 10 == 0) emit(level, to, ParticleTypes.FLAME, x, y + 0.5, z, 10, 0.3, 1.5, 0.3, 0.06);
+            }
+            case WEB -> {
+                if (t % 6 == 0) emit(level, to, ParticleTypes.WHITE_ASH, x, y + 1.0, z, 3, r * 0.5, 0.8, r * 0.5, 0);
+                if (t % 20 == 0) emit(level, to, ParticleTypes.END_ROD, x + Math.cos(a) * r * 0.6, y + 1.4, z + Math.sin(a) * r * 0.6, 1, 0.05, 0.05, 0.05, 0);
+            }
         }
+    }
+
+    /** Комета летает по кругу над полем. */
+    static double[] comet(double x, double y, double z, double r, long t) {
+        double ang = t * 0.05;
+        return new double[] {x + Math.cos(ang) * r * 0.7, y + 1.3 + Math.sin(t * 0.13) * 0.4, z + Math.sin(ang) * r * 0.7};
     }
 
     /** Воздействие на всех живых внутри радиуса. */
     private static void effects(ServerLevel level, AnomalyType type, double r, float damage, double x, double y, double z, long t) {
         AABB box = new AABB(x - r, y - 2, z - r, x + r, y + 6, z + r);
+        double[] cm = type == AnomalyType.COMET ? comet(x, y, z, r, t) : null;
         List<LivingEntity> victims = level.getEntitiesOfClass(LivingEntity.class, box, e -> {
             if (e instanceof ServerPlayer p && (p.isCreative() || p.isSpectator())) return false;
+            if (cm != null) return e.isAlive() && e.distanceToSqr(cm[0], cm[1] - 0.8, cm[2]) <= 3.2;
             return e.isAlive() && Math.hypot(e.getX() - x, e.getZ() - z) <= r;
         });
         if (victims.isEmpty()) return;
@@ -264,7 +329,7 @@ public final class AnomalyManager {
             // костюм снижает урон от аномалий и изнашивается сам
             ItemStack suit = e.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
             double prot = ru.stalkerzone.gear.SuitItem.protection(suit, type);
-            float dmg = (float) (damage * (1 - prot));
+            float dmg = (float) (damage * (1 - prot) * ru.stalkerzone.artifact.Belt.anomalyFactor(e, type));
             if (prot > 0 && second) suit.hurtAndBreak(Math.max(1, Math.round(damage / 2)), e,
                     v -> v.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.CHEST));
             switch (type) {
@@ -312,7 +377,69 @@ public final class AnomalyManager {
                     e.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0, true, true));
                     if (second) e.hurt(level.damageSources().magic(), dmg);
                 }
+                case COMET -> {
+                    e.setSecondsOnFire(6);
+                    e.hurt(level.damageSources().magic(), dmg);
+                    level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.AMBIENT, 0.6f, 0.5f);
+                }
+                case JELLY -> {
+                    // холодец разъедает обувь и костюм, травит
+                    e.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 1, true, true));
+                    e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, true, true));
+                    if (second) {
+                        e.hurt(level.damageSources().magic(), dmg);
+                        ItemStack feet = e.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET);
+                        if (!feet.isEmpty()) feet.hurtAndBreak(4, e, v -> v.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.FEET));
+                        if (!suit.isEmpty()) suit.hurtAndBreak(2, e, v -> v.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.CHEST));
+                    }
+                }
+                case RUST -> {
+                    e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2, true, true));
+                    e.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0, true, true));
+                    if (second) e.hurt(level.damageSources().magic(), dmg);
+                }
+                case LIFT -> {
+                    // подхватывает и роняет: опасен падением
+                    e.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 30, 3, true, false));
+                    if (second) e.hurt(level.damageSources().magic(), dmg);
+                }
+                case BRAZIER -> {
+                    e.setSecondsOnFire(8);
+                    if (second) e.hurt(level.damageSources().inFire(), dmg);
+                }
+                case WEB -> {
+                    // серебристая паутина: ничего не чувствуешь, а сердце остановится позже (Кирилл из «Пикника»)
+                    if (e instanceof ServerPlayer sp) {
+                        net.minecraft.nbt.CompoundTag pd = sp.getPersistentData();
+                        if (!pd.contains(WEB_DOOM)) {
+                            pd.putLong(WEB_DOOM, level.getServer().getTickCount() + 2400);
+                            sp.displayClientMessage(net.minecraft.network.chat.Component.literal("Лицо будто задело паутиной…")
+                                    .withStyle(net.minecraft.ChatFormatting.GRAY), true);
+                        }
+                    } else if (second && t % 200 < 10) e.hurt(level.damageSources().magic(), 4);
+                }
             }
+        }
+    }
+
+    static final String WEB_DOOM = "sz_web_doom";
+
+    /** Отложенная смерть от серебристой паутины: через 2 минуты сердце сдаёт (у сильного — тяжёлая травма). */
+    private static void webDoom(ServerLevel level, long t) {
+        for (ServerPlayer p : level.players()) {
+            net.minecraft.nbt.CompoundTag pd = p.getPersistentData();
+            if (!pd.contains(WEB_DOOM)) continue;
+            long at = pd.getLong(WEB_DOOM);
+            if (at - t <= 600 && at - t > 580) p.displayClientMessage(net.minecraft.network.chat.Component.literal("Сердце колет. Душно…")
+                    .withStyle(net.minecraft.ChatFormatting.DARK_GRAY), true);
+            if (t < at) continue;
+            pd.remove(WEB_DOOM);
+            if (p.isCreative() || p.isSpectator()) continue;
+            p.hurt(level.damageSources().magic(), 18.0f);
+            p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 1200, 1, true, true));
+            p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 600, 1, true, true));
+            p.sendSystemMessage(net.minecraft.network.chat.Component.literal("Сердце остановилось на миг. Серебристая паутина не прощает.")
+                    .withStyle(net.minecraft.ChatFormatting.DARK_RED));
         }
     }
 
@@ -327,7 +454,7 @@ public final class AnomalyManager {
         int took = data.sim.takePendingArtifacts(a, room);
         for (int i = 0; i < took; i++) {
             double ox = (RND.nextDouble() - 0.5) * a.type.radius * 0.8, oz = (RND.nextDouble() - 0.5) * a.type.radius * 0.8;
-            Artifacts.hide(data, a.type.ordinal(), x + ox, y, z + oz);
+            Artifacts.hide(data, ru.stalkerzone.artifact.ArtifactDef.pick(a.type, data.sim.anomalyTier(a), RND), x + ox, y, z + oz);
         }
     }
 }

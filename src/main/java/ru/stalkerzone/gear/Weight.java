@@ -92,7 +92,8 @@ public final class Weight {
         }
         Backpack b = backpack(p);
         if (b != null) l += b.carryBonus;
-        return l;
+        l += ru.stalkerzone.artifact.Belt.carryBonus(p);   // v1.14: Грави, Ночная звезда, Золотая рыбка
+        return Math.max(10, l);
     }
 
     public static int openMainSlots(Player p) {

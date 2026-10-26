@@ -94,9 +94,10 @@ public enum Suit {
     /** Защита нового костюма от аномалии этого типа. */
     public double protection(AnomalyType t) {
         return switch (t) {
-            case FRY, FLUFF -> thermal;
+            case FRY, FLUFF, COMET, BRAZIER -> thermal;
             case ELECTRA -> electric;
-            case FOG -> chemical;
+            case FOG, JELLY, RUST -> chemical;
+            case WEB -> 0;
             default -> gravity;
         };
     }

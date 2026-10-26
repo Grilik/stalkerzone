@@ -16,7 +16,7 @@ jobs:
           mkdir -p out
           javac --release 17 -encoding UTF-8 -d out \
             $(find src/main/java/ru/stalkerzone/sim src/main/java/ru/stalkerzone/zonemap -name '*.java') \
-            src/main/java/ru/stalkerzone/world/ZoneBounds.java src/test/java/*.java
+            src/main/java/ru/stalkerzone/world/ZoneBounds.java src/main/java/ru/stalkerzone/artifact/ArtifactDef.java src/test/java/*.java
           for f in src/test/java/*Test.java; do
             t=$(basename "$f" .java)
             echo "::group::$t"
