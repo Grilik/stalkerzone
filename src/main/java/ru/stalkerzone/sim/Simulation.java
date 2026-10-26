@@ -322,10 +322,13 @@ public final class Simulation {
     }
 
     /** Игровой слой забирает созревшие артефакты аномалии. Они выходят из Зоны через учёт: создаются и сразу вывозятся, дальше их судьба в руках игрока. */
-    public int takePendingArtifacts(Anomaly a) {
-        int n = a.pending;
+    public int takePendingArtifacts(Anomaly a) { return takePendingArtifacts(a, Integer.MAX_VALUE); }
+
+    /** Забрать из поля в мир не больше max созревших артефактов (остальные ждут). */
+    public int takePendingArtifacts(Anomaly a, int max) {
+        int n = Math.min(a.pending, max);
         if (n <= 0) return 0;
-        a.pending = 0;
+        a.pending -= n;
         ledger.created[Good.ARTIFACT.ordinal()] += n;
         ledger.exported[Good.ARTIFACT.ordinal()] += n;
         artifactsWild += n;

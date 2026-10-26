@@ -83,6 +83,9 @@ public final class ZoneWorld {
             // стартовый набор новичка: КПК и флешка
             sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.PDA.get()));
             sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.FLASH_DRIVE.get()));
+            // v1.14: как у новичка у Сидоровича — горсть болтов и простенький «Отклик»
+            sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.BOLT.get(), 24));
+            sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.DETECTORS[0].get()));
         }
 
         /** Возврат игрока, оказавшегося за забором (старые чанки, команды, баги). Раз в секунду. */

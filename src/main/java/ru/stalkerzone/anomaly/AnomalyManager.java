@@ -41,14 +41,121 @@ public final class AnomalyManager {
     private static final Map<Long, Integer> GROUND = new HashMap<>();
     private static final Random RND = new Random();
 
+    /** v1.14: разряженные болтом аномалии (ключ — позиция) и до какого тика. */
+    private static final Map<Long, Long> DISCHARGED = new HashMap<>();
+    /** v1.14: выданные (болтом или «Сварогом») аномалии видны во всей красе до этого тика. */
+    private static final Map<Long, Long> REVEALED = new HashMap<>();
+    /** Дальше этого аномалия почти не видна: лишь редкое марево. */
+    private static final int SUBTLE = 12;
+
     private AnomalyManager() {}
+
+    static long key(int bx, int bz) { return ((long) bx << 32) ^ (bz & 0xffffffffL); }
+
+    /** Аномалия под точкой (для болта). */
+    public record Hit(long key, AnomalyType type, double x, double y, double z, double r) {}
+
+    public static Hit anomalyAt(ServerLevel level, double px, double py, double pz) {
+        Simulation sim = ZoneData.get(level.getServer()).sim;
+        for (Anomaly a : sim.anomalies) {
+            Node n = sim.nodes.get(a.node);
+            int bx = n.x * ZoneBounds.SCALE + a.dx, bz = n.z * ZoneBounds.SCALE + a.dz;
+            double r = a.type.radius * (0.8 + 0.2 * sim.anomalyPower(a));
+            if (Math.abs(px - bx - 0.5) > r || Math.abs(pz - bz - 0.5) > r) continue;
+            if (Math.hypot(px - bx - 0.5, pz - bz - 0.5) > r) continue;
+            double y = GROUND.computeIfAbsent(key(bx, bz), k -> level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, bx, bz)) + 0.1;
+            if (py < y - 1 || py > y + 5) continue;
+            return new Hit(key(bx, bz), a.type, bx + 0.5, y, bz + 0.5, r);
+        }
+        return null;
+    }
+
+    /**
+     * Болт попал в аномалию: она срабатывает (вспышка, звук), выдаёт себя и на время разряжается.
+     * Вернёт true, если болт уничтожен (мясорубка рвёт, жарка плавит).
+     */
+    public static boolean trigger(ServerLevel level, Hit h, net.minecraft.world.entity.Entity bolt) {
+        long now = level.getServer().getTickCount();
+        REVEALED.put(h.key(), now + 400);
+        int calm = switch (h.type()) { case ELECTRA -> 60; case FOG -> 0; case GRINDER -> 140; default -> 100; };
+        if (calm > 0) DISCHARGED.put(h.key(), now + calm);
+        double x = bolt.getX(), y = bolt.getY(), z = bolt.getZ();
+        switch (h.type()) {
+            case SPRINGBOARD -> {
+                level.sendParticles(ParticleTypes.EXPLOSION, x, y, z, 1, 0, 0, 0, 0);
+                level.playSound(null, x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 0.6f, 1.7f);
+                bolt.setDeltaMovement(bolt.getDeltaMovement().multiply(0.3, 0, 0.3).add(0, 1.1, 0));
+            }
+            case WHIRLIGIG -> {
+                level.sendParticles(ParticleTypes.SWEEP_ATTACK, h.x(), h.y() + 1.5, h.z(), 6, 1, 0.5, 1, 0);
+                level.playSound(null, x, y, z, SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.AMBIENT, 0.8f, 0.6f);
+                bolt.setDeltaMovement(-bolt.getDeltaMovement().z * 1.4, 0.6, bolt.getDeltaMovement().x * 1.4);
+            }
+            case GRINDER -> {
+                level.sendParticles(ParticleTypes.CRIT, x, y, z, 25, 0.3, 0.3, 0.3, 0.3);
+                level.playSound(null, x, y, z, SoundEvents.ANVIL_LAND, SoundSource.AMBIENT, 0.6f, 0.5f);
+                return true;
+            }
+            case MOSQUITO -> {
+                level.sendParticles(ParticleTypes.CLOUD, x, h.y() + 0.2, z, 12, 0.8, 0.05, 0.8, 0.02);
+                level.playSound(null, x, y, z, SoundEvents.ANVIL_LAND, SoundSource.AMBIENT, 0.4f, 1.4f);
+                bolt.setDeltaMovement(0, -2.0, 0);
+            }
+            case FRY -> {
+                level.sendParticles(ParticleTypes.FLAME, h.x(), h.y() + 0.5, h.z(), 50, 0.4, 1.6, 0.4, 0.05);
+                level.playSound(null, x, y, z, SoundEvents.BLAZE_SHOOT, SoundSource.AMBIENT, 0.8f, 0.6f);
+                return true;
+            }
+            case FLUFF -> {
+                level.sendParticles(ParticleTypes.SMALL_FLAME, x, y, z, 20, 0.6, 0.6, 0.6, 0.01);
+                level.playSound(null, x, y, z, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.5f, 1.4f);
+            }
+            case ELECTRA -> {
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, h.x(), h.y() + 1, h.z(), 60, h.r() * 0.4, 1, h.r() * 0.4, 0.4);
+                level.playSound(null, x, y, z, SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.AMBIENT, 0.8f, 1.5f);
+                bolt.setDeltaMovement(bolt.getDeltaMovement().scale(-0.3));
+            }
+            case FOG -> {
+                level.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 20, 0.5, 0.5, 0.5, 0.02);
+                level.playSound(null, x, y, z, SoundEvents.BREWING_STAND_BREW, SoundSource.AMBIENT, 0.6f, 0.8f);
+            }
+        }
+        bolt.hurtMarked = true;
+        return false;
+    }
+
+    /** «Сварог» и подобное: выдать аномалии в радиусе. */
+    public static void revealNear(double px, double pz, double radius, long until) {
+        lastReveal = new double[] {px, pz, radius, until};
+    }
+
+    private static double[] lastReveal;
+
+    public static boolean discharged(long key, long now) {
+        Long u = DISCHARGED.get(key);
+        return u != null && u > now;
+    }
 
     public static void tick(MinecraftServer server) {
         ServerLevel level = server.overworld();
         List<ServerPlayer> players = level.players();
         if (players.isEmpty()) return;
         long t = server.getTickCount();
-        if (t % 600 == 0) GROUND.clear();
+        if (t % 600 == 0) {
+            GROUND.clear();
+            DISCHARGED.values().removeIf(u -> u < t);
+            REVEALED.values().removeIf(u -> u < t);
+        }
+        if (lastReveal != null) {
+            double[] lr = lastReveal;
+            lastReveal = null;
+            for (Anomaly a : ZoneData.get(server).sim.anomalies) {
+                Node n = ZoneData.get(server).sim.nodes.get(a.node);
+                int bx = n.x * ZoneBounds.SCALE + a.dx, bz = n.z * ZoneBounds.SCALE + a.dz;
+                if (Math.hypot(bx - lr[0], bz - lr[1]) <= lr[2]) REVEALED.merge(key(bx, bz), (long) lr[3], Math::max);
+            }
+        }
+        ZoneData data = ZoneData.get(server);
         Simulation sim = ZoneData.get(server).sim;
         int index = 0;
         for (Anomaly a : sim.anomalies) {
@@ -56,8 +163,15 @@ public final class AnomalyManager {
             Node n = sim.nodes.get(a.node);
             int bx = n.x * ZoneBounds.SCALE + a.dx, bz = n.z * ZoneBounds.SCALE + a.dz;
             List<ServerPlayer> near = new ArrayList<>();
-            for (ServerPlayer p : players) if (Math.hypot(p.getX() - bx, p.getZ() - bz) <= ACTIVE) near.add(p);
+            double closest = Double.MAX_VALUE;
+            for (ServerPlayer p : players) {
+                double dd = Math.hypot(p.getX() - bx, p.getZ() - bz);
+                if (dd <= ACTIVE) { near.add(p); closest = Math.min(closest, dd); }
+            }
             if (near.isEmpty() || !level.hasChunk(bx >> 4, bz >> 4)) continue;
+            long k0 = key(bx, bz);
+            Long rv = REVEALED.get(k0);
+            boolean revealed = rv != null && rv > t, calm = discharged(k0, t);
             double y = GROUND.computeIfAbsent(((long) bx << 32) ^ (bz & 0xffffffffL),
                     k -> level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, bx, bz)) + 0.1;
             double x = bx + 0.5, z = bz + 0.5;
@@ -65,9 +179,12 @@ public final class AnomalyManager {
             double power = sim.anomalyPower(a);
             double r = a.type.radius * (0.8 + 0.2 * power);
             // сильные поля видны гуще: частиц больше
-            if (t % 2 == 0) for (int k = 0; k < (power >= 2.8 ? 2 : 1); k++) particles(level, near, a.type, r, x, y, z, t + k * 7);
-            if (t % 10 == (index % 10)) effects(level, a.type, r, (float) (a.type.damage * power), x, y, z, t);
-            if (t % 100 == (index * 7L) % 100) dropArtifacts(level, sim, a, x, y, z);
+            // v1.14: издали аномалию почти не видно (редкое марево), вблизи и после болта — во всей красе;
+            // разряженная болтом еле теплится и не бьёт
+            int every = calm ? 10 : (revealed || closest <= SUBTLE) ? 2 : 8;
+            if (t % every == 0) for (int k = 0; k < (power >= 2.8 && every == 2 ? 2 : 1); k++) particles(level, near, a.type, r, x, y, z, t + k * 7);
+            if (!calm && t % 10 == (index % 10)) effects(level, a.type, r, (float) (a.type.damage * power), x, y, z, t);
+            if (t % 100 == (index * 7L) % 100) dropArtifacts(level, data, a, x, y, z);
         }
     }
 
@@ -195,18 +312,18 @@ public final class AnomalyManager {
         }
     }
 
-    /** Созревшие артефакты появляются внутри поля, подсвеченные, чтобы их можно было найти. */
-    private static void dropArtifacts(ServerLevel level, Simulation sim, Anomaly a, double x, double y, double z) {
+    /**
+     * v1.14: созревшие артефакты прячутся внутри поля — без детектора их не найти (см. {@link Artifacts}).
+     * У одного поля копится не больше {@link Artifacts#CAP_PER_FIELD}, остальные ждут в симуляции.
+     */
+    private static void dropArtifacts(ServerLevel level, ZoneData data, Anomaly a, double x, double y, double z) {
         if (a.pending <= 0) return;
-        int n = sim.takePendingArtifacts(a);
-        for (int i = 0; i < n; i++) {
+        int room = Artifacts.CAP_PER_FIELD - Artifacts.hiddenNear(data, x, z, a.type.radius + 4);
+        if (room <= 0) return;
+        int took = data.sim.takePendingArtifacts(a, room);
+        for (int i = 0; i < took; i++) {
             double ox = (RND.nextDouble() - 0.5) * a.type.radius * 0.8, oz = (RND.nextDouble() - 0.5) * a.type.radius * 0.8;
-            ItemStack stack = new ItemStack(ModItems.ARTIFACTS[a.type.ordinal()].get());
-            ItemEntity item = new ItemEntity(level, x + ox, y + 0.6, z + oz, stack);
-            item.setDeltaMovement(0, 0, 0);
-            item.setUnlimitedLifetime();
-            item.setGlowingTag(true);
-            level.addFreshEntity(item);
+            Artifacts.hide(data, a.type.ordinal(), x + ox, y, z + oz);
         }
     }
 }

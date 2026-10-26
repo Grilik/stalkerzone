@@ -17,5 +17,13 @@ public final class ModEntities {
                     .clientTrackingRange(10)
                     .build("stalker"));
 
+    /** v1.14: брошенный болт. */
+    public static final RegistryObject<EntityType<ru.stalkerzone.anomaly.BoltEntity>> BOLT = ENTITIES.register("bolt",
+            () -> EntityType.Builder.<ru.stalkerzone.anomaly.BoltEntity>of(ru.stalkerzone.anomaly.BoltEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(6)
+                    .updateInterval(10)
+                    .build("bolt"));
+
     private ModEntities() {}
 }

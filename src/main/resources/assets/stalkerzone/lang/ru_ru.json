@@ -239,5 +239,11 @@
  "block.stalkerzone.veh_brdm2": "БРДМ-2",
  "block.stalkerzone.veh_t72": "Танк Т-72",
  "block.stalkerzone.veh_excavator": "Экскаватор",
- "block.stalkerzone.veh_tank_wagon": "Цистерна"
+ "block.stalkerzone.veh_tank_wagon": "Цистерна",
+ "item.stalkerzone.bolt": "Болт",
+ "entity.stalkerzone.bolt": "Болт",
+ "item.stalkerzone.detector_echo": "Детектор «Отклик»",
+ "item.stalkerzone.detector_bear": "Детектор «Медведь»",
+ "item.stalkerzone.detector_veles": "Детектор «Велес»",
+ "item.stalkerzone.detector_svarog": "Детектор «Сварог»"
 }

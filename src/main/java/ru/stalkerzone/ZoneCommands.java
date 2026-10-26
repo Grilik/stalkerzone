@@ -117,6 +117,16 @@ public final class ZoneCommands {
                 .then(Commands.literal("anomalies")
                         .executes(c -> send(c, Report.anomalies(sim(c))))
                         .then(Commands.literal("near").executes(ZoneCommands::anomaliesNear)))
+                .then(Commands.literal("artifacts").requires(s -> s.hasPermission(2)).executes(c -> {
+                    ZoneData data = ZoneData.get(c.getSource().getServer());
+                    StringBuilder sb = new StringBuilder("Спрятано артефактов: " + data.hidden.size());
+                    for (int i = 0; i < Math.min(8, data.hidden.size()); i++) {
+                        int[] h = data.hidden.get(i);
+                        sb.append("\n").append(ru.stalkerzone.item.ModItems.ARTIFACT_IDS[h[3]]).append(" ур.").append(ru.stalkerzone.anomaly.Artifacts.tierOf(h[3]))
+                                .append(" — ").append(h[0]).append(' ').append(h[1]).append(' ').append(h[2]);
+                    }
+                    return send(c, sb.toString());
+                }))
                 .then(Commands.literal("emission")
                         .requires(s -> s.hasPermission(2))
                         .executes(c -> {
@@ -256,6 +266,13 @@ public final class ZoneCommands {
         }
         // КПК и накопители данных продаёт любой торговец, пси-шлем только учёные
         for (String name : new String[] {"кпк", "pda"}) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.PDA.get(), 1)));
+        for (String name : new String[] {"болты", "bolts"}) buy.then(Commands.literal(name).executes(c -> buyBolts(c)));
+        String[][] det = {{"отклик", "echo"}, {"медведь", "bear"}, {"велес", "veles"}, {"сварог", "svarog"}};
+        int[] detUnits = {1, 3, 6, 12};
+        for (int i = 0; i < det.length; i++) {
+            final int di = i;
+            for (String name : det[i]) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.DETECTORS[di].get(), detUnits[di])));
+        }
         for (String name : new String[] {"флешка", "flash"}) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.FLASH_DRIVE.get(), 1)));
         for (String name : new String[] {"диск", "disk"}) buy.then(Commands.literal(name).executes(c -> buyGear(c, ru.stalkerzone.item.ModItems.DATA_DISK.get(), 2)));
         for (String name : new String[] {"пси-шлем", "psi_helmet"}) buy.then(Commands.literal(name).executes(c -> buyPsiHelmet(c, false)));
@@ -383,6 +400,20 @@ public final class ZoneCommands {
             if (!proto && !data.sim.labs.fullHelmetReady(data.sim))
                 return send(c, "Полноценный шлем учёные сделают, когда изучат все данные X-16 (или пси-защита дойдёт до " + (int) ru.stalkerzone.sim.Labs.FULL_PSI + "%). Сейчас доступен " + (data.sim.labs.prototypeReady(data.sim) ? "прототип: /zone buy прототип" : "только ожидание"));
             ru.stalkerzone.npc.TradeService.buyEquipment(p, data, n, proto ? ru.stalkerzone.item.ModItems.PSI_HELMET_PROTO.get() : ru.stalkerzone.item.ModItems.PSI_HELMET.get(), proto ? 2 : 5);
+            return 1;
+        } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+            return send(c, "Команда только для игрока.");
+        }
+    }
+
+    /** Болты: 32 штуки за одну единицу запчастей. */
+    private static int buyBolts(CommandContext<CommandSourceStack> c) {
+        try {
+            ServerPlayer p = c.getSource().getPlayerOrException();
+            ZoneData data = ZoneData.get(c.getSource().getServer());
+            Node n = traderNear(p, data);
+            if (n == null) return send(c, "Рядом нет торговца (подойдите ближе 8 блоков).");
+            ru.stalkerzone.npc.TradeService.buyStack(p, data, n, new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.BOLT.get(), 32), ru.stalkerzone.sim.Good.PARTS, 1);
             return 1;
         } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
             return send(c, "Команда только для игрока.");

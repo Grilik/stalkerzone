@@ -35,6 +35,7 @@ public final class MutantRenderers {
 
     @SubscribeEvent
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
+        e.registerEntityRenderer(ru.stalkerzone.npc.ModEntities.BOLT.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         for (MutantType t : MutantType.ALL) {
             var type = MutantRegistry.TYPES[t.ordinal()].get();
             switch (t.model) {

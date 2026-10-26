@@ -239,5 +239,11 @@
  "block.stalkerzone.veh_brdm2": "Brdm2",
  "block.stalkerzone.veh_t72": "T72",
  "block.stalkerzone.veh_excavator": "Excavator",
- "block.stalkerzone.veh_tank_wagon": "Tank Wagon"
+ "block.stalkerzone.veh_tank_wagon": "Tank Wagon",
+ "item.stalkerzone.bolt": "Bolt",
+ "entity.stalkerzone.bolt": "Bolt",
+ "item.stalkerzone.detector_echo": "Echo detector",
+ "item.stalkerzone.detector_bear": "Bear detector",
+ "item.stalkerzone.detector_veles": "Veles detector",
+ "item.stalkerzone.detector_svarog": "Svarog detector"
 }

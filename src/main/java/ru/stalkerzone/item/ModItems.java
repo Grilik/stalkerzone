@@ -45,6 +45,16 @@ public final class ModItems {
         }
     }
 
+    /** v1.14: болты и детекторы артефактов. */
+    public static final RegistryObject<Item> BOLT = ITEMS.register("bolt", BoltItem::new);
+    @SuppressWarnings("unchecked")
+    public static final RegistryObject<Item>[] DETECTORS = new RegistryObject[DetectorItem.Tier.values().length];
+
+    static {
+        for (DetectorItem.Tier t : DetectorItem.Tier.values())
+            DETECTORS[t.ordinal()] = ITEMS.register("detector_" + t.name().toLowerCase(), () -> new DetectorItem(t));
+    }
+
     /** Заглушка закрытой ячейки инвентаря. */
     public static final RegistryObject<Item> LOCKED_SLOT = ITEMS.register("locked_slot", ru.stalkerzone.gear.LockedSlotItem::new);
 

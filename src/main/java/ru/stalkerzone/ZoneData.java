@@ -20,6 +20,9 @@ public class ZoneData extends SavedData {
     /** Что сейчас нарисовано: ключ узел*16+тип постройки, значение (владелец+1, уровень, состояние). */
     public final java.util.Map<Integer, Integer> rendered = new java.util.HashMap<>();
 
+    /** v1.14: спрятанные в аномалиях артефакты: x, y, z, тип (см. anomaly.Artifacts). */
+    public final java.util.List<int[]> hidden = new java.util.ArrayList<>();
+
     private ZoneData(Simulation sim, int tickCounter) {
         this.sim = sim;
         this.tickCounter = tickCounter;
@@ -42,6 +45,8 @@ public class ZoneData extends SavedData {
         for (int i = 0; i + 1 < cy.length; i += 2) d.campY.put(cy[i], cy[i + 1]);
         int[] rd = tag.getIntArray("rendered");
         for (int i = 0; i + 1 < rd.length; i += 2) d.rendered.put(rd[i], rd[i + 1]);
+        int[] hd = tag.getIntArray("hidden");
+        for (int i = 0; i + 3 < hd.length; i += 4) d.hidden.add(new int[] {hd[i], hd[i + 1], hd[i + 2], hd[i + 3]});
         return d;
     }
 
@@ -52,6 +57,9 @@ public class ZoneData extends SavedData {
         tag.putIntArray("built", built.stream().mapToInt(Integer::intValue).toArray());
         tag.putIntArray("campY", flatten(campY));
         tag.putIntArray("rendered", flatten(rendered));
+        int[] hd = new int[hidden.size() * 4];
+        for (int i = 0; i < hidden.size(); i++) System.arraycopy(hidden.get(i), 0, hd, i * 4, 4);
+        tag.putIntArray("hidden", hd);
         return tag;
     }
 
