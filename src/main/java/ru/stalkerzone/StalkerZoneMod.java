@@ -74,7 +74,6 @@ public class StalkerZoneMod {
 
         ZoneData data = ZoneData.get(server);
         ++data.tickCounter;
-        if (data.tickCounter == TICKS_PER_SIM_DAY - 600 && (data.sim.day + 1) % 25 == 0) ru.stalkerzone.anomaly.EmissionEvent.warn(server);
         if (data.tickCounter < TICKS_PER_SIM_DAY) return;
         data.tickCounter = 0;
         data.sim.step();

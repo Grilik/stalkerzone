@@ -95,7 +95,9 @@ public final class MutantManager {
             List<MutantEntity> here = level.getEntitiesOfClass(MutantEntity.class, box, m -> m.lairNode() == l.node && m.isAlive());
             int foreign = level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, box, m -> !(m instanceof MutantEntity) && m.isAlive()
                     && m.getPersistentData().contains(TAG_LAIR) && m.getPersistentData().getInt(TAG_LAIR) == l.node).size();
-            if (here.size() + foreign >= wanted(l, night)) continue;
+            // v1.14: после выброса мутанты сперва затихают, потом пик на 3–4-е сутки
+            double act = ru.stalkerzone.anomaly.EmissionEvent.mutantActivity(sim);
+            if (here.size() + foreign >= Math.max(1, (int) Math.round(wanted(l, night) * act))) continue;
             boolean leader = here.stream().anyMatch(m -> m.kind() == MutantType.CONTROLLER);
             spawn(level, l, den, MutantType.pick(l.kind, leader, RND));
             COOLDOWN.put(l.node, SPAWN_EVERY);

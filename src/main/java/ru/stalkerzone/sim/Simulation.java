@@ -322,6 +322,22 @@ public final class Simulation {
     }
 
     /** Игровой слой забирает созревшие артефакты аномалии. Они выходят из Зоны через учёт: создаются и сразу вывозятся, дальше их судьба в руках игрока. */
+    /**
+     * v1.14: активность мутантов по суткам после выброса (канон ТЧ): сразу после — затишье (они пережидают и
+     * разбредаются после гона), к 3–4-м суткам — пик, потом обычный уровень.
+     */
+    public double mutantActivity() {
+        if (lastEmissionDay < 0) return 1.0;
+        return switch (day - lastEmissionDay) {
+            case 0 -> 0.5;
+            case 1 -> 0.7;
+            case 2 -> 1.1;
+            case 3, 4 -> 1.6;
+            case 5 -> 1.25;
+            default -> 1.0;
+        };
+    }
+
     public int takePendingArtifacts(Anomaly a) { return takePendingArtifacts(a, Integer.MAX_VALUE); }
 
     /** Забрать из поля в мир не больше max созревших артефактов (остальные ждут). */
@@ -1101,6 +1117,8 @@ public final class Simulation {
     private void emission() {
         log("Выброс над Зоной");
         relocateAnomalies();
+        // выброс «заряжает» поля: в каждом созревает свежий артефакт
+        for (Anomaly a : anomalies) if (a.pending < 3) a.pending++;
         for (Node n : nodes) damageNode(n.id, 2);
         for (Faction f : factions) {
             if (f.fanatic && !monolithActive) continue; // спящий Монолит выброс не задевает

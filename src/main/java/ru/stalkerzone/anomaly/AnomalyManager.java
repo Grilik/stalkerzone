@@ -48,6 +48,8 @@ public final class AnomalyManager {
     /** Дальше этого аномалия почти не видна: лишь редкое марево. */
     private static final int SUBTLE = 12;
 
+    private static boolean OMEN_CACHE;
+
     private AnomalyManager() {}
 
     static long key(int bx, int bz) { return ((long) bx << 32) ^ (bz & 0xffffffffL); }
@@ -156,6 +158,7 @@ public final class AnomalyManager {
             }
         }
         ZoneData data = ZoneData.get(server);
+        boolean omen = t % 20 == 0 ? (OMEN_CACHE = EmissionEvent.omen(server)) : OMEN_CACHE;
         Simulation sim = ZoneData.get(server).sim;
         int index = 0;
         for (Anomaly a : sim.anomalies) {
@@ -171,7 +174,8 @@ public final class AnomalyManager {
             if (near.isEmpty() || !level.hasChunk(bx >> 4, bz >> 4)) continue;
             long k0 = key(bx, bz);
             Long rv = REVEALED.get(k0);
-            boolean revealed = rv != null && rv > t, calm = discharged(k0, t);
+            // перед выбросом аномалии затихают — примета, по которой сталкеры его ждут
+            boolean revealed = rv != null && rv > t, calm = discharged(k0, t) || omen;
             double y = GROUND.computeIfAbsent(((long) bx << 32) ^ (bz & 0xffffffffL),
                     k -> level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, bx, bz)) + 0.1;
             double x = bx + 0.5, z = bz + 0.5;

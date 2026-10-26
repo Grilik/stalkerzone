@@ -135,7 +135,11 @@ public final class ZoneCommands {
                             data.setDirty();
                             ru.stalkerzone.anomaly.EmissionEvent.start(c.getSource().getServer());
                             return send(c, "Выброс запущен: аномалии сменили положение.");
-                        }))
+                        })
+                        .then(Commands.literal("soon").executes(c -> {
+                            ru.stalkerzone.anomaly.EmissionEvent.schedule(ru.stalkerzone.anomaly.EmissionEvent.OMEN + 40);
+                            return send(c, "Выброс через 2 минуты, со всеми приметами и тревогой.");
+                        })))
                 .then(Commands.literal("buildings")
                         .executes(c -> send(c, Report.buildings(sim(c)))))
                 .then(Commands.literal("logistics").executes(c -> send(c, Report.logistics(sim(c)))))

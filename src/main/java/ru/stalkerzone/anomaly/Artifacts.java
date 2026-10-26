@@ -61,9 +61,12 @@ public final class Artifacts {
         ServerLevel level = server.overworld();
         if (level.players().isEmpty()) return;
         ZoneData d = ZoneData.get(server);
+        boolean harvest = t % 20 == 0 ? (HARVEST = EmissionEvent.harvest(server)) : HARVEST;
         for (ServerPlayer p : level.players()) {
+            if (p.isSpectator()) continue;
+            if (harvest) harvest(level, d, p, t);
             DetectorItem.Tier tier = held(p);
-            if (tier == null || p.isSpectator()) continue;
+            if (tier == null) continue;
             if (tier == DetectorItem.Tier.SVAROG && t % 20 == 0) AnomalyManager.revealNear(p.getX(), p.getZ(), 24, t + 60);
             int[] best = null;
             double bd = Double.MAX_VALUE;
@@ -99,6 +102,23 @@ public final class Artifacts {
             String arrow = ARROWS[(int) (rel / 45) % 8];
             p.displayClientMessage(Component.literal("§e" + tier.ru + ": " + sig + "  " + arrow + " " + (int) bd + " м"), true);
             if (tier.level >= 3) level.sendParticles(p, ParticleTypes.END_ROD, true, best[0] + 0.5, best[1] + 0.8, best[2] + 0.5, 3, 0.15, 0.3, 0.15, 0.01);
+        }
+    }
+
+    private static boolean HARVEST;
+
+    /** «Рыбалка после дождя»: свежие артефакты мерцают и находятся руками, без детектора. */
+    private static void harvest(ServerLevel level, ZoneData d, ServerPlayer p, long t) {
+        int[] grab = null;
+        for (int[] h : d.hidden) {
+            double dist = Math.sqrt(p.distanceToSqr(h[0] + 0.5, h[1] + 0.5, h[2] + 0.5));
+            if (dist > 24) continue;
+            if (dist <= 1.6) grab = h;
+            else if (t % 40 == (h[0] & 31)) level.sendParticles(p, ParticleTypes.GLOW, true, h[0] + 0.5, h[1] + 0.3, h[2] + 0.5, 4, 0.2, 0.2, 0.2, 0.01);
+        }
+        if (grab != null) {
+            materialize(level, d, grab, true);
+            p.displayClientMessage(Component.literal("§aЗдесь что-то блестит… артефакт!"), true);
         }
     }
 
