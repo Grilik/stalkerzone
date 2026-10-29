@@ -31,7 +31,14 @@ public final class ZoneWorld {
         if (bounds != null) return;
         // координаты локаций статичны и не зависят от seed
         Simulation s = ZoneScenario.create(0);
-        bounds = ZoneBounds.fromNodes(s.nodes);
+        ZoneBounds nb = ZoneBounds.fromNodes(s.nodes);
+        // v1.14: уровни оригинала 1:1 шире своих узлов — граница Зоны обходит их с запасом
+        int x0 = nb.minX, x1 = nb.maxX, z0 = nb.minZ, z1 = nb.maxZ;
+        for (ru.stalkerzone.world.xray.LevelRegion r : ru.stalkerzone.world.xray.LevelRegions.all()) {
+            x0 = Math.min(x0, r.x0 - 160); x1 = Math.max(x1, r.x0 + r.w + 160);
+            z0 = Math.min(z0, r.z0 - 160); z1 = Math.max(z1, r.z0 + r.d + 160);
+        }
+        bounds = new ZoneBounds(x0, x1, z0, z1);
         kordon = s.nodes.get(0);
     }
 

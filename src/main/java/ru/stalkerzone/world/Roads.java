@@ -45,6 +45,9 @@ public final class Roads {
         ChunkPos cp = c.getPos();
         int x0 = cp.getMinBlockX(), z0 = cp.getMinBlockZ(), x1 = cp.getMaxBlockX(), z1 = cp.getMaxBlockZ();
         for (Leg l : legs) {
+            // v1.14: между уровнями оригинала свои переходы (LinkRoads); дорога «центр–центр» не нужна
+            if (ru.stalkerzone.world.xray.LevelRegions.covers(RoadNet.get().centers[l.a()][0], RoadNet.get().centers[l.a()][1])
+                    && ru.stalkerzone.world.xray.LevelRegions.covers(RoadNet.get().centers[l.b()][0], RoadNet.get().centers[l.b()][1])) continue;
             int a0 = l.alongX() ? x0 : z0, a1 = l.alongX() ? x1 : z1;
             int c0 = l.alongX() ? z0 : x0, c1 = l.alongX() ? z1 : x1;
             if (l.hi() < a0 || l.lo() > a1) continue;

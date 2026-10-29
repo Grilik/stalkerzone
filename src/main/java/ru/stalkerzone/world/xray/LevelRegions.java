@@ -6,7 +6,39 @@ import java.util.List;
 
 /** Уровни оригинала, встроенные в мир 1:1. Загружаются лениво из папки игры (stalkerzone/levels/*.szl). */
 public final class LevelRegions {
+    /** Уровни по умолчанию (если нет layout.json). */
     public static final String[] IDS = {"l01_escape"};
+    /** Переход между уровнями: от края одного до края другого (точки уже в блоках мира). */
+    public record Link(String a, String b, int ax, int az, int bx, int bz) {}
+    private static volatile List<Link> links = List.of();
+
+    public static List<Link> links() { all(); return links; }
+
+    private static java.io.File dir() { return new java.io.File(System.getProperty("stalkerzone.levels", "stalkerzone/levels")); }
+
+    /** layout.json: {"levels":[{"id":..}], "links":[{"a","b","ax","az","bx","bz"}]} — простой разбор без библиотек. */
+    private static String[] readLayout(List<Link> outLinks) {
+        java.io.File f = new java.io.File(dir(), "layout.json");
+        if (!f.isFile()) return IDS;
+        try {
+            String s = java.nio.file.Files.readString(f.toPath());
+            List<String> ids = new ArrayList<>();
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\{\\s*\"id\"\\s*:\\s*\"(\\w+)\"").matcher(s);
+            while (m.find()) ids.add(m.group(1));
+            java.util.regex.Matcher l = java.util.regex.Pattern.compile("\"a\"\\s*:\\s*\"(\\w+)\",\\s*\"b\"\\s*:\\s*\"(\\w+)\",\\s*\"ax\"\\s*:\\s*(-?\\d+),\\s*\"az\"\\s*:\\s*(-?\\d+),\\s*\"bx\"\\s*:\\s*(-?\\d+),\\s*\"bz\"\\s*:\\s*(-?\\d+)").matcher(s);
+            while (l.find()) outLinks.add(new Link(l.group(1), l.group(2), Integer.parseInt(l.group(3)), Integer.parseInt(l.group(4)),
+                    Integer.parseInt(l.group(5)), Integer.parseInt(l.group(6))));
+            return ids.isEmpty() ? IDS : ids.toArray(new String[0]);
+        } catch (Exception e) {
+            System.err.println("[stalkerzone] layout.json не прочитан: " + e);
+            return IDS;
+        }
+    }
+
+    public static LevelRegion byId(String id) {
+        for (LevelRegion r : all()) if (r.id.equals(id)) return r;
+        return null;
+    }
     /** Ширина полосы, на которой рельеф уровня плавно переходит в обычный рельеф Зоны. */
     public static final int BLEND = 96;
     private static volatile List<LevelRegion> regions;
@@ -19,10 +51,11 @@ public final class LevelRegions {
         synchronized (LevelRegions.class) {
             if (regions != null) return regions;
             List<LevelRegion> out = new ArrayList<>();
-            for (String id : IDS) {
+            List<Link> ls = new ArrayList<>();
+            for (String id : readLayout(ls)) {
                 // данные уровня делаются из файлов игры у пользователя (tools/xray) и лежат рядом с игрой, не в моде:
                 // <папка игры>/stalkerzone/levels/<id>.szl; запасной путь — ресурсы мода
-                java.io.File ext = new java.io.File(System.getProperty("stalkerzone.levels", "stalkerzone/levels"), id + ".szl");
+                java.io.File ext = new java.io.File(dir(), id + ".szl");
                 try (InputStream in = ext.isFile() ? new java.io.FileInputStream(ext)
                         : LevelRegions.class.getResourceAsStream("/data/stalkerzone/levels/" + id + ".szl")) {
                     if (in != null) out.add(LevelRegion.load(id, in));
@@ -30,6 +63,7 @@ public final class LevelRegions {
                     System.err.println("[stalkerzone] не загрузился уровень " + id + ": " + e);
                 }
             }
+            links = List.copyOf(ls);
             regions = List.copyOf(out);
             return regions;
         }

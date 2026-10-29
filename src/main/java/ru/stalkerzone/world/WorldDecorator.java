@@ -50,7 +50,8 @@ public final class WorldDecorator {
         if (!b.inside(cp.getMinBlockX() - 8, cp.getMinBlockZ() - 8) || !b.inside(cp.getMaxBlockX() + 8, cp.getMaxBlockZ() + 8)) return;
         // v1.14: уровень оригинала 1:1 — свой рельеф, постройки и деревья, наш декор не нужен
         ru.stalkerzone.world.xray.LevelRegion lr = ru.stalkerzone.world.xray.LevelRegions.atChunk(cp.x, cp.z);
-        if (lr != null) { ru.stalkerzone.world.xray.XrayPlacer.place(chunk, lr); return; }
+        if (lr != null) { ru.stalkerzone.world.xray.XrayPlacer.place(chunk, lr); ru.stalkerzone.world.xray.LinkRoads.decorate(chunk); return; }
+        ru.stalkerzone.world.xray.LinkRoads.decorate(chunk);
         Random r = new Random(cp.toLong() * 341873128712L + 132897987541L);
         int biome = ZoneBiomes.index(cx, cz);
         // v1.14: дороги между локациями, столбы с проводами, ЛЭП, газопроводы (доходят и до лагерей)
