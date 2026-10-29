@@ -1,5 +1,5 @@
 """Экспорт уровня X-Ray в регион мода (.szl): рельеф, покрытие, вода, постройки вокселями, вырезы под землёй, деревья."""
-import numpy as np, struct, gzip, sys
+import numpy as np, struct, gzip, sys, json
 from scipy import ndimage
 import json as _j; _L=_j.load(open("levels.json"))[sys.argv[2]]; CF_DX, CF_DZ, YOFF = _L["dx"], _L["dz"], _L.get("yoff",100); _B=_L["bound"]; CROP=(_B[0]-40,_B[1]-40,_B[2]+40,_B[3]+40)
 d=open('esc.bin','rb').read()
@@ -71,6 +71,20 @@ for i,sl in enumerate(ndimage.find_objects(lab)):
         xr_x=bb[0]+px+0.5; xr_z=bb[2]+pz+0.5
         gy=ter[int(pz),int(px)]
         trees.append((int(round(xr_x))+CF_DX, int(round(-xr_z))+CF_DZ, int(round(gy))+YOFF, int(min(24,max(4,hgt))), min(6,r if not big else 3), 0))
+import os
+if os.path.exists('trees.json'):   # деревья по экземплярам из рендер-геометрии (geo2cform.py): точные места и породы
+    inst={}
+    for nm,x,z,y0,y1,r in json.load(open('trees.json')):
+        k=(int(round(x)),int(round(z))); e=inst.setdefault(k,{'n':set(),'y1':-1e9,'r':1})
+        e['n'].add(nm); e['y1']=max(e['y1'],y1); e['r']=max(e['r'],r)
+    trees=[]
+    for (x,z),e in inst.items():
+        n=' '.join(e['n'])
+        kind=5 if 'sux' in n else 2 if 'elka' in n else 1 if 'sosna' in n else 3 if 'bark_a_01' in n else 4
+        zi=int(z-bb[2]); xi=int(x-bb[0])
+        if not (0<=zi<H and 0<=xi<W): continue
+        gy=ter[zi,xi]
+        trees.append((x+CF_DX, int(round(-z))+CF_DZ, int(round(gy))+YOFF, int(min(24,max(4,e['y1']-gy))), int(min(5,max(1,round(e['r'])))), kind))
 print('trees',len(trees))
 # --- сетка в координатах MC: x = xr_x+CF_DX, z = -xr_z+CF_DZ  → строки по возрастанию MC z = убыванию xr z
 # обрезка по игровой области уровня (+40 м): дальние декорационные холмы не нужны
