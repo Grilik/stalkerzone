@@ -25,6 +25,7 @@ public final class XrayPlacer {
     /** Блок по материалу X-Ray (gamemtl.xr: id материала). */
     static BlockState material(int id, int x, int y, int z) {
         int h = (x * 73856093) ^ (y * 19349663) ^ (z * 83492791);
+        h ^= h >>> 13; h *= 0x5bd1e995; h ^= h >>> 15;
         boolean worn = (h & 7) == 0;
         return switch (id) {
             case 2 -> b(Blocks.STRIPPED_SPRUCE_LOG);                                   // wood
@@ -45,16 +46,16 @@ public final class XrayPlacer {
             case 8 -> b(Blocks.GRAVEL);
             // v1.17: категории по текстурам рендер-геометрии (tools/xray/geo2cform.py)
             case 200 -> b((h & 15) == 0 ? Blocks.GRANITE : (h & 15) == 1 ? Blocks.MUD_BRICKS : Blocks.BRICKS);        // кирпич
-            case 201 -> b(worn ? Blocks.LIGHT_GRAY_TERRACOTTA : (h & 15) == 1 ? Blocks.CALCITE : Blocks.WHITE_TERRACOTTA); // штукатурка
+            case 201 -> b(worn ? Blocks.DIORITE : (h & 3) == 1 ? Blocks.WHITE_CONCRETE_POWDER : Blocks.CALCITE);       // штукатурка
             case 202 -> b(worn ? Blocks.ANDESITE : (h & 15) == 1 ? Blocks.POLISHED_ANDESITE : Blocks.LIGHT_GRAY_CONCRETE); // бетон
             case 203 -> b(worn ? Blocks.COBBLESTONE : (h & 3) == 1 ? Blocks.ANDESITE : Blocks.POLISHED_ANDESITE);  // старый бетон
             case 204 -> b(worn ? Blocks.STRIPPED_SPRUCE_WOOD : Blocks.SPRUCE_PLANKS);                              // доски
             case 205 -> b(Blocks.DARK_OAK_PLANKS);                                                                 // крашеное дерево
             case 206 -> b(Blocks.SPRUCE_LOG);                                                                      // столбы, брёвна
-            case 207 -> b(worn ? Blocks.GRAY_TERRACOTTA : Blocks.LIGHT_GRAY_TERRACOTTA);                           // шифер
+            case 207 -> b(worn ? Blocks.ANDESITE : Blocks.POLISHED_ANDESITE);                                      // шифер
             case 208 -> b(worn ? Blocks.BROWN_TERRACOTTA : Blocks.RED_TERRACOTTA);                                 // красная кровля
             case 209 -> b((h & 3) == 0 ? Blocks.ORANGE_TERRACOTTA : Blocks.BROWN_TERRACOTTA);                      // ржавый металл
-            case 210 -> b(worn ? Blocks.GRAY_TERRACOTTA : (h & 3) == 1 ? Blocks.IRON_BLOCK : Blocks.LIGHT_GRAY_TERRACOTTA); // металл
+            case 210 -> b(worn ? Blocks.GRAY_CONCRETE : (h & 3) == 1 ? Blocks.IRON_BLOCK : Blocks.LIGHT_GRAY_CONCRETE);  // металл
             case 211 -> b(Blocks.IRON_BARS);                                                                       // решётки, сетка
             case 212 -> b(Blocks.LIGHT_GRAY_STAINED_GLASS);                                                        // стекло
             case 213 -> b(Blocks.DARK_OAK_PLANKS);                                                                 // двери, ворота
@@ -66,9 +67,9 @@ public final class XrayPlacer {
             case 220 -> b(Blocks.PACKED_MUD);                                                                      // линолеум, смола
             case 221 -> b(Blocks.LANTERN);                                                                         // лампы
             case 222 -> b(Blocks.OAK_LOG);                                                                         // пни, брёвна
-            case 223 -> b(worn ? Blocks.WHITE_TERRACOTTA : Blocks.YELLOW_TERRACOTTA);                             // жёлтая штукатурка
-            case 224 -> b(worn ? Blocks.WHITE_TERRACOTTA : Blocks.ORANGE_TERRACOTTA);                             // охра
-            case 225 -> b(worn ? Blocks.WHITE_TERRACOTTA : Blocks.PINK_TERRACOTTA);                               // розовая штукатурка
+            case 223 -> b(worn ? Blocks.SMOOTH_SANDSTONE : Blocks.YELLOW_TERRACOTTA);                             // жёлтая штукатурка
+            case 224 -> b(worn ? Blocks.SMOOTH_SANDSTONE : Blocks.ORANGE_TERRACOTTA);                             // охра
+            case 225 -> b(worn ? Blocks.CALCITE : Blocks.PINK_TERRACOTTA);                                        // розовая штукатурка
             case 100 -> b(switch (h & 15) {                                            // скала (tools/xray: наклонный «бетон»)
                 case 0, 1, 2 -> Blocks.ANDESITE;
                 case 3, 4 -> Blocks.COBBLESTONE;
@@ -80,8 +81,14 @@ public final class XrayPlacer {
         };
     }
 
+    private static int mix(int x, int z) {
+        int h = x * 0x27d4eb2d ^ z * 0x165667b1;
+        h ^= h >>> 15; h *= 0x2c1b3c6d; h ^= h >>> 12;
+        return h;
+    }
+
     static BlockState surfaceBlock(int code, int x, int z) {
-        int h = (x * 31 + z * 17) & 15;
+        int h = mix(x, z) & 15;
         return switch (code) {
             case LevelRegion.S_DIRT -> b(h < 6 ? Blocks.COARSE_DIRT : Blocks.DIRT);
             case LevelRegion.S_GRAVEL -> b(Blocks.GRAVEL);
@@ -124,6 +131,7 @@ public final class XrayPlacer {
         for (int i = 0; i + 3 < v.length; i += 4)
             ObjPropBlock.safeSet(c, new BlockPos(v[i], v[i + 1], v[i + 2]), material(v[i + 3], v[i], v[i + 1], v[i + 2]));
         doors(c, v);
+        slopes(c, v);
         // 4. деревья
         // кроны свисают в соседние чанки: ставим и деревья соседей, но только свою часть (у дерева свой посев)
         for (int ox = -1; ox <= 1; ox++) for (int oz = -1; oz <= 1; oz++)
@@ -155,6 +163,45 @@ public final class XrayPlacer {
         }
     }
 
+    /** Ступенчатые скаты крыш и откосы (v1.17): верхний блок ската, за которым выше свой же скат, — ступенькой. */
+    private static Block stairOf(int m) {
+        return switch (m) {
+            case 207, 202, 203 -> Blocks.POLISHED_ANDESITE_STAIRS;
+            case 208 -> Blocks.GRANITE_STAIRS;
+            case 204 -> Blocks.SPRUCE_STAIRS;
+            case 205, 213 -> Blocks.DARK_OAK_STAIRS;
+            case 200 -> Blocks.BRICK_STAIRS;
+            case 100 -> Blocks.COBBLESTONE_STAIRS;
+            default -> null;
+        };
+    }
+
+    private static void slopes(ChunkAccess c, int[] v) {
+        ChunkPos cp = c.getPos();
+        net.minecraft.core.Direction[] dirs = {net.minecraft.core.Direction.NORTH, net.minecraft.core.Direction.SOUTH,
+                net.minecraft.core.Direction.WEST, net.minecraft.core.Direction.EAST};
+        for (int i = 0; i + 3 < v.length; i += 4) {
+            Block st = stairOf(v[i + 3]);
+            if (st == null) continue;
+            int x = v[i], y = v[i + 1], z = v[i + 2];
+            if (!air(c, cp, x, y + 1, z)) continue;
+            for (net.minecraft.core.Direction d : dirs) {
+                int lx = x + d.getStepX(), lz = z + d.getStepZ(), hx = x - d.getStepX(), hz = z - d.getStepZ();
+                if (air(c, cp, lx, y, lz) && solid(c, cp, hx, y + 1, hz)) {
+                    ObjPropBlock.safeSet(c, new BlockPos(x, y, z), st.defaultBlockState()
+                            .setValue(net.minecraft.world.level.block.StairBlock.FACING, d.getOpposite()));
+                    break;
+                }
+            }
+        }
+    }
+
+    private static boolean air(ChunkAccess c, ChunkPos cp, int x, int y, int z) {
+        if ((x >> 4) != cp.x || (z >> 4) != cp.z) return false;
+        BlockState s = c.getBlockState(new BlockPos(x, y, z));
+        return s.isAir() || s.canBeReplaced();
+    }
+
     private static boolean solid(ChunkAccess c, ChunkPos cp, int x, int y, int z) {
         if ((x >> 4) != cp.x || (z >> 4) != cp.z) return false;
         BlockState s = c.getBlockState(new BlockPos(x, y, z));
@@ -178,14 +225,42 @@ public final class XrayPlacer {
         for (int k = 0; k < h; k++) set(c, cp, x, y + k, z, b(log));
         if (dead) return;
         BlockState lv = b(leaves).setValue(LeavesBlock.PERSISTENT, true);
-        int crown = Math.max(2, h / 2);
-        for (int dy = h - crown; dy <= h + 1; dy++) {
-            int rr = dy > h - 1 ? Math.max(1, rad - 1) : rad;
-            if (kind >= 3 && kind < 5) rr = Math.max(1, rad * (h + 1 - dy) / Math.max(1, crown));   // сосна — конусом
-            for (int dx = -rr; dx <= rr; dx++) for (int dz = -rr; dz <= rr; dz++) {
-                if (dx * dx + dz * dz > rr * rr + 1 || (dx == 0 && dz == 0 && dy < h) || r.nextInt(7) == 0) continue;
-                set(c, cp, x + dx, y + dy, z + dz, lv);
+        if (kind >= 3 && kind < 5 && species != 1) {
+            // ель: ярусы конусом от четверти высоты до макушки, через ярус уже
+            int base = Math.max(2, h / 4), top = h + 1;
+            for (int dy = base; dy <= top; dy++) {
+                double t = (dy - base) / (double) Math.max(1, top - base);
+                int rr = (int) Math.round(Math.max(2, rad + 1) * (1 - t));
+                if (((dy - base) & 1) == 1) rr = Math.max(0, rr - 1);
+                disk(c, cp, x, y + dy, z, rr, lv, r, dy < h);
             }
+            return;
+        }
+        // сосна — крона только наверху, приплюснутая; лиственные — крона-эллипсоид на верхней половине
+        int cr = species == 1 ? Math.max(2, h * 3 / 10) : Math.max(3, h * 9 / 20);
+        int rx = Math.max(2, rad + (species == 1 ? 0 : 1));
+        double mid = h + 1 - cr / 2.0, half = cr / 2.0 + 0.5;
+        for (int dy = h - cr; dy <= h + 1; dy++) {
+            double q = (dy - mid) / half;
+            if (Math.abs(q) > 1) continue;
+            int rr = (int) Math.round(rx * Math.sqrt(1 - q * q) + (r.nextInt(3) - 1) * 0.5);
+            disk(c, cp, x, y + dy, z, Math.max(1, rr), lv, r, dy < h);
+        }
+        // пара боковых веток с листвой у крупных деревьев
+        if (h >= 10 && species != 1) for (int k = 0; k < 2; k++) {
+            int bx = r.nextInt(3) - 1, bz = r.nextInt(3) - 1, by = h - cr - 1 + r.nextInt(3);
+            if (bx == 0 && bz == 0) continue;
+            set(c, cp, x + bx, y + by, z + bz, b(log));
+            disk(c, cp, x + 2 * bx, y + by + 1, z + 2 * bz, 1, lv, r, false);
+        }
+    }
+
+    private static void disk(ChunkAccess c, ChunkPos cp, int x, int y, int z, int rr, BlockState lv, Random r, boolean trunk) {
+        for (int dx = -rr; dx <= rr; dx++) for (int dz = -rr; dz <= rr; dz++) {
+            int d2 = dx * dx + dz * dz;
+            if (d2 > rr * rr + rr / 2 || (dx == 0 && dz == 0 && trunk)) continue;
+            if (d2 >= rr * rr - 1 && r.nextInt(3) == 0) continue;   // рваный край кроны
+            set(c, cp, x + dx, y, z + dz, lv);
         }
     }
 
