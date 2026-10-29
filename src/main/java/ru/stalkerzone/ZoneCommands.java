@@ -117,6 +117,9 @@ public final class ZoneCommands {
                 .then(Commands.literal("anomalies")
                         .executes(c -> send(c, Report.anomalies(sim(c))))
                         .then(Commands.literal("near").executes(ZoneCommands::anomaliesNear)))
+                .then(joinCommand())
+                .then(Commands.literal("leave").executes(c -> playerOnly(c, p -> ru.stalkerzone.npc.PlayerFaction.leave(p, ZoneData.get(c.getSource().getServer())))))
+                .then(Commands.literal("me").executes(c -> playerOnly(c, p -> ru.stalkerzone.npc.Reputation.describe(p, ZoneData.get(c.getSource().getServer()).sim))))
                 .then(Commands.literal("rep").executes(c -> {
                     try {
                         return send(c, ru.stalkerzone.npc.Reputation.describe(c.getSource().getPlayerOrException(), ZoneData.get(c.getSource().getServer()).sim));
@@ -603,6 +606,26 @@ public final class ZoneCommands {
             sb.append(n.name);
         }
         return sb.toString();
+    }
+
+    /** v1.15: /zone join <группировка> — вступить на её базе. Названия подкомандами (кириллица в слове-аргументе не читается). */
+    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> joinCommand() {
+        com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> j = Commands.literal("join")
+                .executes(c -> send(c, "Вступить: /zone join <группировка> на её базе. Берут: одиночки, долг, свобода, бандиты, наёмники, чн (чистое небо)."));
+        String[][] names = {{"одиночки", "loners"}, {"долг", "duty"}, {"свобода", "freedom"}, {"бандиты", "bandits"}, {"учёные", "scientists"},
+                {"военные", "military"}, {"монолит", "monolith"}, {"наёмники", "mercs"}, {"чн", "clear_sky"}, {"грех", "sin"}};
+        for (int i = 0; i < names.length; i++) {
+            final int fid = i;
+            for (String n : names[i])
+                j.then(Commands.literal(n).executes(c -> playerOnly(c, p -> ru.stalkerzone.npc.PlayerFaction.join(p, ZoneData.get(c.getSource().getServer()), fid))));
+        }
+        return j;
+    }
+
+    private static int playerOnly(CommandContext<CommandSourceStack> c, java.util.function.Function<net.minecraft.server.level.ServerPlayer, String> f) {
+        net.minecraft.server.level.ServerPlayer p = c.getSource().getPlayer();
+        if (p == null) return send(c, "Команда только для игрока.");
+        return send(c, f.apply(p));
     }
 
     private static int send(CommandContext<CommandSourceStack> c, String text) {

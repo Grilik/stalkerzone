@@ -163,9 +163,11 @@ public final class PdaService {
             }
             case DELIVER -> msg = deliver(p, data, id);
             case CLAIM -> {
+                ru.stalkerzone.sim.Contract cc = s.contracts.byId(id);
                 ContractBoard.Reward r = s.contracts.claim(s, id, me);
                 if (r == null) msg = "Награда недоступна";
                 else {
+                    if (cc != null) ru.stalkerzone.npc.PlayerFaction.contractDone(p, s, cc.issuer);
                     give(p, r);
                     msg = "Награда получена: " + describe(r);
                 }
@@ -223,6 +225,7 @@ public final class PdaService {
         }
         ContractBoard.Reward r = s.contracts.deliver(s, id, id(p), c.qty);
         if (r == null) return "Сдать не удалось";
+        ru.stalkerzone.npc.PlayerFaction.contractDone(p, s, c.issuer);
         give(p, r);
         return "Контракт #" + id + " выполнен. Награда: " + describe(r);
     }

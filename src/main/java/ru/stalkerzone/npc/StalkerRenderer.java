@@ -24,6 +24,7 @@ public class StalkerRenderer extends HumanoidMobRenderer<StalkerEntity, Humanoid
     public void render(StalkerEntity e, float yaw, float pt, com.mojang.blaze3d.vertex.PoseStack ps,
                        net.minecraft.client.renderer.MultiBufferSource buf, int light) {
         HumanoidModel<StalkerEntity> m = this.getModel();
+        m.crouching = e.isCrouching();   // v1.15: присел за укрытием
         if (ru.stalkerzone.compat.Tacz.isGun(e.getMainHandItem())) {
             HumanoidModel.ArmPose pose = e.isAggressive() ? HumanoidModel.ArmPose.BOW_AND_ARROW : HumanoidModel.ArmPose.CROSSBOW_HOLD;
             m.rightArmPose = pose;

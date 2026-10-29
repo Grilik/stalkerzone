@@ -601,13 +601,19 @@ public final class Simulation {
     /** Результат сделки игрока: сколько штук и на какую сумму. */
     public record Deal(int qty, long money) {}
 
+    /**
+     * Множители цен для текущей сделки игрока (v1.15: скидки по репутации и званию, PlayerCareer).
+     * Игровой слой ставит их перед сделкой и сбрасывает после; деньги всё равно идут через кассу и учёт.
+     */
+    public double playerBuyFactor = 1.0, playerSellFactor = 1.0;
+
     /** Игрок продаёт торговцу. Цена пересчитывается за каждую штуку, поэтому большой пакет сам сбивает цену. */
     public Deal playerSell(Node n, Good g, int qty) {
         if (!n.trader || qty <= 0) return new Deal(0, 0);
         int done = 0;
         long paid = 0;
         while (done < qty) {
-            long p = buyPrice(n, g);
+            long p = Math.max(1, Math.round(buyPrice(n, g) * playerSellFactor));
             if (n.market.money < p) break;
             // кустарное и прототипы торговцу некуда сбыть, кроме Зоны: сверх четырёх запасов не берёт
             if (!g.mainland && n.market.get(g) >= Math.max(4, n.target[g.ordinal()] * 4)) break;
@@ -627,7 +633,8 @@ public final class Simulation {
         int done = 0;
         long spent = 0;
         while (done < qty && n.market.get(g) > 0) {
-            long p = sellPrice(n, g);
+            // скидка не делает перепродажу выгодной: покупка всегда дороже того, что торговец сейчас платит игроку
+            long p = Math.max(Math.round(sellPrice(n, g) * playerBuyFactor), Math.round(buyPrice(n, g) * playerSellFactor) + 1);
             if (spent + p > budget) break;
             n.market.take(g, 1);
             n.market.money += p;

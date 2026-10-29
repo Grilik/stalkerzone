@@ -53,6 +53,11 @@ public final class TradeService {
 
     /** Продать весь стак из руки. Штука продаётся целиком: у частей мутантов в одной штуке несколько единиц товара. */
     public static void sell(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { sell0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void sell0(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
         if (ru.stalkerzone.compat.Tacz.isAmmo(held)) { sellTaczAmmo(p, data, n, held); return; }
         if (!(held.getItem() instanceof GoodItem gi)) return;
         int units = gi.units();
@@ -78,6 +83,11 @@ public final class TradeService {
     }
 
     public static void buy(ServerPlayer p, ZoneData data, Node n, Good g, int qty) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { buy0(p, data, n, g, qty); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void buy0(ServerPlayer p, ZoneData data, Node n, Good g, int qty) {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuy(n, g, qty, cash);
         if (d.qty() == 0) {
@@ -114,6 +124,11 @@ public final class TradeService {
 
     /** Патроны TaCZ: торговец берёт их как товар «Патроны» (целыми единицами). */
     public static void sellTaczAmmo(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { sellTaczAmmo0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void sellTaczAmmo0(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
         String ammo = ru.stalkerzone.compat.Tacz.ammoId(held);
         int per = ru.stalkerzone.compat.CompatConfig.roundsPerUnit(ammo);
         int units = held.getCount() / per;
@@ -135,6 +150,11 @@ public final class TradeService {
 
     /** Купить готовый предмет за единицы снаряжения со склада торговца (оружие TaCZ): good — кустарное или заводское. */
     public static void buyStack(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { buyStack0(p, data, n, stack, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void buyStack0(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuyAll(n, good, units, cash);
         String name = stack.getHoverName().getString();
@@ -173,6 +193,11 @@ public final class TradeService {
     }
 
     public static void buyEquipment(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { buyEquipment0(p, data, n, item, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void buyEquipment0(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuyAll(n, good, units, cash);
         String name = new ItemStack(item).getHoverName().getString();
@@ -189,6 +214,11 @@ public final class TradeService {
 
     /** Продать костюм или рюкзак из руки: цена зависит от износа. */
     public static void sellEquipment(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { sellEquipment0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void sellEquipment0(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
         int units = gearUnits(held);
         double cond = ru.stalkerzone.gear.SuitItem.condition(held);
         int worth = (int) Math.floor(units * cond * 0.8);
@@ -211,6 +241,11 @@ public final class TradeService {
 
     /** Ремонт предмета в руке: тратит детали со склада торговца и плату за работу. */
     public static void repair(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        try { repair0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
+    }
+
+    private static void repair0(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
         if (held.isEmpty() || !held.isDamageableItem() || held.getDamageValue() == 0) {
             p.sendSystemMessage(Component.literal("Возьмите в руку изношенную вещь (костюм, оружие, инструмент)."));
             return;

@@ -193,8 +193,10 @@ public class StalkerEntity extends PathfinderMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new ru.stalkerzone.npc.combat.FleeGoal(this));
         this.goalSelector.addGoal(1, new ReviveAllyGoal(this));
-        this.goalSelector.addGoal(2, new ru.stalkerzone.compat.GunAttackGoal(this, StalkerEntity::refillFromFaction));
+        // v1.15: укрытия, перебежки, отряд и мораль вместо «встал и стреляет»
+        this.goalSelector.addGoal(2, new ru.stalkerzone.npc.combat.TacticalCombatGoal(this, StalkerEntity::refillFromFaction));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1, false));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0f));
@@ -202,7 +204,7 @@ public class StalkerEntity extends PathfinderMob {
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, StalkerEntity.class, 10, true, false, this::isEnemyNpc));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, p -> hostileToPlayers() || hostileTo(p)));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::hostileTo));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, ru.stalkerzone.mutant.MutantEntity.class, 10, true, false, m -> !isTrader()));
         // существа других модов, стоящие в логовах вместо наших мутантов
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false,
@@ -222,19 +224,115 @@ public class StalkerEntity extends PathfinderMob {
         return sim.hostilityTo(sim.factions.get(faction()), o.faction()) >= 0.6;
     }
 
-    /** v1.14: игрок с плохой репутацией у этой группировки — враг. */
+    /** Враг ли игрок: плохая репутация (v1.14), член враждебной группировки (v1.15). Своих не трогают. */
     private boolean hostileTo(LivingEntity p) {
         if (isTrader() || !(p instanceof net.minecraft.server.level.ServerPlayer sp)) return false;
-        return Reputation.hostile(sp, faction());
+        Simulation sim = sim();
+        if (sim == null || faction() >= sim.factions.size()) return Reputation.hostile(sp, faction());
+        return PlayerFaction.npcHostile(faction(), sp, sim);
     }
 
-    private boolean hostileToPlayers() {
-        if (isTrader()) return false;
-        Simulation sim = sim();
-        if (sim == null || faction() >= sim.factions.size()) return false;
-        Faction f = sim.factions.get(faction());
-        return f.raider || f.fanatic;
+    // ---------------------------------------------------------------- бой (v1.15)
+
+    private ru.stalkerzone.npc.combat.CombatState combat;
+
+    public ru.stalkerzone.npc.combat.CombatState combat() {
+        if (combat == null) {
+            Simulation sim = sim();
+            boolean fan = false;
+            if (sim != null && faction() < sim.factions.size()) {
+                Faction f = sim.factions.get(faction());
+                fan = f.fanatic || f.id == ru.stalkerzone.sim.ZoneScenario.SIN;
+            }
+            combat = new ru.stalkerzone.npc.combat.CombatState(bravery(), fan);
+        }
+        return combat;
     }
+
+    private ru.stalkerzone.sim.Person person() {
+        Simulation sim = sim();
+        return sim != null && personId > 0 ? sim.people.byId(personId) : null;
+    }
+
+    /** Навык стрельбы 0..100: у именных свой, у рядовых по опыту фракции и выучке. */
+    public int combatSkill() {
+        ru.stalkerzone.sim.Person p = person();
+        if (p != null) return p.combat;
+        Simulation sim = sim();
+        if (sim == null || faction() >= sim.factions.size()) return 35;
+        return ru.stalkerzone.sim.tactics.Accuracy.rankAndFileSkill(sim.factions.get(faction()).exp, elite);
+    }
+
+    /** Храбрость −1..1: у именных из характера, у рядовых по духу группировки с личным разбросом. */
+    public double bravery() {
+        ru.stalkerzone.sim.Person p = person();
+        if (p != null) return p.bravery;
+        double base = 0;
+        Simulation sim = sim();
+        if (sim != null && faction() < sim.factions.size()) {
+            Faction f = sim.factions.get(faction());
+            base = f.scientist ? -0.6 : f.military ? 0.35 : f.mercenary ? 0.3 : f.raider ? 0.05 : f.id == ru.stalkerzone.sim.ZoneScenario.DUTY ? 0.3 : -0.05;
+        }
+        long h = getUUID().getLeastSignificantBits();
+        return Math.max(-1, Math.min(1, base + ((h & 0xff) / 255.0 - 0.5) * 0.6 + (elite ? 0.2 : 0)));
+    }
+
+    /** Командирские качества для приказов отряду. */
+    public double commandScore() {
+        ru.stalkerzone.sim.Person p = person();
+        if (p != null) {
+            double bonus = switch (p.role) { case LEADER -> 60; case DEPUTY -> 40; case SQUAD_LEADER -> 30; default -> 0; };
+            return p.command() + bonus;
+        }
+        return combatSkill() * 0.5 + (elite ? 15 : 0);
+    }
+
+    /** Рядом (16 блоков) именной командир своей группировки. */
+    public boolean namedLeaderNear() {
+        for (StalkerEntity e : level().getEntitiesOfClass(StalkerEntity.class, getBoundingBox().inflate(16),
+                x -> x != this && x.isAlive() && x.faction() == faction() && x.personId > 0)) {
+            ru.stalkerzone.sim.Person p = e.person();
+            if (p != null && p.role != ru.stalkerzone.sim.Person.Role.MEMBER && p.role != ru.stalkerzone.sim.Person.Role.SPECIALIST) return true;
+        }
+        return false;
+    }
+
+    private boolean isSquadLeader() {
+        ru.stalkerzone.sim.Person p = person();
+        return (p != null && p.role != ru.stalkerzone.sim.Person.Role.MEMBER && p.role != ru.stalkerzone.sim.Person.Role.SPECIALIST)
+                || (combat != null && combat.order == ru.stalkerzone.sim.tactics.SquadOrders.Order.LEADER && getTarget() != null);
+    }
+
+    public net.minecraft.world.phys.Vec3 homePos() {
+        return homeNode < 0 && homeX == 0 && homeZ == 0 ? null : new net.minecraft.world.phys.Vec3(homeX + 0.5, homeY, homeZ + 0.5);
+    }
+
+    /** Присесть (за низким укрытием, при перезарядке, с колена). */
+    public void setCrouch(boolean on) {
+        if (isDowned()) return;
+        net.minecraft.world.entity.Pose want = on ? net.minecraft.world.entity.Pose.CROUCHING : net.minecraft.world.entity.Pose.STANDING;
+        if (getPose() != want && getPose() != net.minecraft.world.entity.Pose.SLEEPING) setPose(want);
+    }
+
+    /** Гибель бойца бьёт по духу товарищей рядом, гибель командира сильнее; убийце и его отряду прибавляет. */
+    private void moraleOnDeath(DamageSource source) {
+        boolean leader = isSquadLeader();
+        StalkerEntity shouter = null;
+        for (StalkerEntity a : level().getEntitiesOfClass(StalkerEntity.class, getBoundingBox().inflate(20),
+                x -> x != this && x.isAlive() && !x.isTrader() && x.faction() == faction())) {
+            a.combat().morale.allyDown(Math.sqrt(a.distanceToSqr(this)));
+            if (leader) a.combat().morale.leaderDown();
+            if (shouter == null || a.distanceToSqr(this) < shouter.distanceToSqr(this)) shouter = a;
+        }
+        if (shouter != null) shouter.combat().shout(shouter, leader ? "Командира убили!" : pickLine("Минус один!", "Наших бьют!", "Двухсотый!"), leader);
+        if (source.getEntity() instanceof StalkerEntity k && k.isAlive()) {
+            k.combat().morale.enemyDown();
+            for (StalkerEntity a : level().getEntitiesOfClass(StalkerEntity.class, k.getBoundingBox().inflate(16),
+                    x -> x != k && x.isAlive() && x.faction() == k.faction())) a.combat().morale.enemyDown();
+        }
+    }
+
+    private String pickLine(String... s) { return s[this.random.nextInt(s.length)]; }
 
     // ---------------------------------------------------------------- ранения (v1.6)
 
@@ -246,6 +344,7 @@ public class StalkerEntity extends PathfinderMob {
     @Override
     public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose pose) {
         if (pose == net.minecraft.world.entity.Pose.SLEEPING) return net.minecraft.world.entity.EntityDimensions.scalable(0.9f, 0.5f);
+        if (pose == net.minecraft.world.entity.Pose.CROUCHING) return net.minecraft.world.entity.EntityDimensions.scalable(0.6f, 1.5f);
         return super.getDimensions(pose);
     }
 
@@ -274,7 +373,14 @@ public class StalkerEntity extends PathfinderMob {
             }
             return r;
         }
-        return super.hurt(source, amount);
+        float before = getHealth();
+        boolean r = super.hurt(source, amount);
+        if (r && isAlive() && !isTrader()) {
+            double frac = (before - getHealth()) / Math.max(1f, getMaxHealth());
+            combat().morale.hit(frac);
+            if (frac > 0.3) combat().shout(this, pickLine("Меня зацепило!", "Ранен!", "А-а, попали!"), true);
+        }
+        return r;
     }
 
     public void revive(float healthFraction) {
@@ -288,6 +394,9 @@ public class StalkerEntity extends PathfinderMob {
     @Override
     public void tick() {
         super.tick();
+        // вне боя дух восстанавливается
+        if (!this.level().isClientSide && combat != null && getTarget() == null && this.tickCount % 20 == 0) combat.morale.second(1, false, false, false);
+        if (!this.level().isClientSide && !isDowned() && getTarget() == null && isCrouching() && this.tickCount % 40 == 0) setCrouch(false);
         if (this.level().isClientSide || !isDowned()) return;
         if (getPose() != net.minecraft.world.entity.Pose.SLEEPING) setPose(net.minecraft.world.entity.Pose.SLEEPING);
         if (--downTicks <= 0) {
@@ -313,7 +422,10 @@ public class StalkerEntity extends PathfinderMob {
                 player.sendSystemMessage(Component.literal("Вы перевязали сталкера, он снова на ногах."));
                 // сталкерский кодекс: раненому помогают все
                 Simulation simR = sim();
-                if (simR != null && player instanceof net.minecraft.server.level.ServerPlayer spR) Reputation.add(spR, simR, faction(), 10, "помогли раненому");
+                if (simR != null && player instanceof net.minecraft.server.level.ServerPlayer spR) {
+                    Reputation.add(spR, simR, faction(), 10, "помогли раненому");
+                    if (PlayerFaction.faction(spR) == faction()) PlayerFaction.award(spR, simR, ru.stalkerzone.sim.PlayerCareer.XP_REVIVE, "подняли своего");
+                }
             } else {
                 player.sendSystemMessage(Component.literal("Сталкер тяжело ранен. Аптечка в руке и ПКМ, чтобы помочь."));
             }
@@ -340,6 +452,10 @@ public class StalkerEntity extends PathfinderMob {
                     for (String line : Report.market(sim, sim.nodes.get(homeNode)).split("\n")) {
                         player.sendSystemMessage(Component.literal(line));
                     }
+                    if (player instanceof net.minecraft.server.level.ServerPlayer spN) {
+                        String note = PlayerFaction.tradeNote(spN, sim, sim.nodes.get(homeNode));
+                        if (note != null) player.sendSystemMessage(Component.literal(note).withStyle(net.minecraft.ChatFormatting.AQUA));
+                    }
                 } else if (faction() < sim.factions.size()) {
                     Faction f = sim.factions.get(faction());
                     ru.stalkerzone.sim.Person who = personId > 0 ? sim.people.byId(personId) : null;
@@ -363,9 +479,11 @@ public class StalkerEntity extends PathfinderMob {
     public void die(DamageSource source) {
         super.die(source);
         if (!this.level().isClientSide && !isTrader()) {
+            moraleOnDeath(source);
             Simulation sim = sim();
             if (sim != null) {
                 ru.stalkerzone.sim.Person who = personId > 0 ? sim.people.byId(personId) : null;
+                boolean wasLeader = who != null && (who.role == ru.stalkerzone.sim.Person.Role.LEADER || who.role == ru.stalkerzone.sim.Person.Role.DEPUTY);
                 if (who != null) {
                     boolean leader = who.role == ru.stalkerzone.sim.Person.Role.LEADER;
                     String killer = source.getEntity() instanceof Player pk ? pk.getGameProfile().getName() : null;
@@ -381,7 +499,10 @@ public class StalkerEntity extends PathfinderMob {
                     sim.npcKilled(faction());
                 }
                 if (source.getEntity() instanceof Player) dropLoot(sim);
-                if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer spK) Reputation.killed(spK, sim, faction());
+                if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer spK) {
+                    PlayerFaction.onKill(spK, sim, faction(), wasLeader);
+                    Reputation.killed(spK, sim, faction());
+                }
                 MinecraftServer server = this.getServer();
                 if (server != null) ZoneData.get(server).setDirty();
             }

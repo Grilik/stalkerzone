@@ -34,18 +34,27 @@ public final class Reputation {
 
     private Reputation() {}
 
+    /** v1.15: репутация лежит в PlayerPersisted и переживает смерть (раньше сбрасывалась при возрождении). */
+    static net.minecraft.nbt.CompoundTag store(ServerPlayer p) {
+        net.minecraft.nbt.CompoundTag root = p.getPersistentData();
+        net.minecraft.nbt.CompoundTag per = root.getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
+        if (!root.contains(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG)) root.put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, per);
+        if (!per.contains(KEY) && root.contains(KEY)) { per.putIntArray(KEY, root.getIntArray(KEY)); root.remove(KEY); }
+        return per;
+    }
+
     public static int get(ServerPlayer p, int faction) {
-        int[] r = p.getPersistentData().getIntArray(KEY);
+        int[] r = store(p).getIntArray(KEY);
         return faction >= 0 && faction < r.length ? r[faction] : 0;
     }
 
     public static void add(ServerPlayer p, Simulation sim, int faction, int delta, String why) {
         if (faction < 0 || faction >= sim.factions.size() || delta == 0) return;
-        int[] r = p.getPersistentData().getIntArray(KEY);
+        int[] r = store(p).getIntArray(KEY);
         if (r.length < sim.factions.size()) r = java.util.Arrays.copyOf(r, sim.factions.size());
         int before = r[faction];
         r[faction] = Math.max(-100, Math.min(100, r[faction] + delta));
-        p.getPersistentData().putIntArray(KEY, r);
+        store(p).putIntArray(KEY, r);
         Faction f = sim.factions.get(faction);
         if (why != null) p.displayClientMessage(Component.literal("«" + f.name + "»: " + (delta > 0 ? "+" : "") + delta + " (" + why + ")")
                 .withStyle(delta > 0 ? ChatFormatting.GREEN : ChatFormatting.RED), true);
@@ -53,6 +62,7 @@ public final class Reputation {
             p.sendSystemMessage(Component.literal("«" + f.name + "» считают вас врагом: их бойцы стреляют без предупреждения.").withStyle(ChatFormatting.RED));
         if (before < FRIEND && r[faction] >= FRIEND)
             p.sendSystemMessage(Component.literal("«" + f.name + "» считают вас своим.").withStyle(ChatFormatting.GREEN));
+        PlayerFaction.checkStanding(p, sim);
     }
 
     /** Игрок убил бойца группировки. */
@@ -65,7 +75,7 @@ public final class Reputation {
     public static boolean hostile(ServerPlayer p, int faction) { return get(p, faction) <= HOSTILE; }
 
     public static String describe(ServerPlayer p, Simulation sim) {
-        StringBuilder sb = new StringBuilder("Репутация:");
+        StringBuilder sb = new StringBuilder(PlayerFaction.describe(p, sim)).append("\nРепутация:");
         for (Faction f : sim.factions) {
             int v = get(p, f.id);
             String s = f.fanatic ? "фанатики, говорить не о чем" : f.raider ? "грабят всех (" + v + ")"
