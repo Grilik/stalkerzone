@@ -16,7 +16,7 @@ public final class ZoneBiomes {
     public static final int KORDON = 0, GARBAGE = 1, AGROPROM = 2, DARK = 3, BAR = 4, WILD = 5, ARMY = 6, YANTAR = 7, RADAR = 8,
             PSI = 9, CHAES = 10, PERIMETER = 11, RED_FOREST = 12, OUTSKIRTS = 13, PRIPYAT = 14, SWAMPS = 15;
     /** Источник пси-излучения Выжигателя: к северу от Радара. Смертельная зона и «выжженная» земля вокруг. */
-    public static final int PSI_OFFSET_Z = -200, PSI_LETHAL = 140, PSI_REACH = 260;
+    public static final int PSI_OFFSET_Z = -450, PSI_LETHAL = 300, PSI_REACH = 600;
 
     private static int[] nx, nz, nb;
     private static int armyX, armyZ, radarX, radarZ, yantarX, yantarZ;
@@ -91,9 +91,9 @@ public final class ZoneBiomes {
         // Рыжий лес: полоса между Янтарём и Радаром
         double sx = radarX - yantarX, sz = radarZ - yantarZ, len2 = sx * sx + sz * sz;
         double t = len2 > 0 ? ((wx - yantarX) * sx + (wz - yantarZ) * sz) / len2 : -1;
-        if (t > 0.2 && t < 0.8 && Math.hypot(wx - yantarX, wz - yantarZ) > 230) {
+        if (t > 0.2 && t < 0.8 && Math.hypot(wx - yantarX, wz - yantarZ) > 460) {
             double px = yantarX + sx * t, pz = yantarZ + sz * t;
-            if (Math.hypot(wx - px, wz - pz) < 170) return RED_FOREST;
+            if (Math.hypot(wx - px, wz - pz) < 340) return RED_FOREST;
         }
         int best = 0;
         double bd = Double.MAX_VALUE;
@@ -101,7 +101,7 @@ public final class ZoneBiomes {
             double d = (wx - nx[i]) * (wx - nx[i]) + (wz - nz[i]) * (wz - nz[i]);
             if (d < bd) { bd = d; best = i; }
         }
-        if (Math.sqrt(bd) > 480) return OUTSKIRTS;
+        if (Math.sqrt(bd) > 950) return OUTSKIRTS;
         return nb[best];
     }
 }

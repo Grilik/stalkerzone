@@ -32,6 +32,7 @@ public final class StructureManager {
             int cls = data.sim.campClass(n);
             if (data.sim.buildingsAt(n.id).isEmpty()) continue;
             double cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+            if (ru.stalkerzone.world.xray.LevelRegions.covers((int) cx, (int) cz)) continue;   // уровень 1:1 — постройки из игры
             boolean near = false;
             for (ServerPlayer p : players) if (Math.hypot(p.getX() - cx, p.getZ() - cz) <= ACTIVE) near = true;
             if (!near) continue;

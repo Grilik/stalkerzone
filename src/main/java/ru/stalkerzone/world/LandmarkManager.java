@@ -44,6 +44,7 @@ public final class LandmarkManager {
             for (Node x : data.sim.nodes) if (x.name.equals(sp.node())) n = x;
             if (n == null) continue;
             int cx = n.x * ZoneBounds.SCALE + sp.dx(), cz = n.z * ZoneBounds.SCALE + sp.dz();
+            if (ru.stalkerzone.world.xray.LevelRegions.covers(cx, cz)) continue;
             boolean near = false;
             for (ServerPlayer p : players) if (Math.hypot(p.getX() - cx, p.getZ() - cz) < 120 + sp.radius() * 2) near = true;
             if (!near) continue;

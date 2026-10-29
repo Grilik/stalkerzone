@@ -13,6 +13,8 @@ public final class ZoneScenario {
     public static Simulation create(long seed) {
         List<Node> nodes = new ArrayList<>();
 
+        // v1.14: координаты по глобальной карте ТЧ в масштабе 1:1 (×10 блоков): центры уровней из game_maps_single,
+        // Кордон — деревня новичков. Свои места (Болота, посты, хутора) расставлены по канону между уровнями.
         // Карта по оригиналу (север это −Z): Кордон на юге, над ним Свалка, Агропром к западу, Тёмная долина к востоку,
         // дальше Бар, к западу Дикая территория и Янтарь, к северу Армейские склады, Радар с Выжигателем, Припять и ЧАЭС.
         // Порядок точек не менять: на номера опираются базы фракций и сохранения.
@@ -20,76 +22,76 @@ public final class ZoneScenario {
         kordon.farmCap = 30; kordon.partsCap = 5; kordon.artifactCap = 1; kordon.housing = 50;
         trader(kordon, 1.08, 0.95, caps(50, 15, 120, 15, 3, 40));
 
-        Node svalka = node(nodes, "Свалка", NodeType.RUINS, 0, -45);
+        Node svalka = node(nodes, "Свалка", NodeType.RUINS, 26, -147);
         svalka.farmCap = 5; svalka.partsCap = 30; svalka.artifactCap = 1; svalka.housing = 15; svalka.defense = 18;
 
-        Node agroprom = node(nodes, "Агропром", NodeType.RUINS, -55, -40);
+        Node agroprom = node(nodes, "Агропром", NodeType.RUINS, -45, -128);
         agroprom.farmCap = 10; agroprom.partsCap = 25; agroprom.artifactCap = 2; agroprom.housing = 15; agroprom.defense = 24;
 
-        Node dark = node(nodes, "Тёмная долина", NodeType.BASE, 55, -60);
+        Node dark = node(nodes, "Тёмная долина", NodeType.BASE, 133, -160);
         dark.farmCap = 25; dark.partsCap = 10; dark.artifactCap = 1; dark.housing = 40;
 
-        Node bar = node(nodes, "Бар", NodeType.BASE, 0, -100);
+        Node bar = node(nodes, "Бар", NodeType.BASE, 29, -248);
         bar.farmCap = 20; bar.housing = 45; bar.partsCap = 5; bar.artifactCap = 1;
         trader(bar, 1.08, 0.95, caps(70, 10, 100, 12, 2, 35));
 
-        Node wild = node(nodes, "Дикая территория", NodeType.SETTLEMENT, -50, -110);
+        Node wild = node(nodes, "Дикая территория", NodeType.SETTLEMENT, -12, -248);
         wild.farmCap = 30; wild.partsCap = 5; wild.artifactCap = 1; wild.housing = 20; wild.defense = 22;
 
-        Node army = node(nodes, "Армейские склады", NodeType.BASE, 5, -155);
+        Node army = node(nodes, "Армейские склады", NodeType.BASE, 40, -332);
         army.farmCap = 30; army.partsCap = 25; army.artifactCap = 1; army.housing = 40;
 
-        Node yantar = node(nodes, "Янтарь", NodeType.ANOMALY, -110, -115);
+        Node yantar = node(nodes, "Янтарь", NodeType.ANOMALY, -72, -220);
         yantar.farmCap = 20; yantar.partsCap = 5; yantar.artifactCap = 5; yantar.housing = 30; yantar.defense = 30;
         trader(yantar, 1.15, 0.90, caps(25, 5, 40, 5, 1, 15));
 
         // Радар: источник пси-излучения Выжигателя (под ним X-10)
-        Node radar = node(nodes, "Радар", NodeType.PSI, 5, -210);
+        Node radar = node(nodes, "Радар", NodeType.PSI, 87, -404);
         radar.partsCap = 5; radar.artifactCap = 6; radar.housing = 10; radar.defense = 45;
 
         // Припять: город из нескольких районов, за Радаром; дорога закрыта, пока работает Выжигатель
-        Node center = node(nodes, "Припять: центр", NodeType.CITY, 5, -262);
+        Node center = node(nodes, "Припять: центр", NodeType.CITY, 80, -512);
         center.farmCap = 5; center.partsCap = 30; center.artifactCap = 3; center.housing = 35; center.defense = 55;
 
-        Node chaes = node(nodes, "ЧАЭС", NodeType.BASE, 5, -320);
+        Node chaes = node(nodes, "ЧАЭС", NodeType.BASE, 36, -668);
         chaes.farmCap = 50; chaes.partsCap = 40; chaes.artifactCap = 8; chaes.housing = 130;
 
         // запад: база армии и блокпосты на дороге к учёным
-        Node perimeter = node(nodes, "Военная база «Периметр»", NodeType.BASE, -145, -25);
+        Node perimeter = node(nodes, "Военная база «Периметр»", NodeType.BASE, -80, -30);
         perimeter.farmCap = 80; perimeter.partsCap = 30; perimeter.housing = 90;
 
-        Node post1 = node(nodes, "Блокпост «Лесной»", NodeType.OUTPOST, -150, -70);
+        Node post1 = node(nodes, "Блокпост «Лесной»", NodeType.OUTPOST, -95, -95);
         post1.housing = 6; post1.defense = 18;
 
-        Node post2 = node(nodes, "Блокпост «Болотный»", NodeType.OUTPOST, -140, -100);
+        Node post2 = node(nodes, "Блокпост «Болотный»", NodeType.OUTPOST, -100, -160);
         post2.housing = 6; post2.defense = 18;
 
-        Node prometheus = node(nodes, "Припять: «Прометей»", NodeType.CITY, -32, -250);
+        Node prometheus = node(nodes, "Припять: «Прометей»", NodeType.CITY, 6, -488);
         prometheus.farmCap = 5; prometheus.partsCap = 25; prometheus.artifactCap = 2; prometheus.housing = 25; prometheus.defense = 50;
 
-        Node lazurny = node(nodes, "Припять: «Лазурный»", NodeType.CITY, 42, -252);
+        Node lazurny = node(nodes, "Припять: «Лазурный»", NodeType.CITY, 154, -492);
         lazurny.farmCap = 5; lazurny.partsCap = 25; lazurny.artifactCap = 3; lazurny.housing = 25; lazurny.defense = 50;
 
-        Node hospital = node(nodes, "Припять: больница", NodeType.CITY, 8, -290);
+        Node hospital = node(nodes, "Припять: больница", NodeType.CITY, 86, -568);
         hospital.farmCap = 5; hospital.partsCap = 20; hospital.artifactCap = 2; hospital.housing = 25; hospital.defense = 55;
 
         // v1.10: полевые базы армии на дороге от Агропрома к Янтарю (меньше КПП): через них идёт плата учёных
-        Node fbAgro = node(nodes, "База военных «Агропром»", NodeType.OUTPOST, -75, -65);
+        Node fbAgro = node(nodes, "База военных «Агропром»", NodeType.OUTPOST, -80, -120);
         fbAgro.housing = 14; fbAgro.defense = 22; fbAgro.farmCap = 4;
-        Node fbYantar = node(nodes, "База военных «Янтарь»", NodeType.OUTPOST, -95, -92);
+        Node fbYantar = node(nodes, "База военных «Янтарь»", NodeType.OUTPOST, -92, -190);
         fbYantar.housing = 14; fbYantar.defense = 22; fbYantar.partsCap = 3;
 
         // v1.14: новые локации (только в конец списка)
-        Node swamps = node(nodes, "Болота", NodeType.BASE, -85, 20);
+        Node swamps = node(nodes, "Болота", NodeType.BASE, -110, 20);
         swamps.farmCap = 20; swamps.partsCap = 5; swamps.artifactCap = 2; swamps.housing = 35;
         trader(swamps, 1.15, 0.90, caps(25, 5, 40, 8, 1, 15));
-        Node deadCity = node(nodes, "Мёртвый город", NodeType.RUINS, -85, -165);
+        Node deadCity = node(nodes, "Мёртвый город", NodeType.RUINS, -89, -319);
         deadCity.farmCap = 5; deadCity.partsCap = 25; deadCity.artifactCap = 2; deadCity.housing = 30; deadCity.defense = 30;
-        Node dogVillage = node(nodes, "Собачья деревня", NodeType.RUINS, 50, 15);
+        Node dogVillage = node(nodes, "Собачья деревня", NodeType.RUINS, 120, 0);
         dogVillage.farmCap = 8; dogVillage.partsCap = 10; dogVillage.artifactCap = 1; dogVillage.housing = 10; dogVillage.defense = 26;
-        Node forester = node(nodes, "Кордон Лесника", NodeType.SETTLEMENT, -45, -185);
+        Node forester = node(nodes, "Кордон Лесника", NodeType.SETTLEMENT, -20, -390);
         forester.farmCap = 6; forester.partsCap = 3; forester.artifactCap = 3; forester.housing = 6; forester.defense = 30;
-        Node doctor = node(nodes, "Хутор Болотного Доктора", NodeType.SETTLEMENT, -115, 45);
+        Node doctor = node(nodes, "Хутор Болотного Доктора", NodeType.SETTLEMENT, -140, 45);
         doctor.farmCap = 6; doctor.housing = 4; doctor.defense = 40;
 
         ZoneGraph g = new ZoneGraph(nodes.size());

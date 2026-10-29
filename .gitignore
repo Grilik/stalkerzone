@@ -10,3 +10,14 @@ __pycache__/
 *.pyc
 javac.*.args
 /StalkerZone-Textures.zip
+
+# данные уровней оригинальной игры (производные файлов GSC) — не публикуются, генерируются tools/xray у себя
+*.szl
+/tools/xray/out/
+/tools/xray/LzHuf.cpp
+/tools/xray/lzhuf.cpp
+/tools/xray/*.o
+/tools/xray/xdb
+/tools/xray/rast
+/tools/xray/vox
+*.bin
