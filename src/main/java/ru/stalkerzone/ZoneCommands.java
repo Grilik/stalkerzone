@@ -608,7 +608,7 @@ public final class ZoneCommands {
         return sb.toString();
     }
 
-    /** v1.15: /zone join <группировка> — вступить на её базе. Названия подкомандами (кириллица в слове-аргументе не читается). */
+    /** v1.16: /zone join <группировка> — вступить на её базе. Названия подкомандами (кириллица в слове-аргументе не читается). */
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> joinCommand() {
         com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> j = Commands.literal("join")
                 .executes(c -> send(c, "Вступить: /zone join <группировка> на её базе. Берут: одиночки, долг, свобода, бандиты, наёмники, чн (чистое небо)."));

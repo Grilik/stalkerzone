@@ -3,7 +3,7 @@ import ru.stalkerzone.sim.tactics.*;
 
 import java.util.*;
 
-/** v1.15: мораль, меткость, укрытия, приказы отряду, карьера игрока и скидки (закон сохранения). */
+/** v1.16: мораль, меткость, укрытия, приказы отряду, карьера игрока и скидки (закон сохранения). */
 public class TacticsTest {
     static int f = 0;
     static void ck(boolean ok, String m) { System.out.println((ok ? "OK   " : "FAIL ") + m); if (!ok) f++; }

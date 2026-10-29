@@ -195,7 +195,7 @@ public class StalkerEntity extends PathfinderMob {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new ru.stalkerzone.npc.combat.FleeGoal(this));
         this.goalSelector.addGoal(1, new ReviveAllyGoal(this));
-        // v1.15: укрытия, перебежки, отряд и мораль вместо «встал и стреляет»
+        // v1.16: укрытия, перебежки, отряд и мораль вместо «встал и стреляет»
         this.goalSelector.addGoal(2, new ru.stalkerzone.npc.combat.TacticalCombatGoal(this, StalkerEntity::refillFromFaction));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1, false));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8));
@@ -224,7 +224,7 @@ public class StalkerEntity extends PathfinderMob {
         return sim.hostilityTo(sim.factions.get(faction()), o.faction()) >= 0.6;
     }
 
-    /** Враг ли игрок: плохая репутация (v1.14), член враждебной группировки (v1.15). Своих не трогают. */
+    /** Враг ли игрок: плохая репутация (v1.14), член враждебной группировки (v1.16). Своих не трогают. */
     private boolean hostileTo(LivingEntity p) {
         if (isTrader() || !(p instanceof net.minecraft.server.level.ServerPlayer sp)) return false;
         Simulation sim = sim();
@@ -232,7 +232,7 @@ public class StalkerEntity extends PathfinderMob {
         return PlayerFaction.npcHostile(faction(), sp, sim);
     }
 
-    // ---------------------------------------------------------------- бой (v1.15)
+    // ---------------------------------------------------------------- бой (v1.16)
 
     private ru.stalkerzone.npc.combat.CombatState combat;
 

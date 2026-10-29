@@ -25,7 +25,7 @@ import ru.stalkerzone.world.ZoneBounds;
 import ru.stalkerzone.world.ZoneWorld;
 
 /**
- * Игрок в группировке (v1.15): вступление и уход, звание по опыту, свои/чужие для NPC, скидки у торговцев,
+ * Игрок в группировке (v1.16): вступление и уход, звание по опыту, свои/чужие для NPC, скидки у торговцев,
  * смерть с потерей снаряжения и возрождение на базе своей группировки. Всё хранится в PlayerPersisted
  * и переживает смерть. Логика правил — PlayerCareer (чистая, с тестами).
  */
@@ -190,10 +190,10 @@ public final class PlayerFaction {
 
     // ------------------------------------------------------------------ смерть и возрождение
 
-    public static final class Events {
+    public static final class CareerEvents {   // имя уникально: EventBus генерирует обработчики по простому имени класса и метода
         /** Снаряжение остаётся на месте гибели (лежит 20 минут), КПК остаётся при себе. */
         @SubscribeEvent
-        public void onDrops(LivingDropsEvent e) {
+        public void onPlayerDrops(LivingDropsEvent e) {
             if (!(e.getEntity() instanceof ServerPlayer p)) return;
             if (p.serverLevel().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
             ListTag kept = new ListTag();
@@ -209,7 +209,7 @@ public final class PlayerFaction {
         }
 
         @SubscribeEvent
-        public void onClone(PlayerEvent.Clone e) {
+        public void onPlayerClone(PlayerEvent.Clone e) {
             if (!e.isWasDeath() || !(e.getEntity() instanceof ServerPlayer np) || !(e.getOriginal() instanceof ServerPlayer op)) return;
             // Forge и так переносит PlayerPersisted; подстрахуемся
             CompoundTag old = op.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
@@ -217,7 +217,7 @@ public final class PlayerFaction {
         }
 
         @SubscribeEvent
-        public void onRespawn(PlayerEvent.PlayerRespawnEvent e) {
+        public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
             if (e.isEndConquered() || !(e.getEntity() instanceof ServerPlayer p)) return;
             CompoundTag t = Reputation.store(p);
             ListTag kept = t.getList(KEPT, Tag.TAG_COMPOUND);
@@ -240,7 +240,7 @@ public final class PlayerFaction {
 
         /** Опыт за мутантов. */
         @SubscribeEvent
-        public void onDeath(LivingDeathEvent e) {
+        public void onMutantKilled(LivingDeathEvent e) {
             if (e.getEntity().level().isClientSide || !(e.getSource().getEntity() instanceof ServerPlayer p)) return;
             boolean mutant = e.getEntity() instanceof ru.stalkerzone.mutant.MutantEntity
                     || e.getEntity().getPersistentData().contains(ru.stalkerzone.mutant.MutantManager.TAG_LAIR);

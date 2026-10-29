@@ -34,7 +34,7 @@ public final class Reputation {
 
     private Reputation() {}
 
-    /** v1.15: репутация лежит в PlayerPersisted и переживает смерть (раньше сбрасывалась при возрождении). */
+    /** v1.16: репутация лежит в PlayerPersisted и переживает смерть (раньше сбрасывалась при возрождении). */
     static net.minecraft.nbt.CompoundTag store(ServerPlayer p) {
         net.minecraft.nbt.CompoundTag root = p.getPersistentData();
         net.minecraft.nbt.CompoundTag per = root.getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);

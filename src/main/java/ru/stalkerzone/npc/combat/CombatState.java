@@ -9,7 +9,7 @@ import ru.stalkerzone.sim.tactics.Morale;
 import ru.stalkerzone.sim.tactics.SquadOrders;
 
 /**
- * Боевое состояние сталкера (v1.15): мораль, приказ в отряде, подавление, крики.
+ * Боевое состояние сталкера (v1.16): мораль, приказ в отряде, подавление, крики.
  * Живёт только в мире (не сохраняется): после перезагрузки боец спокоен.
  */
 public final class CombatState {

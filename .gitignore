@@ -21,3 +21,4 @@ javac.*.args
 /tools/xray/rast
 /tools/xray/vox
 *.bin
+libs/

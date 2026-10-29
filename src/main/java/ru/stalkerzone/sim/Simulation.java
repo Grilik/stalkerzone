@@ -602,7 +602,7 @@ public final class Simulation {
     public record Deal(int qty, long money) {}
 
     /**
-     * Множители цен для текущей сделки игрока (v1.15: скидки по репутации и званию, PlayerCareer).
+     * Множители цен для текущей сделки игрока (v1.16: скидки по репутации и званию, PlayerCareer).
      * Игровой слой ставит их перед сделкой и сбрасывает после; деньги всё равно идут через кассу и учёт.
      */
     public double playerBuyFactor = 1.0, playerSellFactor = 1.0;

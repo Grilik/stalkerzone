@@ -53,7 +53,7 @@ public final class TradeService {
 
     /** Продать весь стак из руки. Штука продаётся целиком: у частей мутантов в одной штуке несколько единиц товара. */
     public static void sell(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { sell0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
@@ -83,7 +83,7 @@ public final class TradeService {
     }
 
     public static void buy(ServerPlayer p, ZoneData data, Node n, Good g, int qty) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { buy0(p, data, n, g, qty); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
@@ -124,7 +124,7 @@ public final class TradeService {
 
     /** Патроны TaCZ: торговец берёт их как товар «Патроны» (целыми единицами). */
     public static void sellTaczAmmo(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { sellTaczAmmo0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
@@ -150,7 +150,7 @@ public final class TradeService {
 
     /** Купить готовый предмет за единицы снаряжения со склада торговца (оружие TaCZ): good — кустарное или заводское. */
     public static void buyStack(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { buyStack0(p, data, n, stack, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
@@ -193,7 +193,7 @@ public final class TradeService {
     }
 
     public static void buyEquipment(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { buyEquipment0(p, data, n, item, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
@@ -214,7 +214,7 @@ public final class TradeService {
 
     /** Продать костюм или рюкзак из руки: цена зависит от износа. */
     public static void sellEquipment(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { sellEquipment0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
@@ -241,7 +241,7 @@ public final class TradeService {
 
     /** Ремонт предмета в руке: тратит детали со склада торговца и плату за работу. */
     public static void repair(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
-        PlayerFaction.applyTrade(p, data.sim, n);   // v1.15: скидки своим и друзьям
+        PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
         try { repair0(p, data, n, held); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
