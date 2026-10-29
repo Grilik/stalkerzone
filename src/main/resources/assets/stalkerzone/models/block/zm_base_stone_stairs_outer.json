@@ -1,0 +1,8 @@
+{
+ "parent": "minecraft:block/outer_stairs",
+ "textures": {
+  "bottom": "stalkerzone:block/zm_base_stone",
+  "top": "stalkerzone:block/zm_base_stone",
+  "side": "stalkerzone:block/zm_base_stone"
+ }
+}

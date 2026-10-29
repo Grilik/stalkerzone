@@ -14,7 +14,7 @@ public final class LevelRegions {
 
     public static List<Link> links() { all(); return links; }
 
-    private static java.io.File dir() { return new java.io.File(System.getProperty("stalkerzone.levels", "stalkerzone/levels")); }
+    static java.io.File dir() { return new java.io.File(System.getProperty("stalkerzone.levels", "stalkerzone/levels")); }
 
     /** layout.json: {"levels":[{"id":..}], "links":[{"a","b","ax","az","bx","bz"}]} — простой разбор без библиотек. */
     private static String[] readLayout(List<Link> outLinks) {

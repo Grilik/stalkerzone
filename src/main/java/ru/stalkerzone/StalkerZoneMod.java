@@ -28,6 +28,7 @@ public class StalkerZoneMod {
         ru.stalkerzone.compat.GunQuality.register();
         ru.stalkerzone.mutant.MutantRegistry.init();
         ru.stalkerzone.block.ModBlocks.init();
+        ru.stalkerzone.block.ZoneBlocks.init();
         ru.stalkerzone.block.ModBlocks.BLOCKS.register(modBus);
         ru.stalkerzone.world.ZoneBiomeSource.SOURCES.register(modBus);
         ru.stalkerzone.world.xray.XrayTerrain.TYPES.register(modBus);

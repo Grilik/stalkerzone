@@ -27,6 +27,9 @@ public final class XrayPlacer {
         int h = (x * 73856093) ^ (y * 19349663) ^ (z * 83492791);
         h ^= h >>> 13; h *= 0x5bd1e995; h ^= h >>> 15;
         boolean worn = (h & 7) == 0;
+        if (id >= 128 && id < 128 + ZM.length) return ru.stalkerzone.block.ZoneBlocks.full(ZM[id - 128]);
+        ru.stalkerzone.block.ZoneMat zm = zoneOf(id, worn, h);
+        if (zm != null) return ru.stalkerzone.block.ZoneBlocks.full(zm);
         return switch (id) {
             case 2 -> b(Blocks.STRIPPED_SPRUCE_LOG);                                   // wood
             case 3 -> b(worn ? Blocks.ANDESITE : Blocks.LIGHT_GRAY_CONCRETE);           // concrete
@@ -87,6 +90,34 @@ public final class XrayPlacer {
         return h;
     }
 
+    static final ru.stalkerzone.block.ZoneMat[] ZM = ru.stalkerzone.block.ZoneMat.values();
+
+    /** Категория текстуры (tools/xray/geo2cform.py) -> материал Зоны; null — ванильный блок ниже. */
+    static ru.stalkerzone.block.ZoneMat zoneOf(int id, boolean worn, int h) {
+        return switch (id) {
+            case 200 -> worn ? ru.stalkerzone.block.ZoneMat.BRICK_DIRTY : ru.stalkerzone.block.ZoneMat.BRICK_RED;
+            case 201 -> worn ? ru.stalkerzone.block.ZoneMat.PLASTER_OLD : ru.stalkerzone.block.ZoneMat.PLASTER;
+            case 202 -> worn ? ru.stalkerzone.block.ZoneMat.CONCRETE_DIRTY : ru.stalkerzone.block.ZoneMat.CONCRETE;
+            case 203 -> ru.stalkerzone.block.ZoneMat.CONCRETE_OLD;
+            case 204 -> worn ? ru.stalkerzone.block.ZoneMat.BOARDS_OLD : ru.stalkerzone.block.ZoneMat.PLANKS_GRAY;
+            case 205 -> ru.stalkerzone.block.ZoneMat.WOOD_PAINTED;
+            case 206 -> ru.stalkerzone.block.ZoneMat.WOOD_POST;
+            case 207 -> ru.stalkerzone.block.ZoneMat.SHIFER;
+            case 208 -> ru.stalkerzone.block.ZoneMat.ROOF_RED;
+            case 209 -> worn ? ru.stalkerzone.block.ZoneMat.RUST_SHEET : ru.stalkerzone.block.ZoneMat.RUST;
+            case 210 -> worn ? ru.stalkerzone.block.ZoneMat.CORRUGATED : ru.stalkerzone.block.ZoneMat.METAL_PLATE;
+            case 212 -> ru.stalkerzone.block.ZoneMat.GLASS_DIRTY;
+            case 213 -> ru.stalkerzone.block.ZoneMat.BOARDS_OLD;
+            case 214 -> (h & 3) == 0 ? ru.stalkerzone.block.ZoneMat.METAL_PLATE : (h & 3) == 1 ? ru.stalkerzone.block.ZoneMat.RUST_SHEET : ru.stalkerzone.block.ZoneMat.RUST;
+            case 215 -> worn ? ru.stalkerzone.block.ZoneMat.METAL_GREEN_RUST : ru.stalkerzone.block.ZoneMat.METAL_GREEN;
+            case 217 -> ru.stalkerzone.block.ZoneMat.SANDBAGS;
+            case 219 -> ru.stalkerzone.block.ZoneMat.TILE;
+            case 220 -> ru.stalkerzone.block.ZoneMat.LINOLEUM;
+            case 100 -> (h & 7) < 2 ? null : ru.stalkerzone.block.ZoneMat.ROCKS;
+            default -> null;
+        };
+    }
+
     static BlockState surfaceBlock(int code, int x, int z) {
         int h = mix(x, z) & 15;
         return switch (code) {
@@ -128,14 +159,19 @@ public final class XrayPlacer {
         for (int i = 0; i + 2 < a.length; i += 3) ObjPropBlock.safeSet(c, new BlockPos(a[i], a[i + 1], a[i + 2]), b(Blocks.AIR));
         // 3. постройки
         int[] v = r.voxels(cp.x, cp.z);
+        LevelBuildings lb = LevelBuildings.of(r.id);
+        if (!lb.houses.isEmpty() || !lb.fences.isEmpty()) v = withoutTemplated(v, lb, r);
         for (int i = 0; i + 3 < v.length; i += 4)
             ObjPropBlock.safeSet(c, new BlockPos(v[i], v[i + 1], v[i + 2]), material(v[i + 3], v[i], v[i + 1], v[i + 2]));
         doors(c, v);
         slopes(c, v);
+        // дома и заборы по шаблону (вместо кубиков)
+        for (LevelBuildings.House h : lb.houses) HouseBuilder.build(c, h);
+        HouseBuilder.fence(c, lb, r);
         // 4. деревья
         // кроны свисают в соседние чанки: ставим и деревья соседей, но только свою часть (у дерева свой посев)
         for (int ox = -1; ox <= 1; ox++) for (int oz = -1; oz <= 1; oz++)
-            for (int[] t : r.trees(cp.x + ox, cp.z + oz))
+            for (int[] t : r.trees(cp.x + ox, cp.z + oz)) if (lb.houseAt(t[0], t[2]) == null)
                 tree(c, t[0], r.groundBlock(t[0], t[2]) + 1, t[2], t[3], t[4], t[5], new Random(t[0] * 341873128712L + t[2] * 132897987541L));
     }
 
@@ -165,6 +201,8 @@ public final class XrayPlacer {
 
     /** Ступенчатые скаты крыш и откосы (v1.17): верхний блок ската, за которым выше свой же скат, — ступенькой. */
     private static Block stairOf(int m) {
+        ru.stalkerzone.block.ZoneMat zm = m >= 128 && m < 128 + ZM.length ? ZM[m - 128] : zoneOf(m, false, 1);
+        if (zm != null && zm.kind != ru.stalkerzone.block.ZoneMat.Kind.GLASS) return ru.stalkerzone.block.ZoneBlocks.STAIRS.get(zm).get();
         return switch (m) {
             case 207, 202, 203 -> Blocks.POLISHED_ANDESITE_STAIRS;
             case 208 -> Blocks.GRANITE_STAIRS;
@@ -196,6 +234,21 @@ public final class XrayPlacer {
         }
     }
 
+    /** Воксели без тех, что заменяет шаблон: дома (по следу с карнизом) и заборы (низ колонки). */
+    private static int[] withoutTemplated(int[] v, LevelBuildings lb, LevelRegion r) {
+        int[] out = new int[v.length];
+        int n = 0;
+        for (int i = 0; i + 3 < v.length; i += 4) {
+            int x = v[i], y = v[i + 1], z = v[i + 2];
+            LevelBuildings.House h = lb.houseAt(x, z);
+            if (h != null && y > h.y() - 1) continue;
+            if (lb.fenceAt.containsKey(LevelBuildings.key(x, z)) && y <= r.groundBlock(x, z) + 3) continue;
+            System.arraycopy(v, i, out, n, 4);
+            n += 4;
+        }
+        return java.util.Arrays.copyOf(out, n);
+    }
+
     private static boolean air(ChunkAccess c, ChunkPos cp, int x, int y, int z) {
         if ((x >> 4) != cp.x || (z >> 4) != cp.z) return false;
         BlockState s = c.getBlockState(new BlockPos(x, y, z));
@@ -217,8 +270,11 @@ public final class XrayPlacer {
         // kind: <3 берёза, 3..4 хвойное (конусом), иначе лиственное
         int kind = switch (species) { case 1, 2 -> 3; case 3 -> 0; case 4 -> roll < 2 ? 0 : 6; default -> roll; };
         Block log = species == 1 ? Blocks.SPRUCE_LOG : kind < 3 ? Blocks.BIRCH_LOG : kind < 5 ? Blocks.SPRUCE_LOG : (roll & 1) == 0 ? Blocks.DARK_OAK_LOG : Blocks.OAK_LOG;
+        if (species == 1) log = ru.stalkerzone.block.ZoneBlocks.FULL.get(ru.stalkerzone.block.ZoneMat.BARK_PINE).get();
+        else if (kind < 3) log = ru.stalkerzone.block.ZoneBlocks.FULL.get(ru.stalkerzone.block.ZoneMat.BARK_BIRCH).get();
         Block leaves = kind < 3 ? Blocks.BIRCH_LEAVES : kind < 5 ? Blocks.SPRUCE_LEAVES : (roll & 1) == 0 ? Blocks.DARK_OAK_LEAVES : Blocks.OAK_LEAVES;
         boolean dead = species == 5 || (species == 0 && r.nextInt(12) == 0);
+        if (dead) log = ru.stalkerzone.block.ZoneBlocks.FULL.get(ru.stalkerzone.block.ZoneMat.BARK_DEAD).get();
         h = Math.max(4, Math.min(22, h));
         rad = Math.max(1, Math.min(4, rad));
         ChunkPos cp = c.getPos();

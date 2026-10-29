@@ -40,7 +40,17 @@ RULES=[  # (регексп по текстуре, категория)
  (r'mtl_|metal|metall|radiator|transformer|electr|pult|pribor|shitok|safe|vanna|vac_|lamppost|dangerbox|governmentbox|doorbox|vishka|engine', 210),
 ]
 RULES=[(re.compile(a),b) for a,b in RULES]
+import os as _os
+sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', 'zone_blocks'))
+
+from materials import M as _ZM
+ZONE = {g.replace('/', '\\'): 128 + i for i, (k, ru, kind, pat, col, g, ex) in enumerate(_ZM)
+        if kind != 'glass' and 'door' not in ex and not k.startswith(('ground_', 'bark_'))}
 def category(tex):
+    z = ZONE.get(tex.lower())
+    if z is not None: return z
+    return base_category(tex)
+def base_category(tex):
     t=tex.lower()
     if SKIP.search(t): return None
     for rx,c in RULES:
