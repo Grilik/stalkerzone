@@ -43,6 +43,13 @@ public final class XrayPlacer {
             case 60 -> b(Blocks.GRAY_TERRACOTTA);                                      // tin
             case 81 -> b(Blocks.BROWN_WOOL);                                           // cloth
             case 8 -> b(Blocks.GRAVEL);
+            case 100 -> b(switch (h & 15) {                                            // скала (tools/xray: наклонный «бетон»)
+                case 0, 1, 2 -> Blocks.ANDESITE;
+                case 3, 4 -> Blocks.COBBLESTONE;
+                case 5 -> Blocks.TUFF;
+                case 6 -> Blocks.MOSSY_COBBLESTONE;
+                default -> Blocks.STONE;
+            });
             default -> b(Blocks.STONE);
         };
     }

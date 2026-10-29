@@ -111,6 +111,9 @@ public final class Simulation {
             // пси-поле Выжигателя перекрывает дорогу от Радара в Припять
             for (Node c : nodes) if (c.type == NodeType.CITY && graph.edgeDays(n.id, c.id) > 0) graph.setClosed(n.id, c.id, !monolithActive);
         }
+        // v1.15: второй путь на север (Лиманск — Госпиталь) упирается в ту же завесу у самой станции
+        if (mono != null) for (Node c : nodes)
+            if (c.name.equals("Госпиталь") && graph.edgeDays(c.id, mono.baseNode) > 0) graph.setClosed(c.id, mono.baseNode, !monolithActive);
         graph.build();
     }
 

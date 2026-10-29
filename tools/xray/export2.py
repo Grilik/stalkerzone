@@ -39,6 +39,17 @@ for zi in range(VD):
             if b-a>=3:
                 for yy in range(a+1,b): air.append((int(round(vbb[0]+x+0.5))+CF_DX, Y0+yy+YOFF, int(round(-xr_z))+CF_DZ))
 print('voxels',len(vox),'air',len(air))
+# --- скалы: связные (по следу сверху) массивы «бетона», где заметная доля граней наклонная, — камень целиком
+rk=[v for v in vox if v[3] in (3,100)]
+if rk:
+    a=np.array([(v[0],v[2],v[3]) for v in rk]); x0_,z0_=a[:,0].min(),a[:,1].min()
+    fp=np.zeros((a[:,1].max()-z0_+1,a[:,0].max()-x0_+1),bool); fp[a[:,1]-z0_,a[:,0]-x0_]=True
+    lab,_n=ndimage.label(fp,structure=np.ones((3,3)))
+    li=lab[a[:,1]-z0_,a[:,0]-x0_]
+    tot=np.bincount(li,minlength=_n+1); rcnt=np.bincount(li,weights=(a[:,2]==100),minlength=_n+1)
+    rock=(rcnt/np.maximum(tot,1))>0.25
+    vox=[(v[0],v[1],v[2],100 if rock[lab[v[2]-z0_,v[0]-x0_]] else 3) if v[3] in (3,100) else v for v in vox]
+    print('rock voxels',sum(1 for v in vox if v[3]==100))
 # --- деревья: компоненты крон (bush) по карте сверху
 bush=(mat==37)&((top-ter)>2.0)
 lab,n=ndimage.label(bush)

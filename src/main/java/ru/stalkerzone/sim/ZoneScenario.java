@@ -57,7 +57,7 @@ public final class ZoneScenario {
         chaes.farmCap = 50; chaes.partsCap = 40; chaes.artifactCap = 8; chaes.housing = 130;
 
         // запад: база армии и блокпосты на дороге к учёным
-        Node perimeter = node(nodes, "Военная база «Периметр»", NodeType.BASE, -45, -30);
+        Node perimeter = node(nodes, "Военная база «Периметр»", NodeType.BASE, -24, -106);
         perimeter.farmCap = 80; perimeter.partsCap = 30; perimeter.housing = 90;
 
         Node post1 = node(nodes, "Блокпост «Лесной»", NodeType.OUTPOST, -110, -80);
@@ -82,17 +82,30 @@ public final class ZoneScenario {
         fbYantar.housing = 14; fbYantar.defense = 22; fbYantar.partsCap = 3;
 
         // v1.14: новые локации (только в конец списка)
-        Node swamps = node(nodes, "Болота", NodeType.BASE, -110, 30);
+        Node swamps = node(nodes, "Болота", NodeType.BASE, -127, 22);
         swamps.farmCap = 20; swamps.partsCap = 5; swamps.artifactCap = 2; swamps.housing = 35;
         trader(swamps, 1.15, 0.90, caps(25, 5, 40, 8, 1, 15));
-        Node deadCity = node(nodes, "Мёртвый город", NodeType.RUINS, -110, -330);
+        Node deadCity = node(nodes, "Мёртвый город", NodeType.RUINS, -127, -362);
         deadCity.farmCap = 5; deadCity.partsCap = 25; deadCity.artifactCap = 2; deadCity.housing = 30; deadCity.defense = 30;
         Node dogVillage = node(nodes, "Собачья деревня", NodeType.RUINS, 85, 10);
         dogVillage.farmCap = 8; dogVillage.partsCap = 10; dogVillage.artifactCap = 1; dogVillage.housing = 10; dogVillage.defense = 26;
-        Node forester = node(nodes, "Кордон Лесника", NodeType.SETTLEMENT, -30, -380);
+        Node forester = node(nodes, "Кордон Лесника", NodeType.SETTLEMENT, -35, -458);   // в Рыжем лесу
         forester.farmCap = 6; forester.partsCap = 3; forester.artifactCap = 3; forester.housing = 6; forester.defense = 30;
         Node doctor = node(nodes, "Хутор Болотного Доктора", NodeType.SETTLEMENT, -140, 55);
         doctor.farmCap = 6; doctor.housing = 4; doctor.defense = 40;
+
+        // v1.15: уровни из Anomaly (Чистое небо / Зов Чернобыля). Второй путь на север: Рыжий лес — Лиманск — Госпиталь — ЧАЭС,
+        // его держит Монолит: фронт у Монолита теперь на двух направлениях (Радар и Лиманск).
+        Node darkHollow = node(nodes, "Тёмная лощина", NodeType.ANOMALY, 177, 3);
+        darkHollow.farmCap = 4; darkHollow.partsCap = 8; darkHollow.artifactCap = 4; darkHollow.housing = 8; darkHollow.defense = 28;
+        Node trucks = node(nodes, "Свалка техники", NodeType.RUINS, 179, -285);
+        trucks.farmCap = 4; trucks.partsCap = 40; trucks.artifactCap = 2; trucks.housing = 12; trucks.defense = 26;
+        Node redForest = node(nodes, "Рыжий лес", NodeType.ANOMALY, -24, -466);
+        redForest.farmCap = 2; redForest.partsCap = 8; redForest.artifactCap = 6; redForest.housing = 12; redForest.defense = 40;
+        Node limansk = node(nodes, "Лиманск", NodeType.CITY, -141, -515);
+        limansk.farmCap = 5; limansk.partsCap = 30; limansk.artifactCap = 3; limansk.housing = 40; limansk.defense = 50;
+        Node gospital = node(nodes, "Госпиталь", NodeType.CITY, -77, -617);
+        gospital.farmCap = 2; gospital.partsCap = 15; gospital.artifactCap = 3; gospital.housing = 30; gospital.defense = 55;
 
         ZoneGraph g = new ZoneGraph(nodes.size());
         g.connect(0, 1, 1, 0.02);    // Кордон - Свалка
@@ -105,7 +118,6 @@ public final class ZoneScenario {
         g.connect(5, 7, 2, 0.06);    // Дикая территория - Янтарь
         g.connect(4, 6, 2, 0.05);    // Бар - Армейские склады
         g.connect(6, 8, 2, 0.08);    // Армейские склады - Радар
-        g.connect(7, 8, 3, 0.10);    // Янтарь - Радар (через Рыжий лес)
         g.connect(8, 9, 2, 0.15);    // Радар - Припять (закрыта до отключения Выжигателя)
         g.connect(9, 10, 2, 0.12);   // Припять - ЧАЭС
         g.connect(9, 14, 1, 0.08);   // центр - «Прометей»
@@ -128,11 +140,22 @@ public final class ZoneScenario {
         g.connect(19, 23, 1, 0.05);  // Болота - хутор Доктора
         g.connect(20, 5, 2, 0.07);   // Мёртвый город - Дикая территория
         g.connect(20, 7, 2, 0.07);   // Мёртвый город - Янтарь
-        g.connect(20, 22, 2, 0.08);  // Мёртвый город - Лесник
         g.connect(21, 0, 1, 0.05);   // Собачья деревня - Кордон
         g.connect(21, 3, 2, 0.05);   // Собачья деревня - Тёмная долина
         g.connect(22, 8, 1, 0.09);   // Лесник - Радар
-        g.connect(22, 7, 2, 0.08);   // Лесник - Янтарь
+        g.connect(24, 0, 2, 0.05);   // Тёмная лощина - Кордон
+        g.connect(24, 3, 2, 0.05);   // Тёмная лощина - Тёмная долина
+        g.connect(25, 4, 2, 0.05);   // Свалка техники - Бар
+        g.connect(25, 3, 2, 0.05);   // Свалка техники - Тёмная долина
+        g.connect(25, 6, 2, 0.06);   // Свалка техники - Армейские склады
+        g.connect(26, 6, 2, 0.10);   // Рыжий лес - Армейские склады
+        g.connect(26, 8, 2, 0.12);   // Рыжий лес - Радар
+        g.connect(26, 22, 1, 0.06);  // Рыжий лес - Лесник
+        g.connect(26, 27, 2, 0.12);  // Рыжий лес - Лиманск
+        g.connect(20, 27, 2, 0.10);  // Мёртвый город - Лиманск
+        g.connect(20, 6, 2, 0.08);   // Мёртвый город - Армейские склады
+        g.connect(27, 28, 2, 0.14);  // Лиманск - Госпиталь
+        g.connect(28, 10, 2, 0.15);  // Госпиталь - ЧАЭС (второй путь на север)
         g.build();
 
         List<Faction> factions = new ArrayList<>();
@@ -142,7 +165,7 @@ public final class ZoneScenario {
         factions.add(new Faction(BANDITS, "Бандиты", 3, 0.75, true, 35, new Doctrine(1.1, 0.9, 0.2, 0.2, 0.0, 0.3)));
         factions.add(new Faction(SCIENTISTS, "Учёные", 7, 0.0, false, 24, new Doctrine(0.1, 0.0, 0.9, 0.9, 0.0, 0.1)));
         factions.add(new Faction(MILITARY, "Военные", 11, 0.25, false, 70, new Doctrine(0.3, 0.5, 0.7, 0.3, 1.0, 1.0)));
-        factions.add(new Faction(MONOLITH, "Монолит", 10, 0.9, true, 55, new Doctrine(0.5, 0.0, 0.2, 0.0, 0.0, 1.0)));
+        factions.add(new Faction(MONOLITH, "Монолит", 10, 0.9, true, 75, new Doctrine(0.5, 0.0, 0.2, 0.0, 0.0, 1.0)));
         // v1.14: наёмники в Дикой территории (как в ТЧ), Чистое небо на Болотах, секта «Грех» в Мёртвом городе
         factions.add(new Faction(MERCS, "Наёмники", 5, 0.6, false, 30, new Doctrine(1.0, 0.8, 0.4, 0.5, 0.3, 0.7)));
         factions.add(new Faction(CLEAR_SKY, "Чистое небо", 19, 0.3, false, 30, new Doctrine(0.5, 0.4, 0.8, 0.8, 0.2, 0.4)));
@@ -217,6 +240,8 @@ public final class ZoneScenario {
         agroprom.owner = BANDITS;
         chaes.owner = MONOLITH;
         center.owner = MONOLITH;
+        limansk.owner = MONOLITH;
+        gospital.owner = MONOLITH;
         perimeter.owner = MILITARY;
         fbAgro.owner = MILITARY;
         fbYantar.owner = MILITARY;
