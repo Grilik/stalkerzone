@@ -99,6 +99,7 @@ public final class People {
 
     private void seedLeaders(Simulation s, Random r) {
         for (Faction f : s.factions) {
+            if (f.members < 1) continue;   // фракция без людей (сценарий «Кордон») именных не получает
             String[] names = f.id < LEADERS.length ? LEADERS[f.id] : new String[] {null, null};
             Person l = create(s, f, r, f.scientist ? Person.Cls.DOCTOR : Person.Cls.ASSAULT);
             if (names[0] != null) l.name = names[0];

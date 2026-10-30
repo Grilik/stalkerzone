@@ -28,6 +28,8 @@ public final class Simulation {
 
     public final long seed;
     public int day;
+    /** Идентификатор сценария, из которого создан мир; сохраняется вместе с состоянием. */
+    public String scenario = "zone";
     public final List<Node> nodes;
     public final ZoneGraph graph;
     public final List<Faction> factions;
@@ -1834,8 +1836,9 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(12);
+            out.writeInt(13);
             out.writeLong(seed);
+            out.writeUTF(scenario);
             out.writeInt(day);
             ledger.write(out);
             for (long v : initialGoods) out.writeLong(v);
@@ -1969,14 +1972,16 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 12) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 13) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
+            // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
+            String scenario = version >= 13 ? in.readUTF() : "zone";
             // v9–10: полевые базы армии, склады точек, стройматериалы, глобальный рынок; старые сохранения не переносятся
             // v12 (v1.14): новые локации и группировки — старая Зона не переносится, начинается заново
-            if (version < 12) return ZoneScenario.create(seed);
+            if (version < 12) return Scenarios.create(scenario, seed);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
-            Simulation sim = ZoneScenario.create(seed);
+            Simulation sim = Scenarios.create(scenario, seed);
             sim.day = in.readInt();
             sim.ledger.read(in);
             for (int i = 0; i < Good.readCount; i++) sim.initialGoods[i] = in.readLong();

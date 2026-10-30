@@ -2,8 +2,8 @@ package ru.stalkerzone.zonemap;
 
 import ru.stalkerzone.sim.Node;
 import ru.stalkerzone.sim.NodeType;
+import ru.stalkerzone.sim.Scenarios;
 import ru.stalkerzone.sim.Simulation;
-import ru.stalkerzone.sim.ZoneScenario;
 import ru.stalkerzone.world.ZoneBounds;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public final class RoadNet {
     private static RoadNet instance;
 
     public static synchronized RoadNet get() {
-        if (instance == null) instance = new RoadNet(ZoneScenario.create(0));
+        if (instance == null) instance = new RoadNet(Scenarios.create(0));
         return instance;
     }
 

@@ -1,8 +1,8 @@
 package ru.stalkerzone.world;
 
 import ru.stalkerzone.sim.Node;
+import ru.stalkerzone.sim.Scenarios;
 import ru.stalkerzone.sim.Simulation;
-import ru.stalkerzone.sim.ZoneScenario;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public final class ZoneBiomes {
 
     private static synchronized void init() {
         if (nx != null) return;
-        Simulation s = ZoneScenario.create(0);
+        Simulation s = Scenarios.create(0);
         List<Node> nodes = s.nodes;
         int[] x = new int[nodes.size()], z = new int[nodes.size()], b = new int[nodes.size()];
         for (int i = 0; i < nodes.size(); i++) {
