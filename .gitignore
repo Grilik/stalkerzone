@@ -26,3 +26,5 @@ libs/
 # вывод Java-плагина VS Code
 /bin/
 *.log
+*.err
+/tail*.txt
