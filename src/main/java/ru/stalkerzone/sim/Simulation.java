@@ -76,6 +76,19 @@ public final class Simulation {
 
     /** v14: минимальная сила логова для налёта. 0 = стандартный порог 30. */
     public double lairRaidMin = 0;
+
+    // --- v16 (карточка 003): три прохода через насыпь Кордона ---------------------------------
+    /** Узлы-проходы (туннель, мост, дыра). Пусто — сценарий без проходов, работают обычные дороги. */
+    public int[] crossingNodes = {};
+    /** Узел-проход, за который берут пошлину (мост). -1 — пошлин нет. */
+    public int tollCrossing = -1;
+    /** Опасность каждого прохода (параллельно crossingNodes): у туннеля и дыры высокая, у моста низкая. */
+    public double[] crossingRisk = {};
+    /** Сколько раз каждый узел-проход был пройден (статистика, не сохраняется). */
+    public int[] crossingUse = new int[0];
+    /** Всего собрано пошлин и по фракциям-плательщикам (статистика, не сохраняется). */
+    public long tollCollected;
+    public final long[] tollPaidBy = new long[16];
     /** v14: очередь возрождения логов (срок, район, прежний cap, прежний вид). */
     public final List<LairRespawn> lairRespawnQueue = new ArrayList<>();
     public static final class LairRespawn {
@@ -1071,6 +1084,194 @@ public final class Simulation {
         }
     }
 
+    // ------------------------------------------------------------------ проходы через насыпь (карточка 003)
+
+    /** v16 (карточка 003): задать узлы-проходы, узел с пошлиной (мост) и опасность каждого прохода. */
+    public void configureCrossings(int[] passNodes, int tollNode, double[] risk) {
+        this.crossingNodes = passNodes == null ? new int[0] : passNodes;
+        this.tollCrossing = tollNode;
+        this.crossingRisk = risk == null ? new double[0] : risk;
+        this.crossingUse = new int[nodes.size()];
+    }
+
+    /** Опасность прохода по его узлу (0 — если узел не проход). */
+    public double crossingRiskOf(int node) {
+        for (int i = 0; i < crossingNodes.length; i++)
+            if (crossingNodes[i] == node) return i < crossingRisk.length ? crossingRisk[i] : 0;
+        return 0;
+    }
+
+    /** Точки лежат по разные стороны насыпи: путь между ними проходит через один из проходов. */
+    public boolean acrossCrossing(int a, int b) {
+        return crossingNodes.length > 0 && crosses(graph.path(a, b));
+    }
+
+    /** Является ли узел проходом через насыпь. */
+    public boolean isCrossing(int node) {
+        for (int p : crossingNodes) if (p == node) return true;
+        return false;
+    }
+
+    /** Проход закрыт для фракции: владелец прохода — её враг по матрице вражды. */
+    public boolean crossingBlocked(Faction f, int pass) {
+        if (pass < 0 || pass >= nodes.size()) return false;
+        int owner = nodes.get(pass).owner;
+        if (owner < 0 || owner == f.id) return false;
+        return hostilityTo(f, owner) >= Crossings.ENEMY;
+    }
+
+    /**
+     * Маршрут с учётом трёх проходов (карточка 003). Врагов владельца прохода не пускает;
+     * проход выбирается по цене пути (время + опасность + пошлина) с учётом денег и смелости фракции.
+     * Без настроенных проходов — обычный кратчайший путь.
+     */
+    public int[] route(Faction f, int from, int to, Random r) {
+        if (crossingNodes.length == 0 || from == to) return graph.path(from, to);
+        int[] base = graph.path(from, to);
+        if (!crosses(base)) return base;
+
+        int n = graph.count();
+        boolean[] passMask = new boolean[n];
+        for (int p : crossingNodes) if (p >= 0 && p < n) passMask[p] = true;
+
+        int k = 0;
+        int[][] routes = new int[crossingNodes.length][];
+        double[] costs = new double[crossingNodes.length];
+        for (int p : crossingNodes) {
+            if (p < 0 || p >= n || crossingBlocked(f, p)) continue;
+            int[] via = routeVia(f, from, to, p, passMask);
+            if (via == null) continue;
+            routes[k] = via;
+            costs[k] = routeCost(f, via);
+            k++;
+        }
+        if (k == 0) return base;
+
+        double min = costs[0];
+        for (int i = 1; i < k; i++) min = Math.min(min, costs[i]);
+        double total = 0;
+        double[] w = new double[k];
+        for (int i = 0; i < k; i++) { w[i] = Math.exp(-(costs[i] - min) / Crossings.PASS_SPREAD); total += w[i]; }
+        double v = r.nextDouble() * total;
+        for (int i = 0; i < k; i++) { v -= w[i]; if (v <= 0) return routes[i]; }
+        return routes[k - 1];
+    }
+
+    private boolean crosses(int[] path) {
+        for (int node : path) if (isCrossing(node)) return true;
+        return false;
+    }
+
+    /** Маршрут через конкретный проход: до входа с той же стороны, сам проход, от выхода до цели. */
+    private int[] routeVia(Faction f, int from, int to, int pass, boolean[] passMask) {
+        int n = graph.count();
+        int a = -1, b = -1;
+        for (int v = 0; v < n; v++)
+            if (graph.open(pass, v)) { if (a < 0) a = v; else b = v; }
+        if (a < 0 || b < 0) return null;
+        boolean[] reach = reachAvoiding(from, passMask);
+        int entry, exit;
+        if (reach[a] && !reach[b]) { entry = a; exit = b; }
+        else if (reach[b] && !reach[a]) { entry = b; exit = a; }
+        else return null;
+        int[] head = pathAvoiding(from, entry, passMask);
+        int[] tail = pathAvoiding(exit, to, passMask);
+        if (head == null || tail == null) return null;
+        int[] r = new int[head.length + 1 + tail.length];
+        System.arraycopy(head, 0, r, 0, head.length);
+        r[head.length] = pass;
+        System.arraycopy(tail, 0, r, head.length + 1, tail.length);
+        return r;
+    }
+
+    /** Какие узлы достижимы из from, не проходя через узлы-проходы. */
+    private boolean[] reachAvoiding(int from, boolean[] passMask) {
+        int n = graph.count();
+        boolean[] seen = new boolean[n];
+        ArrayDeque<Integer> q = new ArrayDeque<>();
+        seen[from] = true;
+        q.add(from);
+        while (!q.isEmpty()) {
+            int u = q.poll();
+            for (int v = 0; v < n; v++) {
+                if (seen[v] || passMask[v] || !graph.open(u, v)) continue;
+                seen[v] = true;
+                q.add(v);
+            }
+        }
+        return seen;
+    }
+
+    /** Кратчайший по дням путь из from в to, не заходя в узлы-проходы. null — пути нет. */
+    private int[] pathAvoiding(int from, int to, boolean[] passMask) {
+        if (from == to) return new int[] {from};
+        int n = graph.count();
+        double[] dist = new double[n];
+        int[] prev = new int[n];
+        boolean[] done = new boolean[n];
+        java.util.Arrays.fill(dist, Double.MAX_VALUE);
+        java.util.Arrays.fill(prev, -1);
+        dist[from] = 0;
+        for (int it = 0; it < n; it++) {
+            int u = -1; double best = Double.MAX_VALUE;
+            for (int i = 0; i < n; i++) if (!done[i] && dist[i] < best) { best = dist[i]; u = i; }
+            if (u < 0 || u == to) break;
+            done[u] = true;
+            for (int v = 0; v < n; v++) {
+                if (done[v] || passMask[v] || !graph.open(u, v)) continue;
+                double nd = dist[u] + graph.edgeDays(u, v);
+                if (nd < dist[v]) { dist[v] = nd; prev[v] = u; }
+            }
+        }
+        if (prev[to] < 0) return null;
+        java.util.ArrayList<Integer> back = new java.util.ArrayList<>();
+        for (int cur = to; cur != -1; cur = prev[cur]) back.add(0, cur);
+        int[] out = new int[back.size()];
+        for (int i = 0; i < out.length; i++) out[i] = back.get(i);
+        return out;
+    }
+
+    /** Цена маршрута в днях: время + опасность проходов + пошлина за мост. */
+    private double routeCost(Faction f, int[] route) {
+        double c = 0;
+        for (int i = 0; i + 1 < route.length; i++) {
+            int u = route[i], v = route[i + 1];
+            c += graph.edgeDays(u, v);
+            double danger = 0;
+            if (isCrossing(u)) danger += 0.5 * crossingRiskOf(u);
+            if (isCrossing(v)) danger += 0.5 * crossingRiskOf(v);
+            c += Crossings.DANGER_WEIGHT * danger * (1 - Crossings.COURAGE_DANGER * f.doctrine.courage);
+            if (v == tollCrossing && !crossingBlocked(f, v)) {
+                int owner = nodes.get(v).owner;
+                if (owner >= 0 && owner != f.id)
+                    c += Crossings.tollDays(f, Crossings.tollForFaction(this, factions.get(owner), f, 0));
+            }
+        }
+        return c;
+    }
+
+    /** Провести сущность через узел: учесть проход и взять пошлину с наличных (или со склада фракции). */
+    public void crossPass(Faction f, int node, Stock cash) {
+        if (!isCrossing(node)) return;
+        if (node >= 0 && node < crossingUse.length) crossingUse[node]++;
+        if (node != tollCrossing) return;
+        int owner = nodes.get(node).owner;
+        if (owner < 0 || owner == f.id) return;
+        Faction o = factions.get(owner);
+        long toll = Crossings.tollForFaction(this, o, f, 0);
+        long paid = cash == null ? 0 : Stock.moveMoney(cash, o.stock, toll);
+        if (paid < toll) paid += Stock.moveMoney(f.stock, o.stock, toll - paid);
+        if (paid <= 0) return;
+        tollCollected += paid;
+        if (f.id >= 0 && f.id < tollPaidBy.length) tollPaidBy[f.id] += paid;
+        log(f.name + ": пошлина за проход через «" + nodes.get(node).name + "» — " + paid + " руб. «" + o.name + "»");
+    }
+
+    /** Пошлина за мост для игрока: rep — репутация у военных, rank — звание. Только данные для игрового слоя. */
+    public long tollFor(int rep, int rank) {
+        return Crossings.tollFor(rep, rank);
+    }
+
     // ------------------------------------------------------------------ шаг
 
     public void step() {
@@ -1531,7 +1732,7 @@ public final class Simulation {
 
         Stock s = f.stock;
         int guards = Math.max(1, Math.min(Math.min(8, f.members / 2), t.guards()));
-        int[] route = graph.path(f.baseNode, t.hub());
+        int[] route = route(f, f.baseNode, t.hub(), rng);
         Caravan c = new Caravan(f.id, route, guards);
         for (Good g : Good.ALL) {
             int i = g.ordinal();
@@ -1556,7 +1757,7 @@ public final class Simulation {
     private void dispatchCourier(Faction buyer, Command.Trade t, Node hub) {
         Faction traders = traders();
         if (traders == null || traders.members < 1) return;
-        int[] route = graph.path(hub.id, buyer.baseNode);
+        int[] route = route(traders, hub.id, buyer.baseNode, rng);
         if (route.length < 2) return;
         int guards = Math.min(4, Math.max(1, traders.members / 3));
         Caravan c = new Caravan(traders.id, route, guards);
@@ -1715,6 +1916,7 @@ public final class Simulation {
 
             c.leg++;
             int at = c.route[c.leg];
+            crossPass(f, at, c.cargo);
             banditRaid(c, f, at);
 
             if (c.leg < c.route.length - 1) {

@@ -299,7 +299,7 @@ public final class People {
         }
         if (dest < 0) return false;
         w.dest = dest;
-        w.path = s.graph.path(from, s.factions.get(dest).baseNode);
+        w.path = s.route(s.factions.get(dest), from, s.factions.get(dest).baseNode, r);
         w.leg = 0;
         transit.add(w);
         return true;

@@ -268,7 +268,7 @@ public final class Logistics {
             contractMissedRow = 0;
         }
         contractMoney += pay.money;
-        int[] route = s.graph.path(sci.baseNode, dest.id);
+        int[] route = s.route(m, sci.baseNode, dest.id, r);
         Convoy c = new Convoy(m.id, Convoy.Kind.CONTRACT, route, Math.min(4, Math.max(1, m.members / 15)));
         for (Good g : Good.ALL) Stock.move(pay, c.cargo, g, pay.get(g));
         Stock.moveMoney(pay, c.cargo, pay.money);
@@ -406,7 +406,7 @@ public final class Logistics {
         Stock from = victim.id == o.baseNode ? o.stock : victim.depot;
         long take = Math.min(from.money / 10, 600);
         if (take < 50) return;
-        int[] route = s.graph.path(victim.id, b.baseNode);
+        int[] route = s.route(b, victim.id, b.baseNode, r);
         Convoy c = new Convoy(b.id, Convoy.Kind.TRIBUTE, route, Math.min(4, Math.max(1, b.members / 12)));
         Stock.moveMoney(from, c.cargo, take);
         Stock.move(from, c.cargo, Good.FOOD, Math.min(from.get(Good.FOOD) / 20, 30));
@@ -460,8 +460,10 @@ public final class Logistics {
             if (n.owner != f.id || n.id == f.baseNode || headingTo(f, n.id)) continue;
             if (!s.graph.reachable(f.baseNode, n.id)) continue;
             int gar = garrison(s, f, n);
+            // карточка 003: точку за насыпью снабжают постоянно — проход является её единственной ниткой
             boolean low = n.depot.get(Good.FOOD) < gar * 3 || n.depot.money < (long) gar * WAGE * 3 || Arms.ammoValue(n.depot) < gar * 3
-                    || n.depot.get(Good.MATERIALS) < want(s, f, n, Good.MATERIALS) || n.depot.get(Good.PARTS) < want(s, f, n, Good.PARTS);
+                    || n.depot.get(Good.MATERIALS) < want(s, f, n, Good.MATERIALS) || n.depot.get(Good.PARTS) < want(s, f, n, Good.PARTS)
+                    || s.acrossCrossing(f.baseNode, n.id);
             if (!low) continue;
             double score = n.supply - (f.military && fieldBase(s, n) ? 0.1 : 0);
             if (score < worst) { worst = score; pick = n; }
@@ -480,7 +482,7 @@ public final class Logistics {
         reserve[Good.MATERIALS.ordinal()] = s.projectNeed(f.baseNode, true);
         reserve[Good.PARTS.ordinal()] = f.members * 3 + s.projectNeed(f.baseNode, false);
         int guards = Math.min(4, Math.max(1, f.members / 15));
-        Convoy c = new Convoy(f.id, Convoy.Kind.SUPPLY, s.graph.path(f.baseNode, pick.id), guards);
+        Convoy c = new Convoy(f.id, Convoy.Kind.SUPPLY, s.route(f, f.baseNode, pick.id, r), guards);
         for (Good g : Good.ALL) {
             if (g == Good.ARTIFACT) continue;
             int need = want(s, f, pick, g) - pick.depot.get(g);
@@ -503,17 +505,19 @@ public final class Logistics {
             if (n.owner != f.id || n.id == f.baseNode || leaving(f, n.id) || headingTo(f, n.id)) continue;
             if (!s.graph.reachable(n.id, f.baseNode)) continue;
             boolean field = f.military && fieldBase(s, n);
+            // карточка 003: с точки за насыпью излишки уходят на базу чаще — проход работает в обе стороны
+            boolean far = s.acrossCrossing(f.baseNode, n.id);
             int gar = garrison(s, f, n);
             Stock d = n.depot;
-            Convoy c = new Convoy(f.id, Convoy.Kind.RETURN, s.graph.path(n.id, f.baseNode), Math.min(3, Math.max(1, gar / 2)));
+            Convoy c = new Convoy(f.id, Convoy.Kind.RETURN, s.route(f, n.id, f.baseNode, r), Math.min(3, Math.max(1, gar / 2)));
             for (Good g : Good.ALL) {
-                int keep = g == Good.ARTIFACT ? 0 : (int) Math.ceil(want(s, f, n, g) * (field ? 1.0 : 1.5));
+                int keep = g == Good.ARTIFACT ? 0 : (int) Math.ceil(want(s, f, n, g) * (far ? 0.5 : field ? 1.0 : 1.5));
                 int extra = d.get(g) - keep;
                 if (extra > (g == Good.ARTIFACT ? 0 : 10)) Stock.move(d, c.cargo, g, extra);
             }
-            long keepCash = (long) gar * WAGE * (field ? STOCK_DAYS : STOCK_DAYS * 2L);
+            long keepCash = (long) gar * WAGE * (far ? 4L : field ? STOCK_DAYS : STOCK_DAYS * 2L);
             if (d.money - keepCash > 100) Stock.moveMoney(d, c.cargo, d.money - keepCash);
-            if (c.value() < (field ? 150 : 400)) { unloadTo(s, c, d); continue; }
+            if (c.value() < (far ? 80 : field ? 150 : 400)) { unloadTo(s, c, d); continue; }
             launch(s, c);
         }
     }
@@ -539,6 +543,7 @@ public final class Logistics {
             if (r.nextDouble() < pHit) mutants(s, c, f, r);
             if (--c.daysLeft > 0) continue;
             c.leg++;
+            s.crossPass(f, c.route[c.leg], c.cargo);
             if (ambush(s, c, f, c.at(), r)) { it.remove(); continue; }
             if (c.leg < c.route.length - 1) {
                 c.daysLeft = s.graph.edgeDays(c.route[c.leg], c.route[c.leg + 1]);
@@ -604,7 +609,7 @@ public final class Logistics {
             Node base = s.nodes.get(f.baseNode);
             if (base.owner == f.id && base.id != d.id && s.graph.reachable(d.id, base.id)) {
                 c.kind = Convoy.Kind.RETURN;
-                c.route = s.graph.path(d.id, base.id);
+                c.route = s.route(f, d.id, base.id, s.rng);
                 c.leg = 0;
                 if (c.route.length > 1) { c.daysLeft = s.graph.edgeDays(c.route[0], c.route[1]); rerouted.add(c); return; }
             }

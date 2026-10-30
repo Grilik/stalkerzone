@@ -39,7 +39,13 @@ public final class ZoneGraph {
         return closed[a][b];
     }
 
-    private boolean open(int a, int b) {
+    /** Число узлов графа. */
+    public int count() {
+        return n;
+    }
+
+    /** Есть ли открытая дорога между узлами (дорога проложена и не закрыта). */
+    public boolean open(int a, int b) {
         return days[a][b] > 0 && !closed[a][b];
     }
 
