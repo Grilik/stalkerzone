@@ -15,11 +15,21 @@ public final class KordonScenario {
     private static final int VILLAGE = 0, BUNKER = 1, SOUTH_POST = 2, BIG_LAND = 3, ELEVATOR = 4, ATP = 5,
             DARK_EXIT = 6, TUNNEL = 7, BRIDGE = 8, HOLE = 9, FARM = 10, FAR_POST = 11, SVALKA_EXIT = 12;
 
+    // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
+    private static final int HILL = 13, FIELDS = 14, FOREST = 15, RAVINE = 16, MEADOW = 17, EDGE = 18;
+
     /** Координаты узлов (x, z) в единицах ×10 блоков — уточнить по меткам игрока. */
     public static final int[][] COORDS = {
             {0, 0}, {12, 13}, {27, 20}, {28, 31}, {21, -29}, {61, -25}, {96, -23},
-            {0, -48}, {27, -48}, {55, -48}, {1, -70}, {30, -96}, {30, -107}
+            {0, -48}, {27, -48}, {55, -48}, {1, -70}, {30, -96}, {30, -107},
+            {32, -29}, {-10, -70}, {18, -80}, {72, -20}, {15, -75}, {18, -105}
     };
+
+    /** Узлы — выходы за карту: логова и цели налётов их исключают. */
+    public static final int[] EXITS = {BIG_LAND, DARK_EXIT, SVALKA_EXIT};
+
+    /** Узлы, где могут быть логова (старт и возрождение). Захват фракциями исключён. */
+    public static final int[] LAIR_SITES = {HILL, FIELDS, FOREST, RAVINE, MEADOW, EDGE, TUNNEL, HOLE};
 
     /** Стартовая численность трёх живых группировок — баланс уточняет карточка 005. */
     public static final int LONER_MEMBERS = 30, MILITARY_MEMBERS = 14, BANDIT_MEMBERS = 20;
@@ -69,6 +79,14 @@ public final class KordonScenario {
         Node svalkaExit = node(nodes, "Выход: Свалка", NodeType.OUTPOST, 30, -107);
         svalkaExit.housing = 2; svalkaExit.defense = 60;
 
+        // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
+        Node hill = node(nodes, "Холм за элеватором", NodeType.RUINS, 32, -29);
+        Node fields = node(nodes, "Поля у свинофермы", NodeType.RUINS, -10, -70);
+        Node forest = node(nodes, "Лес у дальнего блокпоста", NodeType.RUINS, 18, -80);
+        Node ravine = node(nodes, "Овраг у АТП", NodeType.RUINS, 72, -20);
+        Node meadow = node(nodes, "Луг у фермы", NodeType.RUINS, 15, -75);
+        Node edge = node(nodes, "Опушка у пути на Свалку", NodeType.RUINS, 18, -105);
+
         ZoneGraph g = new ZoneGraph(nodes.size());
         // южная часть
         g.connect(VILLAGE, BUNKER, 1, 0.02);
@@ -88,6 +106,13 @@ public final class KordonScenario {
         g.connect(BRIDGE, FARM, 2, 0.03);
         g.connect(ATP, HOLE, 2, 0.10);
         g.connect(HOLE, FAR_POST, 2, 0.12);
+        // v14: дороги логовых узлов — только внутри своей части, проходов через насыпь три
+        g.connect(HILL, ELEVATOR, 1, 0.03);
+        g.connect(RAVINE, ATP, 1, 0.03);
+        g.connect(FIELDS, FARM, 1, 0.03);
+        g.connect(FOREST, FAR_POST, 1, 0.03);
+        g.connect(MEADOW, FARM, 1, 0.03);
+        g.connect(EDGE, FAR_POST, 1, 0.03);
         g.build();
 
         // baseNode непустых фракций; пустые фракции получают 0, чтобы их ИИ не падал на разыменовании
@@ -147,7 +172,28 @@ public final class KordonScenario {
         }
 
         Simulation sim = new Simulation(seed, nodes, g, factions, h);
+
+        // v14: настройка логов для Кордона
+        sim.lairExits = EXITS;
+        // EXITS + LAIR_SITES — фракции не захватывают
+        int[] nc = new int[EXITS.length + LAIR_SITES.length];
+        System.arraycopy(EXITS, 0, nc, 0, EXITS.length);
+        System.arraycopy(LAIR_SITES, 0, nc, EXITS.length, LAIR_SITES.length);
+        sim.lairNoCapture = nc;
+        sim.lairStartDefs = KordonBalance.START_LAIRS;
+        sim.lairRandomSpawnDisabled = true;
+        sim.lairRaidMin = 22;
+        sim.lairRaidWeights = KordonBalance.RAID_TARGET_WEIGHT;
+
+        // сохранить базовую опасность проходов
+        for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {
+            int a = KordonBalance.PASS_EDGES[i][0];
+            int b = KordonBalance.PASS_EDGES[i][1];
+            KordonBalance.PASS_BASE_DANGER[i] = g.danger(a, b);
+        }
+
         sim.finishSetup();
+        sim.recalcPassDanger();
         return sim;
     }
 

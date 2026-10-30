@@ -22,20 +22,25 @@ public class KordonScenarioTest {
         Simulation s = Scenarios.create("kordon", 0);
         ck(s.scenario.equals("kordon"), "сценарий запомнен: " + s.scenario);
         ck(Scenarios.create(0).scenario.equals("kordon"), "сценарий по умолчанию — kordon");
-        ck(s.nodes.size() == 13, "13 узлов Кордона: " + s.nodes.size());
+        ck(s.nodes.size() == 19, "19 узлов Кордона: " + s.nodes.size());
 
         String[] names = {"Деревня новичков", "Бункер Сидоровича", "Южный блокпост", "Выход: Большая земля",
                 "Элеватор", "АТП", "Выход: Тёмная долина", "Туннель с электрами", "Разрушенный мост",
-                "Дыра в заборе", "Свиноферма", "Дальний блокпост", "Выход: Свалка"};
+                "Дыра в заборе", "Свиноферма", "Дальний блокпост", "Выход: Свалка",
+                "Холм за элеватором", "Поля у свинофермы", "Лес у дальнего блокпоста",
+                "Овраг у АТП", "Луг у фермы", "Опушка у пути на Свалку"};
         NodeType[] types = {NodeType.BASE, NodeType.BASE, NodeType.BASE, NodeType.OUTPOST, NodeType.RUINS, NodeType.BASE,
-                NodeType.OUTPOST, NodeType.ANOMALY, NodeType.BASE, NodeType.RUINS, NodeType.SETTLEMENT, NodeType.BASE, NodeType.OUTPOST};
+                NodeType.OUTPOST, NodeType.ANOMALY, NodeType.BASE, NodeType.RUINS, NodeType.SETTLEMENT, NodeType.BASE, NodeType.OUTPOST,
+                NodeType.RUINS, NodeType.RUINS, NodeType.RUINS, NodeType.RUINS, NodeType.RUINS, NodeType.RUINS};
         int[] owners = {ZoneScenario.LONERS, -1, ZoneScenario.MILITARY, -1, -1, ZoneScenario.BANDITS, -1, -1,
-                ZoneScenario.MILITARY, -1, ZoneScenario.LONERS, ZoneScenario.BANDITS, -1};
-        int[] xs = {0, 12, 27, 28, 21, 61, 96, 0, 27, 55, 1, 30, 30};
-        int[] zs = {0, 13, 20, 31, -29, -25, -23, -48, -48, -48, -70, -96, -107};
-        boolean[] trader = {false, true, false, false, false, false, false, false, false, false, false, false, false};
+                ZoneScenario.MILITARY, -1, ZoneScenario.LONERS, ZoneScenario.BANDITS, -1,
+                -1, -1, -1, -1, -1, -1};
+        int[] xs = {0, 12, 27, 28, 21, 61, 96, 0, 27, 55, 1, 30, 30, 32, -10, 18, 72, 15, 18};
+        int[] zs = {0, 13, 20, 31, -29, -25, -23, -48, -48, -48, -70, -96, -107, -29, -70, -80, -20, -75, -105};
+        boolean[] trader = {false, true, false, false, false, false, false, false, false, false, false, false, false,
+                false, false, false, false, false, false};
 
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < 19; i++) {
             Node n = s.nodes.get(i);
             ck(n.name.equals(names[i]), "узел " + i + " имя: " + n.name);
             ck(n.type == types[i], "узел " + i + " тип: " + n.type);
@@ -43,6 +48,13 @@ public class KordonScenarioTest {
             ck(n.x == xs[i] && n.z == zs[i], "узел " + i + " координаты (" + n.x + "," + n.z + ")");
             ck(n.trader == trader[i], "узел " + i + " trader=" + trader[i]);
         }
+        // v14: 5 стартовых логов по таблице
+        ck(s.lairs.size() == 5, "5 стартовых логов: " + s.lairs.size());
+        ck(s.lairAt(13) != null && s.lairAt(13).kind == LairKind.DOGS, "холм за элеватором — DOGS");
+        ck(s.lairAt(9) != null && s.lairAt(9).kind == LairKind.DOGS, "дыра в заборе — DOGS");
+        ck(s.lairAt(14) != null && s.lairAt(14).kind == LairKind.FLESH, "поля у свинофермы — FLESH");
+        ck(s.lairAt(15) != null && s.lairAt(15).kind == LairKind.FLESH, "лес у дальнего блокпоста — FLESH");
+        ck(s.lairAt(7) != null && s.lairAt(7).kind == LairKind.RODENTS, "туннель с электрами — RODENTS");
     }
 
     static void gates() {
@@ -74,8 +86,8 @@ public class KordonScenarioTest {
 
         Simulation all = Scenarios.create("kordon", 0);
         boolean full = true;
-        for (int i = 0; i < 13; i++)
-            for (int j = 0; j < 13; j++)
+        for (int i = 0; i < 19; i++)
+            for (int j = 0; j < 19; j++)
                 if (i != j && !all.graph.reachable(i, j)) full = false;
         ck(full, "все узлы достижимы без закрытых проходов");
     }

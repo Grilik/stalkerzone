@@ -77,6 +77,11 @@ public final class ZoneGraph {
         return danger[a][b];
     }
 
+    /** v14: динамически изменить опасность ребра (пересчёт проходов Кордона). */
+    public void setDanger(int a, int b, double v) {
+        danger[a][b] = danger[b][a] = v;
+    }
+
     /** Маршрут включая начальную и конечную точки. Если пути нет, вернёт только начальную точку. */
     public int[] path(int a, int b) {
         if (dist[a][b] >= INF) return new int[] {a};
