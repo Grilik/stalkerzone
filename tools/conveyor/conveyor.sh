@@ -14,7 +14,7 @@ FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
 TITLE=$(head -1 "$FILE" | sed 's/^# *//')
 grep -q "Модель исполнителя: сильная" "$FILE" && AGENT_MODEL=$AGENT_MODEL_STRONG
 BR="task/${CARD}-auto"
-echo "Карточка $CARD: $TITLE"
+echo "::notice title=Карточка $CARD::$TITLE (модель $AGENT_MODEL)"
 git checkout -q -b "$BR"
 git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
 cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
@@ -32,7 +32,9 @@ Simulation.java и другие большие файлы читай куска�
 run() { # роль (agent|strong), таймаут, файл с заданием
   if [ "$1" = strong ] && [ -z "${PROXYAPI_KEY:-}" ]; then echo "старший недоступен — пропуск"; return; fi
   echo "::group::cline $1"; cat "$3" | cline --config "/tmp/cfg-$1" -y -t "$2" --retries 3 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
-  tail -30 /tmp/cline-$$.log; echo "::endgroup::"
+  rc=$?; tail -30 /tmp/cline-$$.log; echo "::endgroup::"
+  # краткий итог в аннотацию (её видно в API без доступа к логам)
+  echo "::notice title=cline $1 rc=$rc::$(tail -c 700 /tmp/cline-$$.log | tr '\n\r' '  ' | sed 's/::/ : /g')"
 }
 PHASES="исполнитель ($AGENT_MODEL)"
 { echo "Выполни карточку $FILE. Сначала прочитай её и .clinerules (правила про git/PR выше в этом задании важнее)."; echo; echo "$RULES"; } > /tmp/pA.txt
@@ -48,7 +50,7 @@ if [ $ok -ne 0 ]; then
 fi
 rm -f ESCALATE.md
 git add -A -- src docs tools .github .gitignore 2>/dev/null
-git commit -q -m "$CARD: $TITLE (конвейер: $PHASES)" || { echo "Агент ничего не изменил."; exit 1; }
+git commit -q -m "$CARD: $TITLE (конвейер: $PHASES)" || { echo "::error title=Агент ничего не изменил::карточка $CARD; см. аннотацию cline"; exit 1; }
 REVIEW=""
 if [ $ok -eq 0 ]; then
   git push -q -u origin "$BR"
