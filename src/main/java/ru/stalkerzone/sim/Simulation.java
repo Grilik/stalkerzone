@@ -132,6 +132,7 @@ public final class Simulation {
     public Faction military() { return byRole(f -> f.military); }
     public Faction monolith() { return byRole(f -> f.fanatic); }
     public Faction mercenaries() { return byRole(f -> f.mercenary); }
+    public Faction traders() { for (Faction f : factions) if (f.id == ZoneScenario.TRADERS) return f; return null; }
 
 
     /** Дорога от пси-поля к ЧАЭС закрыта, пока Выжигатель работает. */
@@ -1083,14 +1084,14 @@ public final class Simulation {
         anomaliesDaily();
         lairsDaily();
         recalcPassDanger();
-        for (Faction f : factions) economy(f);
-        for (Faction f : factions) buildingsDaily(f);
+        for (Faction f : factions) if (!f.isService()) economy(f);
+        for (Faction f : factions) if (!f.isService()) buildingsDaily(f);
         labs.daily(this, rng);
         scorcher.daily(this, rng);
         logistics.daily(this, rng);
         monolithPosts();
         advanceCaravans();
-        for (Faction f : factions) think(f);
+        for (Faction f : factions) if (!f.isService()) think(f);
         for (Node n : nodes) if (n.trader) traderDaily(n);
         if (day % 7 == 5) traderWholesale();
         if (day % 3 == 0) world.scientistsOrder(this, scientists(), rng);
@@ -1099,6 +1100,7 @@ public final class Simulation {
         politics.daily(this, rng);
         contracts.daily(this, rng);
         for (Faction f : factions) {
+            if (f.isService()) continue;
             phaseUpdate(f);
             recruit(f);
         }
@@ -1285,6 +1287,7 @@ public final class Simulation {
         for (Anomaly a : anomalies) if (a.pending < 3) a.pending++;
         for (Node n : nodes) damageNode(n.id, 2);
         for (Faction f : factions) {
+            if (f.isService() || f.members <= 1) continue; // сервисные и пустые фракции выброс не задевает
             if (f.fanatic && !monolithActive) continue; // спящий Монолит выброс не задевает
             int dead = randomRound(f.members * 0.02);
             dead = Math.min(dead, f.members - 1);
@@ -1520,6 +1523,12 @@ public final class Simulation {
         if (countCaravans(f) >= (f.members > 60 ? 2 : 1)) return;
         if (t.sell() == null || t.want() == null || t.sell().length != G || t.want().length != G) return;
 
+        Node hub = nodes.get(t.hub());
+        if (hub.owner == ZoneScenario.TRADERS) {
+            dispatchCourier(f, t, hub);
+            return;
+        }
+
         Stock s = f.stock;
         int guards = Math.max(1, Math.min(Math.min(8, f.members / 2), t.guards()));
         int[] route = graph.path(f.baseNode, t.hub());
@@ -1541,6 +1550,41 @@ public final class Simulation {
             c.daysLeft = graph.edgeDays(route[0], route[1]);
             caravans.add(c);
         }
+    }
+
+    /** Курьер Торговцев: везёт товары от бункера до базы группировки и обратно с деньгами. */
+    private void dispatchCourier(Faction buyer, Command.Trade t, Node hub) {
+        Faction traders = traders();
+        if (traders == null || traders.members < 1) return;
+        int[] route = graph.path(hub.id, buyer.baseNode);
+        if (route.length < 2) return;
+        int guards = Math.min(4, Math.max(1, traders.members / 3));
+        Caravan c = new Caravan(traders.id, route, guards);
+        c.courierFor = buyer.id;
+
+        // курьер грузит со склада торговца товары, которые хочет группировка
+        Stock mk = hub.market;
+        for (Good g : Good.ALL) {
+            int i = g.ordinal();
+            int w = Math.max(0, Math.min(t.want()[i], 100_000));
+            c.sell[i] = 0; // курьер не продаёт товары торговца — он их доставляет
+            c.want[i] = 0;
+            // курьер везёт товар покупателю: берём со склада торговца
+            c.cargo.qty[i] = Stock.move(mk, c.cargo, g, Math.min(w, mk.get(g)));
+        }
+        // курьер везёт деньги торговца, чтобы заплатить за то, что группировка продаёт
+        long buyBudget = 0;
+        for (Good g : Good.ALL) {
+            int i = g.ordinal();
+            buyBudget += (long) Math.max(0, t.sell()[i]) * buyPrice(hub, g);
+        }
+        long courierBudget = Math.min(buyBudget + 200, mk.money / 3);
+        Stock.moveMoney(mk, c.cargo, courierBudget);
+
+        buyer.lastDispatch = day;
+        c.leg = 0;
+        c.daysLeft = graph.edgeDays(route[0], route[1]);
+        caravans.add(c);
     }
 
     private void startWar(Faction f, int nodeId) {
@@ -1610,6 +1654,42 @@ public final class Simulation {
         }
     }
 
+    /** Курьер Торговцев торгует на базе группировки: товары идут покупателю, деньги — курьеру (с наценкой). */
+    private void courierTrade(Caravan c, Faction buyer, Node hub) {
+        Stock cargo = c.cargo;
+        Stock bs = buyer.stock;
+        double markup = ZoneScenario.tradersMarkup(buyer.id);
+
+        // курьер продаёт товары группировке (с наценкой)
+        for (Good g : Good.ALL) {
+            int i = g.ordinal();
+            int qty = cargo.qty[i];
+            if (qty <= 0) continue;
+            long unitPrice = Math.round(sellPrice(hub, g) * markup);
+            for (int k = 0; k < qty; k++) {
+                if (bs.money < unitPrice) break;
+                cargo.qty[i]--;
+                bs.add(g, 1);
+                bs.money -= unitPrice;
+                cargo.money += unitPrice;
+            }
+        }
+        // курьер скупает у группировки то, что она продаёт (по обычной цене скупки)
+        for (Good g : Good.ALL) {
+            int i = g.ordinal();
+            int canSell = Math.min(buyer.stock.get(g), bs.get(g));
+            int qty = Math.min(canSell, (int) Math.min(100_000, 50 + bs.get(g) / 2));
+            long unitPrice = buyPrice(hub, g);
+            for (int k = 0; k < qty; k++) {
+                if (cargo.money < unitPrice) break;
+                if (bs.take(g, 1) < 1) break;
+                cargo.qty[i]++;
+                cargo.money -= unitPrice;
+                bs.money += unitPrice;
+            }
+        }
+    }
+
     private void unload(Caravan c, Faction f) {
         for (Good g : Good.ALL) Stock.move(c.cargo, f.stock, g, c.cargo.get(g));
         Stock.moveMoney(c.cargo, f.stock, c.cargo.money);
@@ -1642,7 +1722,11 @@ public final class Simulation {
                 continue;
             }
             if (!c.returning) {
-                tradeAtHub(c, nodes.get(at));
+                if (c.courierFor >= 0) {
+                    courierTrade(c, factions.get(c.courierFor), nodes.get(c.route[0]));
+                } else {
+                    tradeAtHub(c, nodes.get(at));
+                }
                 c.returning = true;
                 int[] back = new int[c.route.length];
                 for (int i = 0; i < back.length; i++) back[i] = c.route[c.route.length - 1 - i];
@@ -1650,7 +1734,14 @@ public final class Simulation {
                 c.leg = 0;
                 c.daysLeft = graph.edgeDays(c.route[0], c.route[1]);
             } else {
-                unload(c, f);
+                if (c.courierFor >= 0) {
+                    // курьер возвращается в бункер: выгружаем товар и деньги обратно торговцу
+                    Node hub = nodes.get(c.route[c.route.length - 1]);
+                    for (Good g : Good.ALL) Stock.move(c.cargo, hub.market, g, c.cargo.get(g));
+                    Stock.moveMoney(c.cargo, hub.market, c.cargo.money);
+                } else {
+                    unload(c, f);
+                }
                 it.remove();
             }
         }
@@ -1806,6 +1897,7 @@ public final class Simulation {
             List<Faction> helpers = new ArrayList<>();
             if (a.fanatic && d != null && d.scientist) {
                 for (Faction g : factions) {
+                    if (g.isService()) continue;
                     if (g != a && g != d && g.fightMonolith && minDistFromOwned(g, n.id) <= 1) helpers.add(g);
                 }
             }
@@ -1983,7 +2075,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(14); // v14: очередь возрождения логов Кордона
+            out.writeInt(15); // v15: фракция Торговцев
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2099,6 +2191,7 @@ public final class Simulation {
                 c.cargo.write(out);
                 for (int v : c.sell) out.writeInt(v);
                 for (int v : c.want) out.writeInt(v);
+                out.writeInt(c.courierFor);
             }
             out.writeInt(events.size());
             for (String e : events) out.writeUTF(e);
@@ -2132,7 +2225,7 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 14) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 15) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
@@ -2153,7 +2246,19 @@ public final class Simulation {
                 n.owner = in.readInt();
                 n.market.read(in);
             }
-            for (Faction f : sim.factions) {
+            // v15: в старых сохранениях фракции Торговцев не было — её узлы получают владельца при загрузке
+            if (version < 15) {
+                for (Node n : sim.nodes) {
+                    if (n.owner < 0 && n.trader) {
+                        Faction tr = sim.traders();
+                        if (tr != null && tr.baseNode == n.id) n.owner = tr.id;
+                    }
+                }
+            }
+            // v14: старые сохранения без Торговцев — фракция добавляется при загрузке со свежим состоянием
+            int loadFactions = version >= 15 ? sim.factions.size() : sim.factions.size() - 1;
+            for (int fi = 0; fi < loadFactions; fi++) {
+                Faction f = sim.factions.get(fi);
                 f.members = in.readInt();
                 f.stock.read(in);
                 f.phase = Phase.values()[in.readInt()];
@@ -2221,7 +2326,8 @@ public final class Simulation {
                 }
             }
             if (version >= 7) {
-                for (Faction f : sim.factions) {
+                for (int fi = 0; fi < loadFactions; fi++) {
+                    Faction f = sim.factions.get(fi);
                     f.exp = in.readDouble();
                     f.stress = in.readDouble();
                     f.wounded = in.readInt();
@@ -2265,6 +2371,7 @@ public final class Simulation {
                 c.cargo.read(in);
                 for (int i = 0; i < Good.readCount; i++) c.sell[i] = in.readInt();
                 for (int i = 0; i < Good.readCount; i++) c.want[i] = in.readInt();
+                c.courierFor = version >= 15 ? in.readInt() : -1;
                 sim.caravans.add(c);
             }
             int en = in.readInt();

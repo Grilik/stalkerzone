@@ -372,6 +372,7 @@ public final class People {
 
     private void factionStats(Simulation s, Random r) {
         for (Faction f : s.factions) {
+            if (f.isService()) continue;
             boolean war = f.phase == Phase.WAR;
             f.exp = Math.min(100, f.exp + (war ? 0.45 : 0.03));
             if (f.fanatic) {

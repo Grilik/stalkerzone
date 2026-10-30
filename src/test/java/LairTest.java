@@ -10,7 +10,7 @@ public class LairTest {
         s.step();
         if(!s.audit().isEmpty()){System.out.println("AUDIT FAIL seed "+seed+" day "+s.day+"\n"+s.audit());System.exit(1);}
         minL=Math.min(minL,s.lairs.size());maxL=Math.max(maxL,s.lairs.size());
-        for(Faction f:s.factions)minMem=Math.min(minMem,f.members);
+        for(Faction f:s.factions) if(!f.isService()) minMem=Math.min(minMem,f.members);
       }
       long raid=s.events.stream().filter(e->e.contains("напало на")).count();
       long take=s.events.stream().filter(e->e.contains("Мутанты захватили")).count();

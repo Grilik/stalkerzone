@@ -32,7 +32,7 @@ public class KordonScenarioTest {
         NodeType[] types = {NodeType.BASE, NodeType.BASE, NodeType.BASE, NodeType.OUTPOST, NodeType.RUINS, NodeType.BASE,
                 NodeType.OUTPOST, NodeType.ANOMALY, NodeType.BASE, NodeType.RUINS, NodeType.SETTLEMENT, NodeType.BASE, NodeType.OUTPOST,
                 NodeType.RUINS, NodeType.RUINS, NodeType.RUINS, NodeType.RUINS, NodeType.RUINS, NodeType.RUINS};
-        int[] owners = {ZoneScenario.LONERS, -1, ZoneScenario.MILITARY, -1, -1, ZoneScenario.BANDITS, -1, -1,
+        int[] owners = {ZoneScenario.LONERS, ZoneScenario.TRADERS, ZoneScenario.MILITARY, -1, -1, ZoneScenario.BANDITS, -1, -1,
                 ZoneScenario.MILITARY, -1, ZoneScenario.LONERS, ZoneScenario.BANDITS, -1,
                 -1, -1, -1, -1, -1, -1};
         int[] xs = {0, 12, 27, 28, 21, 61, 96, 0, 27, 55, 1, 30, 30, 32, -10, 18, 72, 15, 18};
@@ -118,7 +118,7 @@ public class KordonScenarioTest {
             ck(!s.people.of(ZoneScenario.LONERS).isEmpty() && !s.people.of(ZoneScenario.BANDITS).isEmpty()
                     && !s.people.of(ZoneScenario.MILITARY).isEmpty(), "у трёх группировок есть именные (seed " + seed + ")");
             for (Faction x : s.factions) {
-                if (x.id == ZoneScenario.LONERS || x.id == ZoneScenario.BANDITS || x.id == ZoneScenario.MILITARY) continue;
+                if (x.id == ZoneScenario.LONERS || x.id == ZoneScenario.BANDITS || x.id == ZoneScenario.MILITARY || x.id == ZoneScenario.TRADERS) continue;
                 ck(x.members == 0 && s.ownedCount(x) == 0 && s.people.of(x.id).isEmpty(), "фракция «" + x.name + "» без людей и узлов");
             }
         }

@@ -67,7 +67,7 @@ public final class Labs {
 
     void daily(Simulation s, Random r) {
         for (Faction f : s.factions) {
-            if (f.passive || f.fanatic || f.members < 30 || f.phase == Phase.WAR) continue;
+            if (f.passive || f.fanatic || f.members < 30 || f.isService() || f.phase == Phase.WAR) continue;
             if (s.day < 40 || s.readiness(f) < 0.9 || r.nextDouble() > 1.0 / 75) continue;
             Lab target = null;
             for (Lab l : labs) {

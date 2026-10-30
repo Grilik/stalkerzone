@@ -8,6 +8,8 @@ public final class Faction {
     public final double aggression;
     /** Грабит чужие караваны на своих территориях. */
     public final boolean raider;
+    /** Служебная фракция (напр. Торговцы): не участвует в симуляции, не имеет ИИ. */
+    public boolean service;
     public final Doctrine doctrine;
 
     // --- роль в сюжете (задаётся сценарием, не сохраняется) ---
@@ -89,6 +91,8 @@ public final class Faction {
         nodeFailure = new double[nodeCount];
         hubRisk = new double[nodeCount];
     }
+
+    public boolean isService() { return service; }
 
     void decayMemory() {
         for (int i = 0; i < grudge.length; i++) grudge[i] *= 0.985;

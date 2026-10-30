@@ -46,7 +46,7 @@ public class SocietyTest {
         Simulation s = ZoneScenario.create(7);
         s.step(30);
         ck(s.people.arrived > 30 && s.people.joined > 10, "новички идут через Кордон: пришло " + s.people.arrived + ", вступили " + s.people.joined);
-        for (Faction x : s.factions) ck(s.people.leader(x.id) != null, "у «" + x.name + "» есть лидер: " + s.people.leader(x.id).name);
+        for (Faction x : s.factions) if (!x.isService()) ck(s.people.leader(x.id) != null, "у «" + x.name + "» есть лидер: " + (s.people.leader(x.id) != null ? s.people.leader(x.id).name : "—"));
         Person old = s.people.leader(1);
         s.people.kill(s, old.id, "убит игроком");
         Person neu = s.people.leader(1);
