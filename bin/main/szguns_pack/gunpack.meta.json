@@ -1,0 +1,6 @@
+{
+  "namespace": "szguns",
+  "dependencies": {
+    "tacz": ">=1.1.0"
+  }
+}

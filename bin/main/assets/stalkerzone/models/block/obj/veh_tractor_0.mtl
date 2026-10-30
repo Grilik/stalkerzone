@@ -1,0 +1,24 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl glass
+Kd 1 1 1
+map_Kd #glass
+
+newmtl headlight
+Kd 1 1 1
+map_Kd #headlight
+
+newmtl paint
+Kd 1 1 1
+map_Kd #paint
+
+newmtl rim
+Kd 1 1 1
+map_Kd #rim
+
+newmtl tire
+Kd 1 1 1
+map_Kd #tire
+

@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.fort12.name",
+  "display": "szguns:fort12_display",
+  "data": "szguns:fort12_data",
+  "tooltip": "szguns.gun.fort12.desc",
+  "type": "pistol",
+  "item_type": "modern_kinetic",
+  "sort": 3
+}

@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.an94.name",
+  "display": "szguns:an94_display",
+  "data": "szguns:an94_data",
+  "tooltip": "szguns.gun.an94.desc",
+  "type": "rifle",
+  "item_type": "modern_kinetic",
+  "sort": 5
+}

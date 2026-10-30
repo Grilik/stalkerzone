@@ -1,0 +1,20 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl headlight
+Kd 1 1 1
+map_Kd #headlight
+
+newmtl interior
+Kd 1 1 1
+map_Kd #interior
+
+newmtl paint
+Kd 1 1 1
+map_Kd #paint
+
+newmtl rim
+Kd 1 1 1
+map_Kd #rim
+

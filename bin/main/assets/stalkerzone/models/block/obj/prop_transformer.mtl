@@ -1,0 +1,16 @@
+newmtl concrete
+Kd 1 1 1
+map_Kd #concrete
+
+newmtl insulator
+Kd 1 1 1
+map_Kd #insulator
+
+newmtl rad_yellow
+Kd 1 1 1
+map_Kd #rad_yellow
+
+newmtl steel
+Kd 1 1 1
+map_Kd #steel
+

@@ -1,0 +1,20 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/veh_moskvich_1.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "chrome": "stalkerzone:block/prop/chrome",
+  "grille": "stalkerzone:block/prop/grille",
+  "headlight": "stalkerzone:block/prop/headlight",
+  "paint": "stalkerzone:block/prop/paint_orange",
+  "plate": "stalkerzone:block/prop/plate",
+  "rim": "stalkerzone:block/prop/rim",
+  "taillight": "stalkerzone:block/prop/taillight",
+  "particle": "stalkerzone:block/prop/chrome"
+ }
+}

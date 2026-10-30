@@ -1,0 +1,12 @@
+newmtl pole
+Kd 1 1 1
+map_Kd #pole
+
+newmtl wood
+Kd 1 1 1
+map_Kd #wood
+
+newmtl wood_end
+Kd 1 1 1
+map_Kd #wood_end
+

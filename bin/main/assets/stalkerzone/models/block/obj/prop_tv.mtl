@@ -1,0 +1,12 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl screen
+Kd 1 1 1
+map_Kd #screen
+
+newmtl wood_vlak
+Kd 1 1 1
+map_Kd #wood_vlak
+

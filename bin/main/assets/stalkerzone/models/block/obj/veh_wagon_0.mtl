@@ -1,0 +1,28 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl paint
+Kd 1 1 1
+map_Kd #paint
+
+newmtl paint2
+Kd 1 1 1
+map_Kd #paint2
+
+newmtl rim
+Kd 1 1 1
+map_Kd #rim
+
+newmtl rust
+Kd 1 1 1
+map_Kd #rust
+
+newmtl steel
+Kd 1 1 1
+map_Kd #steel
+
+newmtl steel_dark
+Kd 1 1 1
+map_Kd #steel_dark
+

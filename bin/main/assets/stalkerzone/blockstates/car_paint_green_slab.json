@@ -1,0 +1,13 @@
+{
+ "variants": {
+  "type=bottom": {
+   "model": "stalkerzone:block/car_paint_green_slab"
+  },
+  "type=top": {
+   "model": "stalkerzone:block/car_paint_green_slab_top"
+  },
+  "type=double": {
+   "model": "stalkerzone:block/car_paint_green"
+  }
+ }
+}

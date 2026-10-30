@@ -1,0 +1,16 @@
+newmtl console_body
+Kd 1 1 1
+map_Kd #console_body
+
+newmtl console_panel
+Kd 1 1 1
+map_Kd #console_panel
+
+newmtl steel
+Kd 1 1 1
+map_Kd #steel
+
+newmtl tape
+Kd 1 1 1
+map_Kd #tape
+

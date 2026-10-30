@@ -1,0 +1,7 @@
+{
+ "parent": "minecraft:block/template_glass_pane_noside_alt",
+ "textures": {
+  "pane": "stalkerzone:block/zm_window"
+ },
+ "render_type": "minecraft:translucent"
+}

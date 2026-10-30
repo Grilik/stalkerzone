@@ -1,0 +1,7 @@
+{
+ "parent": "minecraft:block/cube_column",
+ "textures": {
+  "end": "stalkerzone:block/car_wheel",
+  "side": "stalkerzone:block/car_wheel_tread"
+ }
+}

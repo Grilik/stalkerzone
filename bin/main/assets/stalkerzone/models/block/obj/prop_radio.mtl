@@ -1,0 +1,20 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl console_panel
+Kd 1 1 1
+map_Kd #console_panel
+
+newmtl crate_ammo
+Kd 1 1 1
+map_Kd #crate_ammo
+
+newmtl paint_olive
+Kd 1 1 1
+map_Kd #paint_olive
+
+newmtl steel
+Kd 1 1 1
+map_Kd #steel
+

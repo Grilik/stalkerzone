@@ -1,0 +1,18 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/veh_zaporozhets_1.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "chrome": "stalkerzone:block/prop/chrome",
+  "headlight": "stalkerzone:block/prop/headlight",
+  "paint": "stalkerzone:block/prop/paint_beige",
+  "plate": "stalkerzone:block/prop/plate",
+  "rim": "stalkerzone:block/prop/rim",
+  "particle": "stalkerzone:block/prop/chrome"
+ }
+}

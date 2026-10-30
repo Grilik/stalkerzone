@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_cable_spool.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "wood": "stalkerzone:block/prop/wood",
+  "wood_end": "stalkerzone:block/prop/wood_end",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

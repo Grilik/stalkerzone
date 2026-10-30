@@ -1,0 +1,16 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl lab_glass
+Kd 1 1 1
+map_Kd #lab_glass
+
+newmtl steel
+Kd 1 1 1
+map_Kd #steel
+
+newmtl tile_white
+Kd 1 1 1
+map_Kd #tile_white
+

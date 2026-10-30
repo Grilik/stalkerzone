@@ -1,0 +1,6 @@
+{
+ "parent": "minecraft:block/fence_post",
+ "textures": {
+  "texture": "stalkerzone:block/zm_planks_gray"
+ }
+}

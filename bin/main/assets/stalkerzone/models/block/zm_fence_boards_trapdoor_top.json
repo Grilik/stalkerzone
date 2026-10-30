@@ -1,0 +1,7 @@
+{
+ "parent": "minecraft:block/template_orientable_trapdoor_top",
+ "textures": {
+  "texture": "stalkerzone:block/zm_fence_boards"
+ },
+ "render_type": "minecraft:cutout"
+}
