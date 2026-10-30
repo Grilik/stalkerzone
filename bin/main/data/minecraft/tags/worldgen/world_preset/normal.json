@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "stalkerzone:zone",
+    "stalkerzone:zone_classic",
+    "stalkerzone:zone_flat"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_ammo_crates.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "crate_ammo": "stalkerzone:block/prop/crate_ammo",
+  "steel_dark": "stalkerzone:block/prop/steel_dark",
+  "particle": "stalkerzone:block/prop/crate_ammo"
+ }
+}

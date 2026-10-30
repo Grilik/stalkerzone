@@ -1,0 +1,118 @@
+{
+  "model": "szguns:gun/pkm_geo",
+  "texture": "szguns:gun/uv/zone_guns",
+  "hud": "szguns:gun/hud/pkm",
+  "slot": "szguns:gun/slot/pkm",
+  "ammo_count_style": "normal",
+  "damage_style": "total",
+  "animation": "tacz:rpk",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "player_animator_3rd": "tacz:rifle_default.player_animation",
+  "show_crosshair": false,
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "ground": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "fixed": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 0.8
+  },
+  "iron_zoom": 1.25,
+  "zoom_model_fov": 45,
+  "shell": {
+    "initial_velocity": [
+      5,
+      2,
+      1
+    ],
+    "random_velocity": [
+      1,
+      1,
+      0.25
+    ],
+    "acceleration": [
+      0.0,
+      -10,
+      0.0
+    ],
+    "angular_velocity": [
+      360,
+      -1200,
+      90
+    ],
+    "living_time": 1.0
+  },
+  "ammo": {
+    "tracer_color": "#FFB070"
+  },
+  "sounds": {
+    "shoot": "tacz:rpk/rpk_shoot",
+    "shoot_3p": "tacz:rpk/rpk_shoot_3p",
+    "reload_empty": "tacz:rpk/rpk_reload_empty",
+    "reload_tactical": "tacz:rpk/rpk_reload_tactical",
+    "inspect": "tacz:rpk/rpk_inspect",
+    "inspect_empty": "tacz:rpk/rpk_inspect_empty",
+    "draw": "tacz:rpk/rpk_draw",
+    "put_away": "tacz:rpk/rpk_put_away",
+    "silence": "tacz:rpk/rpk_silence",
+    "silence_3p": "tacz:rpk/rpk_silence_3p",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill"
+  },
+  "offhand_show": {
+    "pos": [
+      1,
+      20,
+      3.5
+    ],
+    "rotate": [
+      0,
+      0,
+      60
+    ],
+    "scale": [
+      0.5,
+      0.5,
+      0.5
+    ]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [
+        -1,
+        20,
+        3
+      ],
+      "rotate": [
+        -180,
+        0,
+        120
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  },
+  "state_machine": "tacz:default_state_machine"
+}

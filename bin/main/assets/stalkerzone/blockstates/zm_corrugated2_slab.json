@@ -1,0 +1,13 @@
+{
+ "variants": {
+  "type=bottom": {
+   "model": "stalkerzone:block/zm_corrugated2_slab"
+  },
+  "type=top": {
+   "model": "stalkerzone:block/zm_corrugated2_slab_top"
+  },
+  "type=double": {
+   "model": "stalkerzone:block/zm_corrugated2"
+  }
+ }
+}

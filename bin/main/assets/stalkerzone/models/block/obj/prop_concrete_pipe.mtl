@@ -1,0 +1,8 @@
+newmtl concrete
+Kd 1 1 1
+map_Kd #concrete
+
+newmtl concrete_dark
+Kd 1 1 1
+map_Kd #concrete_dark
+

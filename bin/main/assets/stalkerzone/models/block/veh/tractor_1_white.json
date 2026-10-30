@@ -1,0 +1,18 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/veh_tractor_1.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "headlight": "stalkerzone:block/prop/headlight",
+  "interior": "stalkerzone:block/prop/interior",
+  "paint": "stalkerzone:block/prop/paint_white",
+  "rim": "stalkerzone:block/prop/rim",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

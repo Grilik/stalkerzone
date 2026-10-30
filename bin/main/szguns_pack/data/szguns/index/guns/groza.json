@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.groza.name",
+  "display": "szguns:groza_display",
+  "data": "szguns:groza_data",
+  "tooltip": "szguns.gun.groza.desc",
+  "type": "rifle",
+  "item_type": "modern_kinetic",
+  "sort": 7
+}

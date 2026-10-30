@@ -1,0 +1,68 @@
+{
+ "parent": "minecraft:block/block",
+ "render_type": "minecraft:cutout",
+ "textures": {
+  "particle": "stalkerzone:block/tires_side",
+  "side": "stalkerzone:block/tires_side",
+  "top": "stalkerzone:block/tires_top"
+ },
+ "elements": [
+  {
+   "from": [
+    1,
+    0,
+    1
+   ],
+   "to": [
+    15,
+    8,
+    15
+   ],
+   "faces": {
+    "north": {
+     "texture": "#side",
+     "uv": [
+      1,
+      8,
+      15,
+      16
+     ]
+    },
+    "south": {
+     "texture": "#side",
+     "uv": [
+      1,
+      8,
+      15,
+      16
+     ]
+    },
+    "east": {
+     "texture": "#side",
+     "uv": [
+      1,
+      8,
+      15,
+      16
+     ]
+    },
+    "west": {
+     "texture": "#side",
+     "uv": [
+      1,
+      8,
+      15,
+      16
+     ]
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#top",
+     "cullface": "down"
+    }
+   }
+  }
+ ]
+}

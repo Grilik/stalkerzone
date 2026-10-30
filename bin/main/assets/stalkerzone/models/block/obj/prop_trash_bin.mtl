@@ -1,0 +1,8 @@
+newmtl barrel_green
+Kd 1 1 1
+map_Kd #barrel_green
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+

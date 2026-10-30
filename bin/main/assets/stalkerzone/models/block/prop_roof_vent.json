@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_roof_vent.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "brick": "stalkerzone:block/prop/brick",
+  "galv": "stalkerzone:block/prop/galv",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

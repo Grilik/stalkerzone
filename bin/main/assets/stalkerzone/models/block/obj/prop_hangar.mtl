@@ -1,0 +1,12 @@
+newmtl corrugated
+Kd 1 1 1
+map_Kd #corrugated
+
+newmtl galv
+Kd 1 1 1
+map_Kd #galv
+
+newmtl rust
+Kd 1 1 1
+map_Kd #rust
+

@@ -1,0 +1,8 @@
+newmtl galv
+Kd 1 1 1
+map_Kd #galv
+
+newmtl sign_rad
+Kd 1 1 1
+map_Kd #sign_rad
+

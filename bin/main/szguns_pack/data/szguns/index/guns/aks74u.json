@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.aks74u.name",
+  "display": "szguns:aks74u_display",
+  "data": "szguns:aks74u_data",
+  "tooltip": "szguns.gun.aks74u.desc",
+  "type": "smg",
+  "item_type": "modern_kinetic",
+  "sort": 2
+}

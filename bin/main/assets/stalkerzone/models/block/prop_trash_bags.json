@@ -1,0 +1,14 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_trash_bags.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "trash_bag": "stalkerzone:block/prop/trash_bag",
+  "particle": "stalkerzone:block/prop/trash_bag"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "parent": "minecraft:block/template_orientable_trapdoor_open",
+ "textures": {
+  "texture": "stalkerzone:block/zm_planks_gray"
+ },
+ "render_type": "minecraft:cutout"
+}

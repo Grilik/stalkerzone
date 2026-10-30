@@ -1,0 +1,12 @@
+newmtl glass
+Kd 1 1 1
+map_Kd #glass
+
+newmtl paint_blue
+Kd 1 1 1
+map_Kd #paint_blue
+
+newmtl sign_kiosk
+Kd 1 1 1
+map_Kd #sign_kiosk
+

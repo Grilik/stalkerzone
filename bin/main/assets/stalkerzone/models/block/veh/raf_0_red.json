@@ -1,0 +1,21 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/veh_raf_0.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "chrome": "stalkerzone:block/prop/chrome",
+  "glass": "stalkerzone:block/prop/glass",
+  "headlight": "stalkerzone:block/prop/headlight",
+  "paint": "stalkerzone:block/prop/paint_red",
+  "paint2": "stalkerzone:block/prop/paint_red",
+  "rim": "stalkerzone:block/prop/rim",
+  "taillight": "stalkerzone:block/prop/taillight",
+  "tire": "stalkerzone:block/prop/tire",
+  "particle": "stalkerzone:block/prop/chrome"
+ }
+}

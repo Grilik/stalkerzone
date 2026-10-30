@@ -1,0 +1,20 @@
+{
+ "variants": {
+  "facing=east": {
+   "model": "stalkerzone:block/prop_fridge_lying",
+   "y": 0
+  },
+  "facing=south": {
+   "model": "stalkerzone:block/prop_fridge_lying",
+   "y": 90
+  },
+  "facing=west": {
+   "model": "stalkerzone:block/prop_fridge_lying",
+   "y": 180
+  },
+  "facing=north": {
+   "model": "stalkerzone:block/prop_fridge_lying",
+   "y": 270
+  }
+ }
+}

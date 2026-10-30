@@ -1,0 +1,15 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_sign_stop.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "galv": "stalkerzone:block/prop/galv",
+  "sign_stop": "stalkerzone:block/prop/sign_stop",
+  "particle": "stalkerzone:block/prop/galv"
+ }
+}

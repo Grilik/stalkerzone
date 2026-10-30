@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_lab_console.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "console_body": "stalkerzone:block/prop/console_body",
+  "console_panel": "stalkerzone:block/prop/console_panel",
+  "screen": "stalkerzone:block/prop/screen",
+  "particle": "stalkerzone:block/prop/console_body"
+ }
+}

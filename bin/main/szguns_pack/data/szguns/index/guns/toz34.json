@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.toz34.name",
+  "display": "szguns:toz34_display",
+  "data": "szguns:toz34_data",
+  "tooltip": "szguns.gun.toz34.desc",
+  "type": "shotgun",
+  "item_type": "modern_kinetic",
+  "sort": 2
+}

@@ -1,0 +1,20 @@
+{
+ "variants": {
+  "facing=east": {
+   "model": "stalkerzone:block/prop_chainlink",
+   "y": 0
+  },
+  "facing=south": {
+   "model": "stalkerzone:block/prop_chainlink",
+   "y": 90
+  },
+  "facing=west": {
+   "model": "stalkerzone:block/prop_chainlink",
+   "y": 180
+  },
+  "facing=north": {
+   "model": "stalkerzone:block/prop_chainlink",
+   "y": 270
+  }
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_bus_stop.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "concrete": "stalkerzone:block/prop/concrete",
+  "mosaic": "stalkerzone:block/prop/mosaic",
+  "wood": "stalkerzone:block/prop/wood",
+  "particle": "stalkerzone:block/prop/concrete"
+ }
+}

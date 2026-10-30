@@ -1,0 +1,9 @@
+{
+  "name": "szguns.gun.gauss.name",
+  "display": "szguns:gauss_display",
+  "data": "szguns:gauss_data",
+  "tooltip": "szguns.gun.gauss.desc",
+  "type": "sniper",
+  "item_type": "modern_kinetic",
+  "sort": 9
+}
