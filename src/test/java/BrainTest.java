@@ -31,7 +31,7 @@ public class BrainTest {
                 if (!sim.monolithActive) dormantWars = Math.max(dormantWars, sim.monolith().warsStarted);
                 for (Faction f : sim.factions) {
                     goalDays.computeIfAbsent(f.name, k -> new int[Goal.values().length])[f.goal.ordinal()]++;
-                    minMembers = Math.min(minMembers, f.members);
+                    if (!f.isService()) minMembers = Math.min(minMembers, f.members); // у Торговцев нет своих людей
                 }
             }
             StringBuilder sb = new StringBuilder("seed " + seed + ": ");
