@@ -1,9 +1,0 @@
-{
-  "name": "szguns.gun.svd.name",
-  "display": "szguns:svd_display",
-  "data": "szguns:svd_data",
-  "tooltip": "szguns.gun.svd.desc",
-  "type": "sniper",
-  "item_type": "modern_kinetic",
-  "sort": 1
-}

@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/stairs",
- "textures": {
-  "bottom": "stalkerzone:block/zm_door_green",
-  "top": "stalkerzone:block/zm_door_green",
-  "side": "stalkerzone:block/zm_door_green"
- }
-}

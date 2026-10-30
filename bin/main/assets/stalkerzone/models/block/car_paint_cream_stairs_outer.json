@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/outer_stairs",
- "textures": {
-  "bottom": "stalkerzone:block/car_paint_cream",
-  "top": "stalkerzone:block/car_paint_cream",
-  "side": "stalkerzone:block/car_paint_cream"
- }
-}

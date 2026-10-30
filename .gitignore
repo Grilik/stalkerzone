@@ -22,3 +22,7 @@ javac.*.args
 /tools/xray/vox
 *.bin
 libs/
+
+# вывод Java-плагина VS Code
+/bin/
+*.log

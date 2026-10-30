@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/outer_stairs",
- "textures": {
-  "bottom": "stalkerzone:block/zm_shifer_light",
-  "top": "stalkerzone:block/zm_shifer_light",
-  "side": "stalkerzone:block/zm_shifer_light"
- }
-}

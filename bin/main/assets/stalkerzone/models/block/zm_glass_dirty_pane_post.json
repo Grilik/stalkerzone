@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/template_glass_pane_post",
- "textures": {
-  "pane": "stalkerzone:block/zm_glass_dirty",
-  "edge": "stalkerzone:block/zm_glass_dirty"
- },
- "render_type": "minecraft:translucent"
-}

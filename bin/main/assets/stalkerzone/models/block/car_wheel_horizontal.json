@@ -1,7 +1,0 @@
-{
- "parent": "minecraft:block/cube_column_horizontal",
- "textures": {
-  "end": "stalkerzone:block/car_wheel",
-  "side": "stalkerzone:block/car_wheel_tread"
- }
-}

@@ -1,8 +1,0 @@
-newmtl crate_ammo
-Kd 1 1 1
-map_Kd #crate_ammo
-
-newmtl steel_dark
-Kd 1 1 1
-map_Kd #steel_dark
-

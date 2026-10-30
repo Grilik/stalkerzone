@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/slab",
- "textures": {
-  "bottom": "stalkerzone:block/car_paint_blue",
-  "top": "stalkerzone:block/car_paint_blue",
-  "side": "stalkerzone:block/car_paint_blue"
- }
-}

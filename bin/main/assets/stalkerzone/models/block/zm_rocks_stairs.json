@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/stairs",
- "textures": {
-  "bottom": "stalkerzone:block/zm_rocks",
-  "top": "stalkerzone:block/zm_rocks",
-  "side": "stalkerzone:block/zm_rocks"
- }
-}
