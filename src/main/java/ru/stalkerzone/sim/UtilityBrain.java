@@ -262,6 +262,7 @@ public final class UtilityBrain implements FactionBrain {
         }
         for (Node n : sim.nodes) {
             if (n.owner == f.id) continue;
+            if (sim.noCapture(n.id)) continue; // v14: выходы и логовища не захватывают
             Faction owner = n.owner >= 0 ? sim.factions.get(n.owner) : null;
             if (owner != null && owner.baseNode == n.id) continue;
             // армия возвращает свои полевые базы на дороге к учёным: это условие контракта
