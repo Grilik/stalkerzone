@@ -32,6 +32,15 @@ public final class ZoneWorld {
         // координаты локаций статичны и не зависят от seed
         Simulation s = Scenarios.create(0);
         ZoneBounds nb = ZoneBounds.fromNodes(s.nodes);
+        kordon = s.nodes.get(0);
+        // v1.18 (карточка 004): в сценарии «Кордон» граница — реальный край уровня l01_escape (kordon_points.json)
+        if (Scenarios.KORDON.equals(s.scenario)) {
+            ZoneBounds kb = KordonPoints.bounds();
+            if (kb != null && ru.stalkerzone.world.xray.LevelRegions.byId(KordonPoints.LEVEL) != null) {
+                bounds = kb;
+                return;
+            }
+        }
         // v1.14: уровни оригинала 1:1 шире своих узлов — граница Зоны обходит их с запасом
         int x0 = nb.minX, x1 = nb.maxX, z0 = nb.minZ, z1 = nb.maxZ;
         for (ru.stalkerzone.world.xray.LevelRegion r : ru.stalkerzone.world.xray.LevelRegions.all()) {
@@ -39,13 +48,20 @@ public final class ZoneWorld {
             z0 = Math.min(z0, r.z0 - 160); z1 = Math.max(z1, r.z0 + r.d + 160);
         }
         bounds = new ZoneBounds(x0, x1, z0, z1);
-        kordon = s.nodes.get(0);
     }
 
     public static ZoneBounds bounds() { init(); return bounds; }
 
     /** Точка появления в блоках: Кордон. */
-    public static int[] spawnXZ() { init(); return new int[]{kordon.x * ZoneBounds.SCALE, kordon.z * ZoneBounds.SCALE}; }
+    public static int[] spawnXZ() {
+        init();
+        // v1.18: в Кордоне — у костра деревни новичков (kordon_points.json)
+        if (Scenarios.KORDON.equals(Scenarios.current()) && ru.stalkerzone.world.xray.LevelRegions.byId(KordonPoints.LEVEL) != null) {
+            int[] p = KordonPoints.spawnXZ();
+            if (p != null && bounds.inside(p[0], p[1])) return p;
+        }
+        return new int[]{kordon.x * ZoneBounds.SCALE, kordon.z * ZoneBounds.SCALE};
+    }
 
     public static final class Events {
         @SubscribeEvent

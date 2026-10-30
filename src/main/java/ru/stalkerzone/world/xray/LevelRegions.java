@@ -18,6 +18,8 @@ public final class LevelRegions {
 
     /** layout.json: {"levels":[{"id":..}], "links":[{"a","b","ax","az","bx","bz"}]} — простой разбор без библиотек. */
     private static String[] readLayout(List<Link> outLinks) {
+        // v1.18 (карточка 004): «Кордон 1.0» — один уровень, остальные из layout.json не грузятся и переходов нет
+        if (ru.stalkerzone.sim.Scenarios.KORDON.equals(ru.stalkerzone.sim.Scenarios.current())) return IDS;
         java.io.File f = new java.io.File(dir(), "layout.json");
         if (!f.isFile()) return IDS;
         try {

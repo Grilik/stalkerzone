@@ -95,6 +95,10 @@ bb=list(bb); bb[0]+=xi0; bb[2]+=zi0; H,W=ter.shape
 mcx0=int(round(bb[0]+0.5))+CF_DX; mcz0=int(round(-(bb[2]+H-0.5)))+CF_DZ
 inr=lambda x,z: mcx0<=x<mcx0+W and mcz0<=z<mcz0+H
 vox=[v for v in vox if inr(v[0],v[2])]; air=[v for v in air if inr(v[0],v[2])]; trees=[t for t in trees if inr(t[0],t[1])]
+if _L.get('clip'):   # v1.18: постройки и деревья только внутри игровой области — фоновые «декорации за забором» не ставим
+    bx0,bz0,bx1,bz1=_B[0]+CF_DX,-_B[3]+CF_DZ,_B[2]+CF_DX,-_B[1]+CF_DZ
+    inb=lambda x,z: bx0<=x<=bx1 and bz0<=z<=bz1
+    vox=[v for v in vox if inb(v[0],v[2])]; air=[v for v in air if inb(v[0],v[2])]; trees=[t for t in trees if inb(t[0],t[1])]
 G=ter[::-1]; S=tmat[::-1]; Wt=np.where(water,wat,-1000)[::-1]
 SURF={7:1,10:2,15:3,8:4,16:5,4:6,93:7}
 surf=np.vectorize(lambda v: SURF.get(int(v),1))(S).astype(np.uint8)

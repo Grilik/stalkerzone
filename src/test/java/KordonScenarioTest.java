@@ -35,8 +35,8 @@ public class KordonScenarioTest {
         int[] owners = {ZoneScenario.LONERS, ZoneScenario.TRADERS, ZoneScenario.MILITARY, -1, -1, ZoneScenario.BANDITS, -1, -1,
                 ZoneScenario.MILITARY, -1, ZoneScenario.LONERS, ZoneScenario.BANDITS, -1,
                 -1, -1, -1, -1, -1, -1};
-        int[] xs = {0, 12, 27, 28, 21, 61, 96, 0, 27, 55, 1, 30, 30, 32, -10, 18, 72, 15, 18};
-        int[] zs = {0, 13, 20, 31, -29, -25, -23, -48, -48, -48, -70, -96, -107, -29, -70, -80, -20, -75, -105};
+        int[] xs = {0, -4, 6, 8, 20, 33, 58, 13, 27, 43, 21, 23, 24, 24, 8, 26, 42, 35, 28};
+        int[] zs = {0, -1, 22, 33, -22, -12, -8, -26, -30, -35, -42, -81, -84, -17, -36, -51, -21, -38, -76};
         boolean[] trader = {false, true, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false, false, false};
 

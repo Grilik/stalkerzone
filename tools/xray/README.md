@@ -38,6 +38,19 @@
 3. `python3 layout2.py <id…>` — новые уровни на глобальную карту Anomaly (подгонка по 11 уровням ТЧ), раздвижка ≥170 блоков.
 4. `python3 pairs.py all.spawn` → `newpairs.json`; `python3 links2.py` — переходы по level_changer из `all.spawn`; концы дорог на сторонах уровней, смотрящих друг на друга.
 
+### Кордон из Anomaly (v1.18, карточка 004)
+
+Архив `level_l01_escape.db0` (≈300 МБ) проходит через мост целиком и читается `xdb` (файлы не сжаты) — `converter.exe` не нужен.
+
+1. `xdb level_l01_escape.db0 extract . l01_escape/level` — `level`, `level.cform`, `level.geom`, `level.game`, `level.ai`;
+   `xdb configs/spawns.db0 extract . spawns/all.spawn`.
+2. `python3 remap.py level.cform cut/l01_escape/level.cform`.
+3. `levels.json`: `{"l01_escape": {"dx": 209, "dz": -142, "yoff": 100, "bound": [-292.6, -480.9, 396.2, 716.8], "clip": true}}` —
+   `bound` = рамка `level.ai` (игровая область), `clip` — постройки и деревья только внутри неё (без фоновых декораций).
+4. `CUT=… LEVELS=… OUT=… ./run.sh l01_escape level level.geom` → `l01_escape.szl`; `extract.py` → `bld.json`.
+5. `python3 kordon_points.py level.game all.spawn l01_escape.szl bld.json levels.json kordon_points.json` — точки узлов,
+   дороги, граница, старт; узлы сопоставлены смарт-террейнам Anomaly (`esc_smart_terrain_*`).
+
 ## Детализация по рендер-геометрии (v1.17)
 
 Постройки берутся не из коллизии, а из того, что игра рисует (`level` + `level.geom`; для ТЧ вырезаются по `geo_list.txt`,
