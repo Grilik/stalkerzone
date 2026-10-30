@@ -1,6 +1,7 @@
 name: conveyor
 # Конвейер карточек: Cline CLI (дешёвая модель) -> при провале старшая модель -> ревью -> PR (сливает человек).
-# Секрет OPENROUTER_API_KEY. Переменные (необязательно): AGENT_MODEL, STRONG_MODEL.
+# Секреты: OPENROUTER_API_KEY (исполнитель, ревьюер), PROXYAPI_KEY (старшая модель Claude).
+# Переменные (необязательно): AGENT_MODEL, STRONG_MODEL, STRONG_BASE_URL.
 on:
   workflow_dispatch:
     inputs:
@@ -48,4 +49,6 @@ jobs:
           CARD: ${{ github.event.inputs.card }}
           AGENT_MODEL: ${{ vars.AGENT_MODEL }}
           STRONG_MODEL: ${{ vars.STRONG_MODEL }}
+          STRONG_BASE_URL: ${{ vars.STRONG_BASE_URL }}
+          PROXYAPI_KEY: ${{ secrets.PROXYAPI_KEY }}
         run: bash tools/conveyor/conveyor.sh
