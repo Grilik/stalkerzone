@@ -1287,6 +1287,7 @@ public final class Simulation {
         for (Anomaly a : anomalies) if (a.pending < 3) a.pending++;
         for (Node n : nodes) damageNode(n.id, 2);
         for (Faction f : factions) {
+            if (f.isService() || f.members <= 1) continue; // сервисные и пустые фракции выброс не задевает
             if (f.fanatic && !monolithActive) continue; // спящий Монолит выброс не задевает
             int dead = randomRound(f.members * 0.02);
             dead = Math.min(dead, f.members - 1);
