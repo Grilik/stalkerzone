@@ -41,7 +41,7 @@ if [ $ok -ne 0 ]; then
   { echo "Ты старший разработчик. Младший агент выполнял карточку $FILE и не справился. Не переделывай с нуля — найди причину и исправь минимально.";
     echo; echo "$RULES"; echo; echo "## ESCALATE.md от младшего"; cat ESCALATE.md 2>/dev/null || echo "(нет)";
     echo; echo "## Изменённые файлы"; git status --short | head -50; echo; echo "## Результат проверки"; tail -80 /tmp/check1.txt; } > /tmp/pB.txt
-  run strong 1800 /tmp/pB.txt
+  run strong 1200 /tmp/pB.txt
   bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
 fi
 rm -f ESCALATE.md
@@ -55,7 +55,7 @@ if [ $ok -eq 0 ]; then
     PHASES="$PHASES → старший по ревью"
     { echo "Ты старший разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
       echo "Исправь обоснованные замечания минимально; необоснованные — пропусти и кратко объясни почему в файле REVIEW_REPLY.md."; echo; echo "$RULES"; echo; cat /tmp/review.md; } > /tmp/pC.txt
-    run strong 1200 /tmp/pC.txt
+    run strong 900 /tmp/pC.txt
     bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
     REPLY=$(cat REVIEW_REPLY.md 2>/dev/null); rm -f REVIEW_REPLY.md
     git add -A -- src docs tools .github .gitignore; git commit -q -m "$CARD: правки по ревью" || true
