@@ -116,8 +116,8 @@ public final class KordonScenario {
         g.build();
 
         // baseNode непустых фракций; пустые фракции получают 0, чтобы их ИИ не падал на разыменовании
-        int[] baseNodes = {VILLAGE, 0, 0, ATP, 0, SOUTH_POST, 0, 0, 0, 0};
-        int[] members = {LONER_MEMBERS, 0, 0, BANDIT_MEMBERS, 0, MILITARY_MEMBERS, 0, 0, 0, 0};
+        int[] baseNodes = {VILLAGE, 0, 0, ATP, 0, SOUTH_POST, 0, 0, 0, 0, BUNKER};
+        int[] members = {LONER_MEMBERS, 0, 0, BANDIT_MEMBERS, 0, MILITARY_MEMBERS, 0, 0, 0, 0, 5};
         List<Faction> factions = ZoneScenario.factions(baseNodes, members);
 
         // живые фракции сохраняют свой характер из ZoneScenario
@@ -133,6 +133,7 @@ public final class KordonScenario {
         factions.get(ZoneScenario.BANDITS).eliteShare = 0.05;
         factions.get(ZoneScenario.BANDITS).protoBuyer = true;
         factions.get(ZoneScenario.MILITARY).military = true;
+        factions.get(ZoneScenario.TRADERS).passive = true;
 
         double[][] h = ZoneScenario.hostility();
 
@@ -142,6 +143,7 @@ public final class KordonScenario {
         farPost.owner = ZoneScenario.BANDITS;
         southPost.owner = ZoneScenario.MILITARY;
         bridge.owner = ZoneScenario.MILITARY;
+        bunker.owner = ZoneScenario.TRADERS;
 
         // стартовые склады трёх живых группировок
         for (Faction f : factions) {

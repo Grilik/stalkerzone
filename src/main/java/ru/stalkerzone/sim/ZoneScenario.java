@@ -6,7 +6,7 @@ import java.util.List;
 /** Стартовый мир: карта Зоны, семь фракций, три торговца с выходом на Большую землю, север с Выжигателем. */
 public final class ZoneScenario {
     public static final int LONERS = 0, DUTY = 1, FREEDOM = 2, BANDITS = 3, SCIENTISTS = 4, MILITARY = 5, MONOLITH = 6,
-            MERCS = 7, CLEAR_SKY = 8, SIN = 9;
+            MERCS = 7, CLEAR_SKY = 8, SIN = 9, TRADERS = 10;
 
     private ZoneScenario() {}
 
@@ -158,8 +158,8 @@ public final class ZoneScenario {
         g.connect(28, 10, 2, 0.15);  // Госпиталь - ЧАЭС (второй путь на север)
         g.build();
 
-        int[] baseNodes = {0, 4, 6, 3, 7, 11, 10, 5, 19, 20};
-        int[] members = {40, 45, 40, 35, 24, 70, 75, 30, 30, 25};
+        int[] baseNodes = {0, 4, 6, 3, 7, 11, 10, 5, 19, 20, 0};
+        int[] members = {40, 45, 40, 35, 24, 70, 75, 30, 30, 25, 0};
         List<Faction> factions = factions(baseNodes, members);
         factions.get(LONERS).mercenary = true;
         // кого притягивает фракция: преданность и жадность характера новичка
@@ -257,12 +257,14 @@ public final class ZoneScenario {
         factions.add(new Faction(MERCS, "Наёмники", baseNodes[7], 0.6, false, members[7], new Doctrine(1.0, 0.8, 0.4, 0.5, 0.3, 0.7)));
         factions.add(new Faction(CLEAR_SKY, "Чистое небо", baseNodes[8], 0.3, false, members[8], new Doctrine(0.5, 0.4, 0.8, 0.8, 0.2, 0.4)));
         factions.add(new Faction(SIN, "Грех", baseNodes[9], 0.85, true, members[9], new Doctrine(1.2, 1.0, 0.1, 0.1, 0.0, 0.5)));
+        factions.add(new Faction(TRADERS, "Торговцы", baseNodes[10], 0.0, false, members[10], new Doctrine(0.3, 0.2, 0.8, 0.8, 0.0, 0.5)));
+        factions.get(TRADERS).service = true;
         return factions;
     }
 
     /** Матрица вражды, общая для всех сценариев: от неё зависят сохранения и массивы. */
     static double[][] hostility() {
-        double[][] h = new double[10][10];
+        double[][] h = new double[11][11];
         rel(h, DUTY, FREEDOM, 1.0);
         rel(h, BANDITS, LONERS, 0.7);
         rel(h, BANDITS, DUTY, 0.8);
@@ -295,6 +297,15 @@ public final class ZoneScenario {
 
     static void rel(double[][] h, int a, int b, double v) {
         h[a][b] = h[b][a] = v;
+    }
+
+    /** Наценка Торговцев для группировок: союзники −5%, нейтралы 0%, подозрительные +15%. */
+    public static final double MARKUP_ALLY = 0.95, MARKUP_NEUTRAL = 1.0, MARKUP_SUSPICIOUS = 1.15;
+
+    /** Возвращает множитель цены Торговцев для покупателя. */
+    public static double tradersMarkup(int factionId) {
+        if (factionId == BANDITS) return MARKUP_SUSPICIOUS;
+        return MARKUP_NEUTRAL;
     }
 
     static Node node(List<Node> list, String name, NodeType t, int x, int z) {

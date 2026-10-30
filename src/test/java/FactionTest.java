@@ -10,7 +10,7 @@ public class FactionTest {
     ck(merc!=null&&cs!=null&&sin!=null,"три новые группировки в Зоне");
     ck(s.nodes.get(merc.baseNode).name.equals("Дикая территория") && s.nodes.get(cs.baseNode).name.equals("Болота") && s.nodes.get(sin.baseNode).name.equals("Мёртвый город"),"базы: Дикая территория, Болота, Мёртвый город");
     ck(s.hostilityTo(duty,free.id)>=1.0,"Долг и Свобода — главная вражда");
-    boolean sinAll=true; for(Faction x:s.factions) if(x!=sin && !x.fanatic && s.hostilityTo(sin,x.id)<1.0) sinAll=false;
+    boolean sinAll=true; for(Faction x:s.factions) if(x!=sin && !x.fanatic && !x.isService() && s.hostilityTo(sin,x.id)<1.0) sinAll=false;
     ck(sinAll && sin.raider,"«Грех» враждует со всеми");
     for(String n:new String[]{"Болота","Мёртвый город","Собачья деревня","Кордон Лесника","Хутор Болотного Доктора"})
       { Node x=node(s,n); boolean edge=false; if(x!=null) for(Node o:s.nodes) if(s.graph.edgeDays(x.id,o.id)>0) edge=true; ck(x!=null&&edge,"локация «"+n+"» на карте и связана дорогой"); }

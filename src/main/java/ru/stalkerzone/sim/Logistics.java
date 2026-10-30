@@ -105,7 +105,7 @@ public final class Logistics {
         Faction m = s.military();
         if (m != null && m.members > 3 && s.day % 3 == 0) mainland(s, m, r);
         for (Faction f : s.factions) {
-            if (f.fanatic || f.members < 3) continue;
+            if (f.fanatic || f.members < 3 || f.isService()) continue;
             dispatchSupply(s, f, r);
             dispatchReturn(s, f, r);
         }
@@ -183,7 +183,7 @@ public final class Logistics {
         Faction to = null;
         double best = 0.4;
         for (Faction o : s.factions) {
-            if (o == f || o.fanatic || o.members < 5 || s.minDistFromOwned(o, n.id) > 1) continue;
+            if (o == f || o.fanatic || o.isService() || o.members < 5 || s.minDistFromOwned(o, n.id) > 1) continue;
             double h = s.hostilityTo(f, o.id);
             if (h < best) { best = h; to = o; }
         }
@@ -356,7 +356,7 @@ public final class Logistics {
      */
     private void factionIncome(Simulation s, Random r) {
         for (Faction f : s.factions) {
-            if (f.members < 5 || f.fanatic || s.nodes.get(f.baseNode).owner != f.id) continue;
+            if (f.members < 5 || f.fanatic || f.isService() || s.nodes.get(f.baseNode).owner != f.id) continue;
             Node base = s.nodes.get(f.baseNode);
             if (f.name.equals("Долг") && base.trader) {
                 long fee = Math.min(500, base.market.money / 40);

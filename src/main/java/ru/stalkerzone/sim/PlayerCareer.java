@@ -17,7 +17,7 @@ public final class PlayerCareer {
 
     /** Можно ли игроку вступить: учёные, военные, Монолит и Грех чужих не берут. */
     public static boolean joinable(Faction f) {
-        return !f.fanatic && !f.scientist && !f.military && f.id != ZoneScenario.SIN;
+        return !f.fanatic && !f.scientist && !f.military && f.id != ZoneScenario.SIN && !f.isService();
     }
 
     /** Почему не берут (null — берут). rep — репутация игрока у группировки. */

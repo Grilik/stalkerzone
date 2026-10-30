@@ -160,7 +160,7 @@ public final class ContractBoard {
             }
         }
         for (Faction f : s.factions) {
-            if (f.fanatic || f.members < 8 || openCount() >= MAX_OPEN) continue;
+            if (f.fanatic || f.members < 8 || f.isService() || openCount() >= MAX_OPEN) continue;
             // поставки: воюющим и обедневшим не хватает патронов и медикаментов
             Good need = null;
             if (Arms.ammoValue(f.stock) < f.members * 30 || f.phase == Phase.WAR) need = f.military ? Good.AMMO_PRO : Good.AMMO;

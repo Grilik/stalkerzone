@@ -14,6 +14,8 @@ public final class Caravan {
     public final int[] sell = new int[Good.ALL.length];
     /** Сколько единиц закупить у торговца. */
     public final int[] want = new int[Good.ALL.length];
+    /** Для курьера Торговцев: id фракции-покупателя, иначе −1. */
+    public int courierFor = -1;
 
     public Caravan(int owner, int[] route, int guards) {
         this.owner = owner;

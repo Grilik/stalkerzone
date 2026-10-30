@@ -98,7 +98,10 @@ public class BrainTest {
         }
         check(rogueOk, "мусорные команды не ломают закон сохранения и не роняют симуляцию (400 дней)");
         boolean baseKept = true;
-        for (Faction f : rogue.factions) baseKept &= rogue.nodes.get(f.baseNode).owner == f.id;
+        for (Faction f : rogue.factions) {
+            if (f.isService()) continue; // у Торговцев нет своей территории в Зоне
+            baseKept &= rogue.nodes.get(f.baseNode).owner == f.id;
+        }
         check(baseKept, "базы фракций не захватываются даже злым мозгом");
 
         // 2б. проход к ЧАЭС закрыт, пока Выжигатель работает
@@ -121,7 +124,10 @@ public class BrainTest {
             rogue2Ok = rogue2.audit().isEmpty();
         }
         boolean base2 = true;
-        for (Faction f : rogue2.factions) base2 &= rogue2.nodes.get(f.baseNode).owner == f.id;
+        for (Faction f : rogue2.factions) {
+            if (f.isService()) continue;
+            base2 &= rogue2.nodes.get(f.baseNode).owner == f.id;
+        }
         check(rogue2Ok && base2, "злой мозг при активном Монолите: аудит сходится, базы не захвачены");
 
         // 3. сохранение и загрузка (формат v3)

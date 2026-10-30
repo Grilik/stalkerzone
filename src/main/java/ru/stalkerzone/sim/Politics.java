@@ -63,6 +63,7 @@ public final class Politics {
 
     private void unity(Simulation s) {
         for (Faction f : s.factions) {
+            if (f.isService()) continue;
             Person l = s.people.leader(f.id);
             double target = 0.82 + (l != null ? 0.12 * l.loyalty + 0.03 * l.rank() : -0.35)
                     - 0.25 * Math.max(0, f.stress - 55) / 45.0 - (f.phase == Phase.RECOVER ? 0.03 : 0);
@@ -91,7 +92,7 @@ public final class Politics {
 
     private void enclaves(Simulation s, Random r) {
         for (Faction f : s.factions) {
-            if (f.fanatic) continue;
+            if (f.fanatic || f.isService()) continue;
             boolean[] ok = connected(s, f);
             for (Node n : s.nodes) {
                 if (n.owner != f.id || n.id == f.baseNode || ok[n.id]) {
@@ -123,7 +124,7 @@ public final class Politics {
         Faction best = null;
         double bestH = 0.35;
         for (Faction g : s.factions) {
-            if (g == f || g.fanatic || g.members < 5) continue;
+            if (g == f || g.fanatic || g.isService() || g.members < 5) continue;
             if (node >= 0 && s.minDistFromOwned(g, node) > 1) continue;
             double h = s.hostilityTo(f, g.id);
             if (h < bestH) { bestH = h; best = g; }
