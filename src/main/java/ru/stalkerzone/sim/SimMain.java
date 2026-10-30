@@ -7,7 +7,7 @@ public final class SimMain {
         long seed = args.length > 1 ? Long.parseLong(args[1]) : 1L;
         boolean verbose = args.length > 2;
 
-        Simulation sim = ZoneScenario.create(seed);
+        Simulation sim = Scenarios.create(seed);
         for (int d = 1; d <= days; d++) {
             sim.step();
             String audit = sim.audit();

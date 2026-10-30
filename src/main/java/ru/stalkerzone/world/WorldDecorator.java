@@ -28,7 +28,7 @@ public final class WorldDecorator {
 
     private static synchronized int[][] centers() {
         if (centers == null) {
-            List<ru.stalkerzone.sim.Node> nodes = ru.stalkerzone.sim.ZoneScenario.create(0).nodes;
+            List<ru.stalkerzone.sim.Node> nodes = ru.stalkerzone.sim.Scenarios.create(0).nodes;
             centers = new int[nodes.size()][];
             for (int i = 0; i < nodes.size(); i++) centers[i] = new int[] {nodes.get(i).x * ZoneBounds.SCALE, nodes.get(i).z * ZoneBounds.SCALE};
         }

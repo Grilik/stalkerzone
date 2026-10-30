@@ -15,8 +15,8 @@ import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ru.stalkerzone.sim.Node;
+import ru.stalkerzone.sim.Scenarios;
 import ru.stalkerzone.sim.Simulation;
-import ru.stalkerzone.sim.ZoneScenario;
 
 /** Мир Зоны: границы, точка появления, возврат игроков с края. Шкала и границы берутся из карты симуляции. */
 public final class ZoneWorld {
@@ -30,7 +30,7 @@ public final class ZoneWorld {
     private static void init() {
         if (bounds != null) return;
         // координаты локаций статичны и не зависят от seed
-        Simulation s = ZoneScenario.create(0);
+        Simulation s = Scenarios.create(0);
         ZoneBounds nb = ZoneBounds.fromNodes(s.nodes);
         // v1.14: уровни оригинала 1:1 шире своих узлов — граница Зоны обходит их с запасом
         int x0 = nb.minX, x1 = nb.maxX, z0 = nb.minZ, z1 = nb.maxZ;

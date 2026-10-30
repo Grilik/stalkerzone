@@ -3,8 +3,8 @@ package ru.stalkerzone;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
+import ru.stalkerzone.sim.Scenarios;
 import ru.stalkerzone.sim.Simulation;
-import ru.stalkerzone.sim.ZoneScenario;
 
 /** Состояние Зоны, хранящееся вместе с миром (data/stalkerzone_sim.dat). */
 public class ZoneData extends SavedData {
@@ -34,7 +34,7 @@ public class ZoneData extends SavedData {
         long worldSeed = server.overworld().getSeed();
         return server.overworld().getDataStorage().computeIfAbsent(
                 ZoneData::load,
-                () -> new ZoneData(ZoneScenario.create(worldSeed), 0),
+                () -> new ZoneData(Scenarios.create(worldSeed), 0),
                 NAME);
     }
 
@@ -89,7 +89,7 @@ public class ZoneData extends SavedData {
     }
 
     public void reset(long seed) {
-        sim = ZoneScenario.create(seed);
+        sim = Scenarios.create(seed);
         life = new ru.stalkerzone.sim.ZoneLife();
         hidden.clear();
         tickCounter = 0;

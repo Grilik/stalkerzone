@@ -158,18 +158,9 @@ public final class ZoneScenario {
         g.connect(28, 10, 2, 0.15);  // Госпиталь - ЧАЭС (второй путь на север)
         g.build();
 
-        List<Faction> factions = new ArrayList<>();
-        factions.add(new Faction(LONERS, "Одиночки", 0, 0.25, false, 40, new Doctrine(0.6, 0.4, 0.8, 0.8, 0.1, 0.35)));
-        factions.add(new Faction(DUTY, "Долг", 4, 0.55, false, 45, new Doctrine(0.9, 0.7, 0.6, 0.3, 1.0, 0.9)));
-        factions.add(new Faction(FREEDOM, "Свобода", 6, 0.55, false, 40, new Doctrine(1.0, 0.8, 0.3, 0.6, 0.0, 0.6)));
-        factions.add(new Faction(BANDITS, "Бандиты", 3, 0.75, true, 35, new Doctrine(1.1, 0.9, 0.2, 0.2, 0.0, 0.3)));
-        factions.add(new Faction(SCIENTISTS, "Учёные", 7, 0.0, false, 24, new Doctrine(0.1, 0.0, 0.9, 0.9, 0.0, 0.1)));
-        factions.add(new Faction(MILITARY, "Военные", 11, 0.25, false, 70, new Doctrine(0.3, 0.5, 0.7, 0.3, 1.0, 1.0)));
-        factions.add(new Faction(MONOLITH, "Монолит", 10, 0.9, true, 75, new Doctrine(0.5, 0.0, 0.2, 0.0, 0.0, 1.0)));
-        // v1.14: наёмники в Дикой территории (как в ТЧ), Чистое небо на Болотах, секта «Грех» в Мёртвом городе
-        factions.add(new Faction(MERCS, "Наёмники", 5, 0.6, false, 30, new Doctrine(1.0, 0.8, 0.4, 0.5, 0.3, 0.7)));
-        factions.add(new Faction(CLEAR_SKY, "Чистое небо", 19, 0.3, false, 30, new Doctrine(0.5, 0.4, 0.8, 0.8, 0.2, 0.4)));
-        factions.add(new Faction(SIN, "Грех", 20, 0.85, true, 25, new Doctrine(1.2, 1.0, 0.1, 0.1, 0.0, 0.5)));
+        int[] baseNodes = {0, 4, 6, 3, 7, 11, 10, 5, 19, 20};
+        int[] members = {40, 45, 40, 35, 24, 70, 75, 30, 30, 25};
+        List<Faction> factions = factions(baseNodes, members);
         factions.get(LONERS).mercenary = true;
         // кого притягивает фракция: преданность и жадность характера новичка
         double[][] ideals = {{0.0, 0.0}, {0.7, -0.4}, {-0.6, 0.1}, {-0.3, 0.8}};
@@ -198,34 +189,7 @@ public final class ZoneScenario {
         factions.get(SIN).eliteShare = 0.05;
         factions.get(SIN).protoBuyer = true;
 
-        double[][] h = new double[10][10];
-        rel(h, DUTY, FREEDOM, 1.0);
-        rel(h, BANDITS, LONERS, 0.7);
-        rel(h, BANDITS, DUTY, 0.8);
-        rel(h, BANDITS, FREEDOM, 0.6);
-        rel(h, LONERS, DUTY, 0.1);
-        rel(h, LONERS, FREEDOM, 0.1);
-        rel(h, MILITARY, BANDITS, 0.9);
-        rel(h, MILITARY, FREEDOM, 0.25);
-        rel(h, MILITARY, LONERS, 0.2);
-        rel(h, MILITARY, DUTY, 0.1);
-        for (int i = 0; i < 6; i++) rel(h, MONOLITH, i, 1.0);
-        // v1.14: Долг и Свобода — главная вражда (уже 1.0); наёмники работают на всех и против всех
-        rel(h, MERCS, DUTY, 0.6);
-        rel(h, MERCS, LONERS, 0.4);
-        rel(h, MERCS, MILITARY, 0.5);
-        rel(h, MERCS, FREEDOM, 0.3);
-        rel(h, MERCS, BANDITS, 0.3);
-        rel(h, MERCS, SCIENTISTS, 0.2);
-        rel(h, MERCS, CLEAR_SKY, 0.6);
-        rel(h, CLEAR_SKY, BANDITS, 0.7);
-        rel(h, CLEAR_SKY, MILITARY, 0.3);
-        rel(h, CLEAR_SKY, DUTY, 0.1);
-        rel(h, CLEAR_SKY, FREEDOM, 0.1);
-        for (int i = 0; i < 9; i++) if (i != MONOLITH) rel(h, SIN, i, 1.0);
-        rel(h, SIN, MONOLITH, 0.5);
-        rel(h, MONOLITH, MERCS, 1.0);
-        rel(h, MONOLITH, CLEAR_SKY, 1.0);
+        double[][] h = hostility();
 
         // начальное владение
         kordon.owner = LONERS;
@@ -279,17 +243,67 @@ public final class ZoneScenario {
         return sim;
     }
 
-    private static void rel(double[][] h, int a, int b, double v) {
+    /** Один и тот же набор фракций для всех сценариев: те же id, имена и характер. */
+    static List<Faction> factions(int[] baseNodes, int[] members) {
+        List<Faction> factions = new ArrayList<>();
+        factions.add(new Faction(LONERS, "Одиночки", baseNodes[0], 0.25, false, members[0], new Doctrine(0.6, 0.4, 0.8, 0.8, 0.1, 0.35)));
+        factions.add(new Faction(DUTY, "Долг", baseNodes[1], 0.55, false, members[1], new Doctrine(0.9, 0.7, 0.6, 0.3, 1.0, 0.9)));
+        factions.add(new Faction(FREEDOM, "Свобода", baseNodes[2], 0.55, false, members[2], new Doctrine(1.0, 0.8, 0.3, 0.6, 0.0, 0.6)));
+        factions.add(new Faction(BANDITS, "Бандиты", baseNodes[3], 0.75, true, members[3], new Doctrine(1.1, 0.9, 0.2, 0.2, 0.0, 0.3)));
+        factions.add(new Faction(SCIENTISTS, "Учёные", baseNodes[4], 0.0, false, members[4], new Doctrine(0.1, 0.0, 0.9, 0.9, 0.0, 0.1)));
+        factions.add(new Faction(MILITARY, "Военные", baseNodes[5], 0.25, false, members[5], new Doctrine(0.3, 0.5, 0.7, 0.3, 1.0, 1.0)));
+        factions.add(new Faction(MONOLITH, "Монолит", baseNodes[6], 0.9, true, members[6], new Doctrine(0.5, 0.0, 0.2, 0.0, 0.0, 1.0)));
+        // v1.14: наёмники в Дикой территории (как в ТЧ), Чистое небо на Болотах, секта «Грех» в Мёртвом городе
+        factions.add(new Faction(MERCS, "Наёмники", baseNodes[7], 0.6, false, members[7], new Doctrine(1.0, 0.8, 0.4, 0.5, 0.3, 0.7)));
+        factions.add(new Faction(CLEAR_SKY, "Чистое небо", baseNodes[8], 0.3, false, members[8], new Doctrine(0.5, 0.4, 0.8, 0.8, 0.2, 0.4)));
+        factions.add(new Faction(SIN, "Грех", baseNodes[9], 0.85, true, members[9], new Doctrine(1.2, 1.0, 0.1, 0.1, 0.0, 0.5)));
+        return factions;
+    }
+
+    /** Матрица вражды, общая для всех сценариев: от неё зависят сохранения и массивы. */
+    static double[][] hostility() {
+        double[][] h = new double[10][10];
+        rel(h, DUTY, FREEDOM, 1.0);
+        rel(h, BANDITS, LONERS, 0.7);
+        rel(h, BANDITS, DUTY, 0.8);
+        rel(h, BANDITS, FREEDOM, 0.6);
+        rel(h, LONERS, DUTY, 0.1);
+        rel(h, LONERS, FREEDOM, 0.1);
+        rel(h, MILITARY, BANDITS, 0.9);
+        rel(h, MILITARY, FREEDOM, 0.25);
+        rel(h, MILITARY, LONERS, 0.2);
+        rel(h, MILITARY, DUTY, 0.1);
+        for (int i = 0; i < 6; i++) rel(h, MONOLITH, i, 1.0);
+        // v1.14: Долг и Свобода — главная вражда (уже 1.0); наёмники работают на всех и против всех
+        rel(h, MERCS, DUTY, 0.6);
+        rel(h, MERCS, LONERS, 0.4);
+        rel(h, MERCS, MILITARY, 0.5);
+        rel(h, MERCS, FREEDOM, 0.3);
+        rel(h, MERCS, BANDITS, 0.3);
+        rel(h, MERCS, SCIENTISTS, 0.2);
+        rel(h, MERCS, CLEAR_SKY, 0.6);
+        rel(h, CLEAR_SKY, BANDITS, 0.7);
+        rel(h, CLEAR_SKY, MILITARY, 0.3);
+        rel(h, CLEAR_SKY, DUTY, 0.1);
+        rel(h, CLEAR_SKY, FREEDOM, 0.1);
+        for (int i = 0; i < 9; i++) if (i != MONOLITH) rel(h, SIN, i, 1.0);
+        rel(h, SIN, MONOLITH, 0.5);
+        rel(h, MONOLITH, MERCS, 1.0);
+        rel(h, MONOLITH, CLEAR_SKY, 1.0);
+        return h;
+    }
+
+    static void rel(double[][] h, int a, int b, double v) {
         h[a][b] = h[b][a] = v;
     }
 
-    private static Node node(List<Node> list, String name, NodeType t, int x, int z) {
+    static Node node(List<Node> list, String name, NodeType t, int x, int z) {
         Node n = new Node(list.size(), name, t, x, z);
         list.add(n);
         return n;
     }
 
-    private static int[] caps(int food, int parts, int ammo, int meds, int gear, int materials) {
+    static int[] caps(int food, int parts, int ammo, int meds, int gear, int materials) {
         int[] c = new int[Good.ALL.length];
         c[Good.FOOD.ordinal()] = food;
         c[Good.PARTS.ordinal()] = parts;
@@ -301,7 +315,7 @@ public final class ZoneScenario {
         return c;
     }
 
-    private static void trader(Node n, double importMarkup, double exportRate, int[] importCap) {
+    static void trader(Node n, double importMarkup, double exportRate, int[] importCap) {
         n.trader = true;
         n.importMarkup = importMarkup;
         n.exportRate = exportRate;
