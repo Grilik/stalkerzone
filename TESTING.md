@@ -19,6 +19,29 @@
 ```
 Файл появится в `build/libs/stalkerzone-0.1.0.jar`. Первая сборка скачивает Forge и Minecraft, это долго.
 
+## Смоук-тест сервера (одна команда)
+
+Проверяет, что сервер поднимается и команды `/zone` работают из консоли — без ручной игры:
+
+```
+powershell -ExecutionPolicy Bypass -File tools/smoketest.ps1
+```
+
+Что делает `tools/smoketest.ps1` (PowerShell 5, без Python):
+
+1. Готовит `run/`: `eula.txt` и `server.properties` — мир типа «Зона» (`level-type=stalkerzone:zone`),
+   RCON на `25575` с паролем `sz`, `max-tick-time=-1`, `level-name=smoke_<дата-время>`; сценарий `kordon`
+   задаётся JVM-свойством `-Dstalkerzone.scenario=kordon` через `JAVA_TOOL_OPTIONS` (правка `build.gradle` не нужна).
+2. Запускает `./gradlew.bat runServer` в фоне и ждёт в логе `Done (` или падения (таймаут 15 минут).
+3. Подключается по RCON (свой клиент Source RCON на `System.Net.Sockets.TcpClient`) и выполняет проверки
+   из `tools/smoke_checks.txt`: по строке — команда и ожидаемый фрагмент ответа, `!фрагмент` = фрагмента
+   быть не должно. Проверяются `forceload add` вокруг деревни, `zone factions`, `zone step 5`, `zone audit`,
+   `zone events 5`, `zone lairs`, `zone anomalies`.
+4. Посылает `stop` и пишет `run/smoke-report.txt`: PASS/FAIL по каждой строке, плюс все строки лога сервера
+   с `ERROR` и `stalkerzone`.
+
+Код выхода 0 — всё PASS, 1 — есть FAIL. Сломанная проверка (неверный фрагмент) даёт FAIL и код 1.
+
 ## Установка
 
 1. Minecraft **1.20.1**, установщик **Forge 1.20.1-47.3.0** (files.minecraftforge.net).

@@ -1,0 +1,15 @@
+# Смоук-проверки сервера (карточка 008).
+# Формат строки: команда|фрагмент  — фрагмент должен встретиться в ответе RCON (без учёта регистра);
+#               команда|!фрагмент — фрагмента в ответе быть не должно.
+# Пустые строки и строки, начинающиеся с #, пропускаются.
+forceload add -1 -1 1 1|!Unknown or incomplete
+forceload add -1 -1 1 1|!Incorrect argument
+zone factions|Группировки
+zone factions|Одиночки
+zone factions|Военные
+zone factions|Бандиты
+zone step 5|Симуляция продвинута
+zone audit|сходятся
+zone events 5|!Unknown or incomplete
+zone lairs|Логова мутантов
+zone anomalies|Аномалии
