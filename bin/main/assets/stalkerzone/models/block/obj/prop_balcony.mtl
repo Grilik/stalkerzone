@@ -1,0 +1,24 @@
+newmtl balcony_panel
+Kd 1 1 1
+map_Kd #balcony_panel
+
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl concrete
+Kd 1 1 1
+map_Kd #concrete
+
+newmtl concrete_dark
+Kd 1 1 1
+map_Kd #concrete_dark
+
+newmtl rust
+Kd 1 1 1
+map_Kd #rust
+
+newmtl wood
+Kd 1 1 1
+map_Kd #wood
+

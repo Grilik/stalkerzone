@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_fridge.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "chrome": "stalkerzone:block/prop/chrome",
+  "enamel": "stalkerzone:block/prop/enamel",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

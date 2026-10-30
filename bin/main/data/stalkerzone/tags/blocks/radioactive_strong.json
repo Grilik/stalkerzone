@@ -1,0 +1,21 @@
+{
+ "replace": false,
+ "values": [
+  "stalkerzone:radioactive_barrel",
+  "stalkerzone:veh_zhiguli",
+  "stalkerzone:veh_moskvich",
+  "stalkerzone:veh_zaporozhets",
+  "stalkerzone:veh_niva",
+  "stalkerzone:veh_uaz",
+  "stalkerzone:veh_raf",
+  "stalkerzone:veh_laz",
+  "stalkerzone:veh_paz",
+  "stalkerzone:veh_zil_fire",
+  "stalkerzone:veh_zil",
+  "stalkerzone:veh_kamaz",
+  "stalkerzone:veh_btr",
+  "stalkerzone:veh_tractor",
+  "stalkerzone:prop_barrel_rad",
+  "stalkerzone:prop_lab_tank"
+ ]
+}

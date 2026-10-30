@@ -1,0 +1,18 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/veh_tank_wagon_1.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "black": "stalkerzone:block/prop/black",
+  "paint": "stalkerzone:block/prop/paint_beige",
+  "rust": "stalkerzone:block/prop/rust",
+  "steel": "stalkerzone:block/prop/steel",
+  "steel_dark": "stalkerzone:block/prop/steel_dark",
+  "particle": "stalkerzone:block/prop/black"
+ }
+}

@@ -1,0 +1,12 @@
+newmtl black
+Kd 1 1 1
+map_Kd #black
+
+newmtl wood
+Kd 1 1 1
+map_Kd #wood
+
+newmtl wood_end
+Kd 1 1 1
+map_Kd #wood_end
+

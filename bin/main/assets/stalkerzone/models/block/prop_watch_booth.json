@@ -1,0 +1,15 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_watch_booth.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "paint_olive": "stalkerzone:block/prop/paint_olive",
+  "stripe": "stalkerzone:block/prop/stripe",
+  "particle": "stalkerzone:block/prop/paint_olive"
+ }
+}

@@ -63,6 +63,35 @@ public final class Simulation {
     public static final int MAX_LAIRS = 9;
     public int lairsDestroyed, lairsSpawned;
 
+    /** v14: узлы, где логова недопустимы (выходы за карту). */
+    public int[] lairExits = {};
+    /** v14: узлы, которые фракции не могут захватить (выходы и логовища). */
+    public int[] lairNoCapture = {};
+    /** v14: сценарий задал фиксированный стартовый набор логов — seedLairs использует его вместо случайного. */
+    public KordonBalance.LairDef[] lairStartDefs = null;
+    /** v14: сценарий запрещает случайное появление логов (только через respawnQueue). */
+    public boolean lairRandomSpawnDisabled = false;
+    /** v14: веса целей для налётов (индекс узла → множитель). null = без весов (зона). */
+    public double[] lairRaidWeights = null;
+
+    /** v14: минимальная сила логова для налёта. 0 = стандартный порог 30. */
+    public double lairRaidMin = 0;
+    /** v14: очередь возрождения логов (срок, район, прежний cap, прежний вид). */
+    public final List<LairRespawn> lairRespawnQueue = new ArrayList<>();
+    public static final class LairRespawn {
+        public int dueDay, district, shift;
+        public double prevCap;
+        public LairKind prevKind;
+        public LairRespawn(int dueDay, int district, double prevCap, LairKind prevKind, int shift) {
+            this.dueDay = dueDay; this.district = district; this.prevCap = prevCap;
+            this.prevKind = prevKind; this.shift = shift;
+        }
+    }
+    /** v14: сдвиг окна cap по районам. */
+    public final int[] lairDistrictShift = new int[3];
+    /** v14: день последней зачистки в районе (для сброса сдвига). */
+    public final int[] lairDistrictLastClear = new int[3];
+
     /** Люди: новички, именные сталкеры, раненые, зомби (v1.5–1.6). */
     public final People people = new People();
     /** Власть: встречи, перемирия, раскол (v1.7). */
@@ -726,6 +755,7 @@ public final class Simulation {
         if (l.strength >= 4) return false;
         lairs.remove(l);
         lairsDestroyed++;
+        onLairDestroyed(l);
         log("Логово «" + l.title() + "» у «" + nodes.get(l.node).name + "» уничтожено" + (byPlayer ? " сталкером-одиночкой (игрок)" : " в стычке"));
         return true;
     }
@@ -764,6 +794,14 @@ public final class Simulation {
     /** Стартовые логова на нейтральных точках; своя случайность, чтобы не сдвигать остальную симуляцию. */
     private void seedLairs() {
         lairs.clear();
+        if (lairStartDefs != null) {
+            // фиксированные стартовые логова из сценария
+            for (KordonBalance.LairDef d : lairStartDefs) {
+                Lair l = new Lair(d.node, d.kind, d.strength, false);
+                lairs.add(l);
+            }
+            return;
+        }
         Random r = new Random(seed * 7919L + 17);
         for (Node n : nodes) {
             if (n.owner >= 0 || n.type == NodeType.BASE) continue;
@@ -778,6 +816,19 @@ public final class Simulation {
 
     private boolean isAnyBase(int nodeId) {
         for (Faction f : factions) if (f.baseNode == nodeId) return true;
+        return false;
+    }
+
+    /** Может ли на этом узле быть логово (не выход, не база, не запрещён сценарием). */
+    private boolean lairAllowed(int nodeId) {
+        if (isAnyBase(nodeId)) return false;
+        for (int e : lairExits) if (e == nodeId) return false;
+        return true;
+    }
+
+    /** Захват запрещён сценарием (выходы за карту, логовища). */
+    public boolean noCapture(int nodeId) {
+        for (int c : lairNoCapture) if (c == nodeId) return true;
         return false;
     }
 
@@ -804,7 +855,7 @@ public final class Simulation {
             if (l.raidCooldown > 0) l.raidCooldown--;
             if (n.owner < 0) {
                 l.strength += (l.cap() - l.strength) * 0.012 * l.growth();
-                if (l.strength > 30 && l.raidCooldown == 0) raid(l, born);
+                if (l.strength > (lairRaidMin > 0 ? lairRaidMin : 30) && l.raidCooldown == 0) raid(l, born);
                 continue;
             }
             Faction f = factions.get(n.owner);
@@ -828,6 +879,7 @@ public final class Simulation {
         }
         lairs.addAll(born);
         spawnLair();
+        processRespawnQueue();
     }
 
     /** Мутанты нападают на ближайшую территорию фракции. */
@@ -840,8 +892,16 @@ public final class Simulation {
             if (factions.get(t.owner).fanatic) continue;
             int d = graph.dist(l.node, t.id);
             if (d > 2) continue;
+            // v14: выходы за карту недоступны налётам
+            boolean exit = false;
+            for (int e : lairExits) if (e == t.id) { exit = true; break; }
+            if (exit) continue;
             Faction f = factions.get(t.owner);
-            double score = (t.id == f.baseNode ? 0.5 : 1.0) / (1 + lairGarrison(f, t)) * (1 + rng.nextDouble());
+            double w = (t.id == f.baseNode ? 0.5 : 1.0);
+            // v14: сценарий задаёт веса целей (ферма и деревня чаще)
+            if (lairRaidWeights != null && t.id < lairRaidWeights.length && lairRaidWeights[t.id] > 0)
+                w *= lairRaidWeights[t.id];
+            double score = w / (1 + lairGarrison(f, t)) * (1 + rng.nextDouble());
             if (score > best) { best = score; target = t; }
         }
         l.raidCooldown = 12 + rng.nextInt(10);
@@ -879,7 +939,8 @@ public final class Simulation {
         f.nodesLost++;
         l.raidCooldown = 15;
         log("Мутанты захватили «" + n.name + "», " + f.name + " отступают");
-        if (lairAt(n.id) == null && born.stream().noneMatch(b -> b.node == n.id)) {
+        if (lairAt(n.id) == null && born.stream().noneMatch(b -> b.node == n.id)
+                    && lairAllowed(n.id)) {
             double child = l.strength * 0.35;
             l.strength -= child * 0.5;
             born.add(new Lair(n.id, pickKind(n.type, rng), child, false));
@@ -889,6 +950,7 @@ public final class Simulation {
 
     private void destroyLair(Lair l, Faction winner, Node n, String how) {
         lairsDestroyed++;
+        onLairDestroyed(l);
         if (winner != null) {
             int parts = (int) (l.strength * 0.4) + 3;
             int art = (int) (l.strength / 30) + (l.lab ? 2 : 0);
@@ -902,13 +964,30 @@ public final class Simulation {
         }
     }
 
+    /** v14: поставить уничтоженное логово в очередь возрождения, если оно в районе Кордона. */
+    private void onLairDestroyed(Lair l) {
+        int dist = KordonBalance.districtOf(l.node);
+        if (dist < 0) return;
+        // обновить день последней зачистки в районе
+        lairDistrictLastClear[dist] = day;
+        // сдвиг окна увеличивается на SHIFT_STEP, но ограничен сверху
+        lairDistrictShift[dist] = Math.min(lairDistrictShift[dist] + KordonBalance.SHIFT_STEP,
+                KordonBalance.SHIFT_MAX_CAP - (int) l.kind.cap + 20);
+        int dueDay = day + KordonBalance.RESPAWN_MIN
+                + (new Random(seed * 987654321L + day * 7919L + l.node).nextInt(
+                        KordonBalance.RESPAWN_MAX - KordonBalance.RESPAWN_MIN + 1));
+        lairRespawnQueue.add(new LairRespawn(dueDay, dist, l.kind.cap, l.kind, lairDistrictShift[dist]));
+    }
+
     /** Новые логова появляются взамен уничтоженных, предпочтительно на нейтральной земле. */
     private void spawnLair() {
+        if (lairRandomSpawnDisabled) return;
         if (lairs.size() >= MAX_LAIRS || rng.nextDouble() >= 0.04) return;
         double total = 0;
         double[] w = new double[nodes.size()];
         for (Node n : nodes) {
             if (isAnyBase(n.id) || Logistics.isFieldBaseSite(n) || lairAt(n.id) != null) continue;
+            if (!lairAllowed(n.id)) continue;
             w[n.id] = n.owner < 0 ? 3 : 1;
             total += w[n.id];
         }
@@ -925,6 +1004,72 @@ public final class Simulation {
         }
     }
 
+    /** v14: проверить очередь возрождения: подошёл срок — создать логово в районе. */
+    private void processRespawnQueue() {
+        for (int i = lairRespawnQueue.size() - 1; i >= 0; i--) {
+            LairRespawn r = lairRespawnQueue.get(i);
+            if (r.dueDay > day) continue;
+            // сбросить сдвиг района, если зачисток не было SHIFT_RESET_DAYS
+            if (day - lairDistrictLastClear[r.district] > KordonBalance.SHIFT_RESET_DAYS)
+                lairDistrictShift[r.district] = 0;
+
+            // найти свободное место в районе
+            int[] sites = KordonBalance.ALL_DISTRICTS[r.district];
+            int freeNode = -1;
+            for (int s : sites) {
+                if (!lairAllowed(s)) continue;
+                if (lairAt(s) != null) continue;
+                Node sn = nodes.get(s);
+                if (sn.owner >= 0) continue;
+                freeNode = s;
+                break;
+            }
+            if (freeNode < 0) { r.dueDay++; continue; } // все занято, подождём
+
+            // выбрать вид из пула с учётом окна cap
+            KordonBalance.KindWeight[] pool = KordonBalance.pool(r.district);
+            java.util.List<LairKind> kinds = new java.util.ArrayList<>();
+            java.util.List<Integer> weights = new java.util.ArrayList<>();
+            for (KordonBalance.KindWeight kw : pool) { kinds.add(kw.kind); weights.add(kw.weight); }
+            int shift = lairDistrictShift[r.district];
+            LairKind picked = KordonBalance.pickKindInWindow(kinds, weights, r.prevCap, shift,
+                    new Random(seed * 1000003L + day + freeNode));
+            if (picked == null) picked = r.prevKind;
+
+            Node nn = nodes.get(freeNode);
+            Lair nl = new Lair(freeNode, picked, 6, false);
+            nl.strength = Math.min(nl.strength, nl.cap());
+            lairs.add(nl);
+            lairsSpawned++;
+            log("В районе «" + nn.name + "» возродилось логово: " + nl.title());
+
+            // сдвиг окна для следующих возрождений
+            lairDistrictShift[r.district] = Math.min(shift + KordonBalance.SHIFT_STEP,
+                    KordonBalance.SHIFT_MAX_CAP - (int) picked.cap + 20);
+            lairRespawnQueue.remove(i);
+        }
+    }
+
+    /** v14: пересчитать опасность рёбер-проходов по силе ближайших логов. */
+    public void recalcPassDanger() {
+        if (!scenario.equals("kordon")) return;
+        for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {
+            int a = KordonBalance.PASS_EDGES[i][0], b = KordonBalance.PASS_EDGES[i][1];
+            double base = KordonBalance.PASS_BASE_DANGER[i];
+            if (base <= 0) continue;
+            int passNode = (KordonBalance.districtOf(a) >= 0 ? a : b);
+            double bestDist = 99, bestStr = 0, bestCap = 45;
+            for (Lair l : lairs) {
+                int d = graph.dist(passNode, l.node);
+                if (d < bestDist || (d == bestDist && l.strength > bestStr)) {
+                    bestDist = d; bestStr = l.strength; bestCap = l.kind.cap;
+                }
+            }
+            double factor = KordonBalance.passDangerFactor(bestStr, bestCap, (int)bestDist);
+            graph.setDanger(a, b, base * factor);
+        }
+    }
+
     // ------------------------------------------------------------------ шаг
 
     public void step() {
@@ -937,6 +1082,7 @@ public final class Simulation {
         world.daily(this, rng);
         anomaliesDaily();
         lairsDaily();
+        recalcPassDanger();
         for (Faction f : factions) economy(f);
         for (Faction f : factions) buildingsDaily(f);
         labs.daily(this, rng);
@@ -1157,7 +1303,7 @@ public final class Simulation {
                     n.owner = -1;
                     f.nodesLost++;
                     log(f.name + " не удержали «" + n.name + "»: территорию заняли мутанты");
-                    if (lairAt(n.id) == null && !isAnyBase(n.id)) {
+                    if (lairAt(n.id) == null && !isAnyBase(n.id) && lairAllowed(n.id)) {
                         Lair nl = new Lair(n.id, pickKind(n.type, rng), n.defense * 0.5, false);
                         nl.strength = Math.min(nl.strength, nl.cap());
                         lairs.add(nl);
@@ -1403,6 +1549,7 @@ public final class Simulation {
         if (nodeId < 0 || nodeId >= nodes.size()) return;
         Node n = nodes.get(nodeId);
         if (n.owner == f.id) return;
+        if (noCapture(nodeId)) return; // v14: выходы и логовища не захватывают
         // базы не захватываются; только Монолит может разгромить чужую базу
         if (n.owner >= 0 && factions.get(n.owner).baseNode == n.id && !f.fanatic) return;
         if (minDistFromOwned(f, nodeId) > 3) return;
@@ -1836,7 +1983,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(13);
+            out.writeInt(14); // v14: очередь возрождения логов Кордона
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -1955,6 +2102,19 @@ public final class Simulation {
             }
             out.writeInt(events.size());
             for (String e : events) out.writeUTF(e);
+            // v14: очередь возрождения логов Кордона
+            out.writeInt(lairRespawnQueue.size());
+            for (LairRespawn r : lairRespawnQueue) {
+                out.writeInt(r.dueDay);
+                out.writeInt(r.district);
+                out.writeDouble(r.prevCap);
+                out.writeInt(r.prevKind.ordinal());
+                out.writeInt(r.shift);
+            }
+            for (int i = 0; i < lairDistrictShift.length; i++)
+                out.writeInt(lairDistrictShift[i]);
+            for (int i = 0; i < lairDistrictLastClear.length; i++)
+                out.writeInt(lairDistrictLastClear[i]);
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
@@ -1972,13 +2132,15 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 13) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 14) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
             // v9–10: полевые базы армии, склады точек, стройматериалы, глобальный рынок; старые сохранения не переносятся
             // v12 (v1.14): новые локации и группировки — старая Зона не переносится, начинается заново
+            // v14: новые узлы Кордона — старые сохранения несовместимы
             if (version < 12) return Scenarios.create(scenario, seed);
+            if (version < 14 && scenario.equals("kordon")) return Scenarios.create(scenario, seed);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
@@ -2107,6 +2269,21 @@ public final class Simulation {
             }
             int en = in.readInt();
             for (int i = 0; i < en; i++) sim.events.addLast(in.readUTF());
+            // v14: очередь возрождения логов Кордона
+            if (version >= 14) {
+                sim.lairRespawnQueue.clear();
+                int rn = in.readInt();
+                for (int i = 0; i < rn; i++) {
+                    LairRespawn r = new LairRespawn(in.readInt(), in.readInt(), in.readDouble(),
+                            LairKind.values()[in.readInt()], in.readInt());
+                    sim.lairRespawnQueue.add(r);
+                }
+                for (int i = 0; i < sim.lairDistrictShift.length; i++)
+                    sim.lairDistrictShift[i] = in.readInt();
+                for (int i = 0; i < sim.lairDistrictLastClear.length; i++)
+                    sim.lairDistrictLastClear[i] = in.readInt();
+            }
+            sim.recalcPassDanger();
             return sim;
         } catch (IOException e) {
             throw new IllegalStateException("Не удалось загрузить состояние Зоны", e);

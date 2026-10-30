@@ -1,0 +1,22 @@
+{
+  "materials": [
+    {
+      "item": {
+        "tag": "forge:ingots/gold"
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "tag": "minecraft:redstone"
+      },
+      "count": 8
+    }
+  ],
+  "result": {
+    "type": "ammo",
+    "id": "szguns:gauss",
+    "count": 4
+  },
+  "type": "tacz:gun_smith_table_crafting"
+}

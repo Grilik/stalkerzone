@@ -1,0 +1,15 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_road_sign.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "galv": "stalkerzone:block/prop/galv",
+  "sign_road": "stalkerzone:block/prop/sign_road",
+  "particle": "stalkerzone:block/prop/galv"
+ }
+}

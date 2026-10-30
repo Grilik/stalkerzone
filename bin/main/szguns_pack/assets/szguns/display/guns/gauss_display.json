@@ -1,0 +1,114 @@
+{
+  "model": "szguns:gun/gauss_geo",
+  "texture": "szguns:gun/uv/zone_guns",
+  "hud": "szguns:gun/hud/gauss",
+  "slot": "szguns:gun/slot/gauss",
+  "ammo_count_style": "normal",
+  "damage_style": "total",
+  "animation": "tacz:m107",
+  "use_default_animation": "rifle",
+  "third_person_animation": "default",
+  "player_animator_3rd": "tacz:rifle_default.player_animation",
+  "show_crosshair": false,
+  "transform": {
+    "scale": {
+      "thirdperson": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "ground": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "fixed": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
+  },
+  "muzzle_flash": {
+    "texture": "tacz:flash/common_muzzle_flash",
+    "scale": 1.4
+  },
+  "iron_zoom": 1.6,
+  "zoom_model_fov": 45,
+  "shell": {
+    "initial_velocity": [
+      5,
+      2,
+      1
+    ],
+    "random_velocity": [
+      1,
+      1,
+      0.25
+    ],
+    "acceleration": [
+      0.0,
+      -10,
+      0.0
+    ],
+    "angular_velocity": [
+      360,
+      -1200,
+      90
+    ],
+    "living_time": 1.0
+  },
+  "ammo": {
+    "tracer_color": "#60C8FF"
+  },
+  "sounds": {
+    "shoot": "tacz:m107/m107_shoot",
+    "shoot_3p": "tacz:m107/m107_shoot_3p",
+    "silence": "tacz:m107/m107_silence",
+    "silence_3p": "tacz:m107/m107_silence_3p",
+    "draw": "tacz:m107/m107_draw",
+    "put_away": "tacz:m107/m107_put_away",
+    "dry_fire": "tacz:dry_fire",
+    "fire_select": "tacz:fire_select",
+    "head_hit": "tacz:head_hit",
+    "flesh_hit": "tacz:flesh_hit",
+    "kill": "tacz:kill"
+  },
+  "offhand_show": {
+    "pos": [
+      0,
+      20,
+      4
+    ],
+    "rotate": [
+      0,
+      0,
+      30
+    ],
+    "scale": [
+      0.5,
+      0.5,
+      0.5
+    ]
+  },
+  "hotbar_show": {
+    "0": {
+      "pos": [
+        -4,
+        24,
+        3
+      ],
+      "rotate": [
+        -90,
+        -5,
+        -90
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  },
+  "state_machine": "tacz:m107_state_machine"
+}

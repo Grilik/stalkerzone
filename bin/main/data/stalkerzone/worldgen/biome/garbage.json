@@ -1,0 +1,63 @@
+{
+  "temperature": 0.7,
+  "downfall": 0.2,
+  "has_precipitation": true,
+  "effects": {
+    "sky_color": 10132632,
+    "fog_color": 11052440,
+    "water_color": 4870208,
+    "water_fog_color": 2435104,
+    "grass_color": 9076816,
+    "foliage_color": 8024136
+  },
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:cave_extra_underground",
+      "minecraft:canyon"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_dirt",
+      "minecraft:ore_gravel",
+      "minecraft:ore_granite_upper",
+      "minecraft:ore_diorite_upper",
+      "minecraft:ore_andesite_upper",
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_copper",
+      "minecraft:ore_gold",
+      "minecraft:ore_redstone",
+      "minecraft:ore_diamond",
+      "minecraft:ore_lapis"
+    ],
+    [],
+    [],
+    [
+      "minecraft:patch_grass_plain",
+      "minecraft:patch_dead_bush",
+      "minecraft:patch_dead_bush_2"
+    ],
+    []
+  ]
+}

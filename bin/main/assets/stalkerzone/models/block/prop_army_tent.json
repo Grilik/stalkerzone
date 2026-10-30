@@ -1,0 +1,17 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_army_tent.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "glass": "stalkerzone:block/prop/glass",
+  "steel_dark": "stalkerzone:block/prop/steel_dark",
+  "tarp_army": "stalkerzone:block/prop/tarp_army",
+  "wood": "stalkerzone:block/prop/wood",
+  "particle": "stalkerzone:block/prop/glass"
+ }
+}

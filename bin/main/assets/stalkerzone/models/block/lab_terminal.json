@@ -1,0 +1,12 @@
+{
+ "parent": "minecraft:block/cube",
+ "textures": {
+  "particle": "stalkerzone:block/lab_terminal_side",
+  "north": "stalkerzone:block/lab_terminal",
+  "south": "stalkerzone:block/lab_terminal",
+  "east": "stalkerzone:block/lab_terminal_side",
+  "west": "stalkerzone:block/lab_terminal_side",
+  "up": "stalkerzone:block/lab_terminal_side",
+  "down": "stalkerzone:block/lab_terminal_side"
+ }
+}

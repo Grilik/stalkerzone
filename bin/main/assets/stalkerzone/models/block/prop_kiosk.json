@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_kiosk.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "glass": "stalkerzone:block/prop/glass",
+  "paint_blue": "stalkerzone:block/prop/paint_blue",
+  "sign_kiosk": "stalkerzone:block/prop/sign_kiosk",
+  "particle": "stalkerzone:block/prop/glass"
+ }
+}

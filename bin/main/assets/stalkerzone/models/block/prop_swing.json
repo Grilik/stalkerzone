@@ -1,0 +1,16 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_swing.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "play_blue": "stalkerzone:block/prop/play_blue",
+  "steel": "stalkerzone:block/prop/steel",
+  "wood": "stalkerzone:block/prop/wood",
+  "particle": "stalkerzone:block/prop/play_blue"
+ }
+}

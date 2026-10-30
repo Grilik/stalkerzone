@@ -1,0 +1,18 @@
+{
+ "loader": "forge:obj",
+ "model": "stalkerzone:models/block/obj/prop_rubble.obj",
+ "flip_v": true,
+ "shade_quads": true,
+ "emissive_ambient": false,
+ "automatic_culling": false,
+ "render_type": "minecraft:cutout",
+ "ambient_occlusion": false,
+ "textures": {
+  "brick": "stalkerzone:block/prop/brick",
+  "concrete": "stalkerzone:block/prop/concrete",
+  "concrete_dark": "stalkerzone:block/prop/concrete_dark",
+  "rubble": "stalkerzone:block/prop/rubble",
+  "rust": "stalkerzone:block/prop/rust",
+  "particle": "stalkerzone:block/prop/brick"
+ }
+}
