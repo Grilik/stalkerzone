@@ -4,7 +4,9 @@
 set -u
 cd "$(git rev-parse --show-toplevel)"
 AGENT_MODEL=${AGENT_MODEL:-deepseek/deepseek-v4-pro}
-STRONG_MODEL=${STRONG_MODEL:-anthropic/claude-sonnet-5.5}
+STRONG_MODEL=${STRONG_MODEL:-anthropic/claude-sonnet-5-5}
+# старшая модель — через ProxyAPI (OpenAI-совместимый адрес), ключ PROXYAPI_KEY
+STRONG_BASE_URL=${STRONG_BASE_URL:-https://api.proxyapi.ru/v1}
 CARD=${CARD:-$(python3 -I tools/conveyor/next_card.py)}
 [ -z "$CARD" ] && { echo "Нет карточки, готовой к выполнению."; exit 0; }
 FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
@@ -13,27 +15,33 @@ BR="task/${CARD}-auto"
 echo "Карточка $CARD: $TITLE"
 git checkout -q -b "$BR"
 git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
-cline auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
+cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
+if [ -n "${PROXYAPI_KEY:-}" ]; then
+  cline --config /tmp/cfg-strong auth -p openai -k "$PROXYAPI_KEY" -m "$STRONG_MODEL" -b "$STRONG_BASE_URL" >/dev/null
+else
+  echo "PROXYAPI_KEY не задан — старшая модель недоступна"
+fi
 RULES='Ты работаешь в конвейере без человека. НЕ делай git commit, push и PR — это делает конвейер.
 Проверка: `bash tools/conveyor/check.sh` (тесты симуляции и сборка; печатает итог и хвост ошибок). Не читай большие логи целиком.
 Simulation.java и другие большие файлы читай кусками (поиск, затем диапазон строк).
 Если одна и та же ошибка не уходит после 3 попыток исправления — ОСТАНОВИСЬ: опиши проблему в файле ESCALATE.md
 (что делал, текст ошибки, гипотезы) и заверши работу. Дальше задачу подхватит старший разработчик.
 Временные файлы клади в /tmp, не в репозиторий. В конце поставь карточке статус «готово (конвейер)» в docs/tasks/README.md.'
-run() { # модель, таймаут, файл с заданием
-  echo "::group::cline $1"; cat "$3" | cline -y -m "$1" -t "$2" --retries 3 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
+run() { # роль (agent|strong), таймаут, файл с заданием
+  if [ "$1" = strong ] && [ -z "${PROXYAPI_KEY:-}" ]; then echo "старший недоступен — пропуск"; return; fi
+  echo "::group::cline $1"; cat "$3" | cline --config "/tmp/cfg-$1" -y -t "$2" --retries 3 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
   tail -30 /tmp/cline-$$.log; echo "::endgroup::"
 }
 PHASES="исполнитель ($AGENT_MODEL)"
 { echo "Выполни карточку $FILE. Сначала прочитай её и .clinerules (правила про git/PR выше в этом задании важнее)."; echo; echo "$RULES"; } > /tmp/pA.txt
-run "$AGENT_MODEL" 3600 /tmp/pA.txt
+run agent 3600 /tmp/pA.txt
 bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
 if [ $ok -ne 0 ]; then
   PHASES="$PHASES → старший ($STRONG_MODEL)"
   { echo "Ты старший разработчик. Младший агент выполнял карточку $FILE и не справился. Не переделывай с нуля — найди причину и исправь минимально.";
     echo; echo "$RULES"; echo; echo "## ESCALATE.md от младшего"; cat ESCALATE.md 2>/dev/null || echo "(нет)";
     echo; echo "## Изменённые файлы"; git status --short | head -50; echo; echo "## Результат проверки"; tail -80 /tmp/check1.txt; } > /tmp/pB.txt
-  run "$STRONG_MODEL" 1800 /tmp/pB.txt
+  run strong 1800 /tmp/pB.txt
   bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
 fi
 rm -f ESCALATE.md
@@ -47,7 +55,7 @@ if [ $ok -eq 0 ]; then
     PHASES="$PHASES → старший по ревью"
     { echo "Ты старший разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
       echo "Исправь обоснованные замечания минимально; необоснованные — пропусти и кратко объясни почему в файле REVIEW_REPLY.md."; echo; echo "$RULES"; echo; cat /tmp/review.md; } > /tmp/pC.txt
-    run "$STRONG_MODEL" 1200 /tmp/pC.txt
+    run strong 1200 /tmp/pC.txt
     bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
     REPLY=$(cat REVIEW_REPLY.md 2>/dev/null); rm -f REVIEW_REPLY.md
     git add -A -- src docs tools .github .gitignore; git commit -q -m "$CARD: правки по ревью" || true
