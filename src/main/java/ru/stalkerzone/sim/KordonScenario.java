@@ -8,7 +8,7 @@ import java.util.List;
  * Остальные фракции присутствуют в списке (те же id и матрица вражды, что и в ZoneScenario), но без узлов и людей.
  *
  * Координаты в единицах ×10 блоков, деревня новичков = (0,0), север = −Z.
- * Координаты ниже примерные — уточнить по меткам игрока (карточки 004, 009).
+ * v1.18 (карточка 004): координаты — центры узлов из kordon_points.json (уровень Anomaly l01_escape) / 10.
  */
 public final class KordonScenario {
     // --- индексы узлов: порядок не менять, на номера опираются сохранения. Новые узлы только в конец списка.
@@ -18,11 +18,11 @@ public final class KordonScenario {
     // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
     private static final int HILL = 13, FIELDS = 14, FOREST = 15, RAVINE = 16, MEADOW = 17, EDGE = 18;
 
-    /** Координаты узлов (x, z) в единицах ×10 блоков — уточнить по меткам игрока. */
+    /** Координаты узлов (x, z) в единицах ×10 блоков: center / 10 из data/stalkerzone/kordon_points.json. */
     public static final int[][] COORDS = {
-            {0, 0}, {12, 13}, {27, 20}, {28, 31}, {21, -29}, {61, -25}, {96, -23},
-            {0, -48}, {27, -48}, {55, -48}, {1, -70}, {30, -96}, {30, -107},
-            {32, -29}, {-10, -70}, {18, -80}, {72, -20}, {15, -75}, {18, -105}
+            {0, 0}, {-4, -1}, {6, 22}, {8, 33}, {20, -22}, {33, -12}, {58, -8},
+            {13, -26}, {27, -30}, {43, -35}, {21, -42}, {23, -81}, {24, -84},
+            {24, -17}, {8, -36}, {26, -51}, {42, -21}, {35, -38}, {28, -76}
     };
 
     /** Узлы — выходы за карту: логова и цели налётов их исключают. */
@@ -42,50 +42,50 @@ public final class KordonScenario {
         Node village = node(nodes, "Деревня новичков", NodeType.BASE, 0, 0);
         village.farmCap = 20; village.partsCap = 5; village.artifactCap = 1; village.housing = 40;
 
-        Node bunker = node(nodes, "Бункер Сидоровича", NodeType.BASE, 12, 13);
+        Node bunker = node(nodes, "Бункер Сидоровича", NodeType.BASE, -4, -1);
         bunker.housing = 10;
         ZoneScenario.trader(bunker, 1.08, 0.95, ZoneScenario.caps(50, 15, 120, 15, 3, 40));
 
-        Node southPost = node(nodes, "Южный блокпост", NodeType.BASE, 27, 20);
+        Node southPost = node(nodes, "Южный блокпост", NodeType.BASE, 6, 22);
         southPost.farmCap = 3; southPost.housing = 12; southPost.defense = 26;
 
-        Node bigLand = node(nodes, "Выход: Большая земля", NodeType.OUTPOST, 28, 31);
+        Node bigLand = node(nodes, "Выход: Большая земля", NodeType.OUTPOST, 8, 33);
         bigLand.housing = 2; bigLand.defense = 60;
 
-        Node elevator = node(nodes, "Элеватор", NodeType.RUINS, 21, -29);
+        Node elevator = node(nodes, "Элеватор", NodeType.RUINS, 20, -22);
         elevator.partsCap = 18; elevator.artifactCap = 1; elevator.housing = 8; elevator.defense = 24;
 
-        Node atp = node(nodes, "АТП", NodeType.BASE, 61, -25);
+        Node atp = node(nodes, "АТП", NodeType.BASE, 33, -12);
         atp.farmCap = 6; atp.partsCap = 20; atp.housing = 25; atp.defense = 22;
 
-        Node darkExit = node(nodes, "Выход: Тёмная долина", NodeType.OUTPOST, 96, -23);
+        Node darkExit = node(nodes, "Выход: Тёмная долина", NodeType.OUTPOST, 58, -8);
         darkExit.housing = 2; darkExit.defense = 60;
 
-        Node tunnel = node(nodes, "Туннель с электрами", NodeType.ANOMALY, 0, -48);
+        Node tunnel = node(nodes, "Туннель с электрами", NodeType.ANOMALY, 13, -26);
         tunnel.artifactCap = 4; tunnel.defense = 30;
 
-        Node bridge = node(nodes, "Разрушенный мост", NodeType.BASE, 27, -48);
+        Node bridge = node(nodes, "Разрушенный мост", NodeType.BASE, 27, -30);
         bridge.housing = 6; bridge.defense = 20;
 
-        Node hole = node(nodes, "Дыра в заборе", NodeType.RUINS, 55, -48);
+        Node hole = node(nodes, "Дыра в заборе", NodeType.RUINS, 43, -35);
         hole.artifactCap = 3; hole.housing = 6; hole.defense = 28;
 
-        Node farm = node(nodes, "Свиноферма", NodeType.SETTLEMENT, 1, -70);
+        Node farm = node(nodes, "Свиноферма", NodeType.SETTLEMENT, 21, -42);
         farm.farmCap = 25; farm.housing = 15; farm.defense = 18;
 
-        Node farPost = node(nodes, "Дальний блокпост", NodeType.BASE, 30, -96);
+        Node farPost = node(nodes, "Дальний блокпост", NodeType.BASE, 23, -81);
         farPost.housing = 10; farPost.defense = 24;
 
-        Node svalkaExit = node(nodes, "Выход: Свалка", NodeType.OUTPOST, 30, -107);
+        Node svalkaExit = node(nodes, "Выход: Свалка", NodeType.OUTPOST, 24, -84);
         svalkaExit.housing = 2; svalkaExit.defense = 60;
 
         // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
-        Node hill = node(nodes, "Холм за элеватором", NodeType.RUINS, 32, -29);
-        Node fields = node(nodes, "Поля у свинофермы", NodeType.RUINS, -10, -70);
-        Node forest = node(nodes, "Лес у дальнего блокпоста", NodeType.RUINS, 18, -80);
-        Node ravine = node(nodes, "Овраг у АТП", NodeType.RUINS, 72, -20);
-        Node meadow = node(nodes, "Луг у фермы", NodeType.RUINS, 15, -75);
-        Node edge = node(nodes, "Опушка у пути на Свалку", NodeType.RUINS, 18, -105);
+        Node hill = node(nodes, "Холм за элеватором", NodeType.RUINS, 24, -17);
+        Node fields = node(nodes, "Поля у свинофермы", NodeType.RUINS, 8, -36);
+        Node forest = node(nodes, "Лес у дальнего блокпоста", NodeType.RUINS, 26, -51);
+        Node ravine = node(nodes, "Овраг у АТП", NodeType.RUINS, 42, -21);
+        Node meadow = node(nodes, "Луг у фермы", NodeType.RUINS, 35, -38);
+        Node edge = node(nodes, "Опушка у пути на Свалку", NodeType.RUINS, 28, -76);
 
         ZoneGraph g = new ZoneGraph(nodes.size());
         // южная часть
