@@ -3,7 +3,8 @@
 # Нужны: OPENROUTER_API_KEY, GH_TOKEN. Модели: AGENT_MODEL, STRONG_MODEL. Карточка: CARD (или выбирается сама).
 set -u
 cd "$(git rev-parse --show-toplevel)"
-AGENT_MODEL=${AGENT_MODEL:-deepseek/deepseek-v4-pro}
+AGENT_MODEL=${AGENT_MODEL:-deepseek/deepseek-v4.1-flash}
+AGENT_MODEL_STRONG=${AGENT_MODEL_STRONG:-deepseek/deepseek-v4-pro}
 STRONG_MODEL=${STRONG_MODEL:-anthropic/claude-sonnet-5-5}
 # старшая модель — через ProxyAPI (OpenAI-совместимый адрес), ключ PROXYAPI_KEY
 STRONG_BASE_URL=${STRONG_BASE_URL:-https://api.proxyapi.ru/v1}
@@ -11,6 +12,7 @@ CARD=${CARD:-$(python3 -I tools/conveyor/next_card.py)}
 [ -z "$CARD" ] && { echo "Нет карточки, готовой к выполнению."; exit 0; }
 FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
 TITLE=$(head -1 "$FILE" | sed 's/^# *//')
+grep -q "Модель исполнителя: сильная" "$FILE" && AGENT_MODEL=$AGENT_MODEL_STRONG
 BR="task/${CARD}-auto"
 echo "Карточка $CARD: $TITLE"
 git checkout -q -b "$BR"

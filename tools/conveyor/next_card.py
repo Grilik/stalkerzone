@@ -1,6 +1,7 @@
 """Выбор следующей карточки для конвейера по таблице docs/tasks/README.md.
 Печатает номер (NNN) или пусто. Пропускает карточки не для Cline, с невыполненными зависимостями и уже начатые (есть ветка task/NNN-*)."""
-import re, subprocess, sys
+import glob, os, re, subprocess, sys
+LANE = os.environ.get("LANE", "")  # sim | world | пусто — любая
 rows = []
 for line in open("docs/tasks/README.md", encoding="utf-8"):
     c = [x.strip() for x in line.strip().strip("|").split("|")]
@@ -18,6 +19,9 @@ def deps(s):
     return out
 for r in rows:
     if r["n"] in done or r["n"] in started or "Cline" not in r["who"]: continue
+    f = glob.glob(f"docs/tasks/{r['n']}-*.md")
+    lane = "world" if f and "**Линия: мир" in open(f[0], encoding="utf-8").read() else "sim"
+    if LANE and lane != LANE: continue
     d = deps(r["deps"])
     if d is None or not d <= done: continue
     print(r["n"]); sys.exit(0)
