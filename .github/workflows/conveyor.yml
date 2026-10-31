@@ -73,4 +73,6 @@ jobs:
           STRONG_MODEL: ${{ vars.STRONG_MODEL }}
           STRONG_BASE_URL: ${{ vars.STRONG_BASE_URL }}
           PROXYAPI_KEY: ${{ secrets.PROXYAPI_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: bash tools/conveyor/conveyor.sh

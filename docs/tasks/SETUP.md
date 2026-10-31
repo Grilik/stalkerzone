@@ -151,6 +151,23 @@ Workflow `conveyor` выполняет карточки сам на сервер
 Деньги: тот же секрет `OPENROUTER_API_KEY`; поставьте ключу лимит, например $15.
 Не запускайте конвейер на карточку, которую сейчас делает Cline на ПК (конвейер пропускает карточки, у которых уже есть ветка `task/NNN-*` на GitHub).
 
+## 7в. Telegram-бот (уведомления и сводка)
+Бот пишет в Telegram после каждого шага конвейера (старт карточки, итог исполнителя, подключение старшего, ревью,
+PR готов / ⚠️ нужен человек), после каждой сборки (для веток `task/*-auto` — только о провалах), о слиянии PR,
+и каждый вечер в 20:47 МСК присылает 📊 сводку: PR и запуски за сутки, карточки, расходы OpenRouter и ProxyAPI.
+ИИ для этого не используется — сообщения собираются шаблоном.
+
+Подключение (один раз):
+1. В Telegram: @BotFather → `/newbot` → получить токен. Написать своему боту `/start`.
+2. Узнать свой chat_id: написать @userinfobot.
+3. GitHub → Settings → Secrets and variables → Actions → секреты `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID`.
+4. Проверка: Actions → **daily-report** → Run workflow — через минуту придёт сводка.
+
+Без секретов всё молча пропускается. Код: `tools/notify/tg.py` (отправка), `tools/notify/daily_report.py`
+(сводка; `DRY_RUN=1` — печать без отправки), workflow `daily-report.yml`, `notify.yml`, шаг Telegram в `build.yml`.
+Важно: конвейер не может менять файлы в `.github/workflows` (запрет GitHub для токена Actions) — такие карточки
+выполняет Claude или Cline на ПК.
+
 ## 8. Частые проблемы
 - `gh: command not found` — перезапустите VS Code после установки GitHub CLI.
 - Gradle ругается на версию Java — `java -version` должна быть 17; иначе переустановите Temurin 17 с JAVA_HOME.

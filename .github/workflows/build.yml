@@ -29,3 +29,16 @@ jobs:
         with:
           name: stalkerzone-mod
           path: build/libs/*.jar
+      - name: Telegram
+        if: always() && !(startsWith(github.ref_name, 'task/') && endsWith(github.ref_name, '-auto') && job.status == 'success')
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MSG: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name || github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "${{ job.status }}" = success ]; then st="✅"; else st="❌"; fi
+          first=$(printf '%s' "${MSG:-ручной запуск}" | head -1)
+          python3 -I tools/notify/tg.py "$st сборка ${{ github.ref_name }}: $first ($AUTHOR)
+          $RUN_URL" || true
