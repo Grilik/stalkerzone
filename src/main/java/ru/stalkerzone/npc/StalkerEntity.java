@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import ru.stalkerzone.ZoneData;
 import ru.stalkerzone.sim.Faction;
 import ru.stalkerzone.sim.Node;
@@ -57,6 +58,11 @@ public class StalkerEntity extends PathfinderMob {
     public StalkerEntity(EntityType<? extends StalkerEntity> type, Level level) {
         super(type, level);
         this.setPersistenceRequired();
+        // карточка 028: костёр (зажжённый) и блоки огня — непроходимы, штраф пути как у лавы:
+        // NPC обходят огонь и садятся рядом с костром, а не в него
+        this.setPathfindingMalus(BlockPathTypes.LAVA, -1.0f);
+        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0f);
+        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0f);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -88,6 +94,26 @@ public class StalkerEntity extends PathfinderMob {
 
     public void setPerson(int id) { this.personId = id; }
     public void setMedic(boolean m) { this.medic = m; }
+
+    /** Часовой на посту (карточка 028): стоит у точки guards, в бой уходит и возвращается. */
+    public boolean isGuard() { return getPersistentData().getBoolean("sz_guard"); }
+    /** NPC отдыхает у костра (карточка 028): его место — в двух блоках от центра костра. */
+    public boolean isCamper() { return getPersistentData().getBoolean("sz_campfire"); }
+
+    /** Центр точки привязки в мировых координатах (для часового — откуда смотреть) или null. */
+    public double[] nodeCenterXZ() {
+        Simulation sim = sim();
+        if (sim == null || homeNode < 0 || homeNode >= sim.nodes.size()) return null;
+        Node n = sim.nodes.get(homeNode);
+        return new double[]{n.x * ru.stalkerzone.world.ZoneBounds.SCALE, n.z * ru.stalkerzone.world.ZoneBounds.SCALE};
+    }
+
+    /** Центр костра, у которого отдыхает NPC, или null. */
+    public net.minecraft.world.phys.Vec3 campfirePos() {
+        net.minecraft.nbt.CompoundTag t = getPersistentData();
+        if (!t.contains("sz_fire_x")) return null;
+        return new net.minecraft.world.phys.Vec3(t.getInt("sz_fire_x") + 0.5, t.getInt("sz_fire_y"), t.getInt("sz_fire_z") + 0.5);
+    }
 
     /** Настроить NPC при появлении в мире. */
     public void configure(int faction, int role, int node, BlockPos home, Component name) {
@@ -198,6 +224,10 @@ public class StalkerEntity extends PathfinderMob {
         // v1.16: укрытия, перебежки, отряд и мораль вместо «встал и стреляет»
         this.goalSelector.addGoal(2, new ru.stalkerzone.npc.combat.TacticalCombatGoal(this, StalkerEntity::refillFromFaction));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1, false));
+        // карточка 028: часовой стоит на посту guards, NPC у костра садится на своё место.
+        // Боевые цели выше по приоритету, поэтому с поста уходят только в бой и после возвращаются.
+        this.goalSelector.addGoal(4, new GuardPostGoal(this));
+        this.goalSelector.addGoal(4, new CampfireGoal(this));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0f));
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
@@ -405,7 +435,8 @@ public class StalkerEntity extends PathfinderMob {
         super.tick();
         // вне боя дух восстанавливается
         if (!this.level().isClientSide && combat != null && getTarget() == null && this.tickCount % 20 == 0) combat.morale.second(1, false, false, false);
-        if (!this.level().isClientSide && !isDowned() && getTarget() == null && isCrouching() && this.tickCount % 40 == 0) setCrouch(false);
+        if (!this.level().isClientSide && !isDowned() && getTarget() == null && isCrouching()
+                && !isCamper() && this.tickCount % 40 == 0) setCrouch(false);
         if (this.level().isClientSide || !isDowned()) return;
         if (getPose() != net.minecraft.world.entity.Pose.SLEEPING) setPose(net.minecraft.world.entity.Pose.SLEEPING);
         if (--downTicks <= 0) {

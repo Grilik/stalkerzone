@@ -16,12 +16,26 @@ public class GateTest {
     public static void main(String[] a) {
         entry();
         pay();
+        postZone();
         passWithoutPay();
         backOutIsFine();
         ownerChange();
         banditTiming();
         System.out.println(f == 0 ? "ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ" : "ПРОВАЛЕНО " + f);
         System.exit(f > 0 ? 1 : 0);
+    }
+
+    /** Карточка 028: зона «у поста» — регион шлагбаума с запасом не меньше 6 блоков. */
+    static void postZone() {
+        Gate.Pass p = new Gate.Pass(X0, Z0, X1, Z1);
+        ck(Gate.POST_MARGIN >= 6.0, "запас зоны поста не меньше 6 блоков");
+        ck(p.nearPost(X0, Z0), "в самом регионе — у поста");
+        ck(p.nearPost(X0 - 6, Z0 - 6), "в 6 блоках от угла региона — ещё у поста");
+        ck(p.nearPost(267, Z1 + 6), "в 6 блоках к северу от региона — ещё у поста");
+        ck(!p.nearPost(X0 - 6.5, -297), "дальше 6 блоков к западу — уже не у поста");
+        ck(!p.nearPost(267, Z1 + 6.5), "дальше 6 блоков к северу — уже не у поста");
+        // оплатить можно рядом с постом, а не только стоя ровно в регионе
+        ck(p.nearPost(X0 - 3, Z1 + 3), "рядом с постом оплата доступна");
     }
 
     /** Вход в регион: мирному — цена пошлины, врагу владельца — предупреждение. */
