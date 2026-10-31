@@ -34,7 +34,7 @@ public final class NpcManager {
             "Тихий", "Бык", "Север", "Сыч", "Ворон", "Гвоздь", "Малой", "Кащей", "Доцент", "Рыжий", "Бахмач", "Ёж", "Угрюмый", "Сапёр"};
     private static String traderName(Node n) {
         return switch (n.name) {
-            case "Кордон" -> "Сидорович";
+            case "Кордон", "Бункер Сидоровича" -> "Сидорович";
             case "Бар" -> "Бармен";
             case "Янтарь" -> "Профессор Сахаров";
             default -> "Торговец";
@@ -225,6 +225,27 @@ public final class NpcManager {
         if (v == null || v.length < 3) return null;
         return new BlockPos(v[0], v[1], v[2]);
     }
+    /** Радиус «тихой зоны» у торговца: группировки не начинают бой (блоки, карточка 011). */
+    public static final int QUIET_RADIUS = 12;
+
+    /** Точка торговца узла в мире (trader из points уровня) или центр узла, либо null. */
+    public static BlockPos traderSpot(ServerLevel level, Simulation sim, Node n) {
+        BlockPos p = levelPointPos(level, sim, n, "trader");
+        if (p != null) return p;
+        return new BlockPos(n.x * ZoneBounds.SCALE, level.getMinBuildHeight(), n.z * ZoneBounds.SCALE);
+    }
+
+    /** В «тихой зоне» торговца ли точка мира: у бункера группировки не начинают бой друг с другом (карточка 011). */
+    public static boolean quietZone(ServerLevel level, Simulation sim, double x, double z) {
+        for (Node n : sim.nodes) {
+            if (!n.trader) continue;
+            BlockPos c = traderSpot(level, sim, n);
+            if (Math.hypot(x - c.getX(), z - c.getZ()) <= QUIET_RADIUS) return true;
+        }
+        return false;
+    }
+
+
 
     /** Спавн NPC на случайной точке beds/guards/campfire из level points. */
     private static StalkerEntity spawnAtLevelPoint(ServerLevel level, Simulation sim, Node n,

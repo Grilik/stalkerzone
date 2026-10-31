@@ -169,7 +169,7 @@ public final class PlayerFaction {
         int rep = Reputation.get(p, owner);
         boolean member = faction(p) == owner;
         int rank = member ? rank(p) : 0;
-        sim.playerBuyFactor = PlayerCareer.buyFactor(rep, member, rank);
+        sim.playerBuyFactor = PlayerCareer.traderBuyFactor(rep, member, rank, faction(p));   // карточка 011: наценка Торговцев для фракции игрока
         sim.playerSellFactor = PlayerCareer.sellFactor(rep, member, rank);
     }
 
@@ -183,7 +183,7 @@ public final class PlayerFaction {
         if (n.owner < 0 || n.owner >= sim.factions.size()) return null;
         int rep = Reputation.get(p, n.owner);
         boolean member = faction(p) == n.owner;
-        double b = PlayerCareer.buyFactor(rep, member, member ? rank(p) : 0);
+        double b = PlayerCareer.traderBuyFactor(rep, member, member ? rank(p) : 0, faction(p));
         if (Math.abs(b - 1) < 0.001) return null;
         return b < 1 ? "Вам скидка " + Math.round((1 - b) * 100) + "%" + (member ? " (вы свой)" : " (вас уважают)")
                 : "Вам наценка " + Math.round((b - 1) * 100) + "%: здесь вас не любят";
