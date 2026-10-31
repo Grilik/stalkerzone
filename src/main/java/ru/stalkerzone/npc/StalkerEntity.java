@@ -456,6 +456,11 @@ public class StalkerEntity extends PathfinderMob {
                         String note = PlayerFaction.tradeNote(spN, sim, sim.nodes.get(homeNode));
                         if (note != null) player.sendSystemMessage(Component.literal(note).withStyle(net.minecraft.ChatFormatting.AQUA));
                     }
+                } else if (getPersistentData().getBoolean("sz_guard") && homeNode == sim.tollCrossing
+                        && player instanceof net.minecraft.server.level.ServerPlayer spG) {
+                    // пост на мосту (карточка 012): ПКМ по часовому оплачивает пошлину
+                    String msg = ru.stalkerzone.world.BridgePost.payAt(spG, ZoneData.get(this.getServer()), homeNode);
+                    if (msg != null && !msg.isEmpty()) spG.sendSystemMessage(Component.literal(msg));
                 } else if (faction() < sim.factions.size()) {
                     Faction f = sim.factions.get(faction());
                     ru.stalkerzone.sim.Person who = personId > 0 ? sim.people.byId(personId) : null;

@@ -20,3 +20,8 @@ execute positioned 4 80 8 if entity @e[type=stalkerzone:stalker,distance=..32] r
 execute positioned -1 81 -5 if block ~ ~ ~ minecraft:oak_fence run say FlagAtVillage|FlagAtVillage
 # В радиусе 20 от центра деревни нет блоков постройки генератора (cobblestone_wall = забор лагеря)
 execute positioned 4 80 8 unless block ~ ~ ~ minecraft:cobblestone_wall run say NoCampAtVillage|NoCampAtVillage
+# --- карточка 012: пост военных на мосту ---
+# Платный проход (мост) принадлежит военным, у точки guards стоят их часовые
+zone post|Военные
+# Регион gate моста задан в файле точек локации
+zone post|gate
