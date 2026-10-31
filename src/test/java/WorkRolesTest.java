@@ -1,7 +1,6 @@
 import ru.stalkerzone.sim.BaseRoles;
 import ru.stalkerzone.zonemap.build.Prefabs;
 import ru.stalkerzone.zonemap.build.KordonSouthPost;
-import ru.stalkerzone.zonemap.BlockSink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,11 +98,11 @@ public class WorkRolesTest {
         ck(duties.size() >= 1, "≥1 duty → " + duties.size());
 
         // Все точки в границах замены (CLEAR)
-        for (int[] cl : KordonSouthPost.CLEAR) {
-            for (Prefabs.Point p : pts) {
-                ck(p.x() >= cl[0] && p.x() <= cl[2] && p.z() >= cl[1] && p.z() <= cl[3],
-                        "точка " + p.kind() + " (" + p.x() + "," + p.z() + ") в границах [" + cl[0] + "," + cl[1] + "]-[" + cl[2] + "," + cl[3] + "]");
-            }
+        for (Prefabs.Point p : pts) {
+            boolean in = false;
+            for (int[] cl : KordonSouthPost.CLEAR)
+                if (p.x() >= cl[0] && p.x() <= cl[2] && p.z() >= cl[1] && p.z() <= cl[3]) in = true;
+            ck(in, "точка " + p.kind() + " (" + p.x() + "," + p.z() + ") в одной из зон CLEAR");
         }
 
         // Не больше 8 точек на guard (3 вышки)

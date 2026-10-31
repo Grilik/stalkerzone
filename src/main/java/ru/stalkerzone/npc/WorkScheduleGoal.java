@@ -16,9 +16,9 @@ import java.util.Random;
  * после боя цель возвращает NPC на место.
  */
 public class WorkScheduleGoal extends Goal {
-    private static final int DAY_START = 6000;
-    private static final int EVENING_START = 18000;
-    private static final int NIGHT_START = 22000;
+    private static final int DAY_START = 0;
+    private static final int EVENING_START = 12000;
+    private static final int NIGHT_START = 16000;
     private static final double REACH_DIST = 2.5;
     private static final int PATROL_PAUSE = 40;
 
@@ -136,7 +136,7 @@ public class WorkScheduleGoal extends Goal {
         residentTicks--;
         List<Prefabs.Point> pts = prefabPoints(kinds[residentTarget]);
         if (pts.isEmpty()) { idleAtHome(); return; }
-        Prefabs.Point p = pts.get(rng.nextInt(pts.size()));
+        Prefabs.Point p = pts.get(Math.abs(mob.getId()) % pts.size());
         Vec3 target = new Vec3(p.x() + 0.5, p.y(), p.z() + 0.5);
         navigateTo(target);
         if (mob.distanceToSqr(target) < REACH_DIST * REACH_DIST) {
@@ -150,7 +150,7 @@ public class WorkScheduleGoal extends Goal {
     private void goToCampfire() {
         List<Prefabs.Point> pts = prefabPoints("cook");
         if (pts.isEmpty()) { goToBed(); return; }
-        Prefabs.Point p = pts.get(rng.nextInt(pts.size()));
+        Prefabs.Point p = pts.get(Math.abs(mob.getId()) % pts.size());
         int[][] ring = {{2,0},{-2,0},{0,2},{0,-2},{2,2},{2,-2},{-2,2},{-2,-2}};
         int idx = Math.abs(mob.getId()) % ring.length;
         Vec3 target = new Vec3(p.x() + ring[idx][0] + 0.5, p.y(), p.z() + ring[idx][1] + 0.5);
