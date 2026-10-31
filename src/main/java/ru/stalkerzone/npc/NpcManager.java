@@ -9,6 +9,7 @@ import net.minecraft.world.phys.AABB;
 import ru.stalkerzone.ZoneData;
 import ru.stalkerzone.sim.Faction;
 import ru.stalkerzone.sim.Node;
+import ru.stalkerzone.sim.NodePopulation;
 import ru.stalkerzone.sim.Simulation;
 import ru.stalkerzone.world.SpawnFinder;
 import ru.stalkerzone.world.ZoneBounds;
@@ -25,11 +26,10 @@ import java.util.Random;
  * уменьшает численность фракции.
  */
 public final class NpcManager {
-    /** Радиус, в котором NPC привязаны к точке (блоки). */
-    private static final int AREA = 48;
+    /** Радиус, в котором NPC привязаны к точке (блоки); за ним начинается край зоны узла (карточка 033). */
+    public static final int AREA = 48;
     /** Пока игрок ближе этого расстояния к точке, её NPC поддерживаются. */
     private static final int ACTIVE = 110;
-    private static final int MAX_PER_NODE = 8;
 
     /** Места вокруг костра (карточка 028): точка campfire — центр, NPC садятся на радиусе 2. */
     private static final int[][] CAMPFIRE_RING = {
@@ -74,13 +74,13 @@ public final class NpcManager {
         return false;
     }
 
-    /** Сколько NPC показывать на точке. */
+    /**
+     * Сколько NPC показывать на точке (карточка 033): люди фракции на узле по симуляции минус ушедшие
+     * на задание, в границах [2, потолок]. Считает чистая часть симуляции — {@link NodePopulation}.
+     */
     public static int target(Simulation sim, Node n) {
         if (n.owner < 0) return 0;
-        Faction f = sim.factions.get(n.owner);
-        int owned = Math.max(1, sim.ownedCount(f));
-        double share = f.members * 0.35 / owned / 3.0 * (n.id == f.baseNode ? 1.5 : 1.0);
-        return Math.max(1, Math.min(MAX_PER_NODE, (int) Math.round(share)));
+        return NodePopulation.number(sim, sim.factions.get(n.owner), n);
     }
 
     private static void ensure(ServerLevel level, Simulation sim, Node n) {
@@ -97,6 +97,8 @@ public final class NpcManager {
                 if (trader == null) trader = e; else e.discard();
             } else if (e.isBuilder()) {
                 builders.add(e);
+            } else if (e.isLeaving()) {
+                // уже уходит «по делам»: не считается населением узла (карточка 033)
             } else {
                 stalkers.add(e);
             }
@@ -129,11 +131,23 @@ public final class NpcManager {
             }
             if (e != null) assignPerson(sim, n, e, stalkers);
         } else if (stalkers.size() > wanted + 1) {
-            // рядовых убирать раньше именных
+            // карточка 033: лишние при уменьшении гарнизона уходят «по делам» — идут к краю зоны узла
+            // и исчезают вне поля зрения, а не пропадают на глазах. Рядовых уводим раньше именных.
             StalkerEntity drop = stalkers.get(0);
             for (StalkerEntity e : stalkers) if (e.personId() == 0) { drop = e; break; }
-            drop.discard();
+            markLeaving(n, drop);
         }
+    }
+
+    /** Помечает лишнего NPC уходящим «по делам» (карточка 033): цель — край зоны узла, за которым он исчезает. */
+    private static void markLeaving(Node n, StalkerEntity e) {
+        double cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        double dx = e.getX() - cx, dz = e.getZ() - cz;
+        double len = Math.hypot(dx, dz);
+        if (len < 1.0) { double a = RND.nextDouble() * Math.PI * 2; dx = Math.cos(a); dz = Math.sin(a); len = 1.0; }
+        double dist = AREA + 24;
+        double tx = cx + dx / len * dist, tz = cz + dz / len * dist;
+        e.setLeaving(tx, e.getY(), tz);
     }
 
     /** На базе фракции появляются её именные сталкеры: сначала лидер и заместитель, потом остальные. */
