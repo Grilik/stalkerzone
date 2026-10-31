@@ -13,7 +13,10 @@ import java.util.List;
 public final class KordonScenario {
     // --- индексы узлов: порядок не менять, на номера опираются сохранения. Новые узлы только в конец списка.
     private static final int VILLAGE = 0, BUNKER = 1, SOUTH_POST = 2, BIG_LAND = 3, ELEVATOR = 4, ATP = 5,
-            DARK_EXIT = 6, TUNNEL = 7, BRIDGE = 8, HOLE = 9, FARM = 10, FAR_POST = 11, SVALKA_EXIT = 12;
+            DARK_EXIT = 6, TUNNEL = 7, BRIDGE = 8, HOLE = 9, FAR_POST = 11, SVALKA_EXIT = 12;
+
+    /** Свиноферма — именованный узел-цель налёта Бандитов (карточка 022). */
+    public static final int FARM = 10;
 
     // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
     private static final int HILL = 13, FIELDS = 14, FOREST = 15, RAVINE = 16, MEADOW = 17, EDGE = 18;

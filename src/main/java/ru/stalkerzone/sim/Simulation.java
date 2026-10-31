@@ -2064,6 +2064,15 @@ public final class Simulation {
         if (!raider.raider) return;
         double p = 0.3 * (1 - Math.min(0.7, 0.07 * c.guards));
         if (rng.nextDouble() >= p) return;
+        String loot = raidCargo(c, f, raider);
+        log(raider.name + " ограбили караван «" + f.name + "» у «" + n.name + "» (" + loot + ")");
+    }
+
+    /**
+     * Общая часть любого нападения на караван: груз и часть денег переходят налётчику, охрана гибнет.
+     * Возвращает описание добычи для журнала (карточка 022 — переиспользуется и обычным грабежом, и засадой).
+     */
+    private String raidCargo(Caravan c, Faction f, Faction raider) {
         int units = 0;
         for (Good g : Good.ALL) {
             int i = g.ordinal();
@@ -2078,7 +2087,19 @@ public final class Simulation {
         f.caravansLost++;
         f.resent(raider.id, 0.8);
         f.hubRisk[c.hub()] += 0.5;
-        log(raider.name + " ограбили караван «" + f.name + "» у «" + n.name + "» (" + units + " ед., " + cash + " руб.)");
+        return units + " ед., " + cash + " руб.";
+    }
+
+    /**
+     * Игрок-бандит устроил засаду на курьера Торговцев: караван снимается с маршрута, груз и деньги уходят
+     * налётчику, до получателя груз не доходит (карточка 022). Возвращает false, если каравана уже нет.
+     */
+    public boolean ambushCaravan(Caravan c, Faction raider) {
+        if (raider == null || !caravans.remove(c)) return false;
+        Faction f = factions.get(c.owner);
+        String loot = raidCargo(c, f, raider);
+        log(raider.name + " устроили засаду на курьера «" + f.name + "» (потери курьера: " + loot + ")");
+        return true;
     }
 
     // ------------------------------------------------------------------ фазы и война

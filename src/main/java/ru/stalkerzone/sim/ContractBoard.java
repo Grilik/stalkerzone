@@ -66,6 +66,12 @@ public final class ContractBoard {
         return false;
     }
 
+    /** Есть ли активный заказ этого типа у заказчика на ту же реальную цель (qty — фракция-получатель курьера). */
+    private boolean hasTarget(Contract.Type t, int issuer, int qty) {
+        for (Contract c : list) if (c.active() && c.type == t && c.issuer == issuer && c.qty == qty) return true;
+        return false;
+    }
+
     private static final Good[] PAY_GOODS = {Good.GEAR_PRO, Good.PROTO, Good.GEAR, Good.ARTIFACT, Good.MEDS, Good.AMMO_PRO, Good.AMMO};
 
     /** Выдать контракт: деньги из кассы (не больше 60%), недостающее товаром со склада. Если не набрать и половины, не выдавать. */
@@ -273,7 +279,8 @@ public final class ContractBoard {
         Faction bandits = s.factions.get(ZoneScenario.BANDITS);
         if (bandits != null && bandits.members > 0 && openCount() < MAX_OPEN) {
             Caravan courier = courierInTransit(s);
-            if (courier != null && !has(Contract.Type.AMBUSH_COURIER, bandits.id, -1)
+            // v17 (карточка 022): дедупликация по реальной цели — тому же курьеру (courierFor), а не по узлу −1
+            if (courier != null && !hasTarget(Contract.Type.AMBUSH_COURIER, bandits.id, courier.courierFor)
                     && r.nextDouble() < KordonBalance.CONTRACT_AMBUSH_COURIER_CHANCE) {
                 long reward = KordonBalance.REWARD_AMBUSH + r.nextInt(KordonBalance.REWARD_AMBUSH_SPREAD);
                 Contract c = issueCash(s, Contract.Type.AMBUSH_COURIER, bandits.id, reward,
@@ -284,7 +291,9 @@ public final class ContractBoard {
         if (bandits != null && bandits.members > 0 && openCount() < MAX_OPEN) {
             int farm = farmTarget(s, bandits.id);
             if (farm >= 0 && !has(Contract.Type.RAID_NODE, bandits.id, farm)
-                    && r.nextDouble() < KordonBalance.CONTRACT_RAID_NODE_CHANCE) {
+                    && r.nextDouble() < KordonBalance.CONTRACT_RAID_NODE_CHANCE
+                    // v17 (карточка 022): налёт не заказывают на узел, где еды нет — иначе добыча берётся «из воздуха»
+                    && farmDepot(s, bandits, farm).get(Good.FOOD) > 0) {
                 long reward = KordonBalance.REWARD_RAID + r.nextInt(KordonBalance.REWARD_RAID_SPREAD);
                 Contract c = issueCash(s, Contract.Type.RAID_NODE, bandits.id, reward,
                         KordonBalance.CONTRACT_RAID_DAYS, KordonBalance.CONTRACT_DIFFICULTY);
@@ -295,10 +304,21 @@ public final class ContractBoard {
 
     /** Курьер Торговцев, идущий в пути к покупателю (карточка 021). */
     private Caravan courierInTransit(Simulation s) {
+        return courierTo(s, -1);
+    }
+
+    /** Курьер Торговцев в пути; buyerId >= 0 — только к этому покупателю (карточка 022). */
+    private Caravan courierTo(Simulation s, int buyerId) {
         Faction traders = s.traders();
         if (traders == null) return null;
-        for (Caravan c : s.caravans) if (c.owner == traders.id && c.courierFor >= 0 && !c.returning) return c;
+        for (Caravan c : s.caravans) if (c.owner == traders.id && c.courierFor >= 0 && !c.returning
+                && (buyerId < 0 || c.courierFor == buyerId)) return c;
         return null;
+    }
+
+    /** Склад, с которого налёт берёт еду: сам узел, а для базы бандитов — их общий склад (карточка 022). */
+    private Stock farmDepot(Simulation s, Faction bandits, int node) {
+        return node == bandits.baseNode ? bandits.stock : s.nodes.get(node).depot;
     }
 
     /** Чужая ферма для налёта Бандитов: сперва Свиноферма, иначе любой чужой узел с farmCap (карточка 021). */
@@ -558,30 +578,46 @@ public final class ContractBoard {
     }
 
     /**
-     * Игрок-бандит устроил засаду на курьера Торговцев: курьер не дошёл, груз пропал у получателя.
-     * Игровой слой зовёт это, когда засада на курьера удалась (карточка 021).
+     * Игрок-бандит устроил засаду на курьера Торговцев: караван снимается с маршрута с потерей груза
+     * (как при обычном нападении), груз до получателя не доходит — контракт закрыт с наградой.
+     * Если курьер уже доставил груз или исчез — контракт проваливается, награды нет.
+     * Игровой слой зовёт это, когда засада на курьера удалась (карточки 021, 022).
      */
     public Reward courierAmbushed(Simulation s, int buyerId, String player) {
         Reward sum = null;
         for (Contract c : list) {
-            if (c.status == Contract.Status.TAKEN && c.type == Contract.Type.AMBUSH_COURIER
-                    && c.player.equals(player) && c.qty == buyerId) sum = sum(sum, payPlayer(s, c));
+            if (c.status != Contract.Status.TAKEN || c.type != Contract.Type.AMBUSH_COURIER
+                    || c.taker != Contract.PLAYER || !c.player.equals(player) || c.qty != buyerId) continue;
+            // цель контракта: c.qty — покупатель (courierFor), c.node — пункт назначения курьера
+            Caravan courier = courierTo(s, c.qty);
+            if (courier != null && courier.route[courier.route.length - 1] == c.node
+                    && s.ambushCaravan(courier, s.factions.get(c.issuer))) {
+                sum = sum(sum, payPlayer(s, c));
+            } else {
+                // курьер уже дошёл или пропал: заказ провален, залог возвращается заказчику, награды нет
+                c.status = Contract.Status.FAILED;
+                failed++;
+                refund(s, c);
+            }
         }
         return sum;
     }
 
     /**
-     * Игрок-бандит разорил ферму: часть запасов еды узла уходит заказчику (бандитам), владелец не меняется.
-     * Игровой слой зовёт это, когда налёт на узел удался (карточка 021).
+     * Игрок-бандит разорил ферму: часть запасов еды узла (не больше, чем там есть) уходит заказчику (бандитам),
+     * владелец не меняется. Игровой слой зовёт это, когда налёт на узел удался (карточки 021, 022).
      */
     public Reward raidedFarm(Simulation s, int node, String player) {
         Reward sum = null;
         for (Contract c : list) {
             if (c.status != Contract.Status.TAKEN || c.type != Contract.Type.RAID_NODE
-                    || c.node != node || !c.player.equals(player)) continue;
+                    || c.node != node || c.taker != Contract.PLAYER || !c.player.equals(player)) continue;
             Faction bandits = s.factions.get(c.issuer);
-            Stock depot = node == bandits.baseNode ? bandits.stock : s.nodes.get(node).depot;
-            if (depot != bandits.stock) Stock.move(depot, bandits.stock, Good.FOOD, Math.max(1, depot.get(Good.FOOD) / 3));
+            Stock depot = farmDepot(s, bandits, node);
+            if (depot != bandits.stock) {
+                int food = depot.get(Good.FOOD);
+                Stock.move(depot, bandits.stock, Good.FOOD, Math.min(food, food / 3));
+            }
             sum = sum(sum, payPlayer(s, c));
         }
         return sum;
