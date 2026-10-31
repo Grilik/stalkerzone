@@ -49,6 +49,27 @@ public class PrefabsTest {
         ck(inBounds == marks.size(), "все точки в границах замены (" + inBounds + "/" + marks.size() + ")");
         ck(bedsFree == bedsTotal, "точки bed не в твёрдых блоках (" + bedsFree + "/" + bedsTotal + ")");
         ck(Prefabs.points("l02_garbage", (x, z) -> 75).isEmpty(), "другие уровни без рабочих мест");
+
+        // карточка 035: бункер Сидоровича в списке сборщиков — своя граница, блоки, рабочее место торговца
+        int bunkerSolid = 0, duty = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            boolean inBunker = x >= -43 && x <= -27 && z >= -15 && z <= -2;
+            if (inBunker) bunkerSolid++;
+        }
+        ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
+        for (Prefabs.Point p : marks) if (p.kind().equals("duty")) duty++;
+        ck(duty >= 1, "рабочее место торговца (duty) " + duty);
+        // границы сборщиков не пересекаются
+        java.util.List<int[]> cl = Prefabs.clear("l01_escape");
+        boolean overlap = false;
+        outer:
+        for (int i = 0; i < cl.size(); i++) for (int j = i + 1; j < cl.size(); j++) {
+            int[] ra = cl.get(i), rb = cl.get(j);
+            if (ra[0] <= rb[2] && rb[0] <= ra[2] && ra[1] <= rb[3] && rb[1] <= ra[3]) { overlap = true; break outer; }
+        }
+        ck(!overlap && cl.size() >= 2, "сборщиков " + cl.size() + ", без пересечения границ");
         System.exit(f > 0 ? 1 : 0);
     }
 }
