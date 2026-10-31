@@ -1,6 +1,5 @@
 import ru.stalkerzone.sim.BaseRoles;
 import ru.stalkerzone.zonemap.build.Prefabs;
-import ru.stalkerzone.zonemap.build.KordonSouthPost;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,10 +96,10 @@ public class WorkRolesTest {
         ck(works.size() >= 1, "≥1 work → " + works.size());
         ck(duties.size() >= 1, "≥1 duty → " + duties.size());
 
-        // Все точки в границах замены (CLEAR)
+        // Все точки в границах замены (список сборщиков уровня, карточка 035)
         for (Prefabs.Point p : pts) {
             boolean in = false;
-            for (int[] cl : KordonSouthPost.CLEAR)
+            for (int[] cl : Prefabs.clear("l01_escape"))
                 if (p.x() >= cl[0] && p.x() <= cl[2] && p.z() >= cl[1] && p.z() <= cl[3]) in = true;
             ck(in, "точка " + p.kind() + " (" + p.x() + "," + p.z() + ") в одной из зон CLEAR");
         }

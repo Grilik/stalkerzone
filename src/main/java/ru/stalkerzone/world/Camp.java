@@ -245,7 +245,8 @@ public final class Camp {
             clear(pt, s);
             paint(pt, s, Math.max(1, lvl), factionId);
             int c = lvl == 0 ? 3 : cond;
-            if (c > 0) damage(pt, s, c, n.id * 31L + s.cx() * 17L + s.cz() * 13L + c);
+            // карточка 041: на узлах с постройками уровня (existingBuildings) повреждения и щебень не наносим вовсе
+            if (c > 0 && !n.existingBuildings) damage(pt, s, c, n.id * 31L + s.cx() * 17L + s.cz() * 13L + c);
             if (repairing && c > 0) scaffolding(pt, s);
         }
     }
@@ -465,13 +466,14 @@ public final class Camp {
                 }
             }
         }
-        // щебень на полу и на земле вокруг
+        // щебень на полу и на земле вокруг: только гравий и грубая земля — одиночные булыжники
+        // (COBBLESTONE/MOSSY_COBBLESTONE) и уголь в плейтесте выглядели как метки точек (карточка 041)
         double rubble = cond == 1 ? 0.04 : cond == 2 ? 0.18 : 0.42;
-        Block[] junk = {Blocks.COBBLESTONE, Blocks.GRAVEL, Blocks.MOSSY_COBBLESTONE, Blocks.COARSE_DIRT, Blocks.COAL_BLOCK};
+        Block[] junk = {Blocks.GRAVEL, Blocks.COARSE_DIRT};
         for (int x = s.bx0(); x <= s.bx1(); x++) {
             for (int z = s.bz0(); z <= s.bz1(); z++) {
                 if (pt.get(x, 0, z).isAir() && !pt.get(x, -1, z).isAir() && r.nextDouble() < rubble) {
-                    pt.set(x, 0, z, junk[r.nextInt(cond == 3 ? 5 : 3)].defaultBlockState());
+                    pt.set(x, 0, z, junk[r.nextInt(junk.length)].defaultBlockState());
                 }
             }
         }
