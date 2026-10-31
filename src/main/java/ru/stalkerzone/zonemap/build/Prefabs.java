@@ -39,7 +39,8 @@ public final class Prefabs {
     /** Сборщики уровня Kordon (l01_escape) в порядке применения; первый — южный блокпост. */
     private static final List<Builder> BUILDERS = java.util.List.of(
             of(KordonSouthPost.CLEAR, KordonSouthPost::build),
-            of(KordonBunker.CLEAR, KordonBunker::build));
+            of(KordonBunker.CLEAR, KordonBunker::build),
+            of(KordonElevator.CLEAR, KordonElevator::build));
 
     /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками; пусто — уровень без замен. */
     public static List<int[]> clear(String levelId) {
