@@ -49,7 +49,7 @@ public class LeaveNodeGoal extends Goal {
     public void tick() {
         ticks++;
         Vec3 target = mob.leaveTarget();
-        if (target == null) { mob.discard(); return; }
+        if (target == null) return; // без цели не исчезаем на глазах: дождёмся страховки по времени ниже
         double[] c = mob.nodeCenterXZ();
         double fromCenter = c == null ? Double.MAX_VALUE : Math.hypot(mob.getX() - c[0], mob.getZ() - c[1]);
         double near = nearestPlayerDist();
