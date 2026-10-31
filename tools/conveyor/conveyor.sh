@@ -167,7 +167,7 @@ sync_main() {
       git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1
     fi
     rm -f ESCALATE.md REVIEW_REPLY.md
-    git add -A -- $(ls -d src docs tools .gitignore 2>/dev/null)
+    git add -A -- $(ls -d src docs tools .gitignore CHECKLIST.md 2>/dev/null)
     git commit -q --no-edit || { git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1; }
   fi
   # main изменился — перепроверка
