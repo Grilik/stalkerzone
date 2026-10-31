@@ -36,7 +36,7 @@ public final class ZoneMapPlacer {
 
     private static final Map<String, BlockState> CACHE = new HashMap<>();
 
-    static BlockState state(String s) {
+    public static BlockState state(String s) {
         return CACHE.computeIfAbsent(s, k -> {
             try {
                 return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), k, false).blockState();
