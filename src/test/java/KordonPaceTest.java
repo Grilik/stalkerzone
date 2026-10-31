@@ -6,6 +6,11 @@ import java.util.*;
  * Проверяет, что за это время Зона заметно живёт, а не «промотана»: у каждой основной группировки
  * есть улучшение постройки, идут попытки захвата узлов и смены владельца, население растёт,
  * закрываются контракты. Цели сравниваются средним по сидам.
+ *
+ * «Попытки захвата узлов» считаются по {@code Faction.warsStarted}: счётчик инкрементируется ровно
+ * в одном месте — {@code Simulation.startWar}, то есть один раз на каждый начатый штурм конкретного
+ * узла (Command.Attack, прошедший проверки). Других мест, где он растёт, в симуляции нет, поэтому
+ * сумма по фракциям и есть число попыток захвата, а не абстрактных «войн».
  */
 public class KordonPaceTest {
     static int f = 0;
@@ -21,7 +26,7 @@ public class KordonPaceTest {
 
         double[] upL = new double[seeds], upB = new double[seeds], upM = new double[seeds];
         double[] popL = new double[seeds], popB = new double[seeds], popM = new double[seeds];
-        int[] wars = new int[seeds], ownerChanges = new int[seeds], contracts = new int[seeds];
+        int[] captureAttempts = new int[seeds], ownerChanges = new int[seeds], contracts = new int[seeds];
         int auditFails = 0;
 
         for (int s = 0; s < seeds; s++) {
@@ -63,14 +68,15 @@ public class KordonPaceTest {
                 }
             }
 
-            for (Faction fa : sim.factions) wars[s] += fa.warsStarted;
+            // warsStarted растёт только в Simulation.startWar — по разу на начатый штурм узла (см. шапку класса)
+            for (Faction fa : sim.factions) captureAttempts[s] += fa.warsStarted;
             contracts[s] = sim.contracts.doneByNpc + sim.contracts.doneByPlayer;
             popL[s] = (double) lon.members / startL;
             popB[s] = (double) ban.members / startB;
             popM[s] = (double) mil.members / startM;
 
             System.out.println("сид " + seed + ": улучшения Л/Б/В=" + (int) upL[s] + "/" + (int) upB[s] + "/" + (int) upM[s]
-                    + ", штурмы=" + wars[s] + ", смены владельца=" + ownerChanges[s]
+                    + ", попытки захвата=" + captureAttempts[s] + ", смены владельца=" + ownerChanges[s]
                     + ", контракты=" + contracts[s]
                     + ", население Л/Б/В=" + String.format("%.2f", popL[s]) + "/" + String.format("%.2f", popB[s])
                     + "/" + String.format("%.2f", popM[s]));
@@ -82,7 +88,7 @@ public class KordonPaceTest {
         ck(mean(upB) >= 1, "бандиты: улучшений построек в среднем " + fmt(mean(upB)) + " (нужно ≥1)");
         ck(mean(upM) >= 1, "военные: улучшений построек в среднем " + fmt(mean(upM)) + " (нужно ≥1)");
 
-        ck(mean(wars) >= 2, "попыток захвата узлов в среднем " + fmt(mean(wars)) + " (нужно ≥2)");
+        ck(mean(captureAttempts) >= 2, "попыток захвата узлов в среднем " + fmt(mean(captureAttempts)) + " (нужно ≥2)");
         ck(mean(ownerChanges) >= 1, "смен владельца узла в среднем " + fmt(mean(ownerChanges)) + " (нужно ≥1)");
 
         ck(mean(popL) >= 1.15, "одиночки: население выросло до " + pct(mean(popL)) + " (нужно ≥115%)");
