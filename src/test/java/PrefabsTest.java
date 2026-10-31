@@ -118,6 +118,30 @@ public class PrefabsTest {
         ck(atpBed >= 4, "АТП: спальных мест (bed) " + atpBed);
         ck(atpPatrol >= 4, "АТП: точек патруля " + atpPatrol);
         ck(atpWork >= 3, "АТП: рабочих мест у техники (work) " + atpWork);
+        // карточка 038: свиноферма — корпуса, подсобки, навесы, загоны и рабочие места
+        int farmSolid = 0, farmGuard = 0, farmBed = 0, farmCook = 0, farmWork = 0, farmPatrol = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            if (x >= 185 && x <= 240 && z >= -445 && z <= -389) farmSolid++;
+        }
+        for (Prefabs.Point p : marks) {
+            if (p.x() < 185 || p.x() > 240 || p.z() < -445 || p.z() > -389) continue;
+            switch (p.kind()) {
+                case "guard" -> farmGuard++;
+                case "bed" -> farmBed++;
+                case "cook" -> farmCook++;
+                case "work" -> farmWork++;
+                case "patrol" -> farmPatrol++;
+                default -> { }
+            }
+        }
+        ck(farmSolid > 2500, "свиноферма: блоков " + farmSolid);
+        ck(farmGuard >= 2, "свиноферма: часовых (guard) " + farmGuard);
+        ck(farmBed >= 4, "свиноферма: спальных мест (bed) " + farmBed);
+        ck(farmCook >= 1, "свиноферма: повар (cook) " + farmCook);
+        ck(farmWork >= 3, "свиноферма: рабочих мест у загонов (work) " + farmWork);
+        ck(farmPatrol >= 4, "свиноферма: точек патруля " + farmPatrol);
         System.exit(f > 0 ? 1 : 0);
     }
 }
