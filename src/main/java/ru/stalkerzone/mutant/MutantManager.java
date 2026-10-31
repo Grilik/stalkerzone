@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
 import ru.stalkerzone.ZoneData;
 import ru.stalkerzone.sim.Lair;
-import ru.stalkerzone.sim.Node;
 import ru.stalkerzone.sim.Simulation;
 import ru.stalkerzone.world.SpawnFinder;
 import ru.stalkerzone.world.ZoneBounds;
@@ -41,13 +40,9 @@ public final class MutantManager {
 
     /** Логово стоит в стороне от центра точки, чтобы не лезть в лагерь. Направление постоянно для точки. */
     public static BlockPos denXZ(Simulation sim, Lair l) {
-        Node n = sim.nodes.get(l.node);
-        double ang = ((n.id * 2654435761L) >>> 8) % 360 * Math.PI / 180;
-        int dist = 55;
-        int x = n.x * ZoneBounds.SCALE + (int) Math.round(Math.cos(ang) * dist);
-        int z = n.z * ZoneBounds.SCALE + (int) Math.round(Math.sin(ang) * dist);
+        int[] xz = Lair.denXZ(sim.nodes.get(l.node));
         ZoneBounds b = ZoneWorld.bounds();
-        return new BlockPos(b.clampX(x), 0, b.clampZ(z));
+        return new BlockPos(b.clampX(xz[0]), 0, b.clampZ(xz[1]));
     }
 
     public static int wanted(Lair l, boolean night) {

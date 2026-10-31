@@ -8,6 +8,7 @@ public final class ClientPda {
 
     public static void receive(String text, boolean open) {
         PdaModel model = PdaModel.parse(text);
+        PdaMapCache.observe(model.minX, model.minZ);
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen instanceof PdaScreen s) s.update(model);
         else if (open) mc.setScreen(new PdaScreen(model));
