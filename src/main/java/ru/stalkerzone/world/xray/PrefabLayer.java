@@ -17,7 +17,7 @@ public final class PrefabLayer {
     private PrefabLayer() {}
 
     /** Уровень развития построек при генерации мира (дальше их меняет развитие баз). */
-    public static final int WORLDGEN_LEVEL = 2;
+    public static final int WORLDGEN_LEVEL = 1;
 
     private static final Map<String, Map<Long, List<long[]>>> CACHE = new HashMap<>();
     private static final Map<String, List<String>> STATES = new HashMap<>();
