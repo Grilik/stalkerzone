@@ -113,6 +113,7 @@ for (int i = 0; i < sim.caravans.size(); i++) {
                     e.setDropChance(EquipmentSlot.CHEST, 0f);
                 }
                 e.getPersistentData().putInt("sz_caravan_idx", i);
+                if (courier && g == 0) e.getPersistentData().putBoolean("sz_courier", true);
                 e.getPersistentData().putInt("sz_caravan_next_x", nextPt[0]);
                 e.getPersistentData().putInt("sz_caravan_next_y", nextPt[1]);
                 e.getPersistentData().putInt("sz_caravan_next_z", nextPt[2]);
@@ -164,7 +165,7 @@ for (int i = 0; i < sim.caravans.size(); i++) {
         if (idx < 0 || idx >= sim.caravans.size()) return;
         Caravan cv = sim.caravans.get(idx);
         cv.guards = Math.max(0, cv.guards - 1);
-        if (cv.courierFor >= 0 && cv.guards <= 0) {
+        if (cv.courierFor >= 0 && e.getPersistentData().getBoolean("sz_courier")) {
             for (int j = 0; j < cv.cargo.qty.length; j++) {
                 if (j < sim.ledger.destroyed.length) sim.ledger.destroyed[j] += cv.cargo.qty[j];
                 cv.cargo.qty[j] = 0;

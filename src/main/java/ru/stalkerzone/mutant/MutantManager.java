@@ -84,13 +84,14 @@ public final class MutantManager {
 
         boolean night = level.isNight();
         // ограничение: не больше 16 мутантов в радиусе 128 от игроков
-        int totalMutants = 0;
+        java.util.Set<Integer> seenMut = new java.util.HashSet<>();
         for (ServerPlayer p : players) {
             AABB scan = p.getBoundingBox().inflate(128);
-            totalMutants += level.getEntitiesOfClass(MutantEntity.class, scan, m -> m.isAlive()).size();
-            totalMutants += level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, scan,
-                    m -> m.isAlive() && m.getPersistentData().contains(TAG_LAIR) && !(m instanceof MutantEntity)).size();
+            for (MutantEntity m : level.getEntitiesOfClass(MutantEntity.class, scan, m -> m.isAlive())) seenMut.add(m.getId());
+            for (net.minecraft.world.entity.Mob m : level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, scan,
+                    m -> m.isAlive() && m.getPersistentData().contains(TAG_LAIR) && !(m instanceof MutantEntity))) seenMut.add(m.getId());
         }
+        int totalMutants = seenMut.size();
         for (Lair l : sim.lairs) {
             BlockPos den = denXZ(sim, l);
             boolean near = false;
