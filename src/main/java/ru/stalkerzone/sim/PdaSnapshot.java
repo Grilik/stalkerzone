@@ -125,7 +125,9 @@ public final class PdaSnapshot {
             sb.append("A\t").append(ax).append('\t').append(az).append('\t').append(clean(a.type.ru)).append('\t').append(s.anomalyTier(a)).append('\n');
         }
         for (Lair l : s.lairs) {
-            sb.append("Z\t").append(denX(s, l, b)).append('\t').append(denZ(s, l, b)).append('\t').append(clean(l.title())).append('\t').append((int) l.strength).append('\n');
+            int[] den = Lair.denXZ(s.nodes.get(l.node));
+            sb.append("Z\t").append(b == null ? den[0] : b.clampX(den[0])).append('\t')
+                    .append(b == null ? den[1] : b.clampZ(den[1])).append('\t').append(clean(l.title())).append('\t').append((int) l.strength).append('\n');
         }
         // проходы через насыпь: цена (только платный мост) и опасность
         for (int p : s.crossingNodes) {
@@ -153,23 +155,6 @@ public final class PdaSnapshot {
     private static int risk(Simulation s, int node) {
         double r = s.crossingRiskOf(node);
         return r >= 0.20 ? 2 : r >= 0.10 ? 1 : 0;
-    }
-
-    /** Сторона логова от центра точки: та же формула, что у {@code MutantManager} для мира. */
-    private static int denX(Simulation s, Lair l, ZoneBounds b) {
-        Node n = s.nodes.get(l.node);
-        int x = n.x * SCALE + (int) Math.round(Math.cos(denAngle(n)) * 55);
-        return b == null ? x : b.clampX(x);
-    }
-
-    private static int denZ(Simulation s, Lair l, ZoneBounds b) {
-        Node n = s.nodes.get(l.node);
-        int z = n.z * SCALE + (int) Math.round(Math.sin(denAngle(n)) * 55);
-        return b == null ? z : b.clampZ(z);
-    }
-
-    private static double denAngle(Node n) {
-        return ((n.id * 2654435761L) >>> 8) % 360 * Math.PI / 180;
     }
 
     private static String phaseRu(Faction f) {
