@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Экран КПК. Вкладки: карта (владельцы точек, дороги, вы, аномалии, логова, лаборатории, места заданий),
- * задания (контракты с кнопками), новости (журнал Зоны), группировки, лаборатории и исследования.
+ * Экран КПК. Вкладки: карта (подложка — снимок верхнего блока по мере исследования, владельцы точек, дороги, вы,
+ * аномалии, логова, лаборатории, укрытия от выброса, проходы с ценой и опасностью, Сидорович, места заданий),
+ * задания (контракты с кнопками), новости (журнал Зоны), отношения (репутация и группировки), лаборатории.
  */
 public class PdaScreen extends Screen {
-    private static final String[] TABS = {"Карта", "Задания", "Новости", "Группировки", "Лаборатории"};
+    private static final String[] TABS = {"Карта", "Задания", "Новости", "Отношения", "Лаборатории"};
     private static final int[] COLORS = {0xC08040, 0xD03030, 0x40C040, 0x909090, 0xF0F0F0, 0x8FAF3F, 0x70B8E0};
     private static final int BG = 0xF0141A14, PANEL = 0xF0202A20, FRAME = 0xFF5A6B4A, TEXT = 0xD8E0C8, DIM = 0x8C9A80, ACCENT = 0xE8C060;
 
@@ -135,6 +136,7 @@ public class PdaScreen extends Screen {
         cz = zoom <= 1.01 ? (model.minZ + model.maxZ) / 2.0 : model.pz;
         g.enableScissor(mapX0, mapY0, mapX0 + mapW, mapY0 + mapH);
         g.fill(mapX0, mapY0, mapX0 + mapW, mapY0 + mapH, 0xFF1C241A);
+        drawUnderlay(g);
         // граница Зоны
         box(g, sx(model.minX), sy(model.minZ), sx(model.maxX), sy(model.maxZ), 0xFF6A5A30);
         for (int[] e : model.edges) {
@@ -160,6 +162,29 @@ public class PdaScreen extends Screen {
             int x = sx(c.x()), y = sy(c.z());
             box(g, x - 7, y - 7, x + 7, y + 7, 0xFFE8C060);
         }
+        // укрытия от выброса (точки shelter уровня)
+        PdaModel.Passage phover = null;
+        for (PdaModel.Mark w : model.shelters) {
+            int x = sx(w.x()), y = sy(w.z());
+            g.fill(x - 2, y - 2, x + 3, y + 3, 0xFF204060);
+            g.fill(x - 1, y - 1, x + 2, y + 2, 0xFF80C0F0);
+        }
+        // три прохода через насыпь: цвет по опасности, у платного — жёлтая рамка
+        for (PdaModel.Passage p : model.passages) {
+            int x = sx(p.x()), y = sy(p.z());
+            int col = p.risk() >= 2 ? 0xFFFF5030 : p.risk() >= 1 ? 0xFFFFB040 : 0xFF40D060;
+            g.fill(x - 4, y - 4, x + 5, y + 5, 0xFF000000);
+            g.fill(x - 3, y - 3, x + 4, y + 4, 0xFF000000 | col);
+            if (p.price() > 0) box(g, x - 6, y - 6, x + 7, y + 7, 0xFFE8C060);
+            if (Math.abs(mx - x) <= 6 && Math.abs(my - y) <= 6) phover = p;
+        }
+        // торговцы точек: Сидорович и другие
+        for (PdaModel.Mark t : model.traders) {
+            int x = sx(t.x()), y = sy(t.z());
+            g.fill(x - 3, y - 3, x + 4, y + 4, 0xFF000000);
+            g.fill(x - 2, y - 2, x + 3, y + 3, 0xFFE8C060);
+            if (zoom >= 1.2) g.drawString(font, t.name(), x + 5, y - 4, ACCENT, true);
+        }
         PdaModel.NodeInfo hover = null;
         for (PdaModel.NodeInfo n : model.nodes) {
             int x = sx(n.x()), y = sy(n.z());
@@ -181,6 +206,7 @@ public class PdaScreen extends Screen {
         g.drawString(font, "Владельцы:", lx, ly, ACCENT);
         ly += 11;
         for (PdaModel.FactionInfo f : model.factions) {
+            if (f.members() <= 0 && f.nodes() <= 0) continue;   // пустые фракции среза в легенду не лезут
             g.fill(lx, ly + 1, lx + 7, ly + 8, 0xFF000000 | COLORS[Math.min(f.id(), COLORS.length - 1)]);
             g.drawString(font, f.name(), lx + 10, ly, TEXT);
             ly += 10;
@@ -193,7 +219,11 @@ public class PdaScreen extends Screen {
         legend(g, lx, ly += 10, 0xFFFF3030, "идёт штурм");
         legend(g, lx, ly += 10, 0xFF40FFFF, "встреча лидеров");
         legend(g, lx, ly += 10, 0xFFE8C060, "ваши задания");
-        g.drawString(font, "X " + model.px + "  Z " + model.pz, lx, ly + 14, DIM);
+        legend(g, lx, ly += 10, 0xFF40D060, "проходы (опасность)");
+        legend(g, lx, ly += 10, 0xFF80C0F0, "укрытия от выброса");
+        legend(g, lx, ly += 10, 0xFFE8C060, "Сидорович и торговцы");
+        g.drawString(font, "Открыто клеток: " + PdaMapCache.known(), lx, ly + 12, DIM);
+        g.drawString(font, "X " + model.px + "  Z " + model.pz, lx, ly + 22, DIM);
         if (hover != null) {
             List<Component> tip = new ArrayList<>();
             tip.add(Component.literal(hover.name()));
@@ -206,6 +236,30 @@ public class PdaScreen extends Screen {
             int dist = (int) Math.hypot(hover.x() - model.px, hover.z() - model.pz);
             tip.add(Component.literal("До точки " + dist + " блоков"));
             g.renderComponentTooltip(font, tip, mx, my);
+        } else if (phover != null) {
+            List<Component> tip = new ArrayList<>();
+            tip.add(Component.literal("Проход: " + phover.name()));
+            PdaModel.FactionInfo f = model.faction(phover.owner());
+            tip.add(Component.literal("Владелец: " + (f == null ? "ничья" : f.name())));
+            tip.add(Component.literal(phover.price() > 0 ? "Пошлина " + phover.price() + " руб." : "Проход бесплатный"));
+            tip.add(Component.literal("Опасность: " + (phover.risk() >= 2 ? "высокая" : phover.risk() >= 1 ? "средняя" : "низкая")));
+            g.renderComponentTooltip(font, tip, mx, my);
+        }
+    }
+
+    /** Подложка: цвет верхнего блока по сетке {@link PdaMapCache#STEP}, открытый игроком (туман войны). */
+    private void drawUnderlay(GuiGraphics g) {
+        if (mapW <= 0 || mapH <= 0 || scale <= 0) return;
+        int step = 1;
+        while ((mapW / step) * (mapH / step) > 9000) step++;
+        for (int yy = 0; yy < mapH; yy += step) {
+            for (int xx = 0; xx < mapW; xx += step) {
+                double wx = cx + (xx + step / 2.0 - mapW / 2.0) / scale;
+                double wz = cz + (yy + step / 2.0 - mapH / 2.0) / scale;
+                int col = PdaMapCache.color(Math.floorDiv((int) Math.floor(wx), PdaMapCache.STEP),
+                        Math.floorDiv((int) Math.floor(wz), PdaMapCache.STEP));
+                if (col != 0) g.fill(mapX0 + xx, mapY0 + yy, mapX0 + xx + step, mapY0 + yy + step, col);
+            }
         }
     }
 
@@ -271,8 +325,19 @@ public class PdaScreen extends Screen {
         }
     }
 
+    /** Вкладка «Отношения»: репутация игрока и отношения группировок среза. */
     private void renderFactions(GuiGraphics g) {
         List<String> out = new ArrayList<>();
+        if (!model.rep.isEmpty()) {
+            out.add("Репутация у вас:");
+            for (PdaModel.Rep r : model.rep) {
+                PdaModel.FactionInfo f = model.faction(r.faction());
+                if (f == null) continue;
+                String s = r.value() <= -40 ? "враг" : r.value() >= 40 ? "свой" : "нейтрально";
+                out.add("   " + f.name() + ": " + r.value() + " (" + s + ")");
+            }
+            out.add("");
+        }
         for (PdaModel.FactionInfo f : model.factions) {
             out.add(String.format("%s: %d чел. (ранены %d), точек %d, %s. Лидер: %s. Опыт %d, стресс %d, единство %d%%",
                     f.name(), f.members(), f.wounded(), f.nodes(), f.phase(), f.leader(), f.exp(), f.stress(), f.unity()));

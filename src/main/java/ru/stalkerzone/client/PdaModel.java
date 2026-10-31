@@ -10,6 +10,10 @@ public final class PdaModel {
     public record ContractInfo(int id, String status, boolean mine, int actions, int x, int z, String text) {}
     public record LabInfo(int id, String name, String node, int tier, int rec, int parts, int del, boolean open, String lore, long reward, int x, int z) {}
     public record Mark(int x, int z, String name, int level) {}
+    /** Проход через насыпь: цена (0 — бесплатный) и опасность (0 низкая … 2 высокая). */
+    public record Passage(int x, int z, String name, long price, int risk, int owner) {}
+    /** Репутация игрока у группировки. */
+    public record Rep(int faction, int value) {}
 
     public int day, tick;
     public int px, pz;
@@ -27,6 +31,10 @@ public final class PdaModel {
     public final List<LabInfo> labs = new ArrayList<>();
     public final List<Mark> anomalies = new ArrayList<>();
     public final List<Mark> lairs = new ArrayList<>();
+    public final List<Mark> shelters = new ArrayList<>();
+    public final List<Mark> traders = new ArrayList<>();
+    public final List<Passage> passages = new ArrayList<>();
+    public final List<Rep> rep = new ArrayList<>();
     public int research, psiTech, cycle;
     public boolean scorcherOff, monolith;
 
@@ -65,6 +73,10 @@ public final class PdaModel {
                     case "R" -> { m.research = i(f[1]); m.psiTech = i(f[2]); m.cycle = i(f[3]); m.scorcherOff = i(f[4]) == 1; m.monolith = i(f[5]) == 1; }
                     case "A" -> m.anomalies.add(new Mark(i(f[1]), i(f[2]), f[3], i(f[4])));
                     case "Z" -> m.lairs.add(new Mark(i(f[1]), i(f[2]), f[3], i(f[4])));
+                    case "W" -> m.shelters.add(new Mark(i(f[1]), i(f[2]), f[3], 0));
+                    case "S" -> m.traders.add(new Mark(i(f[1]), i(f[2]), f[3], 0));
+                    case "X" -> m.passages.add(new Passage(i(f[1]), i(f[2]), f[3], l(f[4]), i(f[5]), i(f[6])));
+                    case "Y" -> m.rep.add(new Rep(i(f[1]), i(f[2])));
                     default -> { }
                 }
             } catch (ArrayIndexOutOfBoundsException ignored) {

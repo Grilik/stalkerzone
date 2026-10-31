@@ -35,12 +35,7 @@ public final class NpcManager {
     /** Случайный позывной. */
     public static String callsign() { return CALLSIGNS[RND.nextInt(CALLSIGNS.length)]; }
     private static String traderName(Node n) {
-        return switch (n.name) {
-            case "Кордон", "Бункер Сидоровича" -> "Сидорович";
-            case "Бар" -> "Бармен";
-            case "Янтарь" -> "Профессор Сахаров";
-            default -> "Торговец";
-        };
+        return ru.stalkerzone.sim.TraderNames.name(n);
     }
 
     /** Звание рядового по среднему опыту фракции. */
