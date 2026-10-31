@@ -37,6 +37,9 @@ public final class Node {
     public double importMarkup = 1.1;
     public double exportRate = 0.9;
 
+    /** Постройки и рельеф узла уже есть на уровне оригинала (1:1 из Anomaly); генератор свои не ставит. */
+    public boolean existingBuildings;
+
     public Node(int id, String name, NodeType type, int x, int z) {
         this.id = id;
         this.name = name;

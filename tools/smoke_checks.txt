@@ -13,3 +13,10 @@ zone audit|сходятся
 zone events 5|!Unknown or incomplete
 zone lairs|Логова мутантов
 zone anomalies|Аномалии
+# --- карточка 009: узлы на постройках уровня ---
+# NPC на точке после zone step 1 (проверка: есть сталкер в 32 блоках от центра деревни)
+execute positioned 4 80 8 if entity @e[type=stalkerzone:stalker,distance=..32] run say NpcAtVillage|NpcAtVillage
+# Флаг на точке флага (блок забора/баннера у деревни новичков)
+execute positioned -1 81 -5 if block ~ ~ ~ minecraft:oak_fence run say FlagAtVillage|FlagAtVillage
+# В радиусе 20 от центра деревни нет блоков постройки генератора (cobblestone_wall = забор лагеря)
+execute positioned 4 80 8 unless block ~ ~ ~ minecraft:cobblestone_wall run say NoCampAtVillage|NoCampAtVillage

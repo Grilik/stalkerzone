@@ -1,5 +1,6 @@
 package ru.stalkerzone.world;
 
+import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -30,14 +31,46 @@ public final class StructureManager {
         for (Node n : data.sim.nodes) {
             if (worked) break;
             int cls = data.sim.campClass(n);
-            if (data.sim.buildingsAt(n.id).isEmpty()) continue;
             double cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
-            if (ru.stalkerzone.world.xray.LevelRegions.covers((int) cx, (int) cz)) continue;   // уровень 1:1 — постройки из игры
+            if (ru.stalkerzone.world.xray.LevelRegions.covers((int) cx, (int) cz)) {
+                // карточка 009: узлы на постройках уровня — без генерации лагеря, только декор
+                if (n.existingBuildings) {
+                    boolean near = false;
+                    for (ServerPlayer p : players) if (Math.hypot(p.getX() - cx, p.getZ() - cz) <= ACTIVE) near = true;
+                    if (near) worked = levelNodeDecoration(level, data, n);
+                }
+                continue;
+            }
+            if (data.sim.buildingsAt(n.id).isEmpty()) continue;
             boolean near = false;
             for (ServerPlayer p : players) if (Math.hypot(p.getX() - cx, p.getZ() - cz) <= ACTIVE) near = true;
             if (!near) continue;
             worked = step(level, data, n, cls);
         }
+    }
+
+    /** Декор на существующих постройках уровня: костёр, флаг, лежанки, ящики (карточка 009). */
+    private static boolean levelNodeDecoration(ServerLevel level, ZoneData data, Node n) {
+        String levelId = LevelPoints.levelForScenario(data.sim.scenario);
+        if (levelId == null) return false;
+        JsonObject pts = LevelPoints.nodePoints(levelId, n.id);
+        if (pts == null) return false;
+
+        // ключ декора: id узла + 1000 (отдельно от built лагерей)
+        int decoKey = n.id + 10000;
+        Integer lastOwner = data.rendered.get(decoKey);
+        if (lastOwner != null && lastOwner == n.owner) return false; // уже нарисовано
+
+        int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        // проверяем загрузку чанков
+        for (int x = cx - 48; x <= cx + 48; x += 8)
+            for (int z = cz - 48; z <= cz + 48; z += 8)
+                if (!level.hasChunk(x >> 4, z >> 4)) return false;
+
+        Camp.placeLevelDecor(level, n, pts, cx, cz);
+        data.rendered.put(decoKey, n.owner);
+        data.setDirty();
+        return true;
     }
 
     /** Один шаг для точки: построить площадку или перерисовать одну постройку. Возвращает true, если что-то изменено. */

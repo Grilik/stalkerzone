@@ -33,12 +33,15 @@ public final class ZoneWorld {
         Simulation s = Scenarios.create(0);
         ZoneBounds nb = ZoneBounds.fromNodes(s.nodes);
         kordon = s.nodes.get(0);
-        // v1.18 (карточка 004): в сценарии «Кордон» граница — реальный край уровня l01_escape (kordon_points.json)
+        // v1.18 (карточка 004): в сценарии «Кордон» граница — реальный край уровня l01_escape (points/l01_escape.json)
         if (Scenarios.KORDON.equals(s.scenario)) {
-            ZoneBounds kb = KordonPoints.bounds();
-            if (kb != null && ru.stalkerzone.world.xray.LevelRegions.byId(KordonPoints.LEVEL) != null) {
-                bounds = kb;
-                return;
+            String levelId = LevelPoints.levelForScenario(Scenarios.KORDON);
+            if (levelId != null && ru.stalkerzone.world.xray.LevelRegions.byId(levelId) != null) {
+                ZoneBounds kb = LevelPoints.bounds(levelId);
+                if (kb != null) {
+                    bounds = kb;
+                    return;
+                }
             }
         }
         // v1.14: уровни оригинала 1:1 шире своих узлов — граница Зоны обходит их с запасом
@@ -55,10 +58,13 @@ public final class ZoneWorld {
     /** Точка появления в блоках: Кордон. */
     public static int[] spawnXZ() {
         init();
-        // v1.18: в Кордоне — у костра деревни новичков (kordon_points.json)
-        if (Scenarios.KORDON.equals(Scenarios.current()) && ru.stalkerzone.world.xray.LevelRegions.byId(KordonPoints.LEVEL) != null) {
-            int[] p = KordonPoints.spawnXZ();
-            if (p != null && bounds.inside(p[0], p[1])) return p;
+        // v1.18: в Кордоне — у костра деревни новичков (points/l01_escape.json)
+        if (Scenarios.KORDON.equals(Scenarios.current())) {
+            String levelId = LevelPoints.levelForScenario(Scenarios.KORDON);
+            if (levelId != null && ru.stalkerzone.world.xray.LevelRegions.byId(levelId) != null) {
+                int[] p = LevelPoints.spawnXZ(levelId);
+                if (p != null && bounds.inside(p[0], p[1])) return p;
+            }
         }
         return new int[]{kordon.x * ZoneBounds.SCALE, kordon.z * ZoneBounds.SCALE};
     }

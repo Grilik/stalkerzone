@@ -498,4 +498,58 @@ public final class Camp {
             }
         }
     }
+
+    // ---------------------------------------------------------------- декор на постройках уровня (карточка 009)
+
+    /**
+     * Ставит декор на существующих постройках уровня: костёр, флаг фракции, лежанки, ящики.
+     * Вызывается при первом подходе игрока и при смене владельца (меняется цвет флага).
+     */
+    public static void placeLevelDecor(ServerLevel level, Node n, com.google.gson.JsonObject pts, int worldCX, int worldCZ) {
+        BlockPos ground = SpawnFinder.groundAt(level, worldCX, worldCZ);
+        Painter pt = new Painter(level, ground.getX(), ground.getY(), ground.getZ());
+
+        // Очищаем старый декор (если владелец сменился — перерисовываем флаг)
+        // Ставим флаг фракции
+        if (n.owner >= 0) {
+            int[] flag = LevelPoints.readVec(pts, "flag");
+            if (flag != null && flag.length >= 3) {
+                Block banner = bannerOf(n.owner);
+                // флаг на два блока вверх
+                pt.set(flag[0] - ground.getX(), flag[2] - ground.getZ(), -1, Blocks.COBBLESTONE.defaultBlockState());
+                pt.fill(flag[0] - ground.getX(), 0, flag[2] - ground.getZ(),
+                        flag[0] - ground.getX(), 2, flag[2] - ground.getZ(),
+                        Blocks.OAK_FENCE.defaultBlockState());
+                pt.set(flag[0] - ground.getX(), 3, flag[2] - ground.getZ(), banner.defaultBlockState());
+            }
+        }
+
+        // Костёр
+        int[] campfire = LevelPoints.readVec(pts, "campfire");
+        if (campfire != null && campfire.length >= 3) {
+            int fx = campfire[0] - ground.getX(), fz = campfire[2] - ground.getZ();
+            pt.set(fx, -1, fz, Blocks.COBBLESTONE.defaultBlockState());
+            pt.set(fx, 0, fz, Blocks.CAMPFIRE.defaultBlockState().setValue(
+                    net.minecraft.world.level.block.CampfireBlock.LIT, true));
+        }
+
+        // Лежанки (сеном)
+        java.util.List<int[]> beds = LevelPoints.readVecs(pts, "beds");
+        for (int[] bed : beds) {
+            if (bed.length < 3) continue;
+            int bx = bed[0] - ground.getX(), bz = bed[2] - ground.getZ();
+            pt.set(bx, 0, bz, Blocks.HAY_BLOCK.defaultBlockState());
+        }
+
+        // Ящики и бочки вокруг костра
+        if (campfire != null && campfire.length >= 3) {
+            Random r = new Random(n.id * 7727L + 13);
+            int fx = campfire[0] - ground.getX(), fz = campfire[2] - ground.getZ();
+            for (int i = 0; i < 3; i++) {
+                int bx = fx + r.nextInt(5) - 2, bz = fz + r.nextInt(5) - 2;
+                if (Math.abs(bx - fx) < 2 && Math.abs(bz - fz) < 2) continue;
+                pt.set(bx, 0, bz, r.nextBoolean() ? Blocks.BARREL.defaultBlockState() : Blocks.CHEST.defaultBlockState());
+            }
+        }
+    }
 }
