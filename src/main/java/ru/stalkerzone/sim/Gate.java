@@ -27,6 +27,9 @@ public final class Gate {
     public static final int PASS_TICKS = 10 * 60 * TICKS_PER_SECOND;
     /** Падение репутации у владельца за проход без оплаты. */
     public static final int REP_PENALTY = 25;
+    /** Запас зоны «у поста» вокруг шлагбаума, блоков (карточка 028): не меньше 6, чтобы оплата
+     *  и предупреждение часового срабатывали не только стоя точно в регионе gate. */
+    public static final double POST_MARGIN = 6.0;
 
     /** Событие очередного тика для игрового слоя. */
     public enum Event {
@@ -130,6 +133,16 @@ public final class Gate {
 
         public boolean inRegion(double x, double z) {
             return x >= x0 && x <= x1 && z >= z0 && z <= z1;
+        }
+
+        /**
+         * Зона «у поста» (карточка 028): регион шлагбаума с запасом {@link Gate#POST_MARGIN} блоков.
+         * Внутри неё часовой сам предлагает оплату, а оплата проходит, даже если игрок стоит рядом
+         * с постом, а не ровно в регионе gate.
+         */
+        public boolean nearPost(double x, double z) {
+            return x >= x0 - POST_MARGIN && x <= x1 + POST_MARGIN
+                    && z >= z0 - POST_MARGIN && z <= z1 + POST_MARGIN;
         }
 
         /** Сторона, на которой лежит точка снаружи региона. */

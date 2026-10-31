@@ -1,7 +1,10 @@
 package ru.stalkerzone.world;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,6 +39,10 @@ public final class BridgePost {
     private static final Map<UUID, Long> HOSTILE_UNTIL = new HashMap<>();
     /** Значение репутации, которое вернём, когда враждебность спадёт. */
     private static final Map<UUID, Integer> HOSTILE_KEEP = new HashMap<>();
+    /** Игрок сейчас в зоне «у поста» (карточка 028): регион шлагбаума с запасом. */
+    private static final Map<UUID, Boolean> IN_ZONE = new HashMap<>();
+    /** Часовой уже предложил этому игроку заплатить в текущем заходе в зону поста. */
+    private static final Map<UUID, Boolean> OFFERED = new HashMap<>();
 
     private BridgePost() {}
 
@@ -86,6 +93,14 @@ public final class BridgePost {
             boolean friend = mine == owner.id;
             if (friend) pass.pay(t);                   // свои проходят без пошлины, пока у поста
             boolean blocked = !friend && Gate.enemyOf(sim, owner, mine);
+
+            // зона «у поста» (карточка 028): регион шлагбаума с запасом Gate.POST_MARGIN.
+            // Часовой сам предлагает заплатить, как только игрок вошёл в зону.
+            boolean inZone = pass.nearPost(p.getX(), p.getZ());
+            boolean entered = inZone && !Boolean.TRUE.equals(IN_ZONE.put(id, inZone));
+            boolean told = Boolean.TRUE.equals(OFFERED.get(id));
+            if (!inZone) { OFFERED.remove(id); told = false; }
+
             Gate.Event ev = pass.tick(t, p.getX(), p.getZ(), blocked);
             switch (ev) {
                 case WARN -> {
@@ -93,15 +108,30 @@ public final class BridgePost {
                             .withStyle(ChatFormatting.RED));
                     level.playSound(null, p.blockPosition(), SoundEvents.VILLAGER_NO, SoundSource.HOSTILE, 1.0f, 0.6f);
                 }
-                case TOLL -> {
-                    long toll = sim.tollFor(Reputation.get(p, owner.id), PlayerFaction.rank(p));
-                    p.sendSystemMessage(Component.literal("Пост на мосту («" + owner.name + "»): проход стоит " + toll
-                            + " руб. Оплатить: /zone pay или ПКМ по часовому.").withStyle(ChatFormatting.GOLD));
-                }
+                case TOLL -> { if (!told) { offer(p, sim, owner); told = true; } }
                 case VIOLATION -> violation(p, d, sim, owner, t);
                 default -> { }
             }
+            // вход в зону поста без оплаты — часовой предлагает заплатить (замена диалога этапа 3)
+            if (entered && !blocked && !pass.open(t) && !told) {
+                offer(p, sim, owner);
+                told = true;
+            }
+            if (told) OFFERED.put(id, true);
         }
+    }
+
+    /** Часовой сам предлагает оплату на входе в зону поста: сообщение с кнопкой и командой (карточка 028). */
+    private static void offer(ServerPlayer p, Simulation sim, Faction owner) {
+        long toll = sim.tollFor(Reputation.get(p, owner.id), PlayerFaction.rank(p));
+        Component button = Component.literal("[Оплатить " + toll + " руб.]")
+                .withStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/zone pay"))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                Component.literal("Пошлина за проход через мост"))));
+        p.sendSystemMessage(Component.literal("Часовой на посту («" + owner.name + "»): «Проход стоит " + toll + " руб.». ")
+                .append(button)
+                .append(Component.literal(" или ПКМ по часовому.").withStyle(ChatFormatting.GRAY)));
     }
 
     /** Проход без оплаты: минус репутация и короткая враждебность часовых. */
@@ -152,7 +182,7 @@ public final class BridgePost {
         Faction owner = sim.factions.get(n.owner);
         Gate.Pass pass = passFor(sim, nodeId, p.getUUID());
         if (pass == null) return "У этой локации не задан регион прохода.";
-        if (!pass.inside()) return "Вы не у поста. Подойдите к шлагбауму на мосту.";
+        if (!pass.nearPost(p.getX(), p.getZ())) return "Вы не у поста. Подойдите к шлагбауму на мосту.";
         if (Gate.enemyOf(sim, owner, PlayerFaction.faction(p)))
             return "«" + owner.name + "»: «Тебе здесь не место». Сначала заслужите доверие.";
         long t = p.serverLevel().getGameTime();
@@ -176,7 +206,8 @@ public final class BridgePost {
         int[] g = region(sim, nodeId);
         String reg = g == null ? "не задан" : g[0] + "," + g[1] + " .. " + g[2] + "," + g[3];
         return "Пост на мосту: «" + n.name + "», владелец — " + who + ".\n"
-                + "Регион gate: " + reg + ". Часовые у точки guards — фракция владельца (" + who + ").";
+                + "Регион gate: " + reg + ". Часовые у точки guards — фракция владельца (" + who + ").\n"
+                + "Зона «у поста»: регион с запасом " + (int) Gate.POST_MARGIN + " бл. — часовой сам предлагает оплату.";
     }
 }
 
