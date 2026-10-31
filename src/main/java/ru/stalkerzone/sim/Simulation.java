@@ -2448,6 +2448,7 @@ public final class Simulation {
                 out.writeInt(lairDistrictShift[i]);
             for (int i = 0; i < lairDistrictLastClear.length; i++)
                 out.writeInt(lairDistrictLastClear[i]);
+            out.writeInt(courierDelivered); // v16
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
@@ -2630,6 +2631,7 @@ public final class Simulation {
                 for (int i = 0; i < sim.lairDistrictLastClear.length; i++)
                     sim.lairDistrictLastClear[i] = in.readInt();
             }
+            if (version >= 16) sim.courierDelivered = in.readInt();
             sim.recalcPassDanger();
             return sim;
         } catch (IOException e) {

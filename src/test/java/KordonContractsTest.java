@@ -193,11 +193,17 @@ public class KordonContractsTest {
     static void oldSaveLoads() {
         Simulation s1 = Scenarios.create("kordon", 7);
         s1.step(5);
+        s1.courierDelivered = 0;
         String save = s1.save();
-        byte[] raw = Base64.getDecoder().decode(save);
-        raw[0] = 0; raw[1] = 0; raw[2] = 0; raw[3] = 15; // номер версии — первые четыре байта
+        byte[] full = Base64.getDecoder().decode(save);
+        // настоящее v15: версия 15 и без хвостового счётчика курьеров (последние 4 байта)
+        byte[] raw = java.util.Arrays.copyOf(full, full.length - 4);
+        raw[0] = 0; raw[1] = 0; raw[2] = 0; raw[3] = 15;
         Simulation s2 = Simulation.load(Base64.getEncoder().encodeToString(raw));
         ck(s2 != null, "сохранение версии 15 загружается");
         ck(s2.save().equals(save), "старое сохранение даёт то же состояние");
+        // счётчик доставленных партий переживает сохранение v16
+        s1.courierDelivered = 7;
+        ck(Simulation.load(s1.save()).courierDelivered == 7, "счётчик курьерских партий сохраняется");
     }
 }

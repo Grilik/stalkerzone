@@ -325,6 +325,7 @@ public final class ContractBoard {
             double hostile = Math.max(s.hostilityTo(h, m.host), s.hostilityTo(h, m.guest));
             if (hostile < 0.6) continue;
             double score = hostile * (0.4 + h.aggression);
+            if (h == s.mercenaries()) score += 10; // карточка 006: засаду на встречу заказывают прежде всего Одиночки
             if (score > bestScore) { bestScore = score; best = h; }
         }
         return best;
