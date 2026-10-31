@@ -61,6 +61,23 @@ public class PrefabsTest {
         ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
         for (Prefabs.Point p : marks) if (p.kind().equals("duty")) duty++;
         ck(duty >= 1, "рабочее место торговца (duty) " + duty);
+        // карточка 039: мост и туннель с электрами — блоки в своих границах, туннель это настоящий проход
+        int bridgeSolid = 0, tunnelSolid = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            if (x >= 215 && x <= 326 && z >= -325 && z <= -238) bridgeSolid++;
+            if (x >= 95 && x <= 142 && z >= -273 && z <= -211) tunnelSolid++;
+        }
+        ck(bridgeSolid > 1500, "мост: блоков " + bridgeSolid);
+        ck(tunnelSolid > 400, "туннель: блоков " + tunnelSolid);
+        // туннель: сквозной проход по оси Z — в середине стены и арка, в створе воздух
+        boolean passage = true;
+        for (int z = -268; z <= -264; z++) for (int y = 76; y <= 78; y++) {
+            String c = m.get(Prefabs.key(132, y, z));
+            if (c != null && !c.equals("minecraft:air")) passage = false;
+        }
+        ck(passage, "туннель: сквозной проход в створе" + (passage ? "" : " ЗАНЯТ"));
         // границы сборщиков не пересекаются
         java.util.List<int[]> cl = Prefabs.clear("l01_escape");
         boolean overlap = false;
