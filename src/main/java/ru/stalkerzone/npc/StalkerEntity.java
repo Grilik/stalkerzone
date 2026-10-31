@@ -512,6 +512,9 @@ public class StalkerEntity extends PathfinderMob {
                 } else {
                     sim.npcKilled(faction());
                 }
+                if (getPersistentData().contains("sz_caravan_idx")) {
+                    CaravanManager.caravanNpcKilled(this, sim);
+                }
                 if (source.getEntity() instanceof Player) dropLoot(sim);
                 if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer spK) {
                     PlayerFaction.onKill(spK, sim, faction(), wasLeader);

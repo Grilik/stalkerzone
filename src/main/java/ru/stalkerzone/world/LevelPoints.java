@@ -101,4 +101,15 @@ public final class LevelPoints {
         }
         return out;
     }
+
+    /** Дорожные точки между двумя узлами уровня (из поля roads). Ключ: &quot;from-to&quot;. */
+    public static java.util.List<int[]> roadWaypoints(String levelId, int fromNode, int toNode) {
+        JsonObject root = forLevel(levelId);
+        if (root == null || !root.has("roads")) return java.util.Collections.emptyList();
+        JsonObject roads = root.getAsJsonObject("roads");
+        String key = fromNode + "-" + toNode;
+        if (!roads.has(key)) key = toNode + "-" + fromNode;
+        if (!roads.has(key)) return java.util.Collections.emptyList();
+        return readVecs(roads, key);
+    }
 }
