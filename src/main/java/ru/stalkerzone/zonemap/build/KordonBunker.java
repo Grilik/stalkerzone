@@ -134,10 +134,15 @@ public final class KordonBunker {
             int yy = fl + 5 - k;                              // 80..75
             for (int x = xa; x <= xb; x++) {
                 b.set(x, yy, zz, CONC_STAIRS + "[facing=south,half=bottom]");
-                b.set(x, yy + 3, zz, AIR);                    // освободить шахту сверху
+                for (int h = 1; h <= 3; h++) b.set(x, yy + h, zz, AIR);   // освободить шахту сверху
             }
             b.fill(xa - 1, yy, zz, xa - 1, yy + 2, zz, CONC);   // стенки шахты
             b.fill(xb + 1, yy, zz, xb + 1, yy + 2, zz, CONC);
+        }
+        // верхняя ступень на уровне земли: спуск начинается от поверхности без перепада
+        for (int x = xa; x <= xb; x++) {
+            b.set(x, g, -10, CONC_STAIRS + "[facing=south,half=bottom]");
+            b.set(x, g + 1, -10, AIR); b.set(x, g + 2, -10, AIR);
         }
         // проём в северной стене комнаты и дверь
         for (int x = xa; x <= xb; x++) { b.set(x, fl, zd, AIR); b.set(x, fl + 1, zd, AIR); }
@@ -145,7 +150,8 @@ public final class KordonBunker {
         // бетонный портал на поверхности над спуском
         int top = g;
         for (int x = xa - 1; x <= xb + 1; x++) {
-            b.wall(x, top + 1, -10, CONC); b.wall(x, top + 2, -10, CONC_OLD);
+            if (x < xa || x > xb) b.wall(x, top + 1, -10, CONC);
+            b.wall(x, top + 2, -10, CONC_OLD);
             b.wall(x, top + 1, zd, CONC); b.wall(x, top + 2, zd, CONC_OLD);
         }
         for (int z = -10; z <= zd; z++) {
