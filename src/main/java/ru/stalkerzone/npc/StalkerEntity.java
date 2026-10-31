@@ -107,6 +107,25 @@ public class StalkerEntity extends PathfinderMob {
     public void setPerson(int id) { this.personId = id; }
     public void setMedic(boolean m) { this.medic = m; }
 
+    /** NPC уходит с узла «по делам» (карточка 033): не считается населением узла и сам исчезает вне поля зрения. */
+    public boolean isLeaving() { return getPersistentData().getBoolean("sz_leaving"); }
+
+    /** Пометить NPC уходящим: он пойдёт к tx,tz (край зоны узла) и исчезнет вне поля зрения игроков. */
+    public void setLeaving(double tx, double ty, double tz) {
+        CompoundTag t = getPersistentData();
+        t.putBoolean("sz_leaving", true);
+        t.putDouble("sz_leave_x", tx);
+        t.putDouble("sz_leave_y", ty);
+        t.putDouble("sz_leave_z", tz);
+    }
+
+    /** Куда уходит NPC «по делам», или null, если он не уходит. */
+    public net.minecraft.world.phys.Vec3 leaveTarget() {
+        CompoundTag t = getPersistentData();
+        if (!t.contains("sz_leave_x")) return null;
+        return new net.minecraft.world.phys.Vec3(t.getDouble("sz_leave_x"), t.getDouble("sz_leave_y"), t.getDouble("sz_leave_z"));
+    }
+
     /** Часовой на посту (карточка 028): стоит у точки guards, в бой уходит и возвращается. */
     public boolean isGuard() { return getPersistentData().getBoolean("sz_guard"); }
     /** NPC отдыхает у костра (карточка 028): его место — в двух блоках от центра костра. */
@@ -244,6 +263,8 @@ public class StalkerEntity extends PathfinderMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        // карточка 033: лишний NPC уходит «по делам» — выше распорядка и боя, чтобы не задерживался на узле
+        this.goalSelector.addGoal(1, new LeaveNodeGoal(this));
         this.goalSelector.addGoal(1, new ru.stalkerzone.npc.combat.FleeGoal(this));
         this.goalSelector.addGoal(1, new ReviveAllyGoal(this));
         // v1.16: укрытия, перебежки, отряд и мораль вместо «встал и стреляет»
