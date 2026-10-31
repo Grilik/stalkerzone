@@ -18,8 +18,8 @@ import java.util.List;
 public final class KordonSouthPost {
     private KordonSouthPost() {}
 
-    /** Области, где воксели уровня заменяет этот сборщик: {x0, z0, x1, z1}. */
-    public static final List<int[]> CLEAR = List.of(new int[] {28, 199, 107, 262});
+    /** Области, где воксели уровня заменяет этот сборщик: {x0, z0, x1, z1}. Включает выход патруля на дорогу (z 195). */
+    public static final List<int[]> CLEAR = List.of(new int[] {28, 195, 107, 262});
 
     static final String BRICK = "stalkerzone:zm_brick_red", BRICK_D = "stalkerzone:zm_brick_dirty",
             BRICK_ST = "stalkerzone:zm_brick_red_stairs", CONC = "stalkerzone:zm_concrete", CONC_D = "stalkerzone:zm_concrete_dirty",
@@ -47,6 +47,9 @@ public final class KordonSouthPost {
         int ground(int x, int z) { return s.ground(x, z); }
 
         void set(int x, int y, int z, String st) { s.set(x, y, z, st); }
+
+        /** Рабочее место (карточка 031): отмечается тем же проходом сборки, без второй постройки блоков. */
+        void mark(String kind, int x, int y, int z) { s.mark(kind, x, y, z); }
 
         /** Блок стены/крыши: на уровне 0 — четверть выбита, на 1 — изредка. */
         void wall(int x, int y, int z, String st) {
@@ -175,6 +178,7 @@ public final class KordonSouthPost {
         fence(b);
         btr(b);
         camp(b);
+        patrol(b);
     }
 
     // ---------------------------------------------------------------- площадка
@@ -208,6 +212,7 @@ public final class KordonSouthPost {
         b.box(30, 211, 33, 217, g, 3, RUST, RUST, 0, 0, null);
         b.fill(33, g, 213, 33, g + 1, 215, AIR);                       // ворота к дому
         b.flat(30, 211, 33, 217, g + 3, CORR_SLAB, null);
+        b.mark("work", 34, b.ground(34, 214) + 1, 214);                // карточка 031: место у гаража через дорогу
         // сетчатый вольер
         int k = b.floor(31, 219, 36, 223, GRAVEL);
         for (int x = 31; x <= 36; x++) for (int z = 219; z <= 223; z++)
@@ -234,6 +239,9 @@ public final class KordonSouthPost {
             b.set(x, gg + 1, z, CONC);
             if ((x + z) % 2 == 0) b.set(x, gg + 2, z, CONC_D);
         }
+        // карточка 031: караул у проезда в мешках
+        b.mark("gate", 55, b.ground(55, 207) + 1, 207);
+        b.mark("gate", 61, b.ground(61, 205) + 1, 205);
     }
 
     // ---------------------------------------------------------------- здание КПП
@@ -253,6 +261,7 @@ public final class KordonSouthPost {
         b.fill(71, y + 3, 212, 75, y + 3, 217, CONC);                    // перекрытие
         b.set(71, y + 3, 213, AIR); b.fill(71, y, 213, 71, y + 3, 213, LADDER + "[facing=east]");
         b.flat(70, 211, 76, 218, y + 9, CONC, BRICK_D);
+        b.mark("duty", 73, y, 215);                                      // карточка 031: дежурный внутри здания, 1-й этаж
         // проход между частями здания
         for (int z = 214; z <= 215; z++) b.fill(69, y, z, 70, y + 1, z, AIR);
         // бетонная будка у ворот периметра
@@ -276,6 +285,7 @@ public final class KordonSouthPost {
         // нары вдоль стен
         if (b.lvl >= 1) for (int z = 232; z <= 248; z += 3) {
             b.set(85, y, z, "minecraft:spruce_slab[type=top]"); b.set(98, y, z, "minecraft:spruce_slab[type=top]");
+            b.mark("bed", 86, y, z); b.mark("bed", 97, y, z);            // карточка 031: спальные места у нар
         }
         // тамбур
         b.fill(86, y - 1, 225, 97, y - 1, 229, CONC_D);
@@ -298,6 +308,7 @@ public final class KordonSouthPost {
         for (int x = x0; x <= x1; x++) for (int z = z0; z <= z1; z++) g = Math.min(g, b.ground(x, z));
         int cx0 = x0, cz0 = z0, cx1 = Math.min(x1, x0 + 3), cz1 = Math.min(z1, z0 + 3);
         int top = g + 7;
+        b.mark("guard", (cx0 + cx1) / 2, top + 1, (cz0 + cz1) / 2);   // карточка 031: пост часового — центр площадки
         for (int[] c : new int[][] {{cx0, cz0}, {cx1, cz0}, {cx0, cz1}, {cx1, cz1}})
             for (int y = b.ground(c[0], c[1]) + 1; y <= top + 3; y++) b.set(c[0], y, c[1], y <= top ? "minecraft:iron_block" : "minecraft:iron_bars");
         for (int x = cx0 - 1; x <= cx1 + 1; x++) for (int z = cz0 - 1; z <= cz1 + 1; z++) {
@@ -352,6 +363,7 @@ public final class KordonSouthPost {
         if (idx < 0) return;
         B v = new B(b.s, 74, 242, 90, 5151L, b.lvl);
         Vehicles.vehicle(v, Vehicles.ALL[idx], 0, 0, 0, null, b.lvl == 0 ? 2 : 0);
+        b.mark("work", 72, b.ground(72, 242) + 1, 242);                  // карточка 031: место у БТР
     }
 
     /** Лавки и ящики во дворе у казармы (уровень 1+). */
@@ -363,5 +375,15 @@ public final class KordonSouthPost {
         b.set(80, g + 1, 240, "minecraft:spruce_slab[type=bottom]");
         b.set(78, b.ground(78, 237) + 1, 237, "stalkerzone:military_crate");
         b.set(79, b.ground(79, 237) + 1, 237, "stalkerzone:wooden_crate");
+        // карточка 031: повар у костра и лавки
+        b.mark("cook", 77, b.ground(77, 241) + 1, 241);
+        b.mark("rest", 76, g + 1, 240);
+        b.mark("rest", 80, g + 1, 240);
+    }
+
+    /** Карточка 031: маршрут патруля — обход внутри забора по углам, затем выход на дорогу; порядок важен. */
+    private static void patrol(S b) {
+        int[][] route = {{68, 213}, {102, 213}, {102, 256}, {68, 256}, {57, 195}, {57, 262}};
+        for (int[] p : route) b.mark("patrol", p[0], b.ground(p[0], p[1]) + 1, p[1]);
     }
 }

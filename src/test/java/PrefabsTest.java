@@ -25,6 +25,30 @@ public class PrefabsTest {
         ck(solid > 3000, "блокпост: блоков " + solid);
         ck(outside == 0, "все блоки в границах замены (вне: " + outside + ")");
         ck(Prefabs.build("l02_garbage", (x, z) -> 75, 1).isEmpty(), "другие уровни без построек");
+
+        // карточка 031: рабочие места построек
+        java.util.List<Prefabs.Point> marks = Prefabs.points("l01_escape", (x, z) -> 75);
+        int guard = 0, bed = 0, patrol = 0, inBounds = 0, bedsFree = 0, bedsTotal = 0;
+        for (Prefabs.Point p : marks) {
+            if (Prefabs.cleared("l01_escape", p.x(), p.z())) inBounds++;
+            switch (p.kind()) {
+                case "guard" -> guard++;
+                case "bed" -> bed++;
+                case "patrol" -> patrol++;
+                default -> { }
+            }
+            if (p.kind().equals("bed")) {
+                bedsTotal++;
+                String st = m.get(Prefabs.key(p.x(), p.y(), p.z()));
+                if (st == null || st.equals("minecraft:air")) bedsFree++;
+            }
+        }
+        ck(guard >= 3, "часовых (guard) " + guard);
+        ck(bed >= 10, "спальных мест (bed) " + bed);
+        ck(patrol >= 4, "точек патруля " + patrol);
+        ck(inBounds == marks.size(), "все точки в границах замены (" + inBounds + "/" + marks.size() + ")");
+        ck(bedsFree == bedsTotal, "точки bed не в твёрдых блоках (" + bedsFree + "/" + bedsTotal + ")");
+        ck(Prefabs.points("l02_garbage", (x, z) -> 75).isEmpty(), "другие уровни без рабочих мест");
         System.exit(f > 0 ? 1 : 0);
     }
 }
