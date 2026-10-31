@@ -119,6 +119,39 @@ fi
 read U1 LEFT1 <<< "$(python3 -I tools/notify/balance.py)"
 COST=$(python3 -c "u0,u1='$U0','$U1'; print('—' if '-' in (u0,u1) else f'\${float(u1)-float(u0):.2f}')")
 COST_LINE="Стоимость OpenRouter: $COST (за время карточки; если работали обе линии — их сумма), остаток \$$LEFT1"
+# --- карточка 020: подтянуть свежий main (другая линия могла слить своё) и починить конфликты ---
+sync_main() {
+  git fetch -q origin main
+  local before; before=$(git rev-parse HEAD)
+  if git merge -q --no-edit origin/main >/tmp/merge.txt 2>&1; then
+    [ "$(git rev-parse HEAD)" = "$before" ] && return 0
+  else
+    local files; files=$(git diff --name-only --diff-filter=U | tr '\n' ' ')
+    [ -z "${files// /}" ] && { git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1; }
+    tg "🔀 $CARD: конфликт со свежим main ($files) — чиню"
+    PHASES="$PHASES → конфликт с main"
+    { echo "В ветке карточки $FILE идёт слияние свежего main, конфликты в файлах: $files";
+      echo "Разреши конфликты, сохранив смысл ОБЕИХ сторон: изменения карточки и изменения из main (обычно нужно оставить и то и другое)."
+      echo "Убери все маркеры <<<<<<< ======= >>>>>>>. НЕ делай git commit/merge/abort. Затем запусти проверку."; echo; echo "$RULES"; } > /tmp/pM.txt
+    run agent 1500 /tmp/pM.txt
+    if grep -qE '^(<<<<<<<|>>>>>>>)' $files 2>/dev/null || ! bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; then
+      PHASES="$PHASES → старший по конфликту ($STRONG_NAME)"; run strong 1200 /tmp/pM.txt
+    fi
+    if grep -qE '^(<<<<<<<|>>>>>>>)' $files 2>/dev/null; then
+      git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1
+    fi
+    rm -f ESCALATE.md REVIEW_REPLY.md
+    git add -A -- $(ls -d src docs tools .gitignore 2>/dev/null)
+    git commit -q --no-edit || { git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1; }
+  fi
+  # main изменился — перепроверка
+  if ! bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; then git reset -q --hard "$before"; return 1; fi
+  return 0
+}
+SYNC_OK=1
+if [ $ok -eq 0 ]; then
+  sync_main || { SYNC_OK=0; bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; tg "⚠️ $CARD: не удалось совместить со свежим main — автослияния не будет"; }
+fi
 git push -q -u origin "$BR" || { echo "::error title=Пуш отклонён::ветка $BR"; tg "❌ $CARD: пуш ветки отклонён, работа не сохранена — $RUN_URL"; exit 1; }
 { echo "Карточка \`$FILE\` выполнена конвейером."; echo; echo "**Этапы:** $PHASES"; echo; echo "**Проверка (тесты симуляции + сборка):**";
   echo '```'; tail -40 /tmp/check1.txt; echo '```';
@@ -140,5 +173,25 @@ $RUN_URL"
 fi
 echo "PR: $URL"
 [ -f /tmp/review.md ] && gh pr comment "$URL" --body-file /tmp/review.md
+# --- карточка 020: автослияние (тесты зелёные, ревью «ОК», не веха, main совмещён) ---
+if [ $ok -eq 0 ]; then
+  why=""
+  case "$CARD" in 006|011|015) why="веха — ждёт проверки";; esac
+  [ "${AUTO_MERGE:-1}" = 0 ] && why="автослияние выключено (AUTO_MERGE=0)"
+  [ $SYNC_OK -eq 1 ] || why="${why:-конфликт со свежим main не решён}"
+  grep -q REVIEW_UNAVAILABLE /tmp/review.md 2>/dev/null && why="${why:-ревью моделью недоступно}"
+  { grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md; } 2>/dev/null || why="${why:-ревью не дало «ОК»}"
+  if [ -z "$why" ]; then
+    if gh pr merge "$URL" --squash --delete-branch >/tmp/pm.txt 2>&1; then
+      tg "🤖✅ $CARD слит автоматически: $URL"
+      # слияние токеном Actions не запускает другие workflow — запускаем сами: сборку main (релиз 🎮) и следующую карточку линии
+      gh workflow run build.yml --ref main 2>/dev/null || true
+      gh workflow run conveyor.yml --ref main -f lane="${LANE:-both}" 2>/dev/null || true
+      exit 0
+    fi
+    why="слияние не удалось: $(tail -c 200 /tmp/pm.txt)"
+  fi
+  tg "👀 $CARD: PR ждёт тебя — $why. $URL"
+fi
 gh workflow run build.yml --ref "$BR" 2>/dev/null || true
 exit $ok
