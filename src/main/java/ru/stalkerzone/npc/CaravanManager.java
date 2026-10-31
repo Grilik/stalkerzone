@@ -24,6 +24,8 @@ import java.util.*;
  * Курьеры Торговцев получают большие рюкзаки и охрану.
  * Вне радиуса игроков — только симуляция, NPC убираются.
  * Ограничение: не больше 24 NPC в радиусе 128 блоков от всех игроков.
+ * Проход через насыпь (карточка 003) берётся из маршрута каравана: туннель, мост и дыра —
+ * отдельные узлы сценария со своими рёбрами, поэтому дорожные точки строятся по выбранному проходу.
  */
 public final class CaravanManager {
     private static final int ACTIVE_RADIUS = 128;
@@ -33,7 +35,8 @@ public final class CaravanManager {
     private static final int MAX_COURIER_GUARDS = 2;
 
     private static final Random RND = new Random();
-    private static final Map<Integer, List<StalkerEntity>> spawned = new HashMap<>();
+    /** Отряды привязаны к самому объекту каравана (идентичность), а не к его индексу в sim.caravans. */
+    private static final Map<Caravan, List<StalkerEntity>> spawned = new IdentityHashMap<>();
 
     private CaravanManager() {}
 /** Вызывать раз в секунду (раз в 20 тиков). */
@@ -44,22 +47,23 @@ public final class CaravanManager {
         ZoneData data = ZoneData.get(server);
         Simulation sim = data.sim;
 
-        // убрать отряды исчезнувших или далеко ушедших караванов
+        // убрать отряды исчезнувших из симуляции или далеко ушедших караванов
         spawned.entrySet().removeIf(entry -> {
-            int idx = entry.getKey();
-            if (idx < 0 || idx >= sim.caravans.size()) { discardAll(entry.getValue()); return true; }
-            Caravan cv = sim.caravans.get(idx);
+            Caravan cv = entry.getKey();
+            if (!sim.caravans.contains(cv)) { discardAll(entry.getValue()); return true; }
             if (cv.leg >= cv.route.length - 1) { discardAll(entry.getValue()); return true; }
             if (!nearAnyPlayer(players, cv, sim)) { discardAll(entry.getValue()); return true; }
             return false;
         });
 
-        // посчитать сколько NPC уже живо
+        // посчитать, сколько NPC уже живо
         int alive = 0;
-        for (List<StalkerEntity> list : spawned.values())
-for (int i = 0; i < sim.caravans.size(); i++) {
-            if (spawned.containsKey(i)) continue;
+        for (List<StalkerEntity> list : spawned.values()) alive += list.size();
+
+        // заспавнить отряды караванов рядом с игроками в пределах лимита
+        for (int i = 0; i < sim.caravans.size(); i++) {
             Caravan cv = sim.caravans.get(i);
+            if (spawned.containsKey(cv)) continue;
             if (cv.leg >= cv.route.length - 1) continue;
             if (!nearAnyPlayer(players, cv, sim)) continue;
 
@@ -112,7 +116,7 @@ for (int i = 0; i < sim.caravans.size(); i++) {
                     e.setItemSlot(EquipmentSlot.CHEST, bp);
                     e.setDropChance(EquipmentSlot.CHEST, 0f);
                 }
-                e.getPersistentData().putInt("sz_caravan_idx", i);
+                e.getPersistentData().putBoolean("sz_caravan", true);
                 if (courier && g == 0) e.getPersistentData().putBoolean("sz_courier", true);
                 e.getPersistentData().putInt("sz_caravan_next_x", nextPt[0]);
                 e.getPersistentData().putInt("sz_caravan_next_y", nextPt[1]);
@@ -122,14 +126,14 @@ for (int i = 0; i < sim.caravans.size(); i++) {
                 alive++;
                 if (alive >= MAX_CARAVAN_NPC) break;
             }
-            if (!squad.isEmpty()) spawned.put(i, squad);
+            if (!squad.isEmpty()) spawned.put(cv, squad);
             if (alive >= MAX_CARAVAN_NPC) break;
         }
-// вести отряды к следующей точке дороги
-        for (Map.Entry<Integer, List<StalkerEntity>> entry : spawned.entrySet()) {
-            int idx = entry.getKey();
-            if (idx < 0 || idx >= sim.caravans.size()) continue;
-            Caravan cv = sim.caravans.get(idx);
+
+        // вести отряды к следующей точке дороги
+        for (Map.Entry<Caravan, List<StalkerEntity>> entry : spawned.entrySet()) {
+            Caravan cv = entry.getKey();
+            if (!sim.caravans.contains(cv)) continue;
             if (cv.leg >= cv.route.length - 1) continue;
             int from = cv.route[cv.leg];
             int to = cv.route[cv.leg + 1];
@@ -161,9 +165,8 @@ for (int i = 0; i < sim.caravans.size(); i++) {
     }
 /** Гибель NPC каравана: ослабить караван, для курьера — потеря груза через Ledger. */
     public static void caravanNpcKilled(StalkerEntity e, Simulation sim) {
-        int idx = e.getPersistentData().getInt("sz_caravan_idx");
-        if (idx < 0 || idx >= sim.caravans.size()) return;
-        Caravan cv = sim.caravans.get(idx);
+        Caravan cv = caravanOf(e);
+        if (cv == null) return;
         cv.guards = Math.max(0, cv.guards - 1);
         if (cv.courierFor >= 0 && e.getPersistentData().getBoolean("sz_courier")) {
             for (int j = 0; j < cv.cargo.qty.length; j++) {
@@ -173,8 +176,15 @@ for (int i = 0; i < sim.caravans.size(); i++) {
             cv.cargo.money = 0;
             sim.factions.get(cv.courierFor).resent(cv.owner, 0.3);
         }
-        List<StalkerEntity> list = spawned.get(idx);
-        if (list != null) { list.remove(e); if (list.isEmpty()) spawned.remove(idx); }
+        List<StalkerEntity> list = spawned.get(cv);
+        if (list != null) { list.remove(e); if (list.isEmpty()) spawned.remove(cv); }
+    }
+
+    /** Караван, к отряду которого приписан NPC, или null. */
+    private static Caravan caravanOf(StalkerEntity e) {
+        for (Map.Entry<Caravan, List<StalkerEntity>> entry : spawned.entrySet())
+            if (entry.getValue().contains(e)) return entry.getKey();
+        return null;
     }
 
     private static void clearAll() {

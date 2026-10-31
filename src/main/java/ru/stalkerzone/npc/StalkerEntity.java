@@ -512,7 +512,7 @@ public class StalkerEntity extends PathfinderMob {
                 } else {
                     sim.npcKilled(faction());
                 }
-                if (getPersistentData().contains("sz_caravan_idx")) {
+                if (getPersistentData().getBoolean("sz_caravan")) {
                     CaravanManager.caravanNpcKilled(this, sim);
                 }
                 if (source.getEntity() instanceof Player) dropLoot(sim);
