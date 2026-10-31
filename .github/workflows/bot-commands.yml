@@ -1,0 +1,28 @@
+name: bot-commands
+# Команды Telegram-боту без сервера (карточка 018): раз в ~30 минут забрать сообщения и выполнить.
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  actions: write
+concurrency:
+  group: bot-commands
+  cancel-in-progress: false
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Команды
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          PROXYAPI_KEY: ${{ secrets.PROXYAPI_KEY }}
+        run: python3 -I tools/notify/bot_commands.py

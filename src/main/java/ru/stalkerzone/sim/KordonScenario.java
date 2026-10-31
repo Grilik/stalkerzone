@@ -32,7 +32,7 @@ public final class KordonScenario {
     public static final int[] LAIR_SITES = {HILL, FIELDS, FOREST, RAVINE, MEADOW, EDGE, TUNNEL, HOLE};
 
     /** Стартовая численность трёх живых группировок — баланс уточняет карточка 005. */
-    public static final int LONER_MEMBERS = 30, MILITARY_MEMBERS = 14, BANDIT_MEMBERS = 20;
+    public static final int LONER_MEMBERS = 40, MILITARY_MEMBERS = 24, BANDIT_MEMBERS = 28;
 
     /** v16 (карточка 003): опасность проходов при выборе маршрута — туннель и дыра опаснее моста. */
     public static final double PASS_RISK_TUNNEL = 0.14, PASS_RISK_BRIDGE = 0.05, PASS_RISK_HOLE = 0.24;
@@ -44,16 +44,17 @@ public final class KordonScenario {
 
         Node village = node(nodes, "Деревня новичков", NodeType.BASE, 0, 0);
         village.existingBuildings = true;
-        village.farmCap = 20; village.partsCap = 5; village.artifactCap = 1; village.housing = 40;
+        village.farmCap = 45; village.partsCap = 10; village.artifactCap = 3; village.housing = 55;
+        village.defense = 18;
 
         Node bunker = node(nodes, "Бункер Сидоровича", NodeType.BASE, -4, -1);
         bunker.existingBuildings = true;
         bunker.housing = 10;
-        ZoneScenario.trader(bunker, 1.08, 0.95, ZoneScenario.caps(50, 15, 120, 15, 3, 40));
+        ZoneScenario.trader(bunker, 1.08, 0.95, ZoneScenario.caps(200, 30, 120, 30, 6, 60));
 
         Node southPost = node(nodes, "Южный блокпост", NodeType.BASE, 6, 22);
         southPost.existingBuildings = true;
-        southPost.farmCap = 3; southPost.housing = 12; southPost.defense = 26;
+        southPost.farmCap = 10; southPost.housing = 22; southPost.defense = 32;
 
         Node bigLand = node(nodes, "Выход: Большая земля", NodeType.OUTPOST, 8, 33);
         bigLand.existingBuildings = true;
@@ -61,11 +62,11 @@ public final class KordonScenario {
 
         Node elevator = node(nodes, "Элеватор", NodeType.RUINS, 20, -22);
         elevator.existingBuildings = true;
-        elevator.partsCap = 18; elevator.artifactCap = 1; elevator.housing = 8; elevator.defense = 24;
+        elevator.partsCap = 24; elevator.artifactCap = 3; elevator.housing = 12; elevator.defense = 14;
 
         Node atp = node(nodes, "АТП", NodeType.BASE, 33, -12);
         atp.existingBuildings = true;
-        atp.farmCap = 6; atp.partsCap = 20; atp.housing = 25; atp.defense = 22;
+        atp.farmCap = 12; atp.partsCap = 25; atp.housing = 35; atp.defense = 25;
 
         Node darkExit = node(nodes, "Выход: Тёмная долина", NodeType.OUTPOST, 58, -8);
         darkExit.existingBuildings = true;
@@ -77,7 +78,7 @@ public final class KordonScenario {
 
         Node bridge = node(nodes, "Разрушенный мост", NodeType.BASE, 27, -30);
         bridge.existingBuildings = true;
-        bridge.housing = 6; bridge.defense = 20;
+        bridge.housing = 10; bridge.defense = 28;
 
         Node hole = node(nodes, "Дыра в заборе", NodeType.RUINS, 43, -35);
         hole.existingBuildings = true;
@@ -85,7 +86,7 @@ public final class KordonScenario {
 
         Node farm = node(nodes, "Свиноферма", NodeType.SETTLEMENT, 21, -42);
         farm.existingBuildings = true;
-        farm.farmCap = 25; farm.housing = 15; farm.defense = 18;
+        farm.farmCap = 45; farm.housing = 20; farm.defense = 22;
 
         Node farPost = node(nodes, "Дальний блокпост", NodeType.BASE, 23, -81);
         farPost.existingBuildings = true;
@@ -143,13 +144,24 @@ public final class KordonScenario {
         factions.get(ZoneScenario.LONERS).idealGreed = 0.0;
         factions.get(ZoneScenario.LONERS).eliteShare = 0.06;
         factions.get(ZoneScenario.LONERS).protoBuyer = true;
+        factions.get(ZoneScenario.LONERS).brain = new KordonBalance.LonerBrain();
         factions.get(ZoneScenario.BANDITS).takesNewcomers = true;
         factions.get(ZoneScenario.BANDITS).idealLoyalty = -0.3;
         factions.get(ZoneScenario.BANDITS).idealGreed = 0.8;
         factions.get(ZoneScenario.BANDITS).eliteShare = 0.05;
         factions.get(ZoneScenario.BANDITS).protoBuyer = true;
+        factions.get(ZoneScenario.BANDITS).brain = new KordonBalance.BanditBrain();
         factions.get(ZoneScenario.MILITARY).military = true;
+        factions.get(ZoneScenario.MILITARY).takesNewcomers = true;
+        factions.get(ZoneScenario.MILITARY).idealLoyalty = 0.6;
+        factions.get(ZoneScenario.MILITARY).idealGreed = -0.2;
+        factions.get(ZoneScenario.MILITARY).brain = new KordonBalance.MilitaryBrain();
         factions.get(ZoneScenario.TRADERS).passive = true;
+
+        // доктрины Кордона (уточняют характер для локального среза)
+        factions.get(ZoneScenario.LONERS).doctrine = KordonBalance.LONER_DOCTRINE;
+        factions.get(ZoneScenario.BANDITS).doctrine = KordonBalance.BANDIT_DOCTRINE;
+        factions.get(ZoneScenario.MILITARY).doctrine = KordonBalance.MILITARY_DOCTRINE;
 
         double[][] h = ZoneScenario.hostility();
 
@@ -180,7 +192,7 @@ public final class KordonScenario {
             }
             f.stock.add(Good.MEDS, m * 2);
             f.stock.add(Good.MATERIALS, m);
-            f.stock.money = f.military ? 6000 : 3000;
+            f.stock.money = f.military ? 12000 : 8000;
         }
         // стартовый рынок торговца
         for (Node n : nodes) {
@@ -190,6 +202,11 @@ public final class KordonScenario {
         }
 
         Simulation sim = new Simulation(seed, nodes, g, factions, h);
+        sim.scenario = "kordon";
+
+        // v16 (карточка 005): шлюз Большой земли и выходы
+        sim.gatewayNode = KordonBalance.GATEWAY_NODE;
+        sim.exitNodes = KordonBalance.EXIT_NODES;
 
         // v14: настройка логов для Кордона
         sim.lairExits = EXITS;
@@ -200,7 +217,7 @@ public final class KordonScenario {
         sim.lairNoCapture = nc;
         sim.lairStartDefs = KordonBalance.START_LAIRS;
         sim.lairRandomSpawnDisabled = true;
-        sim.lairRaidMin = 22;
+        sim.lairRaidMin = KordonBalance.LAIR_RAID_MIN;
         sim.lairRaidWeights = KordonBalance.RAID_TARGET_WEIGHT;
         // v16 (карточка 003): три прохода через насыпь; пошлина берётся только за мост.
         // Опасность: туннель (электры) и дыра (аномалии, радиация, мутанты) — высокая, мост — низкая.

@@ -69,17 +69,30 @@ else:
 # Diff{' (обрезан)' if cut else ''}
 {diff}
 """
-    req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions",
-        data=json.dumps({"model": model, "max_tokens": 2000, "temperature": 0.1,
-                         "messages": [{"role": "user", "content": prompt}]}).encode(),
-        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json",
-                 "X-Title": "stalkerzone-ai-review"})
-    try:
+    def ask(m):
+        # рассуждающие модели тратят токены на размышления: даём запас и просим короткое рассуждение
+        req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions",
+            data=json.dumps({"model": m, "max_tokens": 12000, "temperature": 0.1, "reasoning": {"effort": "low"},
+                             "messages": [{"role": "user", "content": prompt}]}).encode(),
+            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json",
+                     "X-Title": "stalkerzone-ai-review"})
         r = json.load(urllib.request.urlopen(req, timeout=300))
-        text = r["choices"][0]["message"]["content"].strip()
-        u = r.get("usage", {})
+        text = ((r.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+        return text.strip(), r.get("usage", {})
+    text, u, err = "", {}, ""
+    for m in (model, os.environ.get("REVIEW_FALLBACK_MODEL") or "deepseek/deepseek-v4.1-flash"):
+        try:
+            text, u = ask(m)
+            if text:
+                model = m
+                break
+            err = f"{m}: пустой ответ"
+        except Exception as e:
+            err = f"{m}: {e}"
+    if text:
         out.append(text)
         out.append(f"\n_Модель: `{model}`, токены: {u.get('prompt_tokens','?')} → {u.get('completion_tokens','?')}{', diff обрезан' if cut else ''}._")
-    except Exception as e:
-        out.append(f"_Ревью моделью не удалось: {e}_")
+    else:
+        # маркер для конвейера: сбой ревью — не повод звать старшего
+        out.append(f"_Ревью моделью не удалось ({err}). REVIEW_UNAVAILABLE_")
 print("\n\n".join(out))

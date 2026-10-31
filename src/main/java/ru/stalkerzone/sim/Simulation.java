@@ -89,6 +89,10 @@ public final class Simulation {
     /** Всего собрано пошлин и по фракциям-плательщикам (статистика, не сохраняется). */
     public long tollCollected;
     public final long[] tollPaidBy = new long[16];
+    /** v16 (карточка 005): узел-вход с Большой земли (0 — без шлюза, arrivals используют узел 0). */
+    public int gatewayNode = 0;
+    /** v16 (карточка 005): узлы-выходы, через которые люди покидают срез. */
+    public int[] exitNodes = {};
     /** v14: очередь возрождения логов (срок, район, прежний cap, прежний вид). */
     public final List<LairRespawn> lairRespawnQueue = new ArrayList<>();
     public static final class LairRespawn {
