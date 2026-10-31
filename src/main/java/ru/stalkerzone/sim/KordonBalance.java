@@ -178,8 +178,8 @@ public final class KordonBalance {
     public static final int CONTRACT_DIFFICULTY = 1;
 
     // --- заказы Бандитов (карточка 021) --------------------------------------------------
-    /** Узел-цель налёта по умолчанию: Свиноферма (KordonScenario.FARM). */
-    public static final int CONTRACT_RAID_FARM = 10;
+    /** Узел-цель налёта по умолчанию: Свиноферма — именованный индекс сценария, а не сырой номер (карточка 022). */
+    public static final int CONTRACT_RAID_FARM = KordonScenario.FARM;
     /** Шанс в день, что Бандиты выложат заказ на засаду против курьера Торговцев в пути. */
     public static final double CONTRACT_AMBUSH_COURIER_CHANCE = 0.12;
     /** Шанс в день, что Бандиты выложат заказ на налёт на чужую ферму. */
