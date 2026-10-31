@@ -189,14 +189,14 @@ public final class EmissionEvent {
 
     /** NPC бегут в ближайшее укрытие, а не стоят под открытым небом (карточка 013). */
     private static void shelterRun(ServerLevel level, ZoneData d) {
-        for (ServerPlayer p : level.players()) {
-            for (ru.stalkerzone.npc.StalkerEntity e : level.getEntitiesOfClass(ru.stalkerzone.npc.StalkerEntity.class,
-                    p.getBoundingBox().inflate(64))) {
-                if (e.isTrader()) continue;
-                int[] s = nearestShelter(d, e.getX(), e.getZ());
-                if (s == null) continue;
-                e.getNavigation().moveTo(s[0] + 0.5, s[1], s[2] + 0.5, 1.3);
-            }
+        // все загруженные сталкеры мира, независимо от игроков (иначе дальние так и останутся снаружи)
+        for (net.minecraft.world.entity.Entity ent : level.getAllEntities()) {
+            if (!(ent instanceof ru.stalkerzone.npc.StalkerEntity e) || !e.isAlive() || e.isTrader()) continue;
+            if (!exposed(level, e)) continue; // уже под крышей — не трогаем
+            int[] s = nearestShelter(d, e.getX(), e.getZ());
+            if (s == null) continue;
+            if (!level.hasChunk(s[0] >> 4, s[2] >> 4)) continue; // укрытие в незагруженном чанке
+            e.getNavigation().moveTo(s[0] + 0.5, s[1], s[2] + 0.5, 1.3);
         }
     }
 
@@ -240,8 +240,8 @@ public final class EmissionEvent {
     }
 
     /** Под открытым небом или под тонкой крышей (один блок от неба не спасает). */
-    static boolean exposed(ServerLevel level, ServerPlayer p) {
-        BlockPos head = p.blockPosition().above();
+    static boolean exposed(ServerLevel level, net.minecraft.world.entity.Entity e) {
+        BlockPos head = e.blockPosition().above();
         if (level.canSeeSky(head)) return true;
         int solid = 0;
         for (int y = head.getY() + 1; y < level.getMaxBuildHeight() && solid < 2; y++) {
