@@ -17,7 +17,7 @@ public final class KordonElevator {
 
     /** Области, где воксели уровня заменяет этот сборщик: {x0, z0, x1, z1}. */
     public static final List<int[]> CLEAR = List.of(
-            new int[] {128, -272, 141, -255},   // башня-силос и техника
+            // X 128..141, Z -272..-255 — это портал туннеля (обмер 07-tunnel), его строит KordonBridgeTunnel
             new int[] {175, -247, 246, -158}    // корпус, склады, навесы
     );
 
@@ -162,7 +162,6 @@ public final class KordonElevator {
     public static void build(BlockSink sink, int lvl) {
         S b = new S(sink, lvl);
         clearAndPave(b);
-        siloTower(b);
         mainBuilding(b);
         warehouses(b);
         smallBuilding(b);
@@ -183,44 +182,6 @@ public final class KordonElevator {
         // двор между корпусом и складами
         for (int x = 208; x <= 217; x++) for (int z = -236; z <= -220; z++)
             b.set(x, b.ground(x, z), z, (hash(x, 2, z) % 7 == 0) ? GRAVEL : PATH);
-    }
-// ---------------------------------------------------------------- башня-силос
-
-    /** Высокая бетонная башня элеватора (X 131..138, Z -269..-263):
-     *  этажи через 4 блока, лестница внутри до верха, пост часового наверху. */
-    private static void siloTower(S b) {
-        int y = b.floor(131, -268, 136, -264, CONC_D);
-        b.fill(131, y - 1, -268, 136, y - 1, -264, CONC_D);
-        // стены башни: бетон, 3 этажа по 4 блока
-        for (int floor = 0; floor < 3; floor++) {
-            int fy = y + floor * 4;
-            b.box(131, -268, 136, -264, fy, 4, CONC, CONC_OLD, 0, 0, null);
-            if (floor < 2) b.fill(132, fy + 4, -267, 135, fy + 4, -265, BOARDS_O);
-        }
-        // верхняя площадка и парапет
-        int top = y + 12;
-        b.fill(131, top, -268, 136, top, -264, CONC_SLAB);
-        for (int x = 131; x <= 136; x++) {
-            for (int z = -268; z <= -264; z++) {
-                boolean edge = x == 131 || x == 136 || z == -268 || z == -264;
-                if (edge) b.wall(x, top + 1, z, b.lvl >= 3 ? BAGS : CONC_SLAB);
-            }
-        }
-        // лестница внутри у южной стены (z=-265), опора — стена z=-264 (facing=north → опора с юга)
-        b.fill(133, y, -265, 133, top, -265, LADDER + "[facing=north]");
-        // вход внизу с востока
-        b.set(136, y, -266, AIR); b.set(136, y + 1, -266, AIR);
-        if (b.lvl >= 2) {
-            b.set(136, y, -266, "minecraft:spruce_door[facing=west,half=lower,hinge=left]");
-            b.set(136, y + 1, -266, "minecraft:spruce_door[facing=west,half=upper,hinge=left]");
-        }
-        // пост часового наверху
-        b.mark("guard", 133, top + 1, -266);
-        if (b.lvl >= 2) b.set(133, top + 2, -266, "minecraft:lantern[hanging=true]");
-        // низкая пристройка с востока (X 137-138)
-        int low = b.floor(137, -268, 138, -263, CONC_D);
-        b.box(137, -268, 138, -263, low, 4, CONC_OLD, CONC_D, 0, 0, new int[][] {{138, -266, 1}});
-        b.flat(137, -268, 138, -263, low + 4, CONC_SLAB, null);
     }
 // ---------------------------------------------------------------- корпус элеватора
 
@@ -259,6 +220,9 @@ public final class KordonElevator {
         b.flat(215, -240, 226, -232, twY + 14, CONC_SLAB, CONC_D);
         // лестница внутри конвейерной башни
         b.fill(220, twY, -239, 220, twY + 13, -239, LADDER + "[facing=south]"); // опора — северная стена z=-240
+        // пост часового наверху башни (раньше был на «силосе», который оказался порталом туннеля)
+        b.mark("guard", 220, twY + 15, -236);
+        if (b.lvl >= 2) b.set(220, twY + 16, -236, "minecraft:lantern[hanging=false]");
         // проход между секциями
         for (int x = 209; x <= 212; x++) b.set(x, northY + 4, -238, AIR);
 
@@ -324,16 +288,11 @@ public final class KordonElevator {
 
     /** Брошенная техника у элеватора. */
     private static void vehicles(S b) {
-        // грузовик у башни-силоса
         int zi = -1, ka = -1, tr = -1;
         for (int i = 0; i < Vehicles.ALL.length; i++) {
             if (Vehicles.ALL[i].equals("zil")) zi = i;
             if (Vehicles.ALL[i].equals("kamaz")) ka = i;
             if (Vehicles.ALL[i].equals("tractor")) tr = i;
-        }
-        if (zi >= 0) {
-            B v = new B(b.s, 132, -259, 0, 5151L, b.lvl);
-            Vehicles.vehicle(v, Vehicles.ALL[zi], 0, 0, 0, null, b.lvl == 0 ? 2 : 0);
         }
         if (ka >= 0) {
             B v = new B(b.s, 198, -230, 90, 5151L, b.lvl);
@@ -348,11 +307,6 @@ public final class KordonElevator {
 
     /** Бетонный забор периметра вокруг башни, корпуса и складов. */
     private static void fence(S b) {
-        // вокруг башни
-        line(b, 129, -270, 129, -261);
-        line(b, 129, -261, 139, -261);
-        line(b, 139, -261, 139, -270);
-        line(b, 139, -270, 129, -270);
         // вокруг корпуса и складов — север
         line(b, 200, -244, 235, -244);
         // восток
@@ -394,7 +348,6 @@ public final class KordonElevator {
         }
         // маршрут патруля — обход периметра
         int[][] route = {
-            {132, -266}, {132, -261}, {138, -261}, {138, -266},  // вокруг башни
             {200, -244}, {230, -244}, {240, -244},                // север
             {240, -170}, {235, -165}, {233, -165},                // восток
             {180, -196}, {180, -230}, {200, -240}                 // запад

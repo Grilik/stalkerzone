@@ -61,13 +61,38 @@ public class PrefabsTest {
         ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
         for (Prefabs.Point p : marks) if (p.kind().equals("duty")) duty++;
         ck(duty >= 1, "рабочее место торговца (duty) " + duty);
+        // карточка 039: мост и туннель с электрами — блоки в своих границах, туннель это настоящий проход
+        int bridgeSolid = 0, tunnelSolid = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            if (x >= 215 && x <= 326 && z >= -325 && z <= -238) bridgeSolid++;
+            if (x >= 95 && x <= 142 && z >= -273 && z <= -211) tunnelSolid++;
+        }
+        ck(bridgeSolid > 1500, "мост: блоков " + bridgeSolid);
+        ck(tunnelSolid > 400, "туннель: блоков " + tunnelSolid);
+        // туннель: сквозной проход по оси Z — в середине стены и арка, в створе воздух
+        int fy = Integer.MIN_VALUE;   // пол туннеля: гравий в створе (floor-1)
+        for (int y = 40; y <= 140; y++) if ("minecraft:gravel".equals(m.get(Prefabs.key(132, y, -266)))) fy = y + 1;
+        boolean passage = fy != Integer.MIN_VALUE;
+        for (int z = -268; passage && z <= -264; z++) {
+            for (int x = 132; x <= 132; x++) for (int y = fy; y <= fy + 2; y++) {
+                String c = m.get(Prefabs.key(x, y, z));
+                if (c != null && !c.equals("minecraft:air")) passage = false;
+            }
+            for (int y = fy; y <= fy + 2; y++) {
+                String w1 = m.get(Prefabs.key(130, y, z)), w2 = m.get(Prefabs.key(134, y, z));
+                if (w1 == null || w1.equals("minecraft:air") || w2 == null || w2.equals("minecraft:air")) passage = false;
+            }
+        }
+        ck(passage, "туннель: сквозной проход в створе" + (passage ? "" : " ЗАНЯТ"));
+
         // карточка 037: элеватор в списке сборщиков — свои границы, блоки, рабочие места
         int elevatorSolid = 0, cook = 0;
         for (Map.Entry<Long, String> e : m.entrySet()) {
             if (e.getValue().equals("minecraft:air")) continue;
             int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            boolean inElevator = (x >= 128 && x <= 141 && z >= -272 && z <= -255)
-                    || (x >= 175 && x <= 246 && z >= -247 && z <= -158);
+            boolean inElevator = x >= 175 && x <= 246 && z >= -247 && z <= -158;
             if (inElevator) elevatorSolid++;
         }
         ck(elevatorSolid > 500, "элеватор: блоков " + elevatorSolid);
@@ -103,7 +128,7 @@ public class PrefabsTest {
             int[] ra = cl.get(i), rb = cl.get(j);
             if (ra[0] <= rb[2] && rb[0] <= ra[2] && ra[1] <= rb[3] && rb[1] <= ra[3]) { overlap = true; break outer; }
         }
-        ck(!overlap && cl.size() >= 5, "сборщиков " + cl.size() + ", без пересечения границ");
+        ck(!overlap && cl.size() >= 6, "сборщиков " + cl.size() + ", без пересечения границ");
 
         // карточка 036: АТП — гаражи, мастерские, вышки, техника, забор
         int atpSolid = 0, workMark = 0;
