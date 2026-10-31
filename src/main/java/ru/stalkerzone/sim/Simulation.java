@@ -1668,6 +1668,11 @@ public final class Simulation {
      */
     private void traderDaily(Node n) {
         Stock s = n.market;
+        // v20 (карточка 025): выручка с Большой земли за вывезенный товар — приток, из-за которого касса не пересыхает.
+        if (n.mainlandRevenue > 0) {
+            s.money += n.mainlandRevenue;
+            ledger.moneyMinted += n.mainlandRevenue;
+        }
         long free = s.money - 6000;
         if (free > 0) {
             Faction roof = n.owner >= 0 && n.owner < factions.size() ? factions.get(n.owner) : null;
@@ -1829,7 +1834,7 @@ public final class Simulation {
             int i = g.ordinal();
             buyBudget += (long) Math.max(0, t.sell()[i]) * buyPrice(hub, g);
         }
-        long courierBudget = Math.min(buyBudget + 200, mk.money / 3);
+        long courierBudget = Math.min(buyBudget + 200, Math.max(0, mk.money - hub.cashReserve) / 3);
         Stock.moveMoney(mk, c.cargo, courierBudget);
 
         buyer.lastDispatch = day;

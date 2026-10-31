@@ -261,7 +261,7 @@ public final class GlobalMarket {
                 if (have >= t * 0.9) continue;
                 int need = Math.min(n.importCap[i], t - have);
                 double urgency = Math.min(1, 1 - (double) have / Math.max(1, t));
-                int q = decideBuy(g, need, urgency, (long) (m.money * 0.6));
+                int q = decideBuy(g, need, urgency, (long) (Math.max(0, m.money - n.cashReserve) * 0.6));
                 order(s, m, g, q, -1, n.id, true, 2 + r.nextInt(3));
             }
         }

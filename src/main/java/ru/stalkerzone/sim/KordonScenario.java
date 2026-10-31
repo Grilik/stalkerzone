@@ -197,15 +197,23 @@ public final class KordonScenario {
             f.stock.add(Good.MATERIALS, m);
             f.stock.money = f.military ? 12000 : 8000;
         }
-        // стартовый рынок торговца
+        // стартовые рынки торговцев
         for (Node n : nodes) {
             if (!n.trader) continue;
             for (Good gd : Good.ALL) n.market.qty[gd.ordinal()] = (int) (n.target[gd.ordinal()] * 0.8);
-            n.market.money = 20000;
         }
 
         Simulation sim = new Simulation(seed, nodes, g, factions, h);
         sim.scenario = "kordon";
+
+        // v20 (карточка 025): касса торговцев Кордона — минимум на 3 артефакта уровня 2 и 10 частей мутантов
+        // по текущим ценам скупки плюс оборотный запас; выручка с Большой земли держит кассу на плаву месяц.
+        for (Node n : nodes) {
+            if (!n.trader) continue;
+            n.market.money = KordonBalance.traderStartCash(sim, n);
+            n.cashReserve = KordonBalance.TRADER_CASH_RESERVE;
+            n.mainlandRevenue = KordonBalance.TRADER_MAINLAND_INCOME;
+        }
 
         // v16 (карточка 005): шлюз Большой земли и выходы
         sim.gatewayNode = KordonBalance.GATEWAY_NODE;

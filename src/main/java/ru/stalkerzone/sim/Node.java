@@ -36,6 +36,14 @@ public final class Node {
     public final int[] importCap = new int[Good.ALL.length];
     public double importMarkup = 1.1;
     public double exportRate = 0.9;
+    /**
+     * Неснижаемый запас кассы торговца, руб. (карточка 025): ниже него торговец не тратит деньги на закупки
+     * у Большой земли и не отправляет их с курьерами — это оборотные деньги на скупку у сталкеров.
+     * Задаётся сценарием; 0 — торговец тратит кассу как раньше.
+     */
+    public long cashReserve;
+    /** Приток наличных с Большой земли, руб. в день (карточка 025): выручка за вывезенный за Периметр товар. */
+    public long mainlandRevenue;
 
     /** Постройки и рельеф узла уже есть на уровне оригинала (1:1 из Anomaly); генератор свои не ставит. */
     public boolean existingBuildings;

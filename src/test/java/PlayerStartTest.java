@@ -61,7 +61,7 @@ public class PlayerStartTest {
         ck(pda == 1, "КПК — 1");
         ck(bolt == 10, "болтов — 10");
         ck(det == 1, "детектор «Отклик» — 1");
-        ck(rub == 500, "денег — 500 руб.");
+        ck(rub == PlayerStart.START_RUBLES, "денег — " + PlayerStart.START_RUBLES + " руб.");
         ck(PlayerStart.KIT.length == 12, "в наборе 12 позиций");
         boolean noEmpty = true;
         for (PlayerStart.Kit k : PlayerStart.KIT) if (k.count() <= 0) noEmpty = false;
