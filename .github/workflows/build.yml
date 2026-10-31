@@ -39,14 +39,14 @@ jobs:
       - name: Сборка для игры (релиз nightly)
         id: rel
         # карточка 018: после каждого зелёного main — jar в Releases, ссылка уходит в Telegram
-        if: success() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: success() && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         env:
           GH_TOKEN: ${{ github.token }}
           BEFORE: ${{ github.event.before }}
         run: |
           JAR=$(ls build/libs/*.jar | grep -vE -- '-(sources|slim|dev)\.jar$' | head -1)
           { echo "Сборка из main, коммит ${GITHUB_SHA::7}. Установка: заменить jar в папке mods."; echo;
-            echo "Изменения:"; git log --pretty='- %s' "$BEFORE..HEAD" 2>/dev/null | head -20 || git log -5 --pretty='- %s'; } > /tmp/notes.md
+            echo "Изменения:"; if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE" 2>/dev/null; then git log --pretty='- %s' "$BEFORE..HEAD" | head -20; else git log -5 --pretty='- %s'; fi; } > /tmp/notes.md
           gh release delete nightly --cleanup-tag -y 2>/dev/null || true
           gh release create nightly "$JAR" --prerelease --target "$GITHUB_SHA" \
             --title "Сборка $(TZ=Europe/Moscow date +'%d.%m %H:%M') (${GITHUB_SHA::7})" --notes-file /tmp/notes.md
