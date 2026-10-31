@@ -59,8 +59,8 @@ def status():
     prs = json.loads(gh("api", f"repos/{REPO}/pulls?state=open&per_page=20"))
     lines.append(f"Открытые PR: {len(prs)}" + "".join(
         f"\n{'⚠️ ' if any(l['name'] == 'needs-human' for l in p['labels']) else ''}#{p['number']} {p['title'][:60]} — {p['html_url']}" for p in prs))
-    _, left = balance()
-    lines.append(f"OpenRouter: остаток {'—' if left is None else f'${left:.2f}'}")
+    from balance import describe
+    lines.append(f"OpenRouter: {describe()}")
     return "\n".join(lines)
 
 
