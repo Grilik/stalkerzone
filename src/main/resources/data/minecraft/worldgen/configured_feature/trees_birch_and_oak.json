@@ -1,15 +1,15 @@
 {
   "type": "minecraft:random_selector",
   "config": {
-    "default": "minecraft:oak",
+    "default": "minecraft:oak_checked",
     "features": [
       {
         "chance": 0.2,
-        "feature": "minecraft:birch"
+        "feature": "minecraft:birch_checked"
       },
       {
         "chance": 0.1,
-        "feature": "minecraft:fancy_oak"
+        "feature": "minecraft:fancy_oak_checked"
       }
     ]
   }

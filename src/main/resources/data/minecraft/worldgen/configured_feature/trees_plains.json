@@ -1,11 +1,11 @@
 {
   "type": "minecraft:random_selector",
   "config": {
-    "default": "minecraft:oak",
+    "default": "minecraft:oak_checked",
     "features": [
       {
         "chance": 0.33333334,
-        "feature": "minecraft:fancy_oak"
+        "feature": "minecraft:fancy_oak_checked"
       }
     ]
   }
