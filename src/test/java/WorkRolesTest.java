@@ -104,9 +104,9 @@ public class WorkRolesTest {
             ck(in, "точка " + p.kind() + " (" + p.x() + "," + p.z() + ") в одной из зон CLEAR");
         }
 
-        // Точек guard — не больше 2 на сборщик (вышки/посты); было «≤ 8» при трёх сборщиках
-        int builders = Prefabs.clear("l01_escape").size();
-        ck(guards.size() <= 2 * builders, "guards не больше 2 на зону сборщика (" + 2 * builders + ") → " + guards.size());
+        // Не больше 14 точек guard на весь Кордон: 3 вышки южного блокпоста, 2 — АТП, по 1 у дальнего блокпоста
+        // и элеватора (037), 2 — свиноферма (038), мост и туннель (039). Новый сборщик — поднять потолок осознанно.
+        ck(guards.size() <= 14, "guards не больше 14 → " + guards.size());
     }
 
     private static List<Prefabs.Point> ofKind(List<Prefabs.Point> pts, String kind) {

@@ -42,6 +42,7 @@ public final class Prefabs {
             of(KordonBunker.CLEAR, KordonBunker::build),
             of(KordonATP.CLEAR, KordonATP::build),
             of(KordonFarPost.CLEAR, KordonFarPost::build),
+            of(KordonFarm.CLEAR, KordonFarm::build),
             of(KordonElevator.CLEAR, KordonElevator::build),
             of(KordonBridgeTunnel.CLEAR, KordonBridgeTunnel::build));
 
