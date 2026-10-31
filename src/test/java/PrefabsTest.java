@@ -72,10 +72,18 @@ public class PrefabsTest {
         ck(bridgeSolid > 1500, "мост: блоков " + bridgeSolid);
         ck(tunnelSolid > 400, "туннель: блоков " + tunnelSolid);
         // туннель: сквозной проход по оси Z — в середине стены и арка, в створе воздух
-        boolean passage = true;
-        for (int z = -268; z <= -264; z++) for (int y = 76; y <= 78; y++) {
-            String c = m.get(Prefabs.key(132, y, z));
-            if (c != null && !c.equals("minecraft:air")) passage = false;
+        int fy = Integer.MIN_VALUE;   // пол туннеля: гравий в створе (floor-1)
+        for (int y = 40; y <= 140; y++) if ("minecraft:gravel".equals(m.get(Prefabs.key(132, y, -266)))) fy = y + 1;
+        boolean passage = fy != Integer.MIN_VALUE;
+        for (int z = -268; passage && z <= -264; z++) {
+            for (int x = 132; x <= 132; x++) for (int y = fy; y <= fy + 2; y++) {
+                String c = m.get(Prefabs.key(x, y, z));
+                if (c != null && !c.equals("minecraft:air")) passage = false;
+            }
+            for (int y = fy; y <= fy + 2; y++) {
+                String w1 = m.get(Prefabs.key(130, y, z)), w2 = m.get(Prefabs.key(134, y, z));
+                if (w1 == null || w1.equals("minecraft:air") || w2 == null || w2.equals("minecraft:air")) passage = false;
+            }
         }
         ck(passage, "туннель: сквозной проход в створе" + (passage ? "" : " ЗАНЯТ"));
         // границы сборщиков не пересекаются
