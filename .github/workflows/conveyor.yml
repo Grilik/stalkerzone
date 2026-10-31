@@ -80,5 +80,6 @@ jobs:
           MIN_BALANCE: ${{ vars.MIN_BALANCE }}
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           CLAUDE_DAILY_LIMIT: ${{ vars.CLAUDE_DAILY_LIMIT }}
+          CLAUDE_RESET_AT: ${{ vars.CLAUDE_RESET_AT }}
           AUTO_MERGE: ${{ vars.AUTO_MERGE }}
         run: bash tools/conveyor/conveyor.sh

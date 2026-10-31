@@ -31,13 +31,16 @@ git checkout -q -b "$BR"
 git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
 cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
 # старший (карточка 019): Claude Code по подписке, если задан CLAUDE_CODE_OAUTH_TOKEN; иначе — Claude через ProxyAPI
-CLAUDE_DAILY_LIMIT=${CLAUDE_DAILY_LIMIT:-3}
+CLAUDE_DAILY_LIMIT=${CLAUDE_DAILY_LIMIT:-5}
 if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
   STRONG_NAME="Claude Code"
   # сколько раз старший-Claude уже звался сегодня (по этапам в PR конвейера за сутки МСК)
   SINCE=$(date -u -d "$(TZ=Europe/Moscow date +%Y-%m-%d) 00:00 +0300" +%Y-%m-%dT%H:%M:%SZ)
+  # ручное обнуление счётчика: вызовы раньше CLAUDE_RESET_AT не считаются (31.10 — сброс после смены правил ревью)
+  CLAUDE_RESET_AT=${CLAUDE_RESET_AT:-2026-10-31T08:00:00Z}
+  [[ "$CLAUDE_RESET_AT" > "$SINCE" ]] && SINCE=$CLAUDE_RESET_AT
   CLAUDE_USED=$(gh api "repos/${GITHUB_REPOSITORY:-Grilik/stalkerzone}/pulls?state=all&per_page=50" \
-    --jq "[.[] | select(.created_at >= \"$SINCE\") | (.body // \"\") | scan(\"старший[^→]*Claude Code\")] | length" 2>/dev/null)
+    --jq "[.[] | select(.created_at >= \"$SINCE\") | (.body // \"\") | scan(\"\\(Claude Code\\)\")] | length" 2>/dev/null)
   [[ "$CLAUDE_USED" =~ ^[0-9]+$ ]] || CLAUDE_USED=0
   echo "Claude Code сегодня: ${CLAUDE_USED:-0} из $CLAUDE_DAILY_LIMIT"
 else
