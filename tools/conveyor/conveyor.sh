@@ -28,13 +28,14 @@ RULES='Ты работаешь в конвейере без человека. Н
 Simulation.java и другие большие файлы читай кусками (поиск, затем диапазон строк).
 Если одна и та же ошибка не уходит после 3 попыток исправления — ОСТАНОВИСЬ: опиши проблему в файле ESCALATE.md
 (что делал, текст ошибки, гипотезы) и заверши работу. Дальше задачу подхватит старший разработчик.
+Смоук-тест сервера (tools/smoketest.ps1) в конвейере НЕ запускай: здесь Linux и нет файла уровня — проверяет архитектор на вехе.
 Временные файлы клади в /tmp, не в репозиторий. В конце поставь карточке статус «готово (конвейер)» в docs/tasks/README.md.'
 run() { # роль (agent|strong), таймаут, файл с заданием
   if [ "$1" = strong ] && [ -z "${PROXYAPI_KEY:-}" ]; then echo "старший недоступен — пропуск"; return; fi
-  echo "::group::cline $1"; cat "$3" | cline --config "/tmp/cfg-$1" -y -t "$2" --retries 3 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
+  echo "::group::cline $1"; cat "$3" | cline --config "/tmp/cfg-$1" -y -t "$2" --retries 6 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
   rc=$?; tail -30 /tmp/cline-$$.log; echo "::endgroup::"
   # краткий итог в аннотацию (её видно в API без доступа к логам)
-  echo "::notice title=cline $1 rc=$rc::$(tail -c 700 /tmp/cline-$$.log | tr '\n\r' '  ' | sed 's/::/ : /g')"
+  echo "::notice title=cline $1 rc=$rc::$(sed 's/\x1b\[[0-9;]*m//g' /tmp/cline-$$.log | tail -c 900 | tr '\n\r' '  ' | sed 's/::/ : /g')"
 }
 PHASES="исполнитель ($AGENT_MODEL)"
 { echo "Выполни карточку $FILE. Сначала прочитай её и .clinerules (правила про git/PR выше в этом задании важнее)."; echo; echo "$RULES"; } > /tmp/pA.txt
@@ -73,7 +74,8 @@ git push -q -u origin "$BR"
   [ $ok -ne 0 ] && echo && echo "⚠️ Проверка не прошла даже после старшего — нужен человек (@Grilik): перешлите ссылку архитектору.";
   echo; echo "🤖 Generated with [Claude Code](https://claude.com/claude-code)"; } > /tmp/body.md
 if [ $ok -eq 0 ]; then
-  URL=$(gh pr create --head "$BR" --base main --title "$CARD: $TITLE" --body-file /tmp/body.md)
+  URL=$(gh pr create --head "$BR" --base main --title "$CARD: $TITLE" --body-file /tmp/body.md) || {
+    echo "::error title=PR не создан::Включите Settings → Actions → General → Allow GitHub Actions to create and approve pull requests. Ветка $BR запушена."; exit 1; }
 else
   gh label create needs-human --color B60205 --description "Конвейер не справился" 2>/dev/null || true
   URL=$(gh pr create --head "$BR" --base main --draft --label needs-human --title "$CARD: $TITLE — нужен человек" --body-file /tmp/body.md)
