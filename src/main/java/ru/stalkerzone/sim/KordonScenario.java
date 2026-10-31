@@ -13,7 +13,10 @@ import java.util.List;
 public final class KordonScenario {
     // --- индексы узлов: порядок не менять, на номера опираются сохранения. Новые узлы только в конец списка.
     private static final int VILLAGE = 0, BUNKER = 1, SOUTH_POST = 2, BIG_LAND = 3, ELEVATOR = 4, ATP = 5,
-            DARK_EXIT = 6, TUNNEL = 7, BRIDGE = 8, HOLE = 9, FARM = 10, FAR_POST = 11, SVALKA_EXIT = 12;
+            DARK_EXIT = 6, TUNNEL = 7, BRIDGE = 8, HOLE = 9, FAR_POST = 11, SVALKA_EXIT = 12;
+
+    /** Свиноферма — именованный узел-цель налёта Бандитов (карточка 022). */
+    public static final int FARM = 10;
 
     // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
     private static final int HILL = 13, FIELDS = 14, FOREST = 15, RAVINE = 16, MEADOW = 17, EDGE = 18;
@@ -226,6 +229,18 @@ public final class KordonScenario {
         // Опасность: туннель (электры) и дыра (аномалии, радиация, мутанты) — высокая, мост — низкая.
         sim.configureCrossings(new int[]{TUNNEL, BRIDGE, HOLE}, BRIDGE,
                 new double[]{PASS_RISK_TUNNEL, PASS_RISK_BRIDGE, PASS_RISK_HOLE});
+
+        // v19 (карточка 013): районы аномалий Кордона. Состав поля задаёт район: случайность — только место
+        // внутри района и число полей. После выброса район остаётся своим по составу.
+        sim.anomalyDistricts.add(new AnomalyDistrict(TUNNEL, "Туннель с электрами", 6, 9, 3.0, AnomalyType.ELECTRA));
+        sim.anomalyDistricts.add(new AnomalyDistrict(HOLE, "Дыра в заборе", 5, 7, 1.0,
+                AnomalyType.SPRINGBOARD, AnomalyType.WHIRLIGIG, AnomalyType.MOSQUITO));
+        sim.anomalyDistricts.add(new AnomalyDistrict(EDGE, "Трамплины у дороги на Свалку", 2, 4, 1.0,
+                AnomalyType.SPRINGBOARD, AnomalyType.MOSQUITO));
+        sim.anomalyDistricts.add(new AnomalyDistrict(ELEVATOR, "Жарки у сгоревших домов", 1, 2, 1.0, AnomalyType.FRY));
+        sim.anomalyDistricts.add(new AnomalyDistrict(RAVINE, "Туман в овраге", 1, 1, 1.0, AnomalyType.FOG));
+        // v19 (карточка 013): радиоактивные пятна — насыпь с цистернами (мост), техника у дыры, свиноферма
+        sim.radiationNodes = new int[]{BRIDGE, HOLE, FARM};
 
         // сохранить базовую опасность проходов
         for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {

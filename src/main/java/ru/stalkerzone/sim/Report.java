@@ -70,6 +70,7 @@ public final class Report {
             byType.forEach((t, c) -> sb.append(t.ru).append(" x").append(c).append(", "));
             sb.append('\n');
         }
+        sb.append("Всего полей: ").append(sim.anomalies.size()).append('\n');
         sb.append("Погибло в аномалиях: ").append(sim.anomalyDeaths).append(", артефактов выдано в мир: ").append(sim.artifactsWild).append('\n');
         return sb.toString();
     }

@@ -13,6 +13,10 @@ zone audit|сходятся
 zone events 5|!Unknown or incomplete
 zone lairs|Логова мутантов
 zone anomalies|Аномалии
+# --- карточка 013: аномалии, радиация, выброс ---
+zone anomalies|Всего полей
+zone emission|Выброс запущен
+zone audit|сходятся
 # --- карточка 009: узлы на постройках уровня ---
 # NPC на точке после zone step 1 (проверка: есть сталкер в 32 блоках от центра деревни)
 execute positioned 4 80 8 if entity @e[type=stalkerzone:stalker,distance=..32] run say NpcAtVillage|NpcAtVillage

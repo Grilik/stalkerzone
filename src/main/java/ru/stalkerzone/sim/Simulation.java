@@ -53,6 +53,13 @@ public final class Simulation {
     public final double[] knowledge = new double[64];
     public int lastEmissionDay = -1;
     public int anomalyDeaths, artifactsWild;
+    /**
+     * v19 (карточка 013): районы аномалий, заданные сценарием. Пусто — поле собирается случайным подбором,
+     * как в Полной Зоне. Кордон задаёт районы: туннель, дыра, дороги на север, овраг, сгоревшие дома.
+     */
+    public final List<AnomalyDistrict> anomalyDistricts = new ArrayList<>();
+    /** v19 (карточка 013): узлы с радиоактивным фоном (насыпь с цистернами, техника у дыры, ферма). */
+    public int[] radiationNodes = {};
     /** Сколько прототипов собрали учёные (статистика, не сохраняется). */
     public int protoMade;
     /** Сколько единиц кустарного и прототипов перебросили торговцы друг другу (статистика). */
@@ -253,6 +260,20 @@ public final class Simulation {
         anomalies.clear();
         Random r = new Random(seed * 131L + 7);
         for (Node n : nodes) {
+            // v19 (карточка 013): у узлов, попавших в район локации, состав и число полей задаёт район,
+            // а не случайный подбор. Остальные узлы сохраняют фоновую плотность Зоны.
+            AnomalyDistrict d = districtAt(n.id);
+            if (d != null) {
+                int count = d.min + (d.max > d.min ? r.nextInt(d.max - d.min + 1) : 0);
+                for (int i = 0; i < count; i++) {
+                    Anomaly a = new Anomaly(n.id, 0, 0, d.pick(r));
+                    placeAnomaly(a, n, r);
+                    a.charge = r.nextDouble();
+                    anomalies.add(a);
+                }
+                knowledge[n.id] = 0.7;
+                continue;
+            }
             if (anomalyCount(n) == 0) continue;
             for (int i = 0; i < anomalyCount(n); i++) {
                 Anomaly a = new Anomaly(n.id, 0, 0, pickAnomaly(n, r));
@@ -263,6 +284,18 @@ public final class Simulation {
             knowledge[n.id] = hasAnomalies(n) ? 0.7 : 0.95;
         }
         for (int i = 0; i < knowledge.length; i++) if (knowledge[i] == 0) knowledge[i] = 1;
+    }
+
+    /** Район аномалий узла (карточка 013) или null, если узел вне районов. */
+    public AnomalyDistrict districtAt(int node) {
+        for (AnomalyDistrict d : anomalyDistricts) if (d.node == node) return d;
+        return null;
+    }
+
+    /** Радиоактивен ли узел (карточка 013): насыпь с цистернами, техника у дыры, ферма. */
+    public boolean isRadioactive(int node) {
+        for (int n : radiationNodes) if (n == node) return true;
+        return false;
     }
 
     /**
@@ -314,8 +347,12 @@ public final class Simulation {
         boolean[] touched = new boolean[nodes.size()];
         for (Anomaly a : anomalies) {
             if (rng.nextDouble() < 0.75) {
+                // v19 (карточка 013): поле меняет место внутри своего района и остаётся своим по составу,
+                // поэтому туннель на Кордоне после выброса — всё то же поле электр.
+                AnomalyDistrict d = districtAt(a.node);
                 placeAnomaly(a, nodes.get(a.node), rng);
-                if (rng.nextDouble() < 0.35) a.type = pickAnomaly(nodes.get(a.node), rng);
+                if (d != null) a.type = d.pick(rng);
+                else if (rng.nextDouble() < 0.35) a.type = pickAnomaly(nodes.get(a.node), rng);
                 touched[a.node] = true;
             }
         }
@@ -329,7 +366,10 @@ public final class Simulation {
     /** Ежедневно: заряд аномалий, работа разведчиков, гибель людей в неизученных полях. */
     private void anomaliesDaily() {
         for (Anomaly a : anomalies) {
-            a.charge += 0.02 * (0.55 + 0.3 * anomalyPower(a));
+            // v19 (карточка 013): у района может быть ускоренное созревание артефактов (туннель «Вспышка» ×3).
+            AnomalyDistrict d = districtAt(a.node);
+            double boost = d == null ? 1 : d.artifactBoost;
+            a.charge += 0.02 * (0.55 + 0.3 * anomalyPower(a)) * boost;
             if (a.charge >= 1) {
                 a.charge -= 1;
                 if (a.pending < 3) a.pending++;
@@ -1491,8 +1531,11 @@ public final class Simulation {
     private void emission() {
         log("Выброс над Зоной");
         relocateAnomalies();
-        // выброс «заряжает» поля: в каждом созревает свежий артефакт
-        for (Anomaly a : anomalies) if (a.pending < 3) a.pending++;
+        // выброс «заряжает» поля: в каждом созревает свежий артефакт, а поле копит заряд заново
+        for (Anomaly a : anomalies) {
+            if (a.pending < 3) a.pending++;
+            a.charge = 0;
+        }
         for (Node n : nodes) damageNode(n.id, 2);
         for (Faction f : factions) {
             if (f.isService() || f.members <= 1) continue; // сервисные и пустые фракции выброс не задевает
@@ -2021,6 +2064,15 @@ public final class Simulation {
         if (!raider.raider) return;
         double p = 0.3 * (1 - Math.min(0.7, 0.07 * c.guards));
         if (rng.nextDouble() >= p) return;
+        String loot = raidCargo(c, f, raider);
+        log(raider.name + " ограбили караван «" + f.name + "» у «" + n.name + "» (" + loot + ")");
+    }
+
+    /**
+     * Общая часть любого нападения на караван: груз и часть денег переходят налётчику, охрана гибнет.
+     * Возвращает описание добычи для журнала (карточка 022 — переиспользуется и обычным грабежом, и засадой).
+     */
+    private String raidCargo(Caravan c, Faction f, Faction raider) {
         int units = 0;
         for (Good g : Good.ALL) {
             int i = g.ordinal();
@@ -2035,7 +2087,19 @@ public final class Simulation {
         f.caravansLost++;
         f.resent(raider.id, 0.8);
         f.hubRisk[c.hub()] += 0.5;
-        log(raider.name + " ограбили караван «" + f.name + "» у «" + n.name + "» (" + units + " ед., " + cash + " руб.)");
+        return units + " ед., " + cash + " руб.";
+    }
+
+    /**
+     * Игрок-бандит устроил засаду на курьера Торговцев: караван снимается с маршрута, груз и деньги уходят
+     * налётчику, до получателя груз не доходит (карточка 022). Возвращает false, если каравана уже нет.
+     */
+    public boolean ambushCaravan(Caravan c, Faction raider) {
+        if (raider == null || !caravans.remove(c)) return false;
+        Faction f = factions.get(c.owner);
+        String loot = raidCargo(c, f, raider);
+        log(raider.name + " устроили засаду на курьера «" + f.name + "» (потери курьера: " + loot + ")");
+        return true;
     }
 
     // ------------------------------------------------------------------ фазы и война
