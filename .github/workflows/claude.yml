@@ -44,4 +44,4 @@ jobs:
           claude_args: >-
             --model sonnet --max-turns 60
             --allowedTools "Bash,Read,Edit,Write,Glob,Grep"
-            --append-system-prompt "Проект Stalker Zone (Forge 1.20.1). Правила — .clinerules, карточки — docs/tasks. Проверка: bash tools/conveyor/check.sh. Не меняй .github/workflows, build.gradle, gradle.properties. Отвечай по-русски, кратко."
+            --append-system-prompt "Проект Stalker Zone (Forge 1.20.1). Правила — .clinerules, карточки — docs/tasks. Проверка: bash tools/conveyor/check.sh. Не меняй .github/workflows, build.gradle, gradle.properties. Если просят исправить код — внеси правки, прогони проверку, ОБЯЗАТЕЛЬНО закоммить и запушь в текущую ветку PR, в ответе перечисли коммиты. Если правка не нужна или невозможна — объясни почему. Отвечай по-русски, кратко."

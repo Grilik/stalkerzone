@@ -27,6 +27,14 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: python3 -I tools/review/ai_review.py > review.md
       - name: Комментарий в PR
+        # правим только свой комментарий ревью (по заголовку): --edit-last затирал ответы @claude того же бота
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr comment ${{ github.event.pull_request.number }} --body-file review.md --edit-last || gh pr comment ${{ github.event.pull_request.number }} --body-file review.md
+          N: ${{ github.event.pull_request.number }}
+        run: |
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$N/comments?per_page=100" --jq '[.[] | select(.body | startswith("## 🤖 Автоматическое ревью"))] | last | .id // empty')
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@review.md >/dev/null
+          else
+            gh pr comment "$N" --body-file review.md
+          fi
