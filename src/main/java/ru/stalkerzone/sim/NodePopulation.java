@@ -14,8 +14,6 @@ public final class NodePopulation {
     public static final int NODE_CAP = 6;
     /** Минимум NPC на занятом узле. */
     public static final int MIN_PER_NODE = 2;
-    /** Сколько бойцов уводит с базы один взятый NPC-контракт. */
-    public static final int CONTRACT_HEADCOUNT = 2;
 
     private NodePopulation() {}
 
@@ -51,7 +49,7 @@ public final class NodePopulation {
 
     /**
      * Люди фракции, ушедшие с узла «на задание» по данным симуляции: караваны и конвои, вышедшие отсюда,
-     * а с базы — ещё ударная группа (война) и бойцы на взятых контрактах. На узле они не появляются.
+     * (наступления идут конвоями с войсками). На узле они не появляются.
      */
     public static int away(Simulation s, Faction f, Node n) {
         int away = 0;
@@ -60,13 +58,6 @@ public final class NodePopulation {
         }
         for (Convoy c : s.logistics.convoys) {
             if (c.owner == f.id && c.from() == n.id) away += Math.max(0, c.guards) + Math.max(0, c.troops);
-        }
-        // с базы уходят наступления и взятые NPC-контракты (сопровождение, зачистка, захват узла)
-        if (n.id == f.baseNode) {
-            for (Contract c : s.contracts.list) {
-                if (c.status == Contract.Status.TAKEN && c.taker == f.id) away += CONTRACT_HEADCOUNT;
-            }
-            if (f.phase == Phase.WAR) away += Math.max(0, f.members / 4);   // ударная группа в наступлении
         }
         return away;
     }
