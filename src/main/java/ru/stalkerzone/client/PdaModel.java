@@ -32,6 +32,8 @@ public final class PdaModel {
     public final List<Mark> anomalies = new ArrayList<>();
     public final List<Mark> lairs = new ArrayList<>();
     public final List<Mark> shelters = new ArrayList<>();
+    /** Рюкзак игрока на месте гибели (карточка 030). */
+    public final List<Mark> backpacks = new ArrayList<>();
     public final List<Mark> traders = new ArrayList<>();
     public final List<Passage> passages = new ArrayList<>();
     public final List<Rep> rep = new ArrayList<>();
@@ -74,6 +76,7 @@ public final class PdaModel {
                     case "A" -> m.anomalies.add(new Mark(i(f[1]), i(f[2]), f[3], i(f[4])));
                     case "Z" -> m.lairs.add(new Mark(i(f[1]), i(f[2]), f[3], i(f[4])));
                     case "W" -> m.shelters.add(new Mark(i(f[1]), i(f[2]), f[3], 0));
+                    case "K" -> m.backpacks.add(new Mark(i(f[1]), i(f[2]), f[3], 0));
                     case "S" -> m.traders.add(new Mark(i(f[1]), i(f[2]), f[3], 0));
                     case "X" -> m.passages.add(new Passage(i(f[1]), i(f[2]), f[3], l(f[4]), i(f[5]), i(f[6])));
                     case "Y" -> m.rep.add(new Rep(i(f[1]), i(f[2])));

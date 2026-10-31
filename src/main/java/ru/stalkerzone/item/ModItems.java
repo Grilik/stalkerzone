@@ -53,6 +53,9 @@ public final class ModItems {
     /** v1.14: КПК погибшего сталкера (с отметкой тайника). */
     public static final RegistryObject<Item> DEAD_PDA = ITEMS.register("dead_pda", ru.stalkerzone.pda.DeadPdaItem::new);
 
+    /** Карточка 030: рюкзак на месте гибели игрока — внутри весь его инвентарь. */
+    public static final RegistryObject<Item> DEATH_BACKPACK = ITEMS.register("death_backpack", ru.stalkerzone.item.DeathBackpackItem::new);
+
     /** v1.14: болты и детекторы артефактов. */
     public static final RegistryObject<Item> BOLT = ITEMS.register("bolt", BoltItem::new);
     @SuppressWarnings("unchecked")
