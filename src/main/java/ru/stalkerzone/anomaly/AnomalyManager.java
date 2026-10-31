@@ -453,8 +453,10 @@ public final class AnomalyManager {
         if (room <= 0) return;
         int took = data.sim.takePendingArtifacts(a, room);
         for (int i = 0; i < took; i++) {
-            double ox = (RND.nextDouble() - 0.5) * a.type.radius * 0.8, oz = (RND.nextDouble() - 0.5) * a.type.radius * 0.8;
-            Artifacts.hide(data, ru.stalkerzone.artifact.ArtifactDef.pick(a.type, data.sim.anomalyTier(a), RND), x + ox, y, z + oz);
+            // карточка 029: артефакт лежит у края поля — за ним надо лезть к границе радиуса, с риском задеть аномалию
+            double[] off = Anomaly.artifactOffset(a.type, RND);
+            Artifacts.hide(data, ru.stalkerzone.artifact.ArtifactDef.pick(a.type, data.sim.anomalyTier(a), RND),
+                    x + off[0], y, z + off[1]);
         }
     }
 }
