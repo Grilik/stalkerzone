@@ -208,6 +208,9 @@ public final class KordonScenario {
         sim.gatewayNode = KordonBalance.GATEWAY_NODE;
         sim.exitNodes = KordonBalance.EXIT_NODES;
 
+        // v18 (карточка 010): точка появления игрока и возрождения одиночек — деревня новичков
+        sim.spawnNode = VILLAGE;
+
         // v14: настройка логов для Кордона
         sim.lairExits = EXITS;
         // EXITS + LAIR_SITES — фракции не захватывают

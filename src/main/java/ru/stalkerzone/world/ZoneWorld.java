@@ -109,12 +109,12 @@ public final class ZoneWorld {
             BlockPos pos = SpawnFinder.safeNear(level, bounds(), s[0], s[1]);
             sp.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0f, 0f);
             sp.setRespawnPosition(Level.OVERWORLD, pos, 0f, true, false);
-            // стартовый набор новичка: КПК и флешка
-            sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.PDA.get()));
-            sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.FLASH_DRIVE.get()));
-            // v1.14: как у новичка у Сидоровича — горсть болтов и простенький «Отклик»
-            sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.BOLT.get(), 24));
-            sp.getInventory().add(new net.minecraft.world.item.ItemStack(ru.stalkerzone.item.ModItems.DETECTORS[0].get()));
+            // стартовый набор новичка (карточка 010) — список в ru.stalkerzone.sim.PlayerStart
+            ru.stalkerzone.item.StartKit.give(sp);
+            // вступление и подсказка про КПК при первом входе
+            for (String line : ru.stalkerzone.sim.PlayerStart.INTRO)
+                sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(line));
+            sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(ru.stalkerzone.sim.PlayerStart.PDA_HINT));
         }
 
         /** Возврат игрока, оказавшегося за забором (старые чанки, команды, баги). Раз в секунду. */

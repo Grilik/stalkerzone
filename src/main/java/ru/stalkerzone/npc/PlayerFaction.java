@@ -19,6 +19,7 @@ import ru.stalkerzone.ZoneData;
 import ru.stalkerzone.sim.Faction;
 import ru.stalkerzone.sim.Node;
 import ru.stalkerzone.sim.PlayerCareer;
+import ru.stalkerzone.sim.PlayerStart;
 import ru.stalkerzone.sim.Simulation;
 import ru.stalkerzone.world.SpawnFinder;
 import ru.stalkerzone.world.ZoneBounds;
@@ -221,20 +222,34 @@ public final class PlayerFaction {
             if (e.isEndConquered() || !(e.getEntity() instanceof ServerPlayer p)) return;
             CompoundTag t = Reputation.store(p);
             ListTag kept = t.getList(KEPT, Tag.TAG_COMPOUND);
-            for (int i = 0; i < kept.size(); i++) p.getInventory().add(ItemStack.of(kept.getCompound(i)));
+            // КПК возвращается один раз: если он уже при игроке, второй не выдаём
+            for (int i = 0; i < kept.size(); i++) {
+                ItemStack s = ItemStack.of(kept.getCompound(i));
+                if (s.isEmpty() || p.getInventory().contains(s)) continue;
+                if (!p.getInventory().add(s)) p.drop(s, false);
+            }
             t.remove(KEPT);
             ZoneData data = ZoneData.get(p.getServer());
+            Simulation sim = data.sim;
             int f = faction(p);
             int[] d = t.getIntArray(DEATH);
             String where = d.length == 3 ? " Снаряжение осталось на месте гибели: " + d[0] + " " + d[1] + " " + d[2] + " (лежит 20 минут)." : "";
-            if (f >= 0 && f < data.sim.factions.size()) {
-                Node base = data.sim.nodes.get(data.sim.factions.get(f).baseNode);
-                ServerLevel level = p.getServer().overworld();
-                BlockPos pos = SpawnFinder.safeNear(level, ZoneWorld.bounds(), base.x * ZoneBounds.SCALE, base.z * ZoneBounds.SCALE);
-                p.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, p.getYRot(), 0f);
-                p.sendSystemMessage(Component.literal("Вас вытащили свои: вы очнулись на базе «" + base.name + "»." + where).withStyle(ChatFormatting.YELLOW));
-            } else if (!where.isEmpty()) {
-                p.sendSystemMessage(Component.literal("Вы очнулись." + where).withStyle(ChatFormatting.YELLOW));
+            // без фракции и при потерянной базе — деревня новичков (PlayerStart)
+            int node = PlayerStart.respawnNode(sim, f);
+            boolean ownBase = f >= 0 && f < sim.factions.size() && sim.nodes.get(sim.factions.get(f).baseNode).owner == f;
+            boolean toVillage = node == PlayerStart.spawnNode(sim);
+            int[] xz = toVillage ? ZoneWorld.spawnXZ()
+                    : new int[]{sim.nodes.get(node).x * ZoneBounds.SCALE, sim.nodes.get(node).z * ZoneBounds.SCALE};
+            ServerLevel level = p.getServer().overworld();
+            BlockPos pos = SpawnFinder.safeNear(level, ZoneWorld.bounds(), xz[0], xz[1]);
+            p.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, p.getYRot(), 0f);
+            String place = sim.nodes.get(node).name;
+            if (ownBase) {
+                p.sendSystemMessage(Component.literal("Вас вытащили свои: вы очнулись на базе «" + place + "»." + where).withStyle(ChatFormatting.YELLOW));
+            } else if (f >= 0) {
+                p.sendSystemMessage(Component.literal("Своей базы у группировки больше нет — вас подобрали в «" + place + "»." + where).withStyle(ChatFormatting.YELLOW));
+            } else {
+                p.sendSystemMessage(Component.literal("Вы очнулись в «" + place + "»." + where).withStyle(ChatFormatting.YELLOW));
             }
         }
 
