@@ -196,8 +196,6 @@ public final class KordonElevator {
             int fy = y + floor * 4;
             b.box(131, -268, 136, -264, fy, 4, CONC, CONC_OLD, 0, 0, null);
             if (floor < 2) b.fill(132, fy + 4, -267, 135, fy + 4, -265, BOARDS_O);
-            // проём для лестницы у южной стены
-            b.set(133, fy, -264, AIR); b.set(133, fy + 1, -264, AIR);
         }
         // верхняя площадка и парапет
         int top = y + 12;
@@ -208,8 +206,8 @@ public final class KordonElevator {
                 if (edge) b.wall(x, top + 1, z, b.lvl >= 3 ? BAGS : CONC_SLAB);
             }
         }
-        // лестница внутри по южной стене
-        b.fill(133, y, -264, 133, top, -264, LADDER + "[facing=north]");
+        // лестница внутри у южной стены (z=-265), опора — стена z=-264 (facing=north → опора с юга)
+        b.fill(133, y, -265, 133, top, -265, LADDER + "[facing=north]");
         // вход внизу с востока
         b.set(136, y, -266, AIR); b.set(136, y + 1, -266, AIR);
         if (b.lvl >= 2) {
@@ -238,7 +236,7 @@ public final class KordonElevator {
         b.box(208, -244, 233, -238, northY + 4, 4, BOARDS, LOG, 3, 1, null);
         b.gableZ(208, -244, 233, -238, northY + 8, SHIFER_ST, SHIFER, BOARDS, 1);
         // лестница на второй этаж
-        b.fill(210, northY, -244, 210, northY + 7, -244, LADDER + "[facing=south]");
+        b.fill(210, northY, -243, 210, northY + 7, -243, LADDER + "[facing=south]"); // опора — северная стена z=-244
 
         // южная секция (старый бетон, ржавый металл, выше)
         int southY = b.floor(208, -237, 233, -227, CONC_D);
@@ -260,7 +258,7 @@ public final class KordonElevator {
         b.box(215, -240, 226, -232, twY + 10, 4, CONC_OLD, CONC_D, 0, 0, null);
         b.flat(215, -240, 226, -232, twY + 14, CONC_SLAB, CONC_D);
         // лестница внутри конвейерной башни
-        b.fill(220, twY, -240, 220, twY + 13, -240, LADDER + "[facing=south]");
+        b.fill(220, twY, -239, 220, twY + 13, -239, LADDER + "[facing=south]"); // опора — северная стена z=-240
         // проход между секциями
         for (int x = 209; x <= 212; x++) b.set(x, northY + 4, -238, AIR);
 
@@ -314,7 +312,7 @@ public final class KordonElevator {
     }
 // ---------------------------------------------------------------- малая постройка
 
-    /** Небольшая бетонная постройка (X 231..243, Z -173..-161). */
+    /** Небольшая бетонная постройка (X 233..241, Z -171..-163). */
     private static void smallBuilding(S b) {
         int y = b.floor(233, -171, 241, -163, CONC_D);
         b.fill(233, y - 1, -171, 241, y - 1, -163, CONC_D);
@@ -360,15 +358,13 @@ public final class KordonElevator {
         // восток
         line(b, 235, -244, 235, -196);
         line(b, 235, -196, 243, -196);
-        line(b, 243, -196, 243, -168);
-        line(b, 243, -168, 235, -168);
-        line(b, 235, -168, 235, -161);
-        // юг
-        line(b, 235, -161, 233, -161);
-        // запад (с проездом X=178 Z=-205..-210)
-        line(b, 178, -196, 178, -210);
-        line(b, 178, -205, 183, -244);
-        line(b, 183, -244, 178, -244);
+        line(b, 243, -196, 243, -161);
+        // юг (south of малой постройки, Z -171..-163)
+        line(b, 243, -161, 232, -161);
+        // запад: ровная линия по X=176 (вне стен складов), проезд Z=-205..-210
+        line(b, 176, -196, 176, -204);
+        line(b, 176, -211, 176, -244);
+        line(b, 176, -244, 200, -244);
     }
 
     private static void line(S b, int xa, int za, int xb, int zb) {
