@@ -93,6 +93,8 @@ public final class Simulation {
     public int gatewayNode = 0;
     /** v16 (карточка 005): узлы-выходы, через которые люди покидают срез. */
     public int[] exitNodes = {};
+    /** v18 (карточка 010): узел, где появляется новый игрок и возрождаются одиночки (деревня новичков). */
+    public int spawnNode = 0;
     /** v14: очередь возрождения логов (срок, район, прежний cap, прежний вид). */
     public final List<LairRespawn> lairRespawnQueue = new ArrayList<>();
     public static final class LairRespawn {
