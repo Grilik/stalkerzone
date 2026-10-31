@@ -30,6 +30,19 @@ tg "▶️ $TITLE — старт ($AGENT_MODEL)"
 git checkout -q -b "$BR"
 git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
 cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
+# старший (карточка 019): Claude Code по подписке, если задан CLAUDE_CODE_OAUTH_TOKEN; иначе — Claude через ProxyAPI
+CLAUDE_DAILY_LIMIT=${CLAUDE_DAILY_LIMIT:-3}
+if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+  STRONG_NAME="Claude Code"
+  # сколько раз старший-Claude уже звался сегодня (по этапам в PR конвейера за сутки МСК)
+  SINCE=$(date -u -d "$(TZ=Europe/Moscow date +%Y-%m-%d) 00:00 +0300" +%Y-%m-%dT%H:%M:%SZ)
+  CLAUDE_USED=$(gh api "repos/${GITHUB_REPOSITORY:-Grilik/stalkerzone}/pulls?state=all&per_page=50" \
+    --jq "[.[] | select(.created_at >= \"$SINCE\") | (.body // \"\") | scan(\"старший[^→]*Claude Code\")] | length" 2>/dev/null)
+  [[ "$CLAUDE_USED" =~ ^[0-9]+$ ]] || CLAUDE_USED=0
+  echo "Claude Code сегодня: ${CLAUDE_USED:-0} из $CLAUDE_DAILY_LIMIT"
+else
+  STRONG_NAME="$STRONG_MODEL"
+fi
 if [ -n "${PROXYAPI_KEY:-}" ]; then
   cline --config /tmp/cfg-strong auth -p openai -k "$PROXYAPI_KEY" -m "$STRONG_MODEL" -b "$STRONG_BASE_URL" >/dev/null
 else
@@ -44,6 +57,20 @@ Simulation.java и другие большие файлы читай куска�
 Не меняй файлы в .github/workflows: токен конвейера не может их запушить, работа пропадёт.
 Временные файлы клади в /tmp, не в репозиторий. В конце поставь карточке статус «готово (конвейер)» в docs/tasks/README.md.'
 run() { # роль (agent|strong), таймаут, файл с заданием
+  if [ "$1" = strong ] && [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+    if [ "${CLAUDE_USED:-0}" -ge "$CLAUDE_DAILY_LIMIT" ]; then
+      echo "::warning title=Claude Code::дневной лимит вызовов ($CLAUDE_DAILY_LIMIT) исчерпан"; tg "⏸ $CARD: лимит вызовов Claude на сегодня ($CLAUDE_DAILY_LIMIT) исчерпан — карточка уйдёт человеку"; return
+    fi
+    CLAUDE_USED=$(( ${CLAUDE_USED:-0} + 1 ))
+    tg "🧠 $CARD: зову Claude Code (вызов $CLAUDE_USED из $CLAUDE_DAILY_LIMIT за сегодня)"
+    echo "::group::claude $1"
+    timeout "$2" claude -p "$(cat "$3")" --model sonnet --max-turns 80 --permission-mode acceptEdits \
+      --allowedTools "Bash,Read,Edit,Write,Glob,Grep" >/tmp/claude-$$.log 2>&1
+    rc=$?; tail -30 /tmp/claude-$$.log; echo "::endgroup::"
+    echo "::notice title=claude rc=$rc::$(tail -c 900 /tmp/claude-$$.log | tr '\n\r' '  ' | sed 's/::/ : /g')"
+    grep -qiE "usage limit|rate limit|limit reached" /tmp/claude-$$.log && tg "⚠️ $CARD: Claude Code упёрся в лимит подписки"
+    return
+  fi
   if [ "$1" = strong ] && [ -z "${PROXYAPI_KEY:-}" ]; then echo "старший недоступен — пропуск"; return; fi
   echo "::group::cline $1"; cat "$3" | cline --config "/tmp/cfg-$1" -y -t "$2" --retries 6 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
   rc=$?; tail -30 /tmp/cline-$$.log; echo "::endgroup::"
@@ -56,8 +83,8 @@ run agent 3600 /tmp/pA.txt
 bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
 tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: исполнитель закончил, проверка: $(head -1 /tmp/check1.txt)"
 if [ $ok -ne 0 ]; then
-  PHASES="$PHASES → старший ($STRONG_MODEL)"
-  tg "🔁 $CARD: тесты не прошли, подключаю старшего ($STRONG_MODEL)
+  PHASES="$PHASES → старший ($STRONG_NAME)"
+  tg "🔁 $CARD: тесты не прошли, подключаю старшего ($STRONG_NAME)
 $(tail -5 /tmp/check1.txt)"
   { echo "Ты старший разработчик. Младший агент выполнял карточку $FILE и не справился. Не переделывай с нуля — найди причину и исправь минимально.";
     echo; echo "$RULES"; echo; echo "## ESCALATE.md от младшего"; cat ESCALATE.md 2>/dev/null || echo "(нет)";
@@ -75,7 +102,7 @@ if [ $ok -eq 0 ]; then
   grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md && tg "🔎 $CARD: ревью — ОК"
   grep -q REVIEW_UNAVAILABLE /tmp/review.md && tg "🔎 $CARD: ревью моделью недоступно — старшего не зову, смотрите PR"
   if grep -q "### Блокеры" /tmp/review.md || { ! grep -q REVIEW_UNAVAILABLE /tmp/review.md && ! grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md; }; then
-    PHASES="$PHASES → старший по ревью"
+    PHASES="$PHASES → старший по ревью ($STRONG_NAME)"
     tg "🔎 $CARD: ревью — есть замечания, правит старший"
     { echo "Ты старший разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
       echo "Исправь обоснованные замечания минимально; необоснованные — пропусти и кратко объясни почему в файле REVIEW_REPLY.md."; echo; echo "$RULES"; echo; cat /tmp/review.md; } > /tmp/pC.txt

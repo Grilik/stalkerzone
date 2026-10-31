@@ -177,6 +177,18 @@ PR готов / ⚠️ нужен человек), после каждой сб�
 Важно: конвейер не может менять файлы в `.github/workflows` (запрет GitHub для токена Actions) — такие карточки
 выполняет Claude или Cline на ПК.
 
+## 7г. Claude по подписке вместо ProxyAPI
+Если задан секрет `CLAUDE_CODE_OAUTH_TOKEN`, старший в конвейере — Claude Code по подписке Claude (без оплаты токенов,
+расходует лимит подписки). Не больше `CLAUDE_DAILY_LIMIT` вызовов в сутки (по умолчанию 3) — дальше карточка уходит человеку.
+Без токена — по-старому, через ProxyAPI.
+Токен: на ПК установить Claude Code (`irm https://claude.ai/install.ps1 | iex` или `npm install -g @anthropic-ai/claude-code`),
+затем `claude setup-token` → скопировать токен в секрет. Токен никому не пересылать.
+
+`@claude текст` в комментарии к PR/issue (только от владельца репозитория) — Claude Code отвечает и может поправить ветку PR.
+
+**Выключатель конвейера:** Settings → Secrets and variables → Actions → Variables → `CONVEYOR_PAUSED` = `1`
+(остановить; новые запуски не стартуют даже после слияния PR). Удалить или поставить `0` — работа продолжится.
+
 ## 8. Частые проблемы
 - `gh: command not found` — перезапустите VS Code после установки GitHub CLI.
 - Gradle ругается на версию Java — `java -version` должна быть 17; иначе переустановите Temurin 17 с JAVA_HOME.
