@@ -227,6 +227,18 @@ public final class KordonScenario {
         sim.configureCrossings(new int[]{TUNNEL, BRIDGE, HOLE}, BRIDGE,
                 new double[]{PASS_RISK_TUNNEL, PASS_RISK_BRIDGE, PASS_RISK_HOLE});
 
+        // v19 (карточка 013): районы аномалий Кордона. Состав поля задаёт район: случайность — только место
+        // внутри района и число полей. После выброса район остаётся своим по составу.
+        sim.anomalyDistricts.add(new AnomalyDistrict(TUNNEL, "Туннель с электрами", 6, 9, 3.0, AnomalyType.ELECTRA));
+        sim.anomalyDistricts.add(new AnomalyDistrict(HOLE, "Дыра в заборе", 5, 7, 1.0,
+                AnomalyType.SPRINGBOARD, AnomalyType.WHIRLIGIG, AnomalyType.MOSQUITO));
+        sim.anomalyDistricts.add(new AnomalyDistrict(EDGE, "Трамплины у дороги на Свалку", 2, 4, 1.0,
+                AnomalyType.SPRINGBOARD, AnomalyType.MOSQUITO));
+        sim.anomalyDistricts.add(new AnomalyDistrict(ELEVATOR, "Жарки у сгоревших домов", 1, 2, 1.0, AnomalyType.FRY));
+        sim.anomalyDistricts.add(new AnomalyDistrict(RAVINE, "Туман в овраге", 1, 1, 1.0, AnomalyType.FOG));
+        // v19 (карточка 013): радиоактивные пятна — насыпь с цистернами (мост), техника у дыры, свиноферма
+        sim.radiationNodes = new int[]{BRIDGE, HOLE, FARM};
+
         // сохранить базовую опасность проходов
         for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {
             int a = KordonBalance.PASS_EDGES[i][0];

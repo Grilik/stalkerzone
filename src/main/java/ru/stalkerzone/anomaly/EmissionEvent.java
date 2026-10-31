@@ -140,22 +140,64 @@ public final class EmissionEvent {
             for (ServerPlayer p : level.players()) p.playNotifySound(SoundEvents.WOLF_HOWL, SoundSource.AMBIENT, 0.3f, 0.6f + RND.nextFloat() * 0.3f);
     }
 
-    /** Ближайшее укрытие: лагерь, база или блокпост. */
+    /** Ближайшее укрытие: подвал деревни, бункер, туннель, ангары АТП (карточка 013 — точки shelter уровня). */
     public static String shelterHint(ZoneData d, ServerPlayer p) {
-        Node best = null;
+        int[] best = nearestShelter(d, p.getX(), p.getZ());
+        if (best != null) {
+            double bd = Math.hypot(best[0] - p.getX(), best[2] - p.getZ());
+            String name = d.sim.nodes.get(best[3]).name;
+            if (bd < 40) return "Укрытие рядом: «" + name + "», ищите любую крышу или подвал.";
+            String dir = direction(best[0] - p.getX(), best[2] - p.getZ());
+            return "Ближайшее укрытие: «" + name + "», " + (int) bd + " м на " + dir + ". Подойдёт и любой подвал или дом.";
+        }
+        Node node = null;
         double bd = Double.MAX_VALUE;
         for (Node n : d.sim.nodes) {
             if (n.type == NodeType.ANOMALY || n.type == NodeType.PSI) continue;
             double dist = Math.hypot(n.x * ZoneBounds.SCALE - p.getX(), n.z * ZoneBounds.SCALE - p.getZ());
-            if (dist < bd) { bd = dist; best = n; }
+            if (dist < bd) { bd = dist; node = n; }
         }
-        if (best == null) return "";
-        double dx = best.x * ZoneBounds.SCALE - p.getX(), dz = best.z * ZoneBounds.SCALE - p.getZ();
-        if (bd < 40) return "Укрытие рядом: «" + best.name + "», ищите любую крышу или подвал.";
-        String dir = Math.abs(dx) > Math.abs(dz) * 2 ? (dx > 0 ? "восток" : "запад")
+        if (node == null) return "";
+        if (bd < 40) return "Укрытие рядом: «" + node.name + "», ищите любую крышу или подвал.";
+        String dir = direction(node.x * ZoneBounds.SCALE - p.getX(), node.z * ZoneBounds.SCALE - p.getZ());
+        return "Ближайшее укрытие: «" + node.name + "», " + (int) bd + " м на " + dir + ". Подойдёт и любой подвал или дом.";
+    }
+
+    private static String direction(double dx, double dz) {
+        return Math.abs(dx) > Math.abs(dz) * 2 ? (dx > 0 ? "восток" : "запад")
                 : Math.abs(dz) > Math.abs(dx) * 2 ? (dz > 0 ? "юг" : "север")
                 : (dz > 0 ? "юго-" : "северо-") + (dx > 0 ? "восток" : "запад");
-        return "Ближайшее укрытие: «" + best.name + "», " + (int) bd + " м на " + dir + ". Подойдёт и любой подвал или дом.";
+    }
+
+    /** Ближайшая точка-укрытие из файла точек уровня: world x,y,z и узел. null — если точек нет. */
+    private static int[] nearestShelter(ZoneData d, double x, double z) {
+        String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(d.sim.scenario);
+        if (levelId == null) return null;
+        int[] best = null;
+        double bd = Double.MAX_VALUE;
+        for (Node n : d.sim.nodes) {
+            com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(levelId, n.id);
+            if (pts == null) continue;
+            for (int[] s : ru.stalkerzone.world.LevelPoints.readVecs(pts, "shelter")) {
+                if (s.length < 3) continue;
+                double dist = Math.hypot(s[0] - x, s[2] - z);
+                if (dist < bd) { bd = dist; best = new int[]{s[0], s[1], s[2], n.id}; }
+            }
+        }
+        return best;
+    }
+
+    /** NPC бегут в ближайшее укрытие, а не стоят под открытым небом (карточка 013). */
+    private static void shelterRun(ServerLevel level, ZoneData d) {
+        for (ServerPlayer p : level.players()) {
+            for (ru.stalkerzone.npc.StalkerEntity e : level.getEntitiesOfClass(ru.stalkerzone.npc.StalkerEntity.class,
+                    p.getBoundingBox().inflate(64))) {
+                if (e.isTrader()) continue;
+                int[] s = nearestShelter(d, e.getX(), e.getZ());
+                if (s == null) continue;
+                e.getNavigation().moveTo(s[0] + 0.5, s[1], s[2] + 0.5, 1.3);
+            }
+        }
     }
 
     private static void pda(ServerLevel level, String msg, ChatFormatting color) {
@@ -179,6 +221,8 @@ public final class EmissionEvent {
             bolt.setVisualOnly(true);
             level.addFreshEntity(bolt);
         }
+        // карточка 013: NPC бегут в ближайшее укрытие, а не стоят под открытым небом
+        if (ticksLeft % 100 == 0) shelterRun(level, d);
         if (ticksLeft % 40 != 0) return;
         // урон растёт к концу: от 2 до 7 раз в 2 секунды
         float dmg = 2.0f + 5.0f * elapsed / DURATION;
