@@ -13,6 +13,14 @@ tg() { python3 -I tools/notify/tg.py "$1" || true; }
 RUN_URL="${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}"
 CARD=${CARD:-$(python3 -I tools/conveyor/next_card.py)}
 [ -z "$CARD" ] && { echo "Нет карточки, готовой к выполнению."; tg "💤 Конвейер (${LANE:-?}): нет готовых карточек"; exit 0; }
+# предохранитель бюджета (карточка 018): мало денег на OpenRouter — не начинаем
+read U0 LEFT <<< "$(python3 -I tools/notify/balance.py)"
+MIN_BALANCE=${MIN_BALANCE:-2}
+if [ "$LEFT" != "-" ] && python3 -c "import sys; sys.exit(0 if float('$LEFT') < float('$MIN_BALANCE') else 1)"; then
+  echo "::warning title=Бюджет::остаток OpenRouter \$$LEFT < \$$MIN_BALANCE — конвейер на паузе"
+  tg "⚠️ Баланс OpenRouter \$$LEFT (порог \$$MIN_BALANCE) — конвейер на паузе, карточка $CARD не начата. Пополните баланс и запустите conveyor вручную."
+  exit 0
+fi
 FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
 TITLE=$(head -1 "$FILE" | sed 's/^# *//')
 grep -q "Модель исполнителя: сильная" "$FILE" && AGENT_MODEL=$AGENT_MODEL_STRONG
@@ -65,7 +73,8 @@ if [ $ok -eq 0 ]; then
   git push -q -u origin "$BR"
   BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" python3 -I tools/review/ai_review.py > /tmp/review.md
   grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md && tg "🔎 $CARD: ревью — ОК"
-  if ! grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md || grep -q "### Блокеры" /tmp/review.md; then
+  grep -q REVIEW_UNAVAILABLE /tmp/review.md && tg "🔎 $CARD: ревью моделью недоступно — старшего не зову, смотрите PR"
+  if grep -q "### Блокеры" /tmp/review.md || { ! grep -q REVIEW_UNAVAILABLE /tmp/review.md && ! grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md; }; then
     PHASES="$PHASES → старший по ревью"
     tg "🔎 $CARD: ревью — есть замечания, правит старший"
     { echo "Ты старший разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
@@ -79,17 +88,22 @@ if [ $ok -eq 0 ]; then
     [ -n "$REPLY" ] && printf '\n\n### Ответ старшего на ревью\n%s\n' "$REPLY" >> /tmp/review.md
   fi
 fi
+# стоимость карточки (карточка 018): разница расхода ключа OpenRouter; при двух линиях сразу — сумма обеих
+read U1 LEFT1 <<< "$(python3 -I tools/notify/balance.py)"
+COST=$(python3 -c "u0,u1='$U0','$U1'; print('—' if '-' in (u0,u1) else f'\${float(u1)-float(u0):.2f}')")
+COST_LINE="Стоимость OpenRouter: $COST (за время карточки; если работали обе линии — их сумма), остаток \$$LEFT1"
 git push -q -u origin "$BR" || { echo "::error title=Пуш отклонён::ветка $BR"; tg "❌ $CARD: пуш ветки отклонён, работа не сохранена — $RUN_URL"; exit 1; }
 { echo "Карточка \`$FILE\` выполнена конвейером."; echo; echo "**Этапы:** $PHASES"; echo; echo "**Проверка (тесты симуляции + сборка):**";
   echo '```'; tail -40 /tmp/check1.txt; echo '```';
   [ $ok -ne 0 ] && echo && echo "⚠️ Проверка не прошла даже после старшего — нужен человек (@Grilik): перешлите ссылку архитектору.";
-  echo; echo "🤖 Generated with [Claude Code](https://claude.com/claude-code)"; } > /tmp/body.md
+  echo; echo "**$COST_LINE**"; echo; echo "🤖 Generated with [Claude Code](https://claude.com/claude-code)"; } > /tmp/body.md
 if [ $ok -eq 0 ]; then
   URL=$(gh pr create --head "$BR" --base main --title "$CARD: $TITLE" --body-file /tmp/body.md) || {
     echo "::error title=PR не создан::Включите Settings → Actions → General → Allow GitHub Actions to create and approve pull requests. Ветка $BR запушена."
     tg "⚠️ $CARD: работа готова (ветка $BR), но PR не создан — нужен человек. $RUN_URL"; exit 1; }
   tg "✅ $TITLE — PR готов к слиянию: $URL
-Этапы: $PHASES"
+Этапы: $PHASES
+$COST_LINE"
 else
   gh label create needs-human --color B60205 --description "Конвейер не справился" 2>/dev/null || true
   URL=$(gh pr create --head "$BR" --base main --draft --label needs-human --title "$CARD: $TITLE — нужен человек" --body-file /tmp/body.md)
