@@ -21,9 +21,32 @@ public final class Prefabs {
     /** Уровень развития, на котором снимаются рабочие места (как генерация мира). */
     public static final int POINT_LEVEL = 1;
 
+    /** Один сборщик построек уровня: границы замены, сами блоки и рабочие места (карточка 031). */
+    public interface Builder {
+        /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками. */
+        java.util.List<int[]> clear();
+        /** Построить блоки постройки в мировых координатах на уровне развития lvl (0–3). */
+        void build(BlockSink sink, int lvl);
+    }
+
+    private static Builder of(java.util.List<int[]> clear, java.util.function.ObjIntConsumer<BlockSink> build) {
+        return new Builder() {
+            @Override public java.util.List<int[]> clear() { return clear; }
+            @Override public void build(BlockSink sink, int lvl) { build.accept(sink, lvl); }
+        };
+    }
+
+    /** Сборщики уровня Kordon (l01_escape) в порядке применения; первый — южный блокпост. */
+    private static final List<Builder> BUILDERS = java.util.List.of(
+            of(KordonSouthPost.CLEAR, KordonSouthPost::build),
+            of(KordonBunker.CLEAR, KordonBunker::build));
+
     /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками; пусто — уровень без замен. */
     public static List<int[]> clear(String levelId) {
-        return "l01_escape".equals(levelId) ? KordonSouthPost.CLEAR : List.of();
+        if (!"l01_escape".equals(levelId)) return List.of();
+        List<int[]> out = new java.util.ArrayList<>();
+        for (Builder b : BUILDERS) out.addAll(b.clear());
+        return out;
     }
 
     public static boolean cleared(String levelId, int x, int z) {
@@ -42,7 +65,7 @@ public final class Prefabs {
             @Override public int ground(int x, int z) { return g.at(x, z); }
             @Override public void mark(String kind, int x, int y, int z) { out.add(new Point(kind, x, y, z)); }
         };
-        if ("l01_escape".equals(levelId)) KordonSouthPost.build(s, lvl);
+        if ("l01_escape".equals(levelId)) for (Builder b : BUILDERS) b.build(s, lvl);
         return out;
     }
 
@@ -59,7 +82,7 @@ public final class Prefabs {
             @Override public void set(int x, int y, int z, String st) { m.put(key(x, y, z), st); }
             @Override public int ground(int x, int z) { return g.at(x, z); }
         };
-        if ("l01_escape".equals(levelId)) KordonSouthPost.build(s, lvl);
+        if ("l01_escape".equals(levelId)) for (Builder b : BUILDERS) b.build(s, lvl);
         connect(m);
         return m;
     }
