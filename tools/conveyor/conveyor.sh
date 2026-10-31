@@ -117,7 +117,7 @@ $(tail -5 /tmp/check1.txt)"
   bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
 fi
 rm -f ESCALATE.md
-git add -A -- src docs tools .github .gitignore 2>/dev/null
+git add -A -- src docs tools .github .gitignore CHECKLIST.md 2>/dev/null
 git commit -q -m "$CARD: $TITLE (конвейер: $PHASES)" || { echo "::error title=Агент ничего не изменил::карточка $CARD; см. аннотацию cline"; tg "❌ $CARD: агент ничего не изменил — $RUN_URL"; exit 1; }
 REVIEW=""
 if [ $ok -eq 0 ]; then
@@ -135,7 +135,7 @@ if [ $ok -eq 0 ]; then
     run $WHO 900 /tmp/pC.txt
     bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
     REPLY=$(cat REVIEW_REPLY.md 2>/dev/null); rm -f REVIEW_REPLY.md
-    git add -A -- src docs tools .github .gitignore; git commit -q -m "$CARD: правки по ревью" || true
+    git add -A -- src docs tools .github .gitignore CHECKLIST.md; git commit -q -m "$CARD: правки по ревью" || true
     BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md
     tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: правки по ревью внесены, проверка: $(head -1 /tmp/check1.txt)"
     [ -n "$REPLY" ] && printf '\n\n### Ответ исполнителя на ревью\n%s\n' "$REPLY" >> /tmp/review.md
