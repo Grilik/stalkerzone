@@ -18,7 +18,7 @@ read U0 LEFT <<< "$(python3 -I tools/notify/balance.py)"
 MIN_BALANCE=${MIN_BALANCE:-2}
 if [ "$LEFT" != "-" ] && python3 -c "import sys; sys.exit(0 if float('$LEFT') < float('$MIN_BALANCE') else 1)"; then
   echo "::warning title=Бюджет::остаток OpenRouter \$$LEFT < \$$MIN_BALANCE — конвейер на паузе"
-  tg "⚠️ Баланс OpenRouter \$$LEFT (порог \$$MIN_BALANCE) — конвейер на паузе, карточка $CARD не начата. Пополните баланс и запустите conveyor вручную."
+  tg "⚠️ Доступно на OpenRouter \$$LEFT ($(python3 -I tools/notify/balance.py --text); порог \$$MIN_BALANCE) — конвейер на паузе, карточка $CARD не начата. Пополните счёт или поднимите лимит ключа (openrouter.ai/keys) и запустите conveyor вручную."
   exit 0
 fi
 FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
@@ -123,7 +123,7 @@ fi
 # стоимость карточки (карточка 018): разница расхода ключа OpenRouter; при двух линиях сразу — сумма обеих
 read U1 LEFT1 <<< "$(python3 -I tools/notify/balance.py)"
 COST=$(python3 -c "u0,u1='$U0','$U1'; print('—' if '-' in (u0,u1) else f'\${float(u1)-float(u0):.2f}')")
-COST_LINE="Стоимость OpenRouter: $COST (за время карточки; если работали обе линии — их сумма), остаток \$$LEFT1"
+COST_LINE="Стоимость OpenRouter: $COST (за время карточки; если работали обе линии — их сумма). Остаток: $(python3 -I tools/notify/balance.py --text)"
 # --- карточка 020: подтянуть свежий main (другая линия могла слить своё) и починить конфликты ---
 sync_main() {
   git fetch -q origin main
