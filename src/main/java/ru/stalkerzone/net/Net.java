@@ -29,6 +29,8 @@ public final class Net {
                 .encoder(PdaSnapshot::encode).decoder(PdaSnapshot::new).consumerMainThread(PdaSnapshot::handle).add();
         CHANNEL.messageBuilder(PdaAction.class, 1, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(PdaAction::encode).decoder(PdaAction::new).consumerMainThread(PdaAction::handle).add();
+        CHANNEL.messageBuilder(EmissionPhase.class, 2, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(EmissionPhase::encode).decoder(EmissionPhase::new).consumerMainThread(EmissionPhase::handle).add();
     }
 
     public static void sendTo(ServerPlayer p, Object msg) {
@@ -83,6 +85,40 @@ public final class Net {
         public void handle(Supplier<NetworkEvent.Context> ctx) {
             ServerPlayer p = ctx.get().getSender();
             if (p != null) PdaService.action(p, action, id);
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
+    /**
+     * Фаза выброса для клиента (карточка 030): «краснота» неба и тумана, нарастающая к пику и
+     * спадающая после, и признак «игрок снаружи укрытий» (тогда экран темнеет сильнее).
+     * {@code phase}: 0 — выброса нет, 1 — идёт выброс, 2 — затухание.
+     */
+    public static final class EmissionPhase {
+        public final int phase;
+        public final float intensity;
+        public final boolean outside;
+
+        public EmissionPhase(int phase, float intensity, boolean outside) {
+            this.phase = phase;
+            this.intensity = intensity;
+            this.outside = outside;
+        }
+
+        public EmissionPhase(FriendlyByteBuf buf) {
+            this.phase = buf.readVarInt();
+            this.intensity = buf.readFloat();
+            this.outside = buf.readBoolean();
+        }
+
+        public void encode(FriendlyByteBuf buf) {
+            buf.writeVarInt(phase);
+            buf.writeFloat(intensity);
+            buf.writeBoolean(outside);
+        }
+
+        public void handle(Supplier<NetworkEvent.Context> ctx) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ru.stalkerzone.client.ClientEmission.receive(phase, intensity, outside));
             ctx.get().setPacketHandled(true);
         }
     }
