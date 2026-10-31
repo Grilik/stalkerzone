@@ -4,7 +4,11 @@
 set -u
 cd "$(git rev-parse --show-toplevel)"
 AGENT_MODEL=${AGENT_MODEL:-deepseek/deepseek-v4.1-flash}
-AGENT_MODEL_STRONG=${AGENT_MODEL_STRONG:-deepseek/deepseek-v4-pro}
+# экономия (31.10): V4 Pro стоил ~$2 за карточку против ~$0.16 у Flash, а V4.1 Flash не слабее V4 Pro.
+# Карточки с меткой «сильная» тоже идут на Flash; при провале их добивает Claude по подписке.
+# V4 Pro из переменной репозитория игнорируется — вернуть можно только правкой этой строки.
+AGENT_MODEL_STRONG=${AGENT_MODEL_STRONG:-$AGENT_MODEL}
+case "$AGENT_MODEL_STRONG" in *v4-pro*) AGENT_MODEL_STRONG=$AGENT_MODEL;; esac
 STRONG_MODEL=${STRONG_MODEL:-anthropic/claude-sonnet-5-5}
 # старшая модель — через ProxyAPI (OpenAI-совместимый адрес), ключ PROXYAPI_KEY
 STRONG_BASE_URL=${STRONG_BASE_URL:-https://api.proxyapi.ru/v1}

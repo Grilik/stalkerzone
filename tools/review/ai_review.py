@@ -41,7 +41,9 @@ if hard:
     out += [f"- {h}" for h in hard]
 
 key = os.environ.get("OPENROUTER_API_KEY")
-model = os.environ.get("REVIEW_MODEL") or "z-ai/glm-5.3"
+# экономия (31.10): GLM-5.3 ($1.40/$4.40 за 1M) -> GLM-5.3-Flash ($0.09/$0.30); другая семья, чем у исполнителя (DeepSeek)
+model = os.environ.get("REVIEW_MODEL") or "z-ai/glm-5.3-flash"
+if model == "z-ai/glm-5.3": model = "z-ai/glm-5.3-flash"
 if not key:
     out.append("_Секрет OPENROUTER_API_KEY не задан — ревью моделью пропущено._")
 elif not diff:

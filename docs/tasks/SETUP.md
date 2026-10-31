@@ -57,8 +57,8 @@ powershell -ExecutionPolicy Bypass -File tools/simtest.ps1
 ### 4.3 Модели Plan и Act
 У Cline два режима: **Plan** — читает код и пишет план, ничего не меняя; **Act** — правит файлы и запускает команды.
 1. Включите галочку **Use different models for Plan and Act modes**. Появятся две вкладки: Plan Mode и Act Mode.
-2. Вкладка **Act Mode** → поле **Model** → начните печатать `deepseek` → выберите `deepseek/deepseek-v4-pro`.
-3. Вкладка **Plan Mode** → тоже `deepseek/deepseek-v4-pro` (для обычных карточек).
+2. Вкладка **Act Mode** → поле **Model** → начните печатать `deepseek` → выберите `deepseek/deepseek-v4.1-flash` (V4 Pro в 12 раз дороже и не лучше).
+3. Вкладка **Plan Mode** → тоже `deepseek/deepseek-v4.1-flash`.
 4. Для тяжёлых карточек (в `README.md` карточек помечены «сильная модель для плана»: **009** и **014**)
    перед запуском переключите **Plan Mode** на `z-ai/glm-5.3` (дешевле) или `anthropic/claude-sonnet-5.5` (лучше, дороже).
    Act оставьте на DeepSeek. После карточки верните Plan на DeepSeek.
@@ -125,7 +125,7 @@ powershell -ExecutionPolicy Bypass -File tools/simtest.ps1
 Claude проверяет CI, тесты и смоук-тест на сервере и пишет карточки-исправления, если что-то не так.
 
 ## 7а. Автоматический ревьюер PR
-Каждый PR проверяет другая модель (по умолчанию `z-ai/glm-5.3` через OpenRouter) и пишет комментарий: вердикт,
+Каждый PR проверяет другая модель (по умолчанию `z-ai/glm-5.3-flash` через OpenRouter) и пишет комментарий: вердикт,
 пункты карточки, проблемы. Плюс механические блокеры: лишние файлы, импорт Minecraft в `sim`, правка `build.gradle`.
 - Ключ: GitHub → репозиторий → Settings → Secrets and variables → Actions → **New repository secret**,
   имя `OPENROUTER_API_KEY`, значение — ключ OpenRouter (можно отдельный, с лимитом $2).
@@ -136,7 +136,7 @@ Claude проверяет CI, тесты и смоук-тест на серве�
 Workflow `conveyor` выполняет карточки сам на серверах GitHub:
 0. Две линии параллельно — **симуляция** и **мир** (метка «Линия» в карточке).
 1. Cline CLI делает карточку: `AGENT_MODEL` (по умолчанию `deepseek/deepseek-v4.1-flash`), для карточек с меткой
-   «Модель исполнителя: сильная» — `AGENT_MODEL_STRONG` (по умолчанию `deepseek/deepseek-v4-pro`).
+   «Модель исполнителя: сильная» — `AGENT_MODEL_STRONG` (по умолчанию та же Flash; V4 Pro конвейер игнорирует ради экономии).
    Если одна ошибка не уходит после 3 попыток — он не крутится, а пишет `ESCALATE.md` и останавливается.
 2. Конвейер сам гоняет тесты и сборку (`tools/conveyor/check.sh`).
 3. Провал → **старшая модель** Claude через ProxyAPI (секрет `PROXYAPI_KEY`, переменная `STRONG_MODEL`, по умолчанию `anthropic/claude-sonnet-5-5`) получает только суть:
