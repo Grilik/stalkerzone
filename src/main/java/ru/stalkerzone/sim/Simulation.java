@@ -572,7 +572,9 @@ public final class Simulation {
     private void seedBuildings() {
         buildings.clear();
         for (Node n : nodes) {
-            if (n.existingBuildings) continue;   // карточка 009: постройки уже есть на уровне 1:1
+            // карточка 034: узлы уровня (existingBuildings) мир рисует своими зданиями, но симуляции нужны свои
+            // постройки — иначе их нечем развивать и «Зона не живёт». Начинаем с руин (уровень 0): качество = 0,
+            // как и раньше без построек, а группировки поднимают их сами.
             BuildingType[] set;
             if (isAnyBase(n.id) || n.type == NodeType.BASE) {
                 // главная база: полный набор
@@ -592,7 +594,8 @@ public final class Simulation {
             for (BuildingType t : set) {
                 int level = 1;
                 double hp = 100;
-                if (owner == null) { level = 1; hp = 55; }
+                if (n.existingBuildings) { level = 0; hp = 35; }   // карточка 034: постройки на узлах уровня симуляция развивает сама
+                else if (owner == null) { level = 1; hp = 55; }
                 else if (owner.military && (t == BuildingType.HQ || t == BuildingType.TOWER)) level = 2;
                 else if (owner.scientist && (t == BuildingType.WORKSHOP || t == BuildingType.HQ)) level = 2;
                 buildings.add(new Building(n.id, t, level, hp));
@@ -753,7 +756,12 @@ public final class Simulation {
                 clearProject(b);
             }
         }
-        if ((day + f.id * 3) % 6 != 0 || f.phase == Phase.WAR || f.passive && !f.scientist || f.fanatic) return;
+        // карточка 034: на Кордоне стройки закладываются чаще (BUILD_INTERVAL_DAYS), в полной Зоне — прежние 6 дней;
+        // и война не замораживает стройку — иначе группировка, застрявшая в штурмах, не развивается вовсе.
+        boolean kordon = Scenarios.KORDON.equals(scenario);
+        int buildEvery = kordon ? KordonBalance.BUILD_INTERVAL_DAYS : 6;
+        if ((day + f.id * 3) % buildEvery != 0 || (f.phase == Phase.WAR && !kordon)
+                || f.passive && !f.scientist || f.fanatic) return;
         if (active >= (f.members > 60 ? 2 : 1)) return;
         Building best = null;
         double bestScore = 0;

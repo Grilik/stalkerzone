@@ -130,6 +130,21 @@ public final class KordonBalance {
     public static final double LEAVE_ZONE_RATE = 0.0002;
     /** Плата за приём новичка (сжигается через Ledger). */
     public static final long JOIN_FEE = 30;
+    /**
+     * Приток стройматериалов с Большой земли на человека (карточка 034): с ним постройки на узлах Кордона
+     * успевают подниматься за считанные дни, а не ждут редких докупок у торговца.
+     */
+    public static final int HOMELAND_MATERIALS_PER_MEMBER = 16;
+    /**
+     * Касса Бандитов на старте (карточка 034): у нанимающей стороны должны быть деньги на засаду и вылазки,
+     * иначе заказы Бандитов не выставляются и доска Кордона простаивает. Остальные — по прежним ставкам.
+     */
+    public static final long BANDIT_START_MONEY = 20000;
+    /**
+     * Через сколько дней группировка Кордона закладывает новую стройку (карточка 034; раньше было 6).
+     * Меньше интервал — быстрее растут постройки и заметнее жизнь Зоны за короткую сессию.
+     */
+    public static final int BUILD_INTERVAL_DAYS = 3;
 
     /** Узлы, которые военные НЕ атакуют (чужие базы): деревня, бункер, АТП, ферма, дальний пост, выходы. */
     public static final int[] MILITARY_NO_ATTACK = {0, 1, 5, 10, 11, 3, 6, 12};
@@ -181,14 +196,14 @@ public final class KordonBalance {
     /** Узел-цель контракта на захват: элеватор (KordonScenario.ELEVATOR). */
     public static final int CONTRACT_CAPTURE_NODE = 4;
 
-    /** Шанс в день, что Торговцы выложат заказ на артефакты или части мутантов. */
-    public static final double CONTRACT_FETCH_CHANCE = 0.30;
-    /** Шанс в день, что Торговцы выложат заказ на сопровождение курьера до базы покупателя. */
-    public static final double CONTRACT_ESCORT_CHANCE = 0.16;
-    /** Шанс в день, что Одиночки выложат заказ на захват элеватора. */
-    public static final double CONTRACT_CAPTURE_CHANCE = 0.15;
-    /** Шанс в день, что военные выложат заказ на зачистку логова у дороги. */
-    public static final double CONTRACT_MILITARY_LAIR_CHANCE = 0.20;
+    /** Шанс в день, что Торговцы выложат заказ на артефакты или части мутантов (карточка 034: доска должна жить). */
+    public static final double CONTRACT_FETCH_CHANCE = 1.0;
+    /** Шанс в день, что Торговцы выложат заказ на сопровождение курьера до базы покупателя (карточка 034). */
+    public static final double CONTRACT_ESCORT_CHANCE = 1.0;
+    /** Шанс в день, что Одиночки выложат заказ на захват элеватора (карточка 034). */
+    public static final double CONTRACT_CAPTURE_CHANCE = 1.0;
+    /** Шанс в день, что военные выложат заказ на зачистку логова у дороги (карточка 034). */
+    public static final double CONTRACT_MILITARY_LAIR_CHANCE = 1.0;
     /** Минимальная сила логова у дороги, за которое берутся военные. */
     public static final double CONTRACT_LAIR_MIN_STRENGTH = 12;
     /** Минимальный срок контракта игрока на логово (дней): меньше — не давать, даже если выдали раньше (карточка 026). */
@@ -208,18 +223,26 @@ public final class KordonBalance {
     public static final int CONTRACT_FETCH_DAYS = 20, CONTRACT_ESCORT_DAYS = 12, CONTRACT_CAPTURE_DAYS = 20;
     /** Требуемая для NPC-исполнителя численность заказчика по типам контрактов. */
     public static final int CONTRACT_MIN_LONERS = 10, CONTRACT_MIN_MILITARY = 8;
-    /** На Кордоне одиночки-исполнители берутся за контракты охотнее, чем в полной Зоне. */
-    public static final double CONTRACT_NPC_TAKE_CHANCE = 0.35;
-    /** Сложность контрактов Кордона, которые разбирают NPC (1 — почти всегда удача). */
-    public static final int CONTRACT_DIFFICULTY = 1;
+    /**
+     * На Кордоне одиночки-исполнители берутся за контракты охотнее, чем в полной Зоне.
+     * Карточка 034: 1.0 — доска должна разбираться полностью, иначе контракты копятся и темп падает.
+     */
+    public static final double CONTRACT_NPC_TAKE_CHANCE = 1.0;
+    /** Сложность контрактов Кордона, которые разбирают NPC (0 — почти всегда удача, карточка 034). */
+    public static final int CONTRACT_DIFFICULTY = 0;
+    /**
+     * Через сколько дней после выставления одиночки берут свежий контракт (карточка 034; в полной Зоне — 3).
+     * Меньше задержка — быстрее оборачиваются заказы и доска не простаивает.
+     */
+    public static final int CONTRACT_NPC_TAKE_DELAY_DAYS = 1;
 
     // --- заказы Бандитов (карточка 021) --------------------------------------------------
     /** Узел-цель налёта по умолчанию: Свиноферма — именованный индекс сценария, а не сырой номер (карточка 022). */
     public static final int CONTRACT_RAID_FARM = KordonScenario.FARM;
-    /** Шанс в день, что Бандиты выложат заказ на засаду против курьера Торговцев в пути. */
-    public static final double CONTRACT_AMBUSH_COURIER_CHANCE = 0.12;
-    /** Шанс в день, что Бандиты выложат заказ на налёт на чужую ферму. */
-    public static final double CONTRACT_RAID_NODE_CHANCE = 0.12;
+    /** Шанс в день, что Бандиты выложат заказ на засаду против курьера Торговцев в пути (карточка 034). */
+    public static final double CONTRACT_AMBUSH_COURIER_CHANCE = 0.25;
+    /** Шанс в день, что Бандиты выложат заказ на налёт на чужую ферму (карточка 034). */
+    public static final double CONTRACT_RAID_NODE_CHANCE = 0.25;
     /** Награды заказов Бандитов — порядка награды за сопровождение курьера (руб.) и их разброс. */
     public static final long REWARD_AMBUSH = REWARD_ESCORT, REWARD_RAID = REWARD_ESCORT;
     public static final int REWARD_AMBUSH_SPREAD = REWARD_ESCORT_SPREAD, REWARD_RAID_SPREAD = REWARD_ESCORT_SPREAD;
@@ -234,6 +257,19 @@ public final class KordonBalance {
     public static final Doctrine BANDIT_DOCTRINE = new Doctrine(1.1, 0.9, 0.1, 0.1, 0.0, 0.35);
     /** Одиночки Кордона: осторожны, зарабатывают артефактами и охотой, обороняют своё. */
     public static final Doctrine LONER_DOCTRINE = new Doctrine(0.6, 0.35, 0.5, 0.75, 0.2, 0.4);
+
+    // --- частота вылазок и штурмов Кордона (карточка 034) --------------------------------
+
+    /** Шанс логова/группировки в день на дополнительный штурм узла-цели (элеватор, ферма). */
+    public static final double RAID_CHANCE = 0.65;
+    /** Требуемая готовность группировки для дополнительной вылазки на узел. */
+    public static final double RAID_READINESS = 0.4;
+    /** Шанс в день, что Одиночки попробуют вернуть элеватор. */
+    public static final double LONER_CAPTURE_CHANCE = 0.50;
+    /** Требуемая готовность Одиночек для попытки захвата элеватора. */
+    public static final double LONER_CAPTURE_READINESS = 0.5;
+    /** Сколько денег на человека нужно в кассе, чтобы вылазка вообще закладывалась. */
+    public static final long RAID_CASH_PER_MEMBER = 5;
 
     // ====================================================================================
     //  Мозги группировок Кордона (FactionBrain)
@@ -296,11 +332,11 @@ public final class KordonBalance {
         public List<Command> decide(Simulation sim, Faction f, Random rng) {
             List<Command> cmds = inner.decide(sim, f, rng);
             // цель — элеватор (узел 4) и ферма (узел 10): дополнительный шанс атаки
-            if (f.phase == Phase.ACCUMULATE && sim.readiness(f) >= 0.5 && f.stock.money >= f.members * 5L) {
+            if (f.phase == Phase.ACCUMULATE && sim.readiness(f) >= RAID_READINESS && f.stock.money >= f.members * RAID_CASH_PER_MEMBER) {
                 for (int target : new int[]{4, 10}) {
                     if (target >= sim.nodes.size()) continue;
                     Node n = sim.nodes.get(target);
-                    if (n.owner != f.id && sim.minDistFromOwned(f, target) <= 3 && rng.nextDouble() < 0.06) {
+                    if (n.owner != f.id && sim.minDistFromOwned(f, target) <= 3 && rng.nextDouble() < RAID_CHANCE) {
                         boolean already = false;
                         for (Command c : cmds) if (c instanceof Command.Attack a && a.node() == target) { already = true; break; }
                         if (!already) cmds.add(new Command.Attack(target));
@@ -319,9 +355,9 @@ public final class KordonBalance {
         public List<Command> decide(Simulation sim, Faction f, Random rng) {
             List<Command> cmds = inner.decide(sim, f, rng);
             // цель — элеватор (узел 4): периодические попытки захвата
-            if (f.phase == Phase.ACCUMULATE && sim.readiness(f) >= 0.6 && f.stock.money >= f.members * 5L) {
+            if (f.phase == Phase.ACCUMULATE && sim.readiness(f) >= LONER_CAPTURE_READINESS && f.stock.money >= f.members * RAID_CASH_PER_MEMBER) {
                 Node elev = sim.nodes.get(4);
-                if (elev.owner != f.id && sim.minDistFromOwned(f, 4) <= 3 && rng.nextDouble() < 0.04) {
+                if (elev.owner != f.id && sim.minDistFromOwned(f, 4) <= 3 && rng.nextDouble() < LONER_CAPTURE_CHANCE) {
                     boolean already = false;
                     for (Command c : cmds) if (c instanceof Command.Attack a && a.node() == 4) { already = true; break; }
                     if (!already) cmds.add(new Command.Attack(4));
