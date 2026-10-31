@@ -194,8 +194,8 @@ public final class KordonScenario {
                 f.stock.add(Good.GEAR_PRO, elite / 3);
             }
             f.stock.add(Good.MEDS, m * 2);
-            f.stock.add(Good.MATERIALS, m);
-            f.stock.money = f.military ? 12000 : 8000;
+            f.stock.add(Good.MATERIALS, m * KordonBalance.HOMELAND_MATERIALS_PER_MEMBER);
+            f.stock.money = f.raider ? KordonBalance.BANDIT_START_MONEY : f.military ? 12000 : 8000;
         }
         // стартовые рынки торговцев
         for (Node n : nodes) {

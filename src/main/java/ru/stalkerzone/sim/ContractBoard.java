@@ -18,6 +18,8 @@ public final class ContractBoard {
     public static final int MAX_PER_PLAYER = 3;
     /** Шанс в день, что нейтральный сталкер возьмёт открытый контракт (сценарий «зона»). */
     static final double NPC_TAKE_CHANCE = 0.12;
+    /** Сколько дней контракт должен полежать открытым, прежде чем NPC его возьмут (сценарий «зона»). */
+    static final int NPC_TAKE_DELAY_DAYS = 3;
 
     public final List<Contract> list = new ArrayList<>();
     public int nextId = 1;
@@ -445,13 +447,16 @@ public final class ContractBoard {
         Faction loners = s.mercenaries();
         if (loners == null || loners.members < 10) return;
         // v16 (карточка 006): на Кордоне одиночки берутся за работу охотнее
-        double chance = s.scenario.equals(Scenarios.KORDON) ? KordonBalance.CONTRACT_NPC_TAKE_CHANCE : NPC_TAKE_CHANCE;
+        boolean kordon = s.scenario.equals(Scenarios.KORDON);
+        double chance = kordon ? KordonBalance.CONTRACT_NPC_TAKE_CHANCE : NPC_TAKE_CHANCE;
+        // карточка 034: на Кордоне заказы разбирают почти сразу, а не через три дня
+        int takeDelay = kordon ? KordonBalance.CONTRACT_NPC_TAKE_DELAY_DAYS : NPC_TAKE_DELAY_DAYS;
         for (Contract c : list) {
             // своё же сопровождение/поставка не заказываются себе; захват узла одиночки берут и у себя
             if (c.issuer == loners.id && c.type != Contract.Type.CAPTURE_NODE) continue;
             // карточка 026: взятый игроком контракт NPC не отбирают (правило держим явно, а не только по статусу)
             if (c.taker == Contract.PLAYER) continue;
-            if (c.status != Contract.Status.OPEN || s.day - c.created < 3) continue;
+            if (c.status != Contract.Status.OPEN || s.day - c.created < takeDelay) continue;
             // v17 (карточка 021): AMBUSH_COURIER и RAID_NODE берут только игроки-бандиты — NPC их не разбирают
             if (c.type != Contract.Type.FETCH_ARTIFACT && c.type != Contract.Type.SUPPLY && c.type != Contract.Type.CLEAR_LAIR
                     && c.type != Contract.Type.ESCORT_COURIER && c.type != Contract.Type.CAPTURE_NODE) continue;
