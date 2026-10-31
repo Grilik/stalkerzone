@@ -10,7 +10,8 @@ public final class Faction {
     public final boolean raider;
     /** Служебная фракция (напр. Торговцы): не участвует в симуляции, не имеет ИИ. */
     public boolean service;
-    public final Doctrine doctrine;
+    /** Характер и идеология фракции: задаётся сценарием, может уточняться после создания. */
+    public Doctrine doctrine;
 
     // --- роль в сюжете (задаётся сценарием, не сохраняется) ---
     /** Никогда не начинает войн (учёные). */
