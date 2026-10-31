@@ -98,7 +98,7 @@ git commit -q -m "$CARD: $TITLE (конвейер: $PHASES)" || { echo "::error 
 REVIEW=""
 if [ $ok -eq 0 ]; then
   git push -q -u origin "$BR"
-  BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" python3 -I tools/review/ai_review.py > /tmp/review.md
+  BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md
   grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md && tg "🔎 $CARD: ревью — ОК"
   grep -q REVIEW_UNAVAILABLE /tmp/review.md && tg "🔎 $CARD: ревью моделью недоступно — старшего не зову, смотрите PR"
   if grep -q "### Блокеры" /tmp/review.md || { ! grep -q REVIEW_UNAVAILABLE /tmp/review.md && ! grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md; }; then
@@ -110,7 +110,7 @@ if [ $ok -eq 0 ]; then
     bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
     REPLY=$(cat REVIEW_REPLY.md 2>/dev/null); rm -f REVIEW_REPLY.md
     git add -A -- src docs tools .github .gitignore; git commit -q -m "$CARD: правки по ревью" || true
-    BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" python3 -I tools/review/ai_review.py > /tmp/review.md
+    BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md
     tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: старший поправил по ревью, проверка: $(head -1 /tmp/check1.txt)"
     [ -n "$REPLY" ] && printf '\n\n### Ответ старшего на ревью\n%s\n' "$REPLY" >> /tmp/review.md
   fi
