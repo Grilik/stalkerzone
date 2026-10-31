@@ -69,6 +69,7 @@ public class StalkerZoneMod {
             ru.stalkerzone.world.LandmarkManager.tick(server);
             ru.stalkerzone.npc.ZombieManager.tick(server);
             ru.stalkerzone.npc.MeetingManager.tick(server);
+            ru.stalkerzone.npc.CaravanManager.tick(server);
             ru.stalkerzone.world.BridgePost.tick(server);
             if (server.getTickCount() % 40 == 0) ru.stalkerzone.anomaly.PsiField.tick(server);
         }

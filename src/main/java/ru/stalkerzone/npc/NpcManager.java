@@ -32,6 +32,8 @@ public final class NpcManager {
 
     private static final String[] CALLSIGNS = {"Лис", "Грач", "Бродяга", "Седой", "Хмурый", "Дым", "Шрам", "Курсант", "Топор", "Весёлый",
             "Тихий", "Бык", "Север", "Сыч", "Ворон", "Гвоздь", "Малой", "Кащей", "Доцент", "Рыжий", "Бахмач", "Ёж", "Угрюмый", "Сапёр"};
+    /** Случайный позывной. */
+    public static String callsign() { return CALLSIGNS[RND.nextInt(CALLSIGNS.length)]; }
     private static String traderName(Node n) {
         return switch (n.name) {
             case "Кордон", "Бункер Сидоровича" -> "Сидорович";

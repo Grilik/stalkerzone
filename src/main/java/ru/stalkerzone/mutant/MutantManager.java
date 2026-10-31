@@ -83,6 +83,15 @@ public final class MutantManager {
         }
 
         boolean night = level.isNight();
+        // ограничение: не больше 16 мутантов в радиусе 128 от игроков
+        java.util.Set<Integer> seenMut = new java.util.HashSet<>();
+        for (ServerPlayer p : players) {
+            AABB scan = p.getBoundingBox().inflate(128);
+            for (MutantEntity m : level.getEntitiesOfClass(MutantEntity.class, scan, m -> m.isAlive())) seenMut.add(m.getId());
+            for (net.minecraft.world.entity.Mob m : level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, scan,
+                    m -> m.isAlive() && m.getPersistentData().contains(TAG_LAIR) && !(m instanceof MutantEntity))) seenMut.add(m.getId());
+        }
+        int totalMutants = seenMut.size();
         for (Lair l : sim.lairs) {
             BlockPos den = denXZ(sim, l);
             boolean near = false;
@@ -98,9 +107,11 @@ public final class MutantManager {
             // v1.14: после выброса мутанты сперва затихают, потом пик на 3–4-е сутки
             double act = ru.stalkerzone.anomaly.EmissionEvent.mutantActivity(sim);
             if (here.size() + foreign >= Math.max(1, (int) Math.round(wanted(l, night) * act))) continue;
+            if (totalMutants >= 16) continue;
             boolean leader = here.stream().anyMatch(m -> m.kind().leader());
             spawn(level, l, den, MutantType.pick(l.kind, leader, RND));
             COOLDOWN.put(l.node, SPAWN_EVERY);
+            totalMutants++;
         }
     }
 
