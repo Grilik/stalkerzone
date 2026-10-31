@@ -64,6 +64,9 @@ public final class ZoneCommands {
                                 return send(c, "Команда только для игрока.");
                             }
                         }))
+                .then(Commands.literal("pay").executes(c -> playerOnly(c,
+                        p -> ru.stalkerzone.world.BridgePost.pay(p, ZoneData.get(c.getSource().getServer())))))
+                .then(Commands.literal("post").executes(c -> send(c, ru.stalkerzone.world.BridgePost.describe(sim(c)))))
                 .then(Commands.literal("pda").executes(c -> {
                     try { ru.stalkerzone.pda.PdaService.open(c.getSource().getPlayerOrException(), true); return 1; }
                     catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) { return send(c, "Команда только для игрока."); }
