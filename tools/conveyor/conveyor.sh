@@ -102,17 +102,19 @@ if [ $ok -eq 0 ]; then
   grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md && tg "🔎 $CARD: ревью — ОК"
   grep -q REVIEW_UNAVAILABLE /tmp/review.md && tg "🔎 $CARD: ревью моделью недоступно — старшего не зову, смотрите PR"
   if grep -q "### Блокеры" /tmp/review.md || { ! grep -q REVIEW_UNAVAILABLE /tmp/review.md && ! grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md; }; then
-    PHASES="$PHASES → старший по ревью ($STRONG_NAME)"
-    tg "🔎 $CARD: ревью — есть замечания, правит старший"
-    { echo "Ты старший разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
+    # карточка 022: «ЕСТЬ ЗАМЕЧАНИЯ» правит дешёвый исполнитель; Claude — только для «БЛОКЕР» и механических блокеров
+    if grep -q "### Блокеры" /tmp/review.md || grep -qE "Вердикт:\*\*\s*БЛОКЕР" /tmp/review.md; then WHO=strong; WHO_NAME=$STRONG_NAME; else WHO=agent; WHO_NAME=$AGENT_MODEL; fi
+    PHASES="$PHASES → правки по ревью ($WHO_NAME)"
+    tg "🔎 $CARD: ревью — есть замечания, правит $WHO_NAME"
+    { echo "Ты разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
       echo "Исправь обоснованные замечания минимально; необоснованные — пропусти и кратко объясни почему в файле REVIEW_REPLY.md."; echo; echo "$RULES"; echo; cat /tmp/review.md; } > /tmp/pC.txt
-    run strong 900 /tmp/pC.txt
+    run $WHO 900 /tmp/pC.txt
     bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
     REPLY=$(cat REVIEW_REPLY.md 2>/dev/null); rm -f REVIEW_REPLY.md
     git add -A -- src docs tools .github .gitignore; git commit -q -m "$CARD: правки по ревью" || true
     BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md
-    tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: старший поправил по ревью, проверка: $(head -1 /tmp/check1.txt)"
-    [ -n "$REPLY" ] && printf '\n\n### Ответ старшего на ревью\n%s\n' "$REPLY" >> /tmp/review.md
+    tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: правки по ревью внесены, проверка: $(head -1 /tmp/check1.txt)"
+    [ -n "$REPLY" ] && printf '\n\n### Ответ исполнителя на ревью\n%s\n' "$REPLY" >> /tmp/review.md
   fi
 fi
 # стоимость карточки (карточка 018): разница расхода ключа OpenRouter; при двух линиях сразу — сумма обеих
@@ -180,7 +182,9 @@ if [ $ok -eq 0 ]; then
   [ "${AUTO_MERGE:-1}" = 0 ] && why="автослияние выключено (AUTO_MERGE=0)"
   [ $SYNC_OK -eq 1 ] || why="${why:-конфликт со свежим main не решён}"
   grep -q REVIEW_UNAVAILABLE /tmp/review.md 2>/dev/null && why="${why:-ревью моделью недоступно}"
-  { grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md; } 2>/dev/null || why="${why:-ревью не дало «ОК»}"
+  # после раунда правок «ЕСТЬ ЗАМЕЧАНИЯ» не мешает автослиянию (ревьюер придирчив); мешают только блокеры
+  { grep -q "### Блокеры" /tmp/review.md || grep -qE "Вердикт:\*\*\s*БЛОКЕР" /tmp/review.md; } 2>/dev/null && why="${why:-ревью: блокер}"
+  { grep -qE "Вердикт:\*\*\s*(ОК|ЕСТЬ ЗАМЕЧАНИЯ)" /tmp/review.md; } 2>/dev/null || why="${why:-ревью без вердикта}"
   if [ -z "$why" ]; then
     if gh pr merge "$URL" --squash --delete-branch >/tmp/pm.txt 2>&1; then
       tg "🤖✅ $CARD слит автоматически: $URL"
