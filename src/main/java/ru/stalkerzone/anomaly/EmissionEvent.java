@@ -45,11 +45,15 @@ public final class EmissionEvent {
     /** За сколько тиков до выброса начинаются приметы, тревога в КПК и сирена. */
     public static final int OMEN = 2400, ALARM = 1200, SIREN = 400;
     private static final int GON = 1400;
+    /** Сколько тиков после выброса краснота неба спадает до нуля (карточка 030). */
+    private static final int RED_FADE = 200;
     private static final String GON_TAG = "sz_gon";
     private static final Random RND = new Random();
 
     private static int ticksLeft;
     private static int gonLeft;
+    /** Остаток затухания красноты после выброса (карточка 030). */
+    private static int redFade;
     /** Выброс, назначенный командой (/zone emission soon): тиков до него, со всеми приметами. */
     private static int scheduled;
 
@@ -108,10 +112,30 @@ public final class EmissionEvent {
         if (until > 0 && !active()) beforeEmission(level, d, until);
         if (gonLeft > 0) gon(level, d);
         else if (server.getTickCount() % 100 == 0) cleanupGon(level, 0);
-        if (ticksLeft <= 0) return;
+        if (ticksLeft <= 0) {
+            // затухание красноты после выброса (карточка 030)
+            if (redFade > 0) {
+                redFade--;
+                syncSky(level, redFade == 0 ? 0f : redFade / (float) RED_FADE, redFade == 0 ? 0 : 2);
+            }
+            return;
+        }
         ticksLeft--;
         during(level, d);
-        if (ticksLeft == 0) end(level, d);
+        syncSky(level, (DURATION - ticksLeft) / (float) DURATION, 1);
+        if (ticksLeft == 0) {
+            end(level, d);
+            redFade = RED_FADE;
+        }
+    }
+
+    /** Покраснение неба и тумана: нарастает к пику выброса, спадает после (карточка 030). */
+    private static void syncSky(ServerLevel level, float intensity, int phase) {
+        if (intensity > 0f && level.getServer().getTickCount() % 10 != 0) return;   // раз в полсекунды
+        for (ServerPlayer p : level.players()) {
+            boolean outside = !p.isCreative() && !p.isSpectator() && exposed(level, p);
+            ru.stalkerzone.net.Net.sendTo(p, new ru.stalkerzone.net.Net.EmissionPhase(phase, intensity, outside));
+        }
     }
 
     // ------------------------------------------------------------------ до выброса

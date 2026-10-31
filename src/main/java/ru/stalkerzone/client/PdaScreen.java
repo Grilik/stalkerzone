@@ -185,6 +185,13 @@ public class PdaScreen extends Screen {
             g.fill(x - 2, y - 2, x + 3, y + 3, 0xFFE8C060);
             if (zoom >= 1.2) g.drawString(font, t.name(), x + 5, y - 4, ACCENT, true);
         }
+        // рюкзак игрока на месте гибели (карточка 030)
+        for (PdaModel.Mark b : model.backpacks) {
+            int x = sx(b.x()), y = sy(b.z());
+            g.fill(x - 3, y - 3, x + 4, y + 4, 0xFF000000);
+            g.fill(x - 2, y - 2, x + 3, y + 3, 0xFF40FF80);
+            g.drawString(font, b.name(), x + 5, y - 4, 0xFF40FF80, true);
+        }
         PdaModel.NodeInfo hover = null;
         for (PdaModel.NodeInfo n : model.nodes) {
             int x = sx(n.x()), y = sy(n.z());
@@ -222,6 +229,7 @@ public class PdaScreen extends Screen {
         legend(g, lx, ly += 10, 0xFF40D060, "проходы (опасность)");
         legend(g, lx, ly += 10, 0xFF80C0F0, "укрытия от выброса");
         legend(g, lx, ly += 10, 0xFFE8C060, "Сидорович и торговцы");
+        legend(g, lx, ly += 10, 0xFF40FF80, "ваш рюкзак");
         g.drawString(font, "Открыто клеток: " + PdaMapCache.known(), lx, ly + 12, DIM);
         g.drawString(font, "X " + model.px + "  Z " + model.pz, lx, ly + 22, DIM);
         if (hover != null) {
