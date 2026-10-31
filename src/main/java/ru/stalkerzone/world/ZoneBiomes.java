@@ -16,7 +16,8 @@ public final class ZoneBiomes {
     public static final int KORDON = 0, GARBAGE = 1, AGROPROM = 2, DARK = 3, BAR = 4, WILD = 5, ARMY = 6, YANTAR = 7, RADAR = 8,
             PSI = 9, CHAES = 10, PERIMETER = 11, RED_FOREST = 12, OUTSKIRTS = 13, PRIPYAT = 14, SWAMPS = 15;
     /** Источник пси-излучения Выжигателя: к северу от Радара. Смертельная зона и «выжженная» земля вокруг. */
-    public static final int PSI_OFFSET_Z = -450, PSI_LETHAL = 300, PSI_REACH = 600;
+    public static final int PSI_OFFSET_Z = ru.stalkerzone.sim.Psi.OFFSET_Z,
+            PSI_LETHAL = ru.stalkerzone.sim.Psi.LETHAL, PSI_REACH = ru.stalkerzone.sim.Psi.REACH;
 
     private static int[] nx, nz, nb;
     private static int armyX, armyZ, radarX, radarZ, yantarX, yantarZ;
