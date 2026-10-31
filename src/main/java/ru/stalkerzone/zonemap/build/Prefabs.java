@@ -25,10 +25,11 @@ public final class Prefabs {
         return false;
     }
 
-    public static long key(int x, int y, int z) { return ((long) (x + (1 << 21)) << 42) | ((long) (y + 2048) << 21) | (z + (1 << 21)); }
-    public static int kx(long k) { return (int) (k >>> 42) - (1 << 21); }
+    // упаковка позиции: x и z по 21 бит (±1 млн), y — 21 бит; раньше z+2^21 вылезал в поле y и ломал координаты
+    public static long key(int x, int y, int z) { return ((long) (x + (1 << 20)) << 42) | ((long) (y + 2048) << 21) | (z + (1 << 20)); }
+    public static int kx(long k) { return (int) (k >>> 42) - (1 << 20); }
     public static int ky(long k) { return (int) ((k >>> 21) & 0x1fffff) - 2048; }
-    public static int kz(long k) { return (int) (k & 0x1fffff) - (1 << 21); }
+    public static int kz(long k) { return (int) (k & 0x1fffff) - (1 << 20); }
 
     /** Все блоки построек уровня (уровень развития lvl), с соединёнными решётками и стёклами. */
     public static Map<Long, String> build(String levelId, Ground g, int lvl) {
