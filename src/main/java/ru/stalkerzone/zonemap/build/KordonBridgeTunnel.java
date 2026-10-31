@@ -22,7 +22,7 @@ public final class KordonBridgeTunnel {
 
     /** Области, где воксели уровня заменяет этот сборщик: мост и туннель (с запасом 3–4 блока). */
     public static final List<int[]> CLEAR = List.of(
-            new int[] {215, -325, 326, -238},   // мост: устои, пролёт, подходы
+            new int[] {215, -325, 326, -250},   // мост: устои, пролёт, подходы (севернее z -250 — элеватор)
             new int[] {95, -273, 142, -211});   // туннель: насыпь с проходом
 
     static final String CONC = "stalkerzone:zm_concrete", CONC_D = "stalkerzone:zm_concrete_dirty",
