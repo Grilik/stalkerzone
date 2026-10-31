@@ -14,10 +14,12 @@ public final class Psi {
     private Psi() {}
 
     /**
-     * Координаты источника пси-излучения (Выжигатель к северу от узла «Радар»).
+     * Координаты источника пси-излучения (Выжигатель к северу от узла «Радар») для сценария.
      * {@code null}, если в сценарии такого узла нет — тогда поля на поверхности тоже нет.
+     * Единственный источник правды для всей поверхностной пси-логики: слой мира
+     * ({@code anomaly/PsiField}) берёт координаты отсюда же, чтобы поле и зона зомбирования не разошлись.
      */
-    private static int[] source(Simulation sim) {
+    public static int[] source(Simulation sim) {
         for (Node n : sim.nodes)
             if ("Радар".equals(n.name)) return new int[] {n.x * ZoneBounds.SCALE, n.z * ZoneBounds.SCALE + OFFSET_Z};
         return null;

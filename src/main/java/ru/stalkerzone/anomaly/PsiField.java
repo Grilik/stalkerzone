@@ -21,7 +21,6 @@ import ru.stalkerzone.lab.LabManager;
 import ru.stalkerzone.npc.StalkerEntity;
 import ru.stalkerzone.sim.Simulation;
 import ru.stalkerzone.world.LabLayout;
-import ru.stalkerzone.world.ZoneBiomes;
 
 /**
  * Пси-излучение. Уровни: 1 слабое (X-16), 2 сильное (X-10, X-2, окраины поля Выжигателя),
@@ -59,9 +58,10 @@ public final class PsiField {
         if (sim.scorcher.disabled) return;
         // карточка 024: в Кордоне 1.0 Выжигателя нет — пси-поле «всей карты» здесь никого не зомбирует
         if (ru.stalkerzone.sim.Scenarios.KORDON.equals(sim.scenario)) return;
-        int[] src = ZoneBiomes.psiSource();
-        AABB box = new AABB(src[0] - ZoneBiomes.PSI_LETHAL, level.getMinBuildHeight(), src[1] - ZoneBiomes.PSI_LETHAL,
-                src[0] + ZoneBiomes.PSI_LETHAL, level.getMaxBuildHeight(), src[1] + ZoneBiomes.PSI_LETHAL);
+        int[] src = ru.stalkerzone.sim.Psi.source(sim);
+        if (src == null) return;
+        AABB box = new AABB(src[0] - ru.stalkerzone.sim.Psi.LETHAL, level.getMinBuildHeight(), src[1] - ru.stalkerzone.sim.Psi.LETHAL,
+                src[0] + ru.stalkerzone.sim.Psi.LETHAL, level.getMaxBuildHeight(), src[1] + ru.stalkerzone.sim.Psi.LETHAL);
         for (StalkerEntity e : level.getEntitiesOfClass(StalkerEntity.class, box, e -> e.isAlive() && !e.isTrader() && e.faction() != ru.stalkerzone.sim.ZoneScenario.MONOLITH)) {
             if (surfaceLevel(sim, e.getX(), e.getZ()) < 3 || LabManager.inside(data, e.getX(), e.getY(), e.getZ()) != null) continue;
             BlockPos at = e.blockPosition();

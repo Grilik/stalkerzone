@@ -77,12 +77,6 @@ public final class ZoneBiomes {
         return ((h ^ (h >>> 16)) & 0xffff) / 65535.0;
     }
 
-    /** Координаты источника пси-излучения в блоках. */
-    public static int[] psiSource() {
-        init();
-        return new int[] {radarX, radarZ + PSI_OFFSET_Z};
-    }
-
     public static int index(int x, int z) {
         init();
         double wx = x + 140 * (noise(x / 260.0, z / 260.0) - 0.5) + 40 * (noise(x / 70.0 + 13, z / 70.0) - 0.5);
