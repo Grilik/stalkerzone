@@ -11,6 +11,7 @@ STRONG_BASE_URL=${STRONG_BASE_URL:-https://api.proxyapi.ru/v1}
 # уведомления в Telegram (карточка 017); без секретов — молча пропуск, ошибки не роняют конвейер
 tg() { python3 -I tools/notify/tg.py "$1" || true; }
 RUN_URL="${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}"
+CARD_GIVEN=${CARD:-}
 CARD=${CARD:-$(python3 -I tools/conveyor/next_card.py)}
 [ -z "$CARD" ] && { echo "Нет карточки, готовой к выполнению."; tg "💤 Конвейер (${LANE:-?}): нет готовых карточек"; exit 0; }
 # предохранитель бюджета (карточка 018): мало денег на OpenRouter — не начинаем
@@ -21,14 +22,30 @@ if [ "$LEFT" != "-" ] && python3 -c "import sys; sys.exit(0 if float('$LEFT') < 
   tg "⚠️ Доступно на OpenRouter \$$LEFT ($(python3 -I tools/notify/balance.py --text); порог \$$MIN_BALANCE) — конвейер на паузе, карточка $CARD не начата. Пополните счёт или поднимите лимит ключа (openrouter.ai/keys) и запустите conveyor вручную."
   exit 0
 fi
+git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
+# захват карточки: две линии могут выбрать одну карточку одновременно. Каждая пушит в task/NNN-auto
+# свой пустой коммит — второй пуш отклоняется (не fast-forward), и линия берёт следующую карточку.
+EXPLICIT=${CARD_GIVEN:-}
+SKIP_CARDS=""
+for try in 1 2 3; do
+  BR="task/${CARD}-auto"
+  git checkout -q -B "$BR" origin/main 2>/dev/null || git checkout -q -B "$BR"
+  git commit -q --allow-empty -m "$CARD: захват линией ${LANE:-?} (${GITHUB_RUN_ID:-local})"
+  CLAIM_SHA=$(git rev-parse HEAD)
+  if git push -q origin "HEAD:refs/heads/$BR" 2>/tmp/claim.txt; then break; fi
+  echo "::notice title=Захват::карточку $CARD уже взяла другая линия"
+  [ -n "$EXPLICIT" ] && { tg "⚠️ $CARD: уже в работе у другой линии"; exit 0; }
+  SKIP_CARDS="$SKIP_CARDS $CARD"; CARD=$(SKIP_CARDS="$SKIP_CARDS" python3 -I tools/conveyor/next_card.py)
+  [ -z "$CARD" ] && { echo "Свободных карточек нет."; exit 0; }
+done
+# если запуск оборвётся до работы, снимаем захват, чтобы карточка не зависла
+release() { [ "$(git ls-remote origin "refs/heads/$BR" | cut -f1)" = "$CLAIM_SHA" ] && git push -q origin --delete "$BR" 2>/dev/null; true; }
+trap release EXIT
 FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
 TITLE=$(head -1 "$FILE" | sed 's/^# *//')
 grep -q "Модель исполнителя: сильная" "$FILE" && AGENT_MODEL=$AGENT_MODEL_STRONG
-BR="task/${CARD}-auto"
-echo "::notice title=Карточка $CARD::$TITLE (модель $AGENT_MODEL)"
-tg "▶️ $TITLE — старт ($AGENT_MODEL)"
-git checkout -q -b "$BR"
-git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
+echo "::notice title=Карточка $CARD::$TITLE (модель $AGENT_MODEL, линия ${LANE:-?})"
+tg "▶️ $TITLE — старт ($AGENT_MODEL, линия ${LANE:-?})"
 cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
 # старший (карточка 019): Claude Code по подписке, если задан CLAUDE_CODE_OAUTH_TOKEN; иначе — Claude через ProxyAPI
 CLAUDE_DAILY_LIMIT=${CLAUDE_DAILY_LIMIT:-5}

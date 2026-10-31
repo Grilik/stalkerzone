@@ -35,8 +35,13 @@ public final class WallBuilder {
 
                 if (kind == ZoneBounds.Kind.BARRIER) {
                     if (chunk.getBlockState(p.set(x, minY, z)).is(Blocks.BARRIER)) continue; // уже стоит
-                    for (int y = minY; y < maxY; y++) ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.set(x, y, z), barrier);
-                    changed = true;
+                    for (int y = minY; y < maxY; y++) {
+                        p.set(x, y, z);
+                        if (chunk.getBlockState(p).is(Blocks.BARRIER)) continue; // уже стоит
+                        // блок с сущностью (улей, сундук) оставлял бы в стене дыру: заменяем на барьер (карточка 027)
+                        if (chunk.getBlockState(p).hasBlockEntity()) { chunk.setBlockState(p.immutable(), barrier, false); changed = true; }
+                        else if (ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.immutable(), barrier)) changed = true;
+                    }
                 } else {
                     int floor = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, lx, lz); // первый свободный блок над дном
                     if (chunk.getBlockState(p.set(x, floor, z)).is(Blocks.STONE_BRICKS)) continue; // уже стоит
