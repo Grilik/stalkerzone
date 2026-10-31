@@ -68,6 +68,8 @@ public final class StructureManager {
                 if (!level.hasChunk(x >> 4, z >> 4)) return false;
 
         Camp.placeLevelDecor(level, n, pts, cx, cz);
+        // карточка 013: радиоактивные пятна (насыпь, техника у дыры, ферма) — блоки с тегом radioactive
+        RadioactiveSpots.place(level, data.sim, n, cx, cz);
         data.rendered.put(decoKey, n.owner);
         data.setDirty();
         return true;
