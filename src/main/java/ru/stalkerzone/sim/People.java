@@ -311,6 +311,12 @@ public final class People {
             int leaving = s.randomRound(f.members * KordonBalance.LEAVE_ZONE_RATE);
             if (leaving <= 0) continue;
             leaving = Math.min(leaving, f.members - 3);
+            // уходящие уносят свою долю денег фракции (списание через Ledger как вывоз)
+            long cashOut = f.stock.money * leaving / f.members;
+            if (cashOut > 0) {
+                f.stock.money -= cashOut;
+                s.ledger.moneyBurned += cashOut;
+            }
             f.members -= leaving;
             int foodOut = Math.min(f.stock.get(Good.FOOD), leaving * 2);
             if (foodOut > 0) {
