@@ -61,6 +61,27 @@ public class PrefabsTest {
         ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
         for (Prefabs.Point p : marks) if (p.kind().equals("duty")) duty++;
         ck(duty >= 1, "рабочее место торговца (duty) " + duty);
+        // карточка 040: дальний блокпост — свои блоки и рабочие места в его границах
+        int farSolid = 0, farGate = 0, farGuard = 0, farCook = 0, farBed = 0, farPatrol = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            if (x >= 214 && x <= 280 && z >= -830 && z <= -750) farSolid++;
+        }
+        for (Prefabs.Point p : marks) {
+            if (p.x() < 214 || p.x() > 280 || p.z() < -830 || p.z() > -750) continue;
+            switch (p.kind()) {
+                case "gate" -> farGate++;
+                case "guard" -> farGuard++;
+                case "cook" -> farCook++;
+                case "bed" -> farBed++;
+                case "patrol" -> farPatrol++;
+                default -> { }
+            }
+        }
+        ck(farSolid > 500, "дальний блокпост: блоков " + farSolid);
+        ck(farGate >= 1 && farGuard >= 1 && farCook >= 1 && farBed >= 1 && farPatrol >= 1,
+                "дальний блокпост: gate/guard/cook/bed/patrol " + farGate + "/" + farGuard + "/" + farCook + "/" + farBed + "/" + farPatrol);
         // границы сборщиков не пересекаются
         java.util.List<int[]> cl = Prefabs.clear("l01_escape");
         boolean overlap = false;
