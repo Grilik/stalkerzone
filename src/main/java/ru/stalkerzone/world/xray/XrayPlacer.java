@@ -158,7 +158,7 @@ public final class XrayPlacer {
         int[] a = r.air(cp.x, cp.z);
         for (int i = 0; i + 2 < a.length; i += 3) ObjPropBlock.safeSet(c, new BlockPos(a[i], a[i + 1], a[i + 2]), b(Blocks.AIR));
         // 3. постройки
-        int[] v = r.voxels(cp.x, cp.z);
+        int[] v = PrefabLayer.without(r.voxels(cp.x, cp.z), r.id);   // этап 1: в границах построек по оригиналу — их блоки
         LevelBuildings lb = LevelBuildings.of(r.id);
         if (!lb.houses.isEmpty() || !lb.fences.isEmpty()) v = withoutTemplated(v, lb, r);
         for (int i = 0; i + 3 < v.length; i += 4)
@@ -168,10 +168,11 @@ public final class XrayPlacer {
         // дома и заборы по шаблону (вместо кубиков)
         for (LevelBuildings.House h : lb.houses) HouseBuilder.build(c, h);
         HouseBuilder.fence(c, lb, r);
+        PrefabLayer.place(c, r);
         // 4. деревья
         // кроны свисают в соседние чанки: ставим и деревья соседей, но только свою часть (у дерева свой посев)
         for (int ox = -1; ox <= 1; ox++) for (int oz = -1; oz <= 1; oz++)
-            for (int[] t : r.trees(cp.x + ox, cp.z + oz)) if (lb.houseAt(t[0], t[2]) == null)
+            for (int[] t : r.trees(cp.x + ox, cp.z + oz)) if (lb.houseAt(t[0], t[2]) == null && !ru.stalkerzone.zonemap.build.Prefabs.cleared(r.id, t[0], t[2]))
                 tree(c, t[0], r.groundBlock(t[0], t[2]) + 1, t[2], t[3], t[4], t[5], new Random(t[0] * 341873128712L + t[2] * 132897987541L));
     }
 

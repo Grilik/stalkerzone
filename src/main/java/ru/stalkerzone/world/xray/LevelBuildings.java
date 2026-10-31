@@ -55,16 +55,19 @@ public final class LevelBuildings {
                     JsonArray a = d.getAsJsonArray();
                     doors.add(new int[] {a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt()});
                 }
-                b.houses.add(new House(h.get("x0").getAsInt(), h.get("z0").getAsInt(), h.get("x1").getAsInt(), h.get("z1").getAsInt(),
+                House hh = new House(h.get("x0").getAsInt(), h.get("z0").getAsInt(), h.get("x1").getAsInt(), h.get("z1").getAsInt(),
                         h.get("y").getAsInt(), h.get("eave").getAsInt(), h.get("ridge").getAsInt(), "x".equals(h.get("axis").getAsString()),
-                        h.get("wall").getAsInt(), h.get("roof").getAsInt(), h.get("roofCover").getAsDouble(), doors));
+                        h.get("wall").getAsInt(), h.get("roof").getAsInt(), h.get("roofCover").getAsDouble(), doors);
+                // в границах построек по оригиналу (zonemap.build.Prefabs) шаблонных домов нет
+                if (!ru.stalkerzone.zonemap.build.Prefabs.cleared(id, (hh.x0() + hh.x1()) / 2, (hh.z0() + hh.z1()) / 2)) b.houses.add(hh);
             }
             for (JsonElement e : o.getAsJsonArray("fences")) {
                 JsonObject fo = e.getAsJsonObject();
                 Set<Long> cells = new HashSet<>();
                 for (JsonElement c : fo.getAsJsonArray("cells")) {
                     JsonArray a = c.getAsJsonArray();
-                    cells.add(key(a.get(0).getAsInt(), a.get(1).getAsInt()));
+                    if (!ru.stalkerzone.zonemap.build.Prefabs.cleared(id, a.get(0).getAsInt(), a.get(1).getAsInt()))
+                        cells.add(key(a.get(0).getAsInt(), a.get(1).getAsInt()));
                 }
                 Fence fe = new Fence(cells, fo.get("h").getAsInt());
                 b.fences.add(fe);
