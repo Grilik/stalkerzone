@@ -267,6 +267,47 @@ public final class ContractBoard {
                 break;
             }
         }
+
+        // v17 (карточка 021): Бандиты заказывают засаду на курьера Торговцев в пути и налёт на чужую ферму.
+        // Оба заказа берёт только игрок-бандит (NPC их не берут, см. npcTake); награда — из кассы заказчика.
+        Faction bandits = s.factions.get(ZoneScenario.BANDITS);
+        if (bandits != null && bandits.members > 0 && openCount() < MAX_OPEN) {
+            Caravan courier = courierInTransit(s);
+            if (courier != null && !has(Contract.Type.AMBUSH_COURIER, bandits.id, -1)
+                    && r.nextDouble() < KordonBalance.CONTRACT_AMBUSH_COURIER_CHANCE) {
+                long reward = KordonBalance.REWARD_AMBUSH + r.nextInt(KordonBalance.REWARD_AMBUSH_SPREAD);
+                Contract c = issueCash(s, Contract.Type.AMBUSH_COURIER, bandits.id, reward,
+                        KordonBalance.CONTRACT_AMBUSH_DAYS, KordonBalance.CONTRACT_DIFFICULTY);
+                if (c != null) { c.node = courier.route[courier.route.length - 1]; c.qty = courier.courierFor; }
+            }
+        }
+        if (bandits != null && bandits.members > 0 && openCount() < MAX_OPEN) {
+            int farm = farmTarget(s, bandits.id);
+            if (farm >= 0 && !has(Contract.Type.RAID_NODE, bandits.id, farm)
+                    && r.nextDouble() < KordonBalance.CONTRACT_RAID_NODE_CHANCE) {
+                long reward = KordonBalance.REWARD_RAID + r.nextInt(KordonBalance.REWARD_RAID_SPREAD);
+                Contract c = issueCash(s, Contract.Type.RAID_NODE, bandits.id, reward,
+                        KordonBalance.CONTRACT_RAID_DAYS, KordonBalance.CONTRACT_DIFFICULTY);
+                if (c != null) { c.node = farm; c.qty = s.nodes.get(farm).owner; }
+            }
+        }
+    }
+
+    /** Курьер Торговцев, идущий в пути к покупателю (карточка 021). */
+    private Caravan courierInTransit(Simulation s) {
+        Faction traders = s.traders();
+        if (traders == null) return null;
+        for (Caravan c : s.caravans) if (c.owner == traders.id && c.courierFor >= 0 && !c.returning) return c;
+        return null;
+    }
+
+    /** Чужая ферма для налёта Бандитов: сперва Свиноферма, иначе любой чужой узел с farmCap (карточка 021). */
+    private int farmTarget(Simulation s, int banditId) {
+        int farm = KordonBalance.CONTRACT_RAID_FARM;
+        if (farm < s.nodes.size() && s.nodes.get(farm).farmCap > 0 && s.nodes.get(farm).owner >= 0
+                && s.nodes.get(farm).owner != banditId) return farm;
+        for (Node n : s.nodes) if (n.farmCap > 0 && n.owner >= 0 && n.owner != banditId) return n.id;
+        return -1;
     }
 
     /** Логово стоит на дорожном узле военных или рядом с ним. */
@@ -310,7 +351,12 @@ public final class ContractBoard {
         // поэтому засаду заказывает враждебная хозяину группировка и издалека
         if (h == null && s.scenario.equals(Scenarios.KORDON)) h = kordonAmbusher(s, m);
         if (h != null) {
-            Contract a = issue(s, Contract.Type.AMBUSH_MEETING, h.id, 2000 + r.nextInt(1000), m.day - s.day, 4);
+            long reward = 2000 + r.nextInt(1000);
+            // v17 (карточка 021): на Кордоне засаду на встречу заказчик оплачивает только из кассы;
+            // нет денег — контракт не выставляется. В полной Зоне остаётся выдача товаром (issue).
+            Contract a = s.scenario.equals(Scenarios.KORDON)
+                    ? issueCash(s, Contract.Type.AMBUSH_MEETING, h.id, reward, m.day - s.day, 4)
+                    : issue(s, Contract.Type.AMBUSH_MEETING, h.id, reward, m.day - s.day, 4);
             if (a != null) { a.node = m.venue; a.deadline = m.day; a.qty = m.host * 100 + m.guest; }
         }
     }
@@ -355,6 +401,7 @@ public final class ContractBoard {
             // своё же сопровождение/поставка не заказываются себе; захват узла одиночки берут и у себя
             if (c.issuer == loners.id && c.type != Contract.Type.CAPTURE_NODE) continue;
             if (c.status != Contract.Status.OPEN || s.day - c.created < 3) continue;
+            // v17 (карточка 021): AMBUSH_COURIER и RAID_NODE берут только игроки-бандиты — NPC их не разбирают
             if (c.type != Contract.Type.FETCH_ARTIFACT && c.type != Contract.Type.SUPPLY && c.type != Contract.Type.CLEAR_LAIR
                     && c.type != Contract.Type.ESCORT_COURIER && c.type != Contract.Type.CAPTURE_NODE) continue;
             if (r.nextDouble() > chance) continue;
@@ -506,6 +553,36 @@ public final class ContractBoard {
         for (Contract c : list) {
             if (c.status != Contract.Status.TAKEN || c.type != Contract.Type.AMBUSH_MEETING || !c.player.equals(player)) continue;
             if (c.qty / 100 == faction || c.qty % 100 == faction) sum = sum(sum, payPlayer(s, c));
+        }
+        return sum;
+    }
+
+    /**
+     * Игрок-бандит устроил засаду на курьера Торговцев: курьер не дошёл, груз пропал у получателя.
+     * Игровой слой зовёт это, когда засада на курьера удалась (карточка 021).
+     */
+    public Reward courierAmbushed(Simulation s, int buyerId, String player) {
+        Reward sum = null;
+        for (Contract c : list) {
+            if (c.status == Contract.Status.TAKEN && c.type == Contract.Type.AMBUSH_COURIER
+                    && c.player.equals(player) && c.qty == buyerId) sum = sum(sum, payPlayer(s, c));
+        }
+        return sum;
+    }
+
+    /**
+     * Игрок-бандит разорил ферму: часть запасов еды узла уходит заказчику (бандитам), владелец не меняется.
+     * Игровой слой зовёт это, когда налёт на узел удался (карточка 021).
+     */
+    public Reward raidedFarm(Simulation s, int node, String player) {
+        Reward sum = null;
+        for (Contract c : list) {
+            if (c.status != Contract.Status.TAKEN || c.type != Contract.Type.RAID_NODE
+                    || c.node != node || !c.player.equals(player)) continue;
+            Faction bandits = s.factions.get(c.issuer);
+            Stock depot = node == bandits.baseNode ? bandits.stock : s.nodes.get(node).depot;
+            if (depot != bandits.stock) Stock.move(depot, bandits.stock, Good.FOOD, Math.max(1, depot.get(Good.FOOD) / 3));
+            sum = sum(sum, payPlayer(s, c));
         }
         return sum;
     }

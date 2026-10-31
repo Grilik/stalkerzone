@@ -25,6 +25,10 @@ public class KordonContractsTest {
         rewardsDebited();
         escortRaisesCourierBatches();
         captureOnlyOnOwnerChange();
+        banditContractsAppear();
+        npcDoNotTakeBanditContracts();
+        meetingAmbushNeedsCash();
+        banditResolution();
         oldSaveLoads();
         System.out.println(f == 0 ? "ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ" : "ПРОВАЛЕНО " + f);
         System.exit(f > 0 ? 1 : 0);
@@ -205,5 +209,78 @@ public class KordonContractsTest {
         // счётчик доставленных партий переживает сохранение v16
         s1.courierDelivered = 7;
         ck(Simulation.load(s1.save()).courierDelivered == 7, "счётчик курьерских партий сохраняется");
+    }
+
+    /** За 30 дней у Бандитов появляется хотя бы один заказ: засада на курьера или налёт (карточка 021). */
+    static void banditContractsAppear() {
+        for (long seed : new long[]{1, 2, 3, 4, 5}) {
+            Simulation s = Scenarios.create("kordon", seed);
+            boolean ambush = false, raid = false;
+            for (int d = 0; d < 30; d++) {
+                s.step();
+                for (Contract c : s.contracts.list) {
+                    if (c.issuer != ZoneScenario.BANDITS) continue;
+                    if (c.type == Contract.Type.AMBUSH_COURIER) ambush = true;
+                    if (c.type == Contract.Type.RAID_NODE) raid = true;
+                }
+            }
+            ck(ambush || raid, "сид " + seed + ": у Бандитов появился заказ на засаду (" + ambush + ") или налёт (" + raid + ")");
+        }
+    }
+
+    /** Заказы Бандитов берёт только игрок-бандит: NPC их не разбирают (карточка 021). */
+    static void npcDoNotTakeBanditContracts() {
+        for (long seed : new long[]{1, 2, 3, 4, 5}) {
+            Simulation s = Scenarios.create("kordon", seed);
+            boolean npcTook = false;
+            for (int d = 0; d < 30; d++) {
+                s.step();
+                for (Contract c : s.contracts.list) {
+                    if (c.type != Contract.Type.AMBUSH_COURIER && c.type != Contract.Type.RAID_NODE) continue;
+                    if (c.taker >= 0) npcTook = true;
+                }
+            }
+            ck(!npcTook, "сид " + seed + ": NPC не берут заказы Бандитов");
+        }
+    }
+
+    /** При пустой кассе заказчика засада на встречу на Кордоне не выставляется (карточка 021). */
+    static void meetingAmbushNeedsCash() {
+        for (long seed : new long[]{1, 2, 3}) {
+            Simulation s = Scenarios.create("kordon", seed);
+            boolean any = false;
+            for (int d = 0; d < 40; d++) {
+                for (Faction f : s.factions) f.stock.money = 0; // кассы пусты: заказчик не может оплатить
+                s.step();
+                for (Contract c : s.contracts.list) if (c.type == Contract.Type.AMBUSH_MEETING) any = true;
+            }
+            ck(!any, "сид " + seed + ": без денег AMBUSH_MEETING не выставляется");
+        }
+    }
+
+    /** Налёт: запасы еды уходят бандитам, владелец не меняется; засада на курьера — груз пропал (карточка 021). */
+    static void banditResolution() {
+        Simulation s = Scenarios.create("kordon", 5);
+        for (int d = 0; d < 3; d++) s.step();
+        int farm = KordonBalance.CONTRACT_RAID_FARM;
+        int owner = s.nodes.get(farm).owner;
+        long foodBefore = s.nodes.get(farm).depot.get(Good.FOOD);
+        long banditFood = s.factions.get(ZoneScenario.BANDITS).stock.get(Good.FOOD);
+        Contract raid = new Contract(900100, Contract.Type.RAID_NODE, ZoneScenario.BANDITS);
+        raid.node = farm; raid.qty = owner; raid.created = s.day; raid.deadline = s.day + 20; raid.difficulty = 1;
+        s.contracts.list.add(raid);
+        raid.status = Contract.Status.TAKEN; raid.taker = Contract.PLAYER; raid.player = "test";
+        s.contracts.raidedFarm(s, farm, "test");
+        ck(raid.status == Contract.Status.DONE, "налёт закрыт при удачном налёте: " + raid.status.ru);
+        ck(s.nodes.get(farm).owner == owner, "владелец фермы не сменился");
+        ck(s.nodes.get(farm).depot.get(Good.FOOD) < foodBefore, "у фермы убыло еды");
+        ck(s.factions.get(ZoneScenario.BANDITS).stock.get(Good.FOOD) > banditFood, "бандиты получили еду");
+
+        Contract amb = new Contract(900101, Contract.Type.AMBUSH_COURIER, ZoneScenario.BANDITS);
+        amb.node = 0; amb.qty = ZoneScenario.LONERS; amb.created = s.day; amb.deadline = s.day + 20; amb.difficulty = 1;
+        s.contracts.list.add(amb);
+        amb.status = Contract.Status.TAKEN; amb.taker = Contract.PLAYER; amb.player = "test";
+        ck(s.contracts.courierAmbushed(s, ZoneScenario.LONERS, "test") != null && amb.status == Contract.Status.DONE,
+                "засада на курьера закрыта по пропавшему грузу: " + amb.status.ru);
     }
 }

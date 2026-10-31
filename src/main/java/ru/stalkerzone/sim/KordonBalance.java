@@ -177,7 +177,18 @@ public final class KordonBalance {
     /** Сложность контрактов Кордона, которые разбирают NPC (1 — почти всегда удача). */
     public static final int CONTRACT_DIFFICULTY = 1;
 
-
+    // --- заказы Бандитов (карточка 021) --------------------------------------------------
+    /** Узел-цель налёта по умолчанию: Свиноферма (KordonScenario.FARM). */
+    public static final int CONTRACT_RAID_FARM = 10;
+    /** Шанс в день, что Бандиты выложат заказ на засаду против курьера Торговцев в пути. */
+    public static final double CONTRACT_AMBUSH_COURIER_CHANCE = 0.12;
+    /** Шанс в день, что Бандиты выложат заказ на налёт на чужую ферму. */
+    public static final double CONTRACT_RAID_NODE_CHANCE = 0.12;
+    /** Награды заказов Бандитов — порядка награды за сопровождение курьера (руб.) и их разброс. */
+    public static final long REWARD_AMBUSH = REWARD_ESCORT, REWARD_RAID = REWARD_ESCORT;
+    public static final int REWARD_AMBUSH_SPREAD = REWARD_ESCORT_SPREAD, REWARD_RAID_SPREAD = REWARD_ESCORT_SPREAD;
+    /** Сроки исполнения заказов Бандитов (дней). */
+    public static final int CONTRACT_AMBUSH_DAYS = CONTRACT_ESCORT_DAYS, CONTRACT_RAID_DAYS = CONTRACT_CAPTURE_DAYS;
 
     // --- Доктрины трёх группировок Кордона (уточняют характер для локального среза) ---
 

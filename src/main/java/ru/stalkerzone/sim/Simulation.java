@@ -2317,7 +2317,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(16); // v16: контракты Кордона — сопровождение курьера и захват узла (карточка 006)
+            out.writeInt(17); // v17: заказы Бандитов на Кордоне — засада на курьера и налёт (карточка 021)
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2468,7 +2468,7 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 16) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 17) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
