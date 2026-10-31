@@ -22,12 +22,14 @@ permissions:
 jobs:
   run:
     # после слияния PR карточки — сразу следующая; на вехах (006, 011, 015) конвейер ждёт архитектора
+    # выключатель (карточка 019): переменная репозитория CONVEYOR_PAUSED=1 — конвейер не стартует
     if: >-
+      vars.CONVEYOR_PAUSED != '1' && (
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'task/') &&
        !startsWith(github.event.pull_request.head.ref, 'task/006') &&
        !startsWith(github.event.pull_request.head.ref, 'task/011') &&
-       !startsWith(github.event.pull_request.head.ref, 'task/015'))
+       !startsWith(github.event.pull_request.head.ref, 'task/015')))
     strategy:
       fail-fast: false
       matrix:
@@ -59,7 +61,7 @@ jobs:
         if: steps.lane.outputs.skip == '0'
         with:
           node-version: 22
-      - run: npm install -g cline
+      - run: npm install -g cline @anthropic-ai/claude-code
         if: steps.lane.outputs.skip == '0'
       - name: Карточка
         if: steps.lane.outputs.skip == '0'
@@ -76,4 +78,6 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           MIN_BALANCE: ${{ vars.MIN_BALANCE }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          CLAUDE_DAILY_LIMIT: ${{ vars.CLAUDE_DAILY_LIMIT }}
         run: bash tools/conveyor/conveyor.sh
