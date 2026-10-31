@@ -15,6 +15,12 @@ public final class Prefabs {
 
     public interface Ground { int at(int x, int z); }
 
+    /** Рабочее место постройки (карточка 031): вид, координаты (y — пол над землёй/площадкой). */
+    public record Point(String kind, int x, int y, int z) {}
+
+    /** Уровень развития, на котором снимаются рабочие места (как генерация мира). */
+    public static final int POINT_LEVEL = 1;
+
     /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками; пусто — уровень без замен. */
     public static List<int[]> clear(String levelId) {
         return "l01_escape".equals(levelId) ? KordonSouthPost.CLEAR : List.of();
@@ -23,6 +29,21 @@ public final class Prefabs {
     public static boolean cleared(String levelId, int x, int z) {
         for (int[] c : clear(levelId)) if (x >= c[0] && x <= c[2] && z >= c[1] && z <= c[3]) return true;
         return false;
+    }
+
+    /** Рабочие места построек уровня (карточка 031): каждый сборщик выдаёт свои точки тем же проходом. */
+    public static List<Point> points(String levelId, Ground g) { return points(levelId, g, POINT_LEVEL); }
+
+    /** Рабочие места построек уровня на уровне развития lvl. */
+    public static List<Point> points(String levelId, Ground g, int lvl) {
+        java.util.ArrayList<Point> out = new java.util.ArrayList<>();
+        BlockSink s = new BlockSink() {
+            @Override public void set(int x, int y, int z, String st) {}
+            @Override public int ground(int x, int z) { return g.at(x, z); }
+            @Override public void mark(String kind, int x, int y, int z) { out.add(new Point(kind, x, y, z)); }
+        };
+        if ("l01_escape".equals(levelId)) KordonSouthPost.build(s, lvl);
+        return out;
     }
 
     // упаковка позиции: x и z по 21 бит (±1 млн), y — 21 бит; раньше z+2^21 вылезал в поле y и ломал координаты

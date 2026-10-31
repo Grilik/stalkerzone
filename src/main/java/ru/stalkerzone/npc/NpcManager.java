@@ -13,6 +13,7 @@ import ru.stalkerzone.sim.Simulation;
 import ru.stalkerzone.world.SpawnFinder;
 import ru.stalkerzone.world.ZoneBounds;
 import ru.stalkerzone.world.ZoneWorld;
+import ru.stalkerzone.zonemap.build.Prefabs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -248,9 +249,11 @@ public final class NpcManager {
 
 
 
-    /** Спавн NPC на случайной точке beds/guards/campfire из level points. */
+    /** Спавн NPC на рабочем месте: из построек уровня (карточка 031) или из старых точек level points. */
     private static StalkerEntity spawnAtLevelPoint(ServerLevel level, Simulation sim, Node n,
                                                     List<StalkerEntity> present) {
+        List<Prefabs.Point> pp = prefabPoints(level, sim, n);
+        if (pp != null) return spawnAtPrefabPoint(level, sim, n, present, pp);
         String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
         if (levelId == null) return null;
         com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(levelId, n.id);
@@ -305,6 +308,69 @@ public final class NpcManager {
         // fallback: случайная точка в радиусе
         int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
         return spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+    }
+
+    /** Рабочие места постройки узла (карточка 031): точки не меняются, поэтому кэш по уровню. */
+    private static final java.util.Map<String, List<Prefabs.Point>> PREFAB_POINTS = new java.util.HashMap<>();
+
+    /** Точки постройки, в чьих границах замены лежит центр узла, или null, если постройки нет. */
+    private static List<Prefabs.Point> prefabPoints(ServerLevel level, Simulation sim, Node n) {
+        String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
+        if (levelId == null || Prefabs.clear(levelId).isEmpty()) return null;
+        int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        if (!Prefabs.cleared(levelId, cx, cz)) return null;
+        synchronized (PREFAB_POINTS) {
+            List<Prefabs.Point> ps = PREFAB_POINTS.get(levelId);
+            if (ps == null) {
+                // y нужен только точкам; непрогруженные чанки не генерируем
+                Prefabs.Ground g = (x, z) -> level.hasChunk(x >> 4, z >> 4)
+                        ? SpawnFinder.groundAt(level, x, z).getY() : 75;
+                ps = Prefabs.points(levelId, g);
+                PREFAB_POINTS.put(levelId, ps);
+            }
+            return ps;
+        }
+    }
+
+    /** Спавн на рабочих местах постройки: часовые на постах, остальные — на нарах и у костра. */
+    private static StalkerEntity spawnAtPrefabPoint(ServerLevel level, Simulation sim, Node n,
+                                                     List<StalkerEntity> present, List<Prefabs.Point> pts) {
+        List<Prefabs.Point> guards = ofKind(pts, "guard");
+        List<Prefabs.Point> spots = new java.util.ArrayList<>(ofKind(pts, "bed"));
+        int beds = spots.size();
+        spots.addAll(ofKind(pts, "cook"));
+        // Сначала guards (первые двое — часовые)
+        int guardCount = 0;
+        for (StalkerEntity e : present) if (e.isGuard()) guardCount++;
+        if (guardCount < Math.min(2, guards.size())) {
+            Prefabs.Point p = guards.get(RND.nextInt(guards.size()));
+            StalkerEntity e = spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner,
+                    new BlockPos(p.x(), p.y(), p.z()));
+            if (e != null) { e.getPersistentData().putBoolean("sz_guard", true); return e; }
+        }
+        // Потом нары и костёр
+        if (!spots.isEmpty()) {
+            int idx = RND.nextInt(spots.size());
+            Prefabs.Point p = spots.get(idx);
+            StalkerEntity e = spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner,
+                    new BlockPos(p.x(), p.y(), p.z()));
+            if (e != null && idx >= beds) {   // своё место у костра: NPC сидит здесь и смотрит на огонь
+                e.getPersistentData().putBoolean("sz_campfire", true);
+                e.getPersistentData().putInt("sz_fire_x", p.x());
+                e.getPersistentData().putInt("sz_fire_y", p.y());
+                e.getPersistentData().putInt("sz_fire_z", p.z());
+            }
+            if (e != null) return e;
+        }
+        int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        return spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+    }
+
+    /** Точки нужного вида, в порядке сборщика. */
+    private static List<Prefabs.Point> ofKind(List<Prefabs.Point> pts, String kind) {
+        List<Prefabs.Point> out = new java.util.ArrayList<>();
+        for (Prefabs.Point p : pts) if (p.kind().equals(kind)) out.add(p);
+        return out;
     }
 
     /** Спавн в конкретную точку (без проверки земли — полагаемся на точку из файла). */

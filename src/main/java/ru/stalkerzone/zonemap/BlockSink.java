@@ -11,6 +11,9 @@ public interface BlockSink {
     /** Высота земли (верхний твёрдый блок + 1) в точке мира; для зданий на рельефе. */
     int ground(int x, int z);
 
+    /** Рабочее место сборщика (карточка 031): вид («guard», «bed»…), координаты. По умолчанию — никуда. */
+    default void mark(String kind, int x, int y, int z) {}
+
     default void fill(int x1, int y1, int z1, int x2, int y2, int z2, String state) {
         for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++)
             for (int y = Math.min(y1, y2); y <= Math.max(y1, y2); y++)
