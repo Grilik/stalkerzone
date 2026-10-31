@@ -14,11 +14,11 @@ public final class KordonBalance {
 
     // --- стартовые логова: узел, вид, начальная сила ---------------------------------
     public static final LairDef[] START_LAIRS = {
-            new LairDef(13, LairKind.DOGS, 28.0),
-            new LairDef(9, LairKind.DOGS, 28.0),
-            new LairDef(14, LairKind.FLESH, 26.0),
-            new LairDef(15, LairKind.FLESH, 26.0),
-            new LairDef(7, LairKind.RODENTS, 24.0),
+            new LairDef(13, LairKind.DOGS, 20.0),
+            new LairDef(9, LairKind.DOGS, 20.0),
+            new LairDef(14, LairKind.FLESH, 20.0),
+            new LairDef(15, LairKind.FLESH, 20.0),
+            new LairDef(7, LairKind.RODENTS, 18.0),
     };
 
     /** Описание стартового логова. */
@@ -66,7 +66,9 @@ public final class KordonBalance {
 
     // --- веса целей для нападений -------------------------------------------------------
     public static final double[] RAID_TARGET_WEIGHT = new double[19];
-    static { RAID_TARGET_WEIGHT[0] = 3.0; RAID_TARGET_WEIGHT[10] = 3.0; }
+    static { RAID_TARGET_WEIGHT[0] = 1.5; RAID_TARGET_WEIGHT[10] = 1.5; }
+    /** Минимальная сила логова для налёта на Кордоне. */
+    public static final double LAIR_RAID_MIN = 25;
 
     // --- опасность проходов -------------------------------------------------------------
     public static final int[][] PASS_EDGES = {
@@ -107,5 +109,140 @@ public final class KordonBalance {
             if (pick < 0) return kinds.get(i);
         }
         return kinds.get(0);
+    }
+
+    // ====================================================================================
+    //  Баланс группировок Кордона (карточка 005)
+    // ====================================================================================
+
+    /** Узел-вход с Большой земли (BIG_LAND). Новички появляются здесь и идут в деревню. */
+    public static final int GATEWAY_NODE = 3;
+    /** Узел деревни новичков, куда приходят люди с Большой земли. */
+    public static final int VILLAGE_NODE = 0;
+    /** Узлы-выходы: Большая земля и Свалка — люди покидают срез через них. */
+    public static final int[] EXIT_NODES = {3, 12};
+
+    /** Множитель притока новичков для сценария Кордон (относительно ARRIVALS_PER_DAY в People). */
+    public static final double KORDON_ARRIVAL_FACTOR = 4.5;
+    /** Доля новичков, которые сразу идут к бандитам (дезертиры). */
+    public static final double DESERTER_SHARE = 0.15;
+    /** Шанс, что сталкер уходит из Зоны через выход (за день, от численности фракции). */
+    public static final double LEAVE_ZONE_RATE = 0.0002;
+    /** Плата за приём новичка (сжигается через Ledger). */
+    public static final long JOIN_FEE = 30;
+
+    /** Узлы, которые военные НЕ атакуют (чужие базы): деревня, бункер, АТП, ферма, дальний пост, выходы. */
+    public static final int[] MILITARY_NO_ATTACK = {0, 1, 5, 10, 11, 3, 6, 12};
+    /** Узлы-дороги, где военные могут устраивать рейды на бандитов. */
+    public static final int[] MILITARY_ROAD_NODES = {4, 8, 9};
+    /** Военные предпочитают атаковать бандитов на этих узлах (вес выше). */
+    public static final double MILITARY_ROAD_WEIGHT = 2.5;
+
+    /** Шанс перехвата каравана военными (в день, если караван проходит через их узел). */
+    public static final double MILITARY_INTERCEPT_CHANCE = 0.03;
+
+    // --- Доктрины трёх группировок Кордона (уточняют характер для локального среза) ---
+
+    /** Военные на Кордоне: держат юг и мост, не лезут в чужие базы, но карают бандитов. */
+    public static final Doctrine MILITARY_DOCTRINE = new Doctrine(0.15, 0.6, 0.85, 0.3, 0.5, 0.7);
+    /** Бандиты Кордона: агрессивны, цель — элеватор и ферма, живут грабежом. */
+    public static final Doctrine BANDIT_DOCTRINE = new Doctrine(1.1, 0.9, 0.1, 0.1, 0.0, 0.35);
+    /** Одиночки Кордона: осторожны, зарабатывают артефактами и охотой, обороняют своё. */
+    public static final Doctrine LONER_DOCTRINE = new Doctrine(0.6, 0.35, 0.5, 0.75, 0.2, 0.4);
+
+    // ====================================================================================
+    //  Мозги группировок Кордона (FactionBrain)
+    // ====================================================================================
+
+    /** Военные Кордона: не захватывают чужие базы, атакуют бандитов на дорогах. */
+    public static final class MilitaryBrain implements FactionBrain {
+        private final UtilityBrain inner = new UtilityBrain();
+
+        @Override
+        public List<Command> decide(Simulation sim, Faction f, Random rng) {
+            List<Command> commands = inner.decide(sim, f, rng);
+            List<Command> filtered = new ArrayList<>(commands.size());
+            for (Command c : commands) {
+                if (c instanceof Command.Attack a) {
+                    if (!isMilitaryTarget(sim, a.node())) continue;
+                }
+                filtered.add(c);
+            }
+            // иногда перехватывают караваны: рейд на бандитский дорожный узел
+            if (rng.nextDouble() < MILITARY_INTERCEPT_CHANCE) {
+                int banditNode = findBanditRoadNode(sim);
+                if (banditNode >= 0 && !hasAttackCmd(filtered, banditNode)) {
+                    filtered.add(new Command.Attack(banditNode));
+                }
+            }
+            return filtered;
+        }
+
+        private static boolean isMilitaryTarget(Simulation sim, int node) {
+            for (int n : MILITARY_NO_ATTACK) if (n == node) return false;
+            Node target = sim.nodes.get(node);
+            if (target.owner >= 0) {
+                Faction owner = sim.factions.get(target.owner);
+                return owner.raider; // воюют только с бандитами
+            }
+            return true; // мутанты — можно
+        }
+
+        private static int findBanditRoadNode(Simulation sim) {
+            for (int n : MILITARY_ROAD_NODES) {
+                if (n >= sim.nodes.size()) continue;
+                Node node = sim.nodes.get(n);
+                if (node.owner >= 0 && sim.factions.get(node.owner).raider) return n;
+            }
+            return -1;
+        }
+
+        private static boolean hasAttackCmd(List<Command> cmds, int node) {
+            for (Command c : cmds) if (c instanceof Command.Attack a && a.node() == node) return true;
+            return false;
+        }
+    }
+
+    /** Бандиты Кордона: фокус на элеватор и ферму, живут грабежом. */
+    public static final class BanditBrain implements FactionBrain {
+        private final UtilityBrain inner = new UtilityBrain();
+
+        @Override
+        public List<Command> decide(Simulation sim, Faction f, Random rng) {
+            List<Command> cmds = inner.decide(sim, f, rng);
+            // цель — элеватор (узел 4) и ферма (узел 10): дополнительный шанс атаки
+            if (f.phase == Phase.ACCUMULATE && sim.readiness(f) >= 0.5 && f.stock.money >= f.members * 5L) {
+                for (int target : new int[]{4, 10}) {
+                    if (target >= sim.nodes.size()) continue;
+                    Node n = sim.nodes.get(target);
+                    if (n.owner != f.id && sim.minDistFromOwned(f, target) <= 3 && rng.nextDouble() < 0.06) {
+                        boolean already = false;
+                        for (Command c : cmds) if (c instanceof Command.Attack a && a.node() == target) { already = true; break; }
+                        if (!already) cmds.add(new Command.Attack(target));
+                    }
+                }
+            }
+            return cmds;
+        }
+    }
+
+    /** Одиночки Кордона: оборона деревни и фермы, цель — элеватор, доход от артефактов. */
+    public static final class LonerBrain implements FactionBrain {
+        private final UtilityBrain inner = new UtilityBrain();
+
+        @Override
+        public List<Command> decide(Simulation sim, Faction f, Random rng) {
+            List<Command> cmds = inner.decide(sim, f, rng);
+            // цель — элеватор (узел 4): периодические попытки захвата
+            if (f.phase == Phase.ACCUMULATE && sim.readiness(f) >= 0.6 && f.stock.money >= f.members * 5L) {
+                Node elev = sim.nodes.get(4);
+                if (elev.owner != f.id && sim.minDistFromOwned(f, 4) <= 3 && rng.nextDouble() < 0.04) {
+                    boolean already = false;
+                    for (Command c : cmds) if (c instanceof Command.Attack a && a.node() == 4) { already = true; break; }
+                    if (!already) cmds.add(new Command.Attack(4));
+                }
+            }
+            return cmds;
+        }
     }
 }

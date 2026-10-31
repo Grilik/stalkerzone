@@ -262,17 +262,80 @@ public final class People {
     }
 
     private void arrivals(Simulation s, Random r) {
-        Node kordon = s.nodes.get(0);
-        double mean = ARRIVALS_PER_DAY * (1 + 0.35 * Math.sin(s.day / 37.0));
+        // шлюз Большой земли (Кордон) или стандартный вход (Кордон-деревня)
+        int gateway = s.gatewayNode > 0 ? s.gatewayNode : 0;
+        Node entry = s.nodes.get(gateway);
+        double factor = s.gatewayNode > 0 ? KordonBalance.KORDON_ARRIVAL_FACTOR : 1.0;
+        double mean = People.ARRIVALS_PER_DAY * factor * (1 + 0.35 * Math.sin(s.day / 37.0));
         int n = s.randomRound(mean);
+        // приток с Большой земли: новички идут в деревню
+        int village = s.gatewayNode > 0 ? KordonBalance.VILLAGE_NODE : 0;
         for (int i = 0; i < n; i++) {
             Walker w = new Walker();
             w.bravery = trait(r);
             w.greed = trait(r);
             w.loyalty = trait(r);
             arrived++;
-            if (!route(s, w, kordon.id, -1, r)) leftZone++;
+            // если есть шлюз, часть сразу идёт к бандитам (дезертиры)
+            if (s.gatewayNode > 0 && r.nextDouble() < KordonBalance.DESERTER_SHARE) {
+                Faction bandits = banditFaction(s);
+                if (bandits != null && s.graph.reachable(entry.id, bandits.baseNode)) {
+                    w.dest = bandits.id;
+                    int[] path = s.graph.path(entry.id, bandits.baseNode);
+                    w.path = path.length > 0 ? path : new int[]{entry.id, bandits.baseNode};
+                    w.leg = 0;
+                    transit.add(w);
+                    continue;
+                }
+            }
+            // идёт через деревню: сперва маршрут до деревни, потом выбор фракции
+            if (s.gatewayNode > 0 && entry.id != village) {
+                int[] leg = s.graph.path(entry.id, village);
+                if (leg.length == 0) { leftZone++; continue; }
+                // новичок «телепортируется» в деревню (путь короткий и безопасный)
+                if (!route(s, w, village, -1, r)) leftZone++;
+            } else {
+                if (!route(s, w, entry.id, -1, r)) leftZone++;
+            }
         }
+        // отток: часть людей уходит из Зоны через выходы
+        if (s.exitNodes.length > 0) {
+            outflow(s, r);
+        }
+    }
+
+    /** Отток: сталкеры уходят через выходы, унося часть еды (export в Ledger). */
+    private void outflow(Simulation s, Random r) {
+        for (Faction f : s.factions) {
+            if (f.isService() || !f.takesNewcomers || f.members < 5) continue;
+            int leaving = s.randomRound(f.members * KordonBalance.LEAVE_ZONE_RATE);
+            if (leaving <= 0) continue;
+            leaving = Math.min(leaving, f.members - 3);
+            f.members -= leaving;
+            int foodOut = Math.min(f.stock.get(Good.FOOD), leaving * 2);
+            if (foodOut > 0) {
+                f.stock.qty[Good.FOOD.ordinal()] -= foodOut;
+                s.ledger.exported[Good.FOOD.ordinal()] += foodOut;
+            }
+            leftZone += leaving;
+        }
+        // пополнение кассы фракций (приток денег с Большой земли через контрабанду и налоги)
+        if (s.day % 10 == 0) {
+            for (Faction f : s.factions) {
+                if (f.isService() || !f.takesNewcomers || f.members < 1) continue;
+                long stipend = Math.min(2000, (long) f.members * 60);
+                f.stock.money += stipend;
+                s.ledger.moneyMinted += stipend;
+            }
+        }
+    }
+
+    /** Найти фракцию бандитов в симуляции. */
+    private static Faction banditFaction(Simulation s) {
+        for (Faction f : s.factions) {
+            if (f.raider && f.takesNewcomers) return f;
+        }
+        return null;
     }
 
     /** Выбрать фракцию и маршрут. Возвращает false, если идти некуда (новичок уходит из Зоны). */
@@ -343,7 +406,7 @@ public final class People {
 
     private void join(Simulation s, Walker w, Random r) {
         Faction f = s.factions.get(w.dest);
-        long fee = 120;
+        long fee = s.gatewayNode > 0 ? KordonBalance.JOIN_FEE : 120;
         boolean room = s.housingOf(f) > f.members;
         if (!room || f.stock.money < fee || !f.takesNewcomers) {
             // не взяли: ищет другую фракцию отсюда же, иначе уходит
