@@ -333,8 +333,6 @@ public final class Simulation {
 
     /** Поставить аномалию внутри поля района: центр поля фиксирован, меняется только место вокруг него. */
     private void placeInDistrict(Anomaly a, AnomalyDistrict d, Node n, Random r) {
-        if (!d.isCentered()) d.setCenter((int) Math.round((r.nextDouble() - 0.5) * d.radius * 0.5),
-                (int) Math.round((r.nextDouble() - 0.5) * d.radius * 0.5));
         int bx0 = n.x * ZoneBounds.SCALE, bz0 = n.z * ZoneBounds.SCALE;
         for (int attempt = 0; attempt < 120; attempt++) {
             double ang = r.nextDouble() * Math.PI * 2;

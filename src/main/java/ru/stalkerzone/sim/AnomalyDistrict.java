@@ -21,10 +21,10 @@ public final class AnomalyDistrict {
     public final int radius;
     /** Допустимые в районе типы аномалий. */
     public final AnomalyType[] pool;
-    /** Центр поля относительно узла, блоки (карточка 029). Ставится один раз и после выброса не меняется. */
+    /** Центр поля относительно узла, блоки (карточка 029). Задан сценарием (по умолчанию — сам узел района, т.е. туннель для электр), не случайный и не меняется. */
     public int cdx, cdz;
     /** Выбран ли уже центр поля. */
-    private boolean centered;
+    private boolean centered = true;
 
     public AnomalyDistrict(int node, String ru, int min, int max, double artifactBoost, int radius, AnomalyType... pool) {
         this.node = node;
