@@ -512,7 +512,8 @@ public class StalkerEntity extends PathfinderMob {
                 } else {
                     sim.npcKilled(faction());
                 }
-                if (getPersistentData().getBoolean("sz_caravan")) {
+                // sz_caravan_idx — старый тег (до карточки 023), читаем как fallback для уже заспавненных NPC
+                if (getPersistentData().getBoolean("sz_caravan") || getPersistentData().contains("sz_caravan_idx")) {
                     CaravanManager.caravanNpcKilled(this, sim);
                 }
                 if (source.getEntity() instanceof Player) dropLoot(sim);
