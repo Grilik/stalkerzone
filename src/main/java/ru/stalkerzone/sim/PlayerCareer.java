@@ -82,6 +82,14 @@ public final class PlayerCareer {
         return 1.0 - disc + markup;
     }
 
+    /**
+     * Итоговый множитель цены покупки у торговца для игрока (карточка 011): скидки и наценки по репутации (v1.16)
+     * поверх наценки Торговцев для группировки покупателя (карточка 002). Без фракции — как нейтрал.
+     */
+    public static double traderBuyFactor(int rep, boolean member, int rank, int playerFaction) {
+        return buyFactor(rep, member, rank) * ZoneScenario.tradersMarkup(playerFaction);
+    }
+
     /** Множитель цены продажи торговцу: своим он платит чуть больше, недругам меньше. */
     public static double sellFactor(int rep, boolean member, int rank) {
         double bonus = Math.min(0.03, (rep >= 40 ? 0.01 : 0) + (member ? 0.01 + 0.005 * Math.max(0, rank) : 0));

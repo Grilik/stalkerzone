@@ -219,6 +219,7 @@ public class StalkerEntity extends PathfinderMob {
     private boolean isEnemyNpc(LivingEntity other) {
         if (isBuilder() || (other instanceof StalkerEntity os && os.isDowned())) return false;
         if (isTrader() || !(other instanceof StalkerEntity o) || o.isTrader() || o.faction() == faction()) return false;
+        if (inQuietZone()) return false;   // карточка 011: у бункера Сидоровича не начинают бой
         Simulation sim = sim();
         if (sim == null || faction() >= sim.factions.size()) return false;
         return sim.hostilityTo(sim.factions.get(faction()), o.faction()) >= 0.6;
@@ -227,9 +228,17 @@ public class StalkerEntity extends PathfinderMob {
     /** Враг ли игрок: плохая репутация (v1.14), член враждебной группировки (v1.16). Своих не трогают. */
     private boolean hostileTo(LivingEntity p) {
         if (isTrader() || !(p instanceof net.minecraft.server.level.ServerPlayer sp)) return false;
+        if (inQuietZone()) return false;   // карточка 011: у бункера Сидоровича не начинают бой
         Simulation sim = sim();
         if (sim == null || faction() >= sim.factions.size()) return Reputation.hostile(sp, faction());
         return PlayerFaction.npcHostile(faction(), sp, sim);
+    }
+
+    /** В «тихой зоне» торговца ли NPC: там группировки не начинают бой (карточка 011). */
+    private boolean inQuietZone() {
+        if (!(this.level() instanceof net.minecraft.server.level.ServerLevel sl)) return false;
+        Simulation sim = sim();
+        return sim != null && NpcManager.quietZone(sl, sim, this.getX(), this.getZ());
     }
 
     // ---------------------------------------------------------------- бой (v1.16)

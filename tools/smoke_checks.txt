@@ -25,3 +25,6 @@ execute positioned 4 80 8 unless block ~ ~ ~ minecraft:cobblestone_wall run say 
 zone post|Военные
 # Регион gate моста задан в файле точек локации
 zone post|gate
+# --- карточка 011: торговец на точке trader у бункера Сидоровича ---
+execute positioned -35 75 -8 if entity @e[type=stalkerzone:stalker,name="Торговец Сидорович",distance=..16] run say TraderAtBunker|TraderAtBunker
+
