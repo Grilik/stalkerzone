@@ -29,7 +29,7 @@ public final class MutantManager {
 
     /** Игрок ближе этого к логову: логово «живёт» в мире. */
     private static final int ACTIVE = 110;
-    private static final int MAX_PER_LAIR = 6;
+    private static final int MAX_PER_LAIR = ru.stalkerzone.sim.Lair.MAX_MUTANTS;
     /** Новый мутант у логова не чаще чем раз в столько секунд. */
     private static final int SPAWN_EVERY = 6;
 

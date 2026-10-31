@@ -191,6 +191,8 @@ public final class KordonBalance {
     public static final double CONTRACT_MILITARY_LAIR_CHANCE = 0.20;
     /** Минимальная сила логова у дороги, за которое берутся военные. */
     public static final double CONTRACT_LAIR_MIN_STRENGTH = 12;
+    /** Минимальный срок контракта игрока на логово (дней): меньше — не давать, даже если выдали раньше (карточка 026). */
+    public static final int CONTRACT_LAIR_PLAYER_MIN_DAYS = 5;
 
     /** Награда за принос: цена товара с наценкой заказа. */
     public static final double CONTRACT_FETCH_MARKUP = 1.6;

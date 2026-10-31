@@ -54,6 +54,12 @@ public final class Contract {
     public Status status = Status.OPEN;
     /** Для NPC-исполнителя: день, когда станет ясен исход. */
     public int resolveDay;
+    /**
+     * Карточка 026: счётчик целей контракта на логово (CLEAR_LAIR) у игрока. {@code lairTotal} — сколько
+     * мутантов логова было на момент взятия, {@code lairKilled} — сколько из них убил игрок. У остальных
+     * контрактов и у NPC нули. В сохранение пишется отдельной секцией (v18), старые версии читаются без неё.
+     */
+    public int lairTotal, lairKilled;
 
     public Contract(int id, Type type, int issuer) {
         this.id = id;

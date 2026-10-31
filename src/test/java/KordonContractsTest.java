@@ -32,6 +32,10 @@ public class KordonContractsTest {
         ambushRemovesCourier();
         raidNodeNeedsFood();
         oldSaveLoads();
+        playerLairNotStolen();
+        playerLairSoursWithoutPlayer();
+        playerLairCreditedToPlayer();
+        lairCounterSaved();
         System.out.println(f == 0 ? "ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ" : "ПРОВАЛЕНО " + f);
         System.exit(f > 0 ? 1 : 0);
     }
@@ -345,5 +349,94 @@ public class KordonContractsTest {
             }
             ck(!raidIssued, "сид " + seed + ": без еды на ферме RAID_NODE не выставляется");
         }
+    }
+
+    // ---------------------------------------------------------------- карточка 026: контракты игрока на логово
+
+    /** Контракт игрока на логово: заказчик и залог как у обычного заказа, но берёт его игрок. */
+    static Contract playerLairContract(Simulation s, int node, int days, long escrow, int issuer) {
+        Contract c = new Contract(s.contracts.nextId++, Contract.Type.CLEAR_LAIR, issuer);
+        c.node = node;
+        c.created = s.day;
+        c.deadline = s.day + days;
+        c.difficulty = 2;
+        c.escrow = escrow;
+        s.factions.get(issuer).stock.money -= escrow;
+        s.contracts.list.add(c);
+        return c;
+    }
+
+    /** Взятый игроком контракт на логово NPC не отбирают; счётчик целей и срок выставлены при взятии. */
+    static void playerLairNotStolen() {
+        Simulation s = Scenarios.create("kordon", 3);
+        for (int d = 0; d < 3; d++) s.step();
+        Lair l = s.lairs.get(0);
+        Contract c = playerLairContract(s, l.node, 25, 1000, ZoneScenario.MILITARY);
+        ck(s.contracts.take(s, c.id, "Тестер") == null, "игрок взял контракт на логово");
+        ck(c.taker == Contract.PLAYER && c.status == Contract.Status.TAKEN, "контракт принадлежит игроку");
+        ck(c.lairTotal >= 1 && c.lairTotal == l.mutantCount(),
+                "счётчик мутантов логова выставлен при взятии: " + c.lairTotal);
+        ck(c.deadline - s.day >= KordonBalance.CONTRACT_LAIR_PLAYER_MIN_DAYS,
+                "срок контракта игрока не меньше " + KordonBalance.CONTRACT_LAIR_PLAYER_MIN_DAYS + " дней");
+        boolean stolen = false;
+        for (int d = 0; d < 10; d++) {
+            s.step();
+            if (c.taker != Contract.PLAYER) stolen = true;
+        }
+        ck(!stolen, "за 10 дней NPC не забрали контракт игрока (исполнитель всё ещё игрок)");
+        ck(s.audit().isEmpty(), "аудит сходится после 10 дней с контрактом игрока");
+    }
+
+    /** Логово уничтожил кто-то другой без игрока — контракт сорван, залог возвращён заказчику, игроку сообщение. */
+    static void playerLairSoursWithoutPlayer() {
+        Simulation s = Scenarios.create("kordon", 3);
+        for (int d = 0; d < 3; d++) s.step();
+        Lair l = s.lairs.get(0);
+        Contract c = playerLairContract(s, l.node, 25, 1000, ZoneScenario.MILITARY);
+        s.contracts.take(s, c.id, "Тестер");
+        int failedBefore = s.contracts.failed;
+        s.lairs.remove(l);   // логово выбил кто-то другой, игрок не участвовал
+        s.step();
+        ck(c.status == Contract.Status.FAILED, "контракт сорван, а не закрыт чужими: " + c.status.ru);
+        ck(c.escrow == 0 && s.contracts.failed > failedBefore, "залог возвращён заказчику (escrow обнулён, провал учтён)");
+        boolean noted = false;
+        for (ContractBoard.Note n : s.contracts.notes) if (n.player().equals("Тестер")) noted = true;
+        ck(noted, "игроку оставлено сообщение, а не тихое исчезновение контракта");
+        ck(s.audit().isEmpty(), "аудит сходится после срыва контракта");
+    }
+
+    /** Логово уничтожено при участии игрока (он убил мутанта) — контракт засчитан игроку. */
+    static void playerLairCreditedToPlayer() {
+        Simulation s = Scenarios.create("kordon", 3);
+        for (int d = 0; d < 3; d++) s.step();
+        Lair l = s.lairs.get(0);
+        Contract c = playerLairContract(s, l.node, 25, 1000, ZoneScenario.MILITARY);
+        s.contracts.take(s, c.id, "Тестер");
+        int total = c.lairTotal;
+        String note = s.contracts.lairMutantKilled(l.node, "Тестер");
+        ck(note != null && note.contains("осталось " + (total - 1)), "чат при убийстве мутанта: " + note);
+        ck(c.lairKilled == 1, "счётчик убитых игроком мутантов вырос");
+        s.lairs.remove(l);
+        s.step();
+        ck(c.status == Contract.Status.READY, "контракт засчитан игроку: " + c.status.ru);
+        ContractBoard.Reward r = s.contracts.claim(s, c.id, "Тестер");
+        ck(r != null && r.money() == 1000 && c.status == Contract.Status.DONE, "награда получена после зачистки");
+        ck(s.audit().isEmpty(), "аудит сходится после выплаты за логово");
+    }
+
+    /** Счётчик целей контракта игрока на логово переживает сохранение (версия 18). */
+    static void lairCounterSaved() {
+        Simulation s1 = Scenarios.create("kordon", 7);
+        s1.step(3);
+        Lair l = s1.lairs.get(0);
+        Contract c = playerLairContract(s1, l.node, 25, 1000, ZoneScenario.MILITARY);
+        s1.contracts.take(s1, c.id, "Тестер");
+        s1.contracts.lairMutantKilled(l.node, "Тестер");
+        String save = s1.save();
+        Simulation s2 = Simulation.load(save);
+        Contract c2 = s2.contracts.byId(c.id);
+        ck(c2 != null && c2.lairTotal == c.lairTotal && c2.lairKilled == 1,
+                "счётчик целей контракта на логово сохраняется");
+        ck(s2.save().equals(save), "сохранение со счётчиком целей идентично после загрузки");
     }
 }

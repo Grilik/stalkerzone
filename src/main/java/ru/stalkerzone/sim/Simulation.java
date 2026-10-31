@@ -2386,7 +2386,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(17); // v17: заказы Бандитов на Кордоне — засада на курьера и налёт (карточка 021)
+            out.writeInt(18); // v18: счётчики целей контрактов игрока на логово (карточка 026)
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2520,6 +2520,17 @@ public final class Simulation {
             for (int i = 0; i < lairDistrictLastClear.length; i++)
                 out.writeInt(lairDistrictLastClear[i]);
             out.writeInt(courierDelivered); // v16
+            // v18 (карточка 026): счётчики целей контрактов игрока на логово — id, всего мутантов, убито игроком.
+            // Пишем только непустые, чтобы старые сохранения и свежие совпадали по хвосту.
+            int lairCounters = 0;
+            for (Contract c : contracts.list) if (c.lairTotal > 0 || c.lairKilled > 0) lairCounters++;
+            out.writeInt(lairCounters);
+            for (Contract c : contracts.list) {
+                if (c.lairTotal <= 0 && c.lairKilled <= 0) continue;
+                out.writeInt(c.id);
+                out.writeInt(c.lairTotal);
+                out.writeInt(c.lairKilled);
+            }
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
@@ -2537,7 +2548,7 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 17) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 18) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
@@ -2703,6 +2714,20 @@ public final class Simulation {
                     sim.lairDistrictLastClear[i] = in.readInt();
             }
             if (version >= 16) sim.courierDelivered = in.readInt();
+            // v18 (карточка 026): счётчики целей контрактов на логово — у старых сохранений их нет (нули)
+            if (version >= 18) {
+                int ln = in.readInt();
+                for (int i = 0; i < ln; i++) {
+                    int cid = in.readInt();
+                    int total = in.readInt();
+                    int killed = in.readInt();
+                    Contract c = sim.contracts.byId(cid);
+                    if (c != null) {
+                        c.lairTotal = total;
+                        c.lairKilled = killed;
+                    }
+                }
+            }
             sim.recalcPassDanger();
             return sim;
         } catch (IOException e) {
