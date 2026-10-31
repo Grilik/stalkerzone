@@ -31,6 +31,9 @@ public final class PlayerStart {
     /** Одна позиция набора: что и сколько. */
     public record Kit(KitItem kind, int count) {}
 
+    /** Стартовые деньги новичка (карточка 025): хватает на первые покупки у торговца. */
+    public static final int START_RUBLES = 2000;
+
     /** Стартовый набор новичка: ПМ с двумя магазинами, нож, куртка, бинты, аптечка, еда, КПК, болты, детектор, деньги. */
     public static final Kit[] KIT = {
             new Kit(KitItem.PM, 1),
@@ -44,7 +47,7 @@ public final class PlayerStart {
             new Kit(KitItem.PDA, 1),
             new Kit(KitItem.BOLT, 10),
             new Kit(KitItem.DETECTOR_ECHO, 1),
-            new Kit(KitItem.RUBLES, 500),
+            new Kit(KitItem.RUBLES, START_RUBLES),
     };
 
     /** Вступление при первом входе (стиль ТЧ). */

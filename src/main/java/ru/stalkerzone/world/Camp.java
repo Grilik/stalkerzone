@@ -516,7 +516,7 @@ public final class Camp {
         if (n.owner >= 0) {
             int[] flag = LevelPoints.readVec(pts, "flag");
             if (flag != null && flag.length >= 3) {
-                BlockPos base = surface(pt, flag[0], flag[1], flag[2]);
+                BlockPos base = surface(level, pt, flag[0], flag[1], flag[2]);
                 if (base != null) {
                     pt.fill(base.getX(), base.getY(), base.getZ(), base.getX(), base.getY() + 2, base.getZ(),
                             Blocks.OAK_FENCE.defaultBlockState());
@@ -528,7 +528,7 @@ public final class Camp {
         // Костёр
         int[] campfire = LevelPoints.readVec(pts, "campfire");
         if (campfire != null && campfire.length >= 3) {
-            BlockPos base = surface(pt, campfire[0], campfire[1], campfire[2]);
+            BlockPos base = surface(level, pt, campfire[0], campfire[1], campfire[2]);
             if (base != null) pt.set(base.getX(), base.getY(), base.getZ(),
                     Blocks.CAMPFIRE.defaultBlockState().setValue(net.minecraft.world.level.block.CampfireBlock.LIT, true));
         }
@@ -536,7 +536,7 @@ public final class Camp {
         // Лежанки (сеном)
         for (int[] bed : LevelPoints.readVecs(pts, "beds")) {
             if (bed.length < 3) continue;
-            BlockPos base = surface(pt, bed[0], bed[1], bed[2]);
+            BlockPos base = surface(level, pt, bed[0], bed[1], bed[2]);
             if (base != null) pt.set(base.getX(), base.getY(), base.getZ(), Blocks.HAY_BLOCK.defaultBlockState());
         }
 
@@ -547,7 +547,7 @@ public final class Camp {
             for (int i = 0; i < 3; i++) {
                 int bx = fx + r.nextInt(5) - 2, bz = fz + r.nextInt(5) - 2;
                 if (Math.abs(bx - fx) < 2 && Math.abs(bz - fz) < 2) continue;
-                BlockPos base = surface(pt, bx, campfire[1], bz);
+                BlockPos base = surface(level, pt, bx, campfire[1], bz);
                 if (base != null) pt.set(base.getX(), base.getY(), base.getZ(),
                         r.nextBoolean() ? Blocks.BARREL.defaultBlockState() : Blocks.CHEST.defaultBlockState());
             }
@@ -559,18 +559,20 @@ public final class Camp {
      * под объектом ставим опору из материала покрытия. Если точка внутри стены/рельефа — поднимаем до
      * свободного места, но не выше 8 блоков. null, если свободного места не нашлось (внутрь не ставим).
      */
-    private static BlockPos surface(Painter pt, int x, int y, int z) {
+    private static BlockPos surface(ServerLevel level, Painter pt, int x, int y, int z) {
         int top = y;
         for (int k = 0; k < 8 && solid(pt, x, top, z); k++) top++;
         if (solid(pt, x, top, z)) return null;
         int base = Integer.MIN_VALUE;
         for (int dy = 1; dy <= 6; dy++) if (solid(pt, x, top - dy, z)) { base = top - dy; break; }
-        BlockState cover;
-        if (base == Integer.MIN_VALUE) { base = top - 6; cover = Blocks.DIRT.defaultBlockState(); }
-        else {
-            cover = pt.get(x, base, z);
-            if (cover.isAir() || cover.canBeReplaced() || !cover.getFluidState().isEmpty()) cover = Blocks.DIRT.defaultBlockState();
+        if (base == Integer.MIN_VALUE) {
+            // Y точек уровня абсолютна (tools/xray/kordon_points.py: y = xr_y + yoff), но если под точкой
+            // нет земли — берём реальную высоту рельефа, а не строим висящую колонку
+            int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            return solid(pt, x, ground, z) ? null : new BlockPos(x, ground, z);
         }
+        BlockState cover = pt.get(x, base, z);
+        if (cover.isAir() || cover.canBeReplaced() || !cover.getFluidState().isEmpty()) cover = Blocks.DIRT.defaultBlockState();
         // опора из материала покрытия, если под объектом пусто
         for (int yy = base + 1; yy < top; yy++) pt.set(x, yy, z, cover);
         return new BlockPos(x, top, z);

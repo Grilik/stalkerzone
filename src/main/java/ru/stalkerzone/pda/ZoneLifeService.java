@@ -50,6 +50,15 @@ public final class ZoneLifeService {
                 p.playNotifySound(SoundEvents.NOTE_BLOCK_HAT.get(), SoundSource.PLAYERS, 0.4f, 1.6f);
             }
         }
+        // карточка 026: личные сообщения о судьбе контрактов игрока (сорван / выполнен)
+        for (ru.stalkerzone.sim.ContractBoard.Note note : data.sim.contracts.drainNotes()) {
+            for (ServerPlayer p : server.overworld().players()) {
+                if (!p.getName().getString().equals(note.player())) continue;
+                p.sendSystemMessage(Component.literal("[КПК] ").withStyle(ChatFormatting.DARK_GREEN)
+                        .append(Component.literal(note.text()).withStyle(ChatFormatting.GOLD)));
+                p.playNotifySound(SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.PLAYERS, 0.5f, 1.2f);
+            }
+        }
     }
 
     static boolean hasPda(ServerPlayer p) {

@@ -197,15 +197,23 @@ public final class KordonScenario {
             f.stock.add(Good.MATERIALS, m);
             f.stock.money = f.military ? 12000 : 8000;
         }
-        // стартовый рынок торговца
+        // стартовые рынки торговцев
         for (Node n : nodes) {
             if (!n.trader) continue;
             for (Good gd : Good.ALL) n.market.qty[gd.ordinal()] = (int) (n.target[gd.ordinal()] * 0.8);
-            n.market.money = 20000;
         }
 
         Simulation sim = new Simulation(seed, nodes, g, factions, h);
         sim.scenario = "kordon";
+
+        // v20 (карточка 025): касса торговцев Кордона — минимум на 3 артефакта уровня 2 и 10 частей мутантов
+        // по текущим ценам скупки плюс оборотный запас; выручка с Большой земли держит кассу на плаву месяц.
+        for (Node n : nodes) {
+            if (!n.trader) continue;
+            n.market.money = KordonBalance.traderStartCash(sim, n);
+            n.cashReserve = KordonBalance.TRADER_CASH_RESERVE;
+            n.mainlandRevenue = KordonBalance.TRADER_MAINLAND_INCOME;
+        }
 
         // v16 (карточка 005): шлюз Большой земли и выходы
         sim.gatewayNode = KordonBalance.GATEWAY_NODE;
@@ -232,13 +240,15 @@ public final class KordonScenario {
 
         // v19 (карточка 013): районы аномалий Кордона. Состав поля задаёт район: случайность — только место
         // внутри района и число полей. После выброса район остаётся своим по составу.
-        sim.anomalyDistricts.add(new AnomalyDistrict(TUNNEL, "Туннель с электрами", 6, 9, 3.0, AnomalyType.ELECTRA));
-        sim.anomalyDistricts.add(new AnomalyDistrict(HOLE, "Дыра в заборе", 5, 7, 1.0,
+        // v21 (карточка 029): у каждого района своё поле фиксированного радиуса — после выброса аномалии
+        // ходят только внутри него, а не разбредаются по всей точке.
+        sim.anomalyDistricts.add(new AnomalyDistrict(TUNNEL, "Туннель с электрами", 6, 9, 3.0, 30, AnomalyType.ELECTRA));
+        sim.anomalyDistricts.add(new AnomalyDistrict(HOLE, "Дыра в заборе", 5, 7, 1.0, 30,
                 AnomalyType.SPRINGBOARD, AnomalyType.WHIRLIGIG, AnomalyType.MOSQUITO));
-        sim.anomalyDistricts.add(new AnomalyDistrict(EDGE, "Трамплины у дороги на Свалку", 2, 4, 1.0,
+        sim.anomalyDistricts.add(new AnomalyDistrict(EDGE, "Трамплины у дороги на Свалку", 2, 4, 1.0, 24,
                 AnomalyType.SPRINGBOARD, AnomalyType.MOSQUITO));
-        sim.anomalyDistricts.add(new AnomalyDistrict(ELEVATOR, "Жарки у сгоревших домов", 1, 2, 1.0, AnomalyType.FRY));
-        sim.anomalyDistricts.add(new AnomalyDistrict(RAVINE, "Туман в овраге", 1, 1, 1.0, AnomalyType.FOG));
+        sim.anomalyDistricts.add(new AnomalyDistrict(ELEVATOR, "Жарки у сгоревших домов", 1, 2, 1.0, 18, AnomalyType.FRY));
+        sim.anomalyDistricts.add(new AnomalyDistrict(RAVINE, "Туман в овраге", 1, 1, 1.0, 16, AnomalyType.FOG));
         // v19 (карточка 013): радиоактивные пятна — насыпь с цистернами (мост), техника у дыры, свиноферма
         sim.radiationNodes = new int[]{BRIDGE, HOLE, FARM};
 

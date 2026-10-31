@@ -9,6 +9,8 @@ import ru.stalkerzone.world.ZoneBounds;
 public final class Lair {
     /** Расстояние логова от центра точки в мировых блоках. */
     public static final int DEN_DIST = 55;
+    /** Сколько мутантов логова может одновременно бродить в мире (то же, что в MutantManager). */
+    public static final int MAX_MUTANTS = 6;
 
     public int node;
     public LairKind kind;
@@ -30,6 +32,15 @@ public final class Lair {
     public double growth() { return kind.growth * (lab ? 1.4 : 1.0); }
 
     public String title() { return kind.ru + (lab ? " (лаборатория)" : ""); }
+
+    /**
+     * Сколько мутантов сейчас у логова: сила, делённая на среднюю «цену» мутанта вида (карточка 026).
+     * Та же формула, что в мире у {@code MutantManager.wanted}, с тем же потолком {@link #MAX_MUTANTS}.
+     */
+    public int mutantCount() {
+        int n = (int) Math.ceil(strength / kind.mutantValue);
+        return Math.max(1, Math.min(MAX_MUTANTS, n));
+    }
 
     /**
      * Логово стоит в стороне от центра точки, чтобы не лезть в лагерь. Направление постоянно для точки.

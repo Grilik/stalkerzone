@@ -30,6 +30,10 @@ public final class NpcManager {
     private static final int ACTIVE = 110;
     private static final int MAX_PER_NODE = 8;
 
+    /** Места вокруг костра (карточка 028): точка campfire — центр, NPC садятся на радиусе 2. */
+    private static final int[][] CAMPFIRE_RING = {
+            {2, 0}, {-2, 0}, {0, 2}, {0, -2}, {2, 2}, {2, -2}, {-2, 2}, {-2, -2}};
+
     private static final String[] CALLSIGNS = {"Лис", "Грач", "Бродяга", "Седой", "Хмурый", "Дым", "Шрам", "Курсант", "Топор", "Весёлый",
             "Тихий", "Бык", "Север", "Сыч", "Ворон", "Гвоздь", "Малой", "Кащей", "Доцент", "Рыжий", "Бахмач", "Ёж", "Угрюмый", "Сапёр"};
     /** Случайный позывной. */
@@ -274,12 +278,27 @@ public final class NpcManager {
         // Потом beds и campfire
         java.util.List<int[]> spots = new java.util.ArrayList<>();
         for (int[] bed : beds) spots.add(bed);
-        if (campfire != null && campfire.length >= 3) spots.add(campfire);
+        int campfireFrom = spots.size();
+        if (campfire != null && campfire.length >= 3) {
+            // карточка 028: точка campfire — центр костра, NPC садятся рядом, на радиусе 2 (не в огонь)
+            for (int[] d : CAMPFIRE_RING) {
+                spots.add(new int[]{campfire[0] + d[0], campfire[1], campfire[2] + d[1]});
+            }
+        }
         if (!spots.isEmpty()) {
-            int[] spot = spots.get(RND.nextInt(spots.size()));
+            int idx = RND.nextInt(spots.size());
+            int[] spot = spots.get(idx);
             BlockPos pos = new BlockPos(spot[0], spot[1], spot[2]);
             if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
-                return spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, pos);
+                StalkerEntity e = spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, pos);
+                if (e != null && campfire != null && campfire.length >= 3 && idx >= campfireFrom) {
+                    // своё место у костра: NPC сидит здесь и смотрит на огонь
+                    e.getPersistentData().putBoolean("sz_campfire", true);
+                    e.getPersistentData().putInt("sz_fire_x", campfire[0]);
+                    e.getPersistentData().putInt("sz_fire_y", campfire[1]);
+                    e.getPersistentData().putInt("sz_fire_z", campfire[2]);
+                }
+                return e;
             }
         }
 

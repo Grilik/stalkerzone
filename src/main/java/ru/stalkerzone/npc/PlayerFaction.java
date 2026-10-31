@@ -34,6 +34,8 @@ public final class PlayerFaction {
     private PlayerFaction() {}
 
     private static final String FAC = "sz_fac", XP = "sz_xp", LEFT = "sz_left", KEPT = "sz_kept", DEATH = "sz_death";
+    /** Когда на месте гибели положен рюкзак (карточка 030); нет ключа — рюкзака нет. */
+    private static final String BACKPACK = "sz_backpack";
     /** Насколько близко к базе нужно подойти, чтобы вступить (блоков). */
     public static final int JOIN_RADIUS = 90;
 
@@ -160,6 +162,22 @@ public final class PlayerFaction {
         return sb.toString();
     }
 
+    // ------------------------------------------------------------------ рюкзак на месте гибели (карточка 030)
+
+    /** Координаты рюкзака на месте гибели {x, z} или null, если рюкзака уже нет (подобран или истёк). */
+    public static int[] backpackMarker(ServerPlayer p) {
+        CompoundTag t = Reputation.store(p);
+        int[] d = t.getIntArray(DEATH);
+        if (d.length < 3 || !t.contains(BACKPACK)) return null;
+        long left = DeathBackpack.HOLD_TICKS - (p.serverLevel().getGameTime() - t.getLong(BACKPACK));
+        return left > 0 ? new int[]{d[0], d[2]} : null;
+    }
+
+    /** Рюкзак подобран: с карты КПК снимается метка «Ваш рюкзак». */
+    static void backpackTaken(ServerPlayer p) {
+        Reputation.store(p).remove(BACKPACK);
+    }
+
     // ------------------------------------------------------------------ скидки
 
     /** Выставить множители цен симуляции под игрока у торговца этой точки; вызвать reset() после сделки. */
@@ -192,21 +210,40 @@ public final class PlayerFaction {
     // ------------------------------------------------------------------ смерть и возрождение
 
     public static final class CareerEvents {   // имя уникально: EventBus генерирует обработчики по простому имени класса и метода
-        /** Снаряжение остаётся на месте гибели (лежит 20 минут), КПК остаётся при себе. */
+        /** Вместо разбросанных вещей — рюкзак на месте гибели, КПК остаётся при игроке (карточка 030). */
         @SubscribeEvent
         public void onPlayerDrops(LivingDropsEvent e) {
             if (!(e.getEntity() instanceof ServerPlayer p)) return;
             if (p.serverLevel().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
             ListTag kept = new ListTag();
-            e.getDrops().removeIf(ie -> {
+            ListTag items = new ListTag();
+            for (ItemEntity ie : e.getDrops()) {
                 ItemStack s = ie.getItem();
-                if (s.getItem() == ru.stalkerzone.item.ModItems.PDA.get()) { kept.add(s.save(new CompoundTag())); return true; }
-                return false;
-            });
-            for (ItemEntity ie : e.getDrops()) ie.lifespan = 20 * 60 * 20;
+                if (s.isEmpty()) continue;
+                // КПК и то, что и так остаётся у игрока, не кладём в рюкзак
+                if (s.getItem() == ru.stalkerzone.item.ModItems.PDA.get()) kept.add(s.save(new CompoundTag()));
+                else items.add(s.save(new CompoundTag()));
+            }
+            e.getDrops().clear();
             CompoundTag t = Reputation.store(p);
             t.put(KEPT, kept);
             t.putIntArray(DEATH, new int[]{p.getBlockX(), p.getBlockY(), p.getBlockZ()});
+            if (items.isEmpty()) {
+                t.remove(BACKPACK);
+            } else {
+                t.putLong(BACKPACK, p.serverLevel().getGameTime());
+                DeathBackpack.place(p, items);
+            }
+        }
+
+        /** ПКМ по рюкзаку на месте гибели — забрать всё содержимое (карточка 030). */
+        @SubscribeEvent
+        public void onBackpackInteract(net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract e) {
+            if (!(e.getTarget() instanceof ItemEntity ie) || !(e.getEntity() instanceof ServerPlayer p)) return;
+            if (!DeathBackpack.isBackpack(ie)) return;
+            DeathBackpack.take(p, ie);
+            e.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
+            e.setCanceled(true);
         }
 
         @SubscribeEvent
@@ -253,14 +290,29 @@ public final class PlayerFaction {
             }
         }
 
-        /** Опыт за мутантов. */
+        /** Опыт за мутантов и счётчик целей контракта на логово (карточка 026). */
         @SubscribeEvent
         public void onMutantKilled(LivingDeathEvent e) {
             if (e.getEntity().level().isClientSide || !(e.getSource().getEntity() instanceof ServerPlayer p)) return;
             boolean mutant = e.getEntity() instanceof ru.stalkerzone.mutant.MutantEntity
                     || e.getEntity().getPersistentData().contains(ru.stalkerzone.mutant.MutantManager.TAG_LAIR);
             if (!mutant || p.getServer() == null) return;
-            award(p, ZoneData.get(p.getServer()).sim, PlayerCareer.XP_KILL_MUTANT, null);
+            Simulation sim = ZoneData.get(p.getServer()).sim;
+            award(p, sim, PlayerCareer.XP_KILL_MUTANT, null);
+            // мутант логова убит игроком: у контракта на это логово уменьшается счётчик целей
+            int lairNode = lairNodeOf(e.getEntity());
+            if (lairNode >= 0) {
+                String note = sim.contracts.lairMutantKilled(lairNode, p.getName().getString());
+                if (note != null) p.sendSystemMessage(Component.literal(note).withStyle(ChatFormatting.GRAY));
+            }
+        }
+
+        /** Номер точки логова для существа или −1, если оно не из логова. */
+        private static int lairNodeOf(net.minecraft.world.entity.Entity e) {
+            if (e instanceof ru.stalkerzone.mutant.MutantEntity me) return me.lairNode();
+            if (e.getPersistentData().contains(ru.stalkerzone.mutant.MutantManager.TAG_LAIR))
+                return e.getPersistentData().getInt(ru.stalkerzone.mutant.MutantManager.TAG_LAIR);
+            return -1;
         }
     }
 }

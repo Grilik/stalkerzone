@@ -16,4 +16,16 @@ public final class Anomaly {
         this.dz = dz;
         this.type = type;
     }
+
+    /**
+     * Смещение артефакта от центра аномалии (карточка 029): на кольце в 1–2 блока от границы радиуса поля,
+     * поэтому за артефактом приходится лезть к самому краю — с риском задеть аномалию.
+     *
+     * @return {dx, dz} в блоках
+     */
+    public static double[] artifactOffset(AnomalyType type, java.util.Random r) {
+        double ang = r.nextDouble() * Math.PI * 2;
+        double ring = type.radius - 1.0 - r.nextDouble(); // 1–2 блока внутрь от границы
+        return new double[]{Math.cos(ang) * ring, Math.sin(ang) * ring};
+    }
 }

@@ -60,6 +60,7 @@ public final class PdaService {
                 TradeService.countRubles(p), ZoneWorld.bounds(), tollFor(p, s)));
         appendReputation(p, s, sb);
         appendShelters(s, sb);
+        appendBackpack(p, sb);
         return sb.toString();
     }
 
@@ -91,6 +92,13 @@ public final class PdaService {
                 sb.append("W\t").append(v[0]).append('\t').append(v[2]).append('\t').append(clean(n.name)).append('\n');
             }
         }
+    }
+
+    /** Метка «Ваш рюкзак» на месте гибели, пока он лежит на земле и не подобран (карточка 030). */
+    private static void appendBackpack(ServerPlayer p, StringBuilder sb) {
+        int[] m = ru.stalkerzone.npc.PlayerFaction.backpackMarker(p);
+        if (m == null) return;
+        sb.append("K\t").append(m[0]).append('\t').append(m[1]).append('\t').append(clean("Ваш рюкзак")).append('\n');
     }
 
 

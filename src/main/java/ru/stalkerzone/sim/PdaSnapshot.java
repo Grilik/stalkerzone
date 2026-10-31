@@ -91,9 +91,27 @@ public final class PdaSnapshot {
                 if (c.type == Contract.Type.FETCH_ARTIFACT || c.type == Contract.Type.SUPPLY || c.type == Contract.Type.LAB_DATA) act |= CAN_DELIVER;
             }
             if (mine && c.status == Contract.Status.READY) act |= CAN_CLAIM;
+            // карточка 026: у своего контракта на логово видно счётчик целей — сколько мутантов убито из скольких
+            String text = c.describe(s);
+            if (mine && c.type == Contract.Type.CLEAR_LAIR && c.lairTotal > 0) {
+                text += "; Мутанты: убито " + Math.min(c.lairKilled, c.lairTotal) + " из " + c.lairTotal;
+            }
+            // карточка 026: метка цели — на логове (смещено от центра точки), иначе центр точки
+            int mx = 0, mz = 0;
+            if (c.node >= 0) {
+                Lair lr = s.lairAt(c.node);
+                if (c.type == Contract.Type.CLEAR_LAIR && lr != null) {
+                    int[] den = Lair.denXZ(s.nodes.get(c.node));
+                    mx = den[0];
+                    mz = den[1];
+                } else {
+                    mx = s.nodes.get(c.node).x * SCALE;
+                    mz = s.nodes.get(c.node).z * SCALE;
+                }
+            }
             sb.append("C\t").append(c.id).append('\t').append(c.status.name()).append('\t').append(mine ? 1 : 0).append('\t').append(act).append('\t')
-                    .append(c.node >= 0 ? s.nodes.get(c.node).x * SCALE : 0).append('\t').append(c.node >= 0 ? s.nodes.get(c.node).z * SCALE : 0)
-                    .append('\t').append(clean(c.describe(s))).append('\n');
+                    .append(mx).append('\t').append(mz)
+                    .append('\t').append(clean(text)).append('\n');
         }
         return sb.toString();
     }
