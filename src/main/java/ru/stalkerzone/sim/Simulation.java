@@ -421,6 +421,7 @@ public final class Simulation {
     private void seedBuildings() {
         buildings.clear();
         for (Node n : nodes) {
+            if (n.existingBuildings) continue;   // карточка 009: постройки уже есть на уровне 1:1
             BuildingType[] set;
             if (isAnyBase(n.id) || n.type == NodeType.BASE) {
                 // главная база: полный набор

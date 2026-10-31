@@ -43,44 +43,57 @@ public final class KordonScenario {
         List<Node> nodes = new ArrayList<>();
 
         Node village = node(nodes, "Деревня новичков", NodeType.BASE, 0, 0);
+        village.existingBuildings = true;
         village.farmCap = 45; village.partsCap = 10; village.artifactCap = 3; village.housing = 55;
         village.defense = 18;
 
         Node bunker = node(nodes, "Бункер Сидоровича", NodeType.BASE, -4, -1);
+        bunker.existingBuildings = true;
         bunker.housing = 10;
         ZoneScenario.trader(bunker, 1.08, 0.95, ZoneScenario.caps(200, 30, 120, 30, 6, 60));
 
         Node southPost = node(nodes, "Южный блокпост", NodeType.BASE, 6, 22);
+        southPost.existingBuildings = true;
         southPost.farmCap = 10; southPost.housing = 22; southPost.defense = 32;
 
         Node bigLand = node(nodes, "Выход: Большая земля", NodeType.OUTPOST, 8, 33);
+        bigLand.existingBuildings = true;
         bigLand.housing = 2; bigLand.defense = 60;
 
         Node elevator = node(nodes, "Элеватор", NodeType.RUINS, 20, -22);
+        elevator.existingBuildings = true;
         elevator.partsCap = 24; elevator.artifactCap = 3; elevator.housing = 12; elevator.defense = 14;
 
         Node atp = node(nodes, "АТП", NodeType.BASE, 33, -12);
+        atp.existingBuildings = true;
         atp.farmCap = 12; atp.partsCap = 25; atp.housing = 35; atp.defense = 25;
 
         Node darkExit = node(nodes, "Выход: Тёмная долина", NodeType.OUTPOST, 58, -8);
+        darkExit.existingBuildings = true;
         darkExit.housing = 2; darkExit.defense = 60;
 
         Node tunnel = node(nodes, "Туннель с электрами", NodeType.ANOMALY, 13, -26);
+        tunnel.existingBuildings = true;
         tunnel.artifactCap = 4; tunnel.defense = 30;
 
         Node bridge = node(nodes, "Разрушенный мост", NodeType.BASE, 27, -30);
+        bridge.existingBuildings = true;
         bridge.housing = 10; bridge.defense = 28;
 
         Node hole = node(nodes, "Дыра в заборе", NodeType.RUINS, 43, -35);
+        hole.existingBuildings = true;
         hole.artifactCap = 3; hole.housing = 6; hole.defense = 28;
 
         Node farm = node(nodes, "Свиноферма", NodeType.SETTLEMENT, 21, -42);
+        farm.existingBuildings = true;
         farm.farmCap = 45; farm.housing = 20; farm.defense = 22;
 
         Node farPost = node(nodes, "Дальний блокпост", NodeType.BASE, 23, -81);
+        farPost.existingBuildings = true;
         farPost.housing = 10; farPost.defense = 24;
 
         Node svalkaExit = node(nodes, "Выход: Свалка", NodeType.OUTPOST, 24, -84);
+        svalkaExit.existingBuildings = true;
         svalkaExit.housing = 2; svalkaExit.defense = 60;
 
         // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока

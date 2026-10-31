@@ -101,7 +101,12 @@ public final class NpcManager {
         }
         builders(level, sim, n, builders);
 
-        if (n.trader && trader == null) spawn(level, sim, n, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), cx, cz, 0);
+        if (n.trader && trader == null) {
+            // карточка 009: на постройках уровня торговец — в точке trader из points
+            BlockPos tp = levelPointPos(level, sim, n, "trader");
+            if (tp != null) spawnAt(level, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), n, tp, Component.literal("Торговец " + traderName(n)));
+            else spawn(level, sim, n, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), cx, cz, 0);
+        }
 
         int wanted = target(sim, n);
         // чужие фракции на точке больше не живут: она сменила владельца
@@ -113,7 +118,13 @@ public final class NpcManager {
             return false;
         });
         if (stalkers.size() < wanted) {
-            StalkerEntity e = spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+            StalkerEntity e;
+            if (n.existingBuildings) {
+                // карточка 009: NPC на точках beds/campfire/guards
+                e = spawnAtLevelPoint(level, sim, n, stalkers);
+            } else {
+                e = spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+            }
             if (e != null) assignPerson(sim, n, e, stalkers);
         } else if (stalkers.size() > wanted + 1) {
             // рядовых убирать раньше именных
@@ -200,6 +211,76 @@ public final class NpcManager {
                 : CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " [" + rankFor(sim.factions.get(faction)) + "]";
         e.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
         e.configure(faction, role, n.id, pos, Component.literal(role == StalkerEntity.ROLE_TRADER ? "Торговец " + name : name));
+        level.addFreshEntity(e);
+        return e;
+    }
+
+    /** Точка в мире из level points или null. */
+    private static BlockPos levelPointPos(ServerLevel level, Simulation sim, Node n, String field) {
+        String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
+        if (levelId == null) return null;
+        com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(levelId, n.id);
+        if (pts == null) return null;
+        int[] v = ru.stalkerzone.world.LevelPoints.readVec(pts, field);
+        if (v == null || v.length < 3) return null;
+        return new BlockPos(v[0], v[1], v[2]);
+    }
+
+    /** Спавн NPC на случайной точке beds/guards/campfire из level points. */
+    private static StalkerEntity spawnAtLevelPoint(ServerLevel level, Simulation sim, Node n,
+                                                    List<StalkerEntity> present) {
+        String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
+        if (levelId == null) return null;
+        com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(levelId, n.id);
+        if (pts == null) return null;
+
+        // Собираем доступные точки: guards → часовые, beds → жители, campfire → дежурный
+        java.util.List<int[]> guards = ru.stalkerzone.world.LevelPoints.readVecs(pts, "guards");
+        java.util.List<int[]> beds = ru.stalkerzone.world.LevelPoints.readVecs(pts, "beds");
+        int[] campfire = ru.stalkerzone.world.LevelPoints.readVec(pts, "campfire");
+
+        // Сначала guards (первые двое — часовые)
+        int guardCount = 0;
+        for (StalkerEntity e : present) {
+            if (e.getPersistentData().getBoolean("sz_guard")) guardCount++;
+        }
+        if (guardCount < Math.min(2, guards.size()) && !guards.isEmpty()) {
+            int[] spot = guards.get(RND.nextInt(guards.size()));
+            BlockPos pos = new BlockPos(spot[0], spot[1], spot[2]);
+            if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+                StalkerEntity e = spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, pos);
+                if (e != null) { e.getPersistentData().putBoolean("sz_guard", true); return e; }
+            }
+        }
+
+        // Потом beds и campfire
+        java.util.List<int[]> spots = new java.util.ArrayList<>();
+        for (int[] bed : beds) spots.add(bed);
+        if (campfire != null && campfire.length >= 3) spots.add(campfire);
+        if (!spots.isEmpty()) {
+            int[] spot = spots.get(RND.nextInt(spots.size()));
+            BlockPos pos = new BlockPos(spot[0], spot[1], spot[2]);
+            if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+                return spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, pos);
+            }
+        }
+
+        // fallback: случайная точка в радиусе
+        int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
+        return spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+    }
+
+    /** Спавн в конкретную точку (без проверки земли — полагаемся на точку из файла). */
+    private static StalkerEntity spawnFixed(ServerLevel level, Simulation sim, Node n, int role, int faction,
+                                            BlockPos pos) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
+        BlockPos ground = SpawnFinder.groundAt(level, pos.getX(), pos.getZ());
+        StalkerEntity e = ModEntities.STALKER.get().create(level);
+        if (e == null) return null;
+        String name = CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " ["
+                + rankFor(sim.factions.get(faction)) + "]";
+        e.moveTo(ground.getX() + 0.5, ground.getY(), ground.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
+        e.configure(faction, role, n.id, ground, Component.literal(name));
         level.addFreshEntity(e);
         return e;
     }
