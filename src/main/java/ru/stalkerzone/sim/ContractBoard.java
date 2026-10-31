@@ -23,6 +23,17 @@ public final class ContractBoard {
     public int nextId = 1;
     public int doneByPlayer, doneByNpc, failed, expired;
 
+    /** Карточка 026: личные сообщения игрокам о судьбе их контрактов, ждут доставки в игре. Не сохраняются. */
+    public record Note(String player, String text) {}
+    public final List<Note> notes = new ArrayList<>();
+
+    /** Отдать накопившиеся сообщения игрокам и очистить очередь (зовёт игровой слой после шага симуляции). */
+    public List<Note> drainNotes() {
+        List<Note> out = new ArrayList<>(notes);
+        notes.clear();
+        return out;
+    }
+
     public List<Contract> active() {
         List<Contract> out = new ArrayList<>();
         for (Contract c : list) if (c.active()) out.add(c);
@@ -148,9 +159,27 @@ public final class ContractBoard {
                 c.status = Contract.Status.EXPIRED;
                 refund(s, c);
             }
-            if (c.active() && c.type == Contract.Type.CLEAR_LAIR && s.lairAt(c.node) == null && c.status != Contract.Status.READY) {
-                c.status = Contract.Status.EXPIRED;
-                refund(s, c);
+            if (c.active() && c.type == Contract.Type.CLEAR_LAIR && c.node >= 0 && s.lairAt(c.node) == null
+                    && c.status != Contract.Status.READY) {
+                // карточка 026: контракт игрока на логово не закрывается сам «в пользу» других.
+                if (c.taker == Contract.PLAYER) {
+                    if (c.lairKilled > 0) {
+                        // игрок вложился в зачистку (убил хоть одного мутанта) — засчитываем ему
+                        c.status = Contract.Status.READY;
+                        notes.add(new Note(c.player, "Контракт #" + c.id + " на логово у «" + s.nodes.get(c.node).name
+                                + "» выполнен: заберите награду в КПК («Задания»)."));
+                    } else {
+                        // логово выбил кто-то другой без игрока — контракт сорван, залог возвращается заказчику
+                        c.status = Contract.Status.FAILED;
+                        failed++;
+                        refund(s, c);
+                        notes.add(new Note(c.player, "Контракт #" + c.id + " сорван: логово у «" + s.nodes.get(c.node).name
+                                + "» уничтожили без вас. Залог возвращён заказчику."));
+                    }
+                } else {
+                    c.status = Contract.Status.EXPIRED;
+                    refund(s, c);
+                }
             }
             if (c.active() && c.type == Contract.Type.LAB_DATA && s.labs.labs.get(c.lab).complete() && c.status != Contract.Status.READY) {
                 c.status = Contract.Status.EXPIRED;
@@ -420,6 +449,8 @@ public final class ContractBoard {
         for (Contract c : list) {
             // своё же сопровождение/поставка не заказываются себе; захват узла одиночки берут и у себя
             if (c.issuer == loners.id && c.type != Contract.Type.CAPTURE_NODE) continue;
+            // карточка 026: взятый игроком контракт NPC не отбирают (правило держим явно, а не только по статусу)
+            if (c.taker == Contract.PLAYER) continue;
             if (c.status != Contract.Status.OPEN || s.day - c.created < 3) continue;
             // v17 (карточка 021): AMBUSH_COURIER и RAID_NODE берут только игроки-бандиты — NPC их не разбирают
             if (c.type != Contract.Type.FETCH_ARTIFACT && c.type != Contract.Type.SUPPLY && c.type != Contract.Type.CLEAR_LAIR
@@ -497,6 +528,29 @@ public final class ContractBoard {
         c.status = Contract.Status.TAKEN;
         c.taker = Contract.PLAYER;
         c.player = player;
+        if (c.type == Contract.Type.CLEAR_LAIR) {
+            Lair l = s.lairAt(c.node);
+            c.lairTotal = l != null ? l.mutantCount() : 0;
+            c.lairKilled = 0;
+            // срок контракта игрока на логово — не меньше минимума (карточка 026)
+            c.deadline = Math.max(c.deadline, s.day + KordonBalance.CONTRACT_LAIR_PLAYER_MIN_DAYS);
+        }
+        return null;
+    }
+
+    /**
+     * Карточка 026: игрок убил мутанта логова. Уменьшаем счётчик целей его контракта на это логово.
+     *
+     * @return короткое сообщение «Логово: осталось K» для чата или null, если у игрока нет контракта на это логово
+     */
+    public String lairMutantKilled(int node, String player) {
+        for (Contract c : list) {
+            if (c.type != Contract.Type.CLEAR_LAIR || c.node != node) continue;
+            if (c.status != Contract.Status.TAKEN || c.taker != Contract.PLAYER || !c.player.equals(player)) continue;
+            c.lairKilled++;
+            int left = Math.max(0, c.lairTotal - c.lairKilled);
+            return "Логово: осталось " + left;
+        }
         return null;
     }
 

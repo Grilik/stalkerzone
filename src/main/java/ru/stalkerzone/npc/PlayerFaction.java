@@ -253,14 +253,29 @@ public final class PlayerFaction {
             }
         }
 
-        /** Опыт за мутантов. */
+        /** Опыт за мутантов и счётчик целей контракта на логово (карточка 026). */
         @SubscribeEvent
         public void onMutantKilled(LivingDeathEvent e) {
             if (e.getEntity().level().isClientSide || !(e.getSource().getEntity() instanceof ServerPlayer p)) return;
             boolean mutant = e.getEntity() instanceof ru.stalkerzone.mutant.MutantEntity
                     || e.getEntity().getPersistentData().contains(ru.stalkerzone.mutant.MutantManager.TAG_LAIR);
             if (!mutant || p.getServer() == null) return;
-            award(p, ZoneData.get(p.getServer()).sim, PlayerCareer.XP_KILL_MUTANT, null);
+            Simulation sim = ZoneData.get(p.getServer()).sim;
+            award(p, sim, PlayerCareer.XP_KILL_MUTANT, null);
+            // мутант логова убит игроком: у контракта на это логово уменьшается счётчик целей
+            int lairNode = lairNodeOf(e.getEntity());
+            if (lairNode >= 0) {
+                String note = sim.contracts.lairMutantKilled(lairNode, p.getName().getString());
+                if (note != null) p.sendSystemMessage(Component.literal(note).withStyle(ChatFormatting.GRAY));
+            }
+        }
+
+        /** Номер точки логова для существа или −1, если оно не из логова. */
+        private static int lairNodeOf(net.minecraft.world.entity.Entity e) {
+            if (e instanceof ru.stalkerzone.mutant.MutantEntity me) return me.lairNode();
+            if (e.getPersistentData().contains(ru.stalkerzone.mutant.MutantManager.TAG_LAIR))
+                return e.getPersistentData().getInt(ru.stalkerzone.mutant.MutantManager.TAG_LAIR);
+            return -1;
         }
     }
 }

@@ -72,18 +72,12 @@ public enum MutantType {
         };
     }
 
-    /** Средняя «цена» мутанта логова: по ней считаем, сколько их показывать. */
+    /**
+     * Средняя «цена» мутанта логова: по ней считаем, сколько их показывать. Числа живут в
+     * {@link ru.stalkerzone.sim.LairKind#mutantValue} — их читает и симуляция (счётчик целей, карточка 026),
+     * чтобы мир и КПК не расходились.
+     */
     public static double avgValue(ru.stalkerzone.sim.LairKind kind) {
-        return switch (kind) {
-            case DOGS -> DOG.value * 0.7 + PSEUDODOG.value * 0.25 + PSYDOG.value * 0.05;
-            case FLESH -> FLESH.value * 0.6 + BOAR.value * 0.4;
-            case BLOODSUCKERS -> BLOODSUCKER.value * 0.7 + SNORK.value * 0.3;
-            case CHIMERA -> (CHIMERA.value + PSEUDODOG.value) / 2;
-            case CONTROLLERS -> SNORK.value * 1.5;
-            case RODENTS -> TUSHKAN.value;
-            case BURERS -> BURER.value * 0.75 + SNORK.value * 0.25;
-            case GIANTS -> FLESH.value * 2;
-            case POLTERGEISTS -> POLTERGEIST.value;
-        };
+        return kind.mutantValue;
     }
 }
