@@ -40,6 +40,7 @@ public final class Prefabs {
     private static final List<Builder> BUILDERS = java.util.List.of(
             of(KordonSouthPost.CLEAR, KordonSouthPost::build),
             of(KordonBunker.CLEAR, KordonBunker::build),
+            of(KordonATP.CLEAR, KordonATP::build),
             of(KordonFarPost.CLEAR, KordonFarPost::build));
 
     /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками; пусто — уровень без замен. */

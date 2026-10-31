@@ -90,7 +90,34 @@ public class PrefabsTest {
             int[] ra = cl.get(i), rb = cl.get(j);
             if (ra[0] <= rb[2] && rb[0] <= ra[2] && ra[1] <= rb[3] && rb[1] <= ra[3]) { overlap = true; break outer; }
         }
-        ck(!overlap && cl.size() >= 2, "сборщиков " + cl.size() + ", без пересечения границ");
+        ck(!overlap && cl.size() >= 3, "сборщиков " + cl.size() + ", без пересечения границ");
+
+        // карточка 036: АТП — гаражи, мастерские, вышки, техника, забор
+        int atpSolid = 0, workMark = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            boolean inATP = x >= 288 && x <= 356 && z >= -160 && z <= -86;
+            if (inATP) atpSolid++;
+        }
+        ck(atpSolid > 2000, "АТП: блоков " + atpSolid);
+        // проверка, что у АТП есть рабочие места всех нужных видов
+        int atpGuard = 0, atpBed = 0, atpPatrol = 0, atpWork = 0;
+        for (Prefabs.Point p : marks) {
+            boolean inATP = p.x() >= 288 && p.x() <= 356 && p.z() >= -160 && p.z() <= -86;
+            if (!inATP) continue;
+            switch (p.kind()) {
+                case "guard" -> atpGuard++;
+                case "bed" -> atpBed++;
+                case "patrol" -> atpPatrol++;
+                case "work" -> atpWork++;
+                default -> { }
+            }
+        }
+        ck(atpGuard >= 2, "АТП: часовых (guard) " + atpGuard);
+        ck(atpBed >= 4, "АТП: спальных мест (bed) " + atpBed);
+        ck(atpPatrol >= 4, "АТП: точек патруля " + atpPatrol);
+        ck(atpWork >= 3, "АТП: рабочих мест у техники (work) " + atpWork);
         System.exit(f > 0 ? 1 : 0);
     }
 }

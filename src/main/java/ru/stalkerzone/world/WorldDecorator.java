@@ -437,11 +437,12 @@ public final class WorldDecorator {
 
     // ---------------------------------------------------------------- пропсы
 
-    /** Куча хлама Свалки: гравий, щебень, ржавые детали, бочки. */
+    /** Куча хлама Свалки: гравий, щебень, ржавые детали, бочки. Только биом Свалки, не Кордон. */
     private static void junkPile(ChunkAccess c, ChunkPos cp, Random r) {
         int x0 = cp.getMinBlockX() + 4 + r.nextInt(8), z0 = cp.getMinBlockZ() + 4 + r.nextInt(8);
         int rad = 2 + r.nextInt(3);
-        Block[] junk = {Blocks.GRAVEL, Blocks.COARSE_DIRT, Blocks.COBBLESTONE, Blocks.ANDESITE, Blocks.RAW_IRON_BLOCK, Blocks.GRAVEL};
+        // карточка 041: без одиночных булыжников — они выглядели как метки точек
+        Block[] junk = {Blocks.GRAVEL, Blocks.COARSE_DIRT, Blocks.ANDESITE, Blocks.RAW_IRON_BLOCK, Blocks.GRAVEL};
         for (int dx = -rad; dx <= rad; dx++) for (int dz = -rad; dz <= rad; dz++) {
             double d = Math.hypot(dx, dz);
             if (d > rad) continue;
