@@ -140,6 +140,44 @@ public final class KordonBalance {
 
     /** Шанс перехвата каравана военными (в день, если караван проходит через их узел). */
     public static final double MILITARY_INTERCEPT_CHANCE = 0.03;
+    // ====================================================================================
+    //  Контракты Кордона (карточка 006)
+    // ====================================================================================
+
+    /** Узел-цель контракта на захват: элеватор (KordonScenario.ELEVATOR). */
+    public static final int CONTRACT_CAPTURE_NODE = 4;
+
+    /** Шанс в день, что Торговцы выложат заказ на артефакты или части мутантов. */
+    public static final double CONTRACT_FETCH_CHANCE = 0.30;
+    /** Шанс в день, что Торговцы выложат заказ на сопровождение курьера до базы покупателя. */
+    public static final double CONTRACT_ESCORT_CHANCE = 0.16;
+    /** Шанс в день, что Одиночки выложат заказ на захват элеватора. */
+    public static final double CONTRACT_CAPTURE_CHANCE = 0.15;
+    /** Шанс в день, что военные выложат заказ на зачистку логова у дороги. */
+    public static final double CONTRACT_MILITARY_LAIR_CHANCE = 0.20;
+    /** Минимальная сила логова у дороги, за которое берутся военные. */
+    public static final double CONTRACT_LAIR_MIN_STRENGTH = 12;
+
+    /** Награда за принос: цена товара с наценкой заказа. */
+    public static final double CONTRACT_FETCH_MARKUP = 1.6;
+    /** Сколько штук просят за один заказ на принос. */
+    public static final int CONTRACT_FETCH_MAX_QTY = 2;
+    /** Награды контрактов, выдаваемых не за товар (руб.) и их случайный разброс. */
+    public static final long REWARD_ESCORT = 1500, REWARD_CAPTURE = 2500;
+    public static final int REWARD_ESCORT_SPREAD = 500, REWARD_CAPTURE_SPREAD = 700;
+    /** Награда военным за зачистку логова у дороги: база плюс доля силы логова. */
+    public static final long REWARD_MILITARY_LAIR_BASE = 800;
+    public static final double REWARD_MILITARY_LAIR_PER_STRENGTH = 30;
+    /** Срок исполнения контрактов Кордона (дней). */
+    public static final int CONTRACT_FETCH_DAYS = 20, CONTRACT_ESCORT_DAYS = 12, CONTRACT_CAPTURE_DAYS = 20;
+    /** Требуемая для NPC-исполнителя численность заказчика по типам контрактов. */
+    public static final int CONTRACT_MIN_LONERS = 10, CONTRACT_MIN_MILITARY = 8;
+    /** На Кордоне одиночки-исполнители берутся за контракты охотнее, чем в полной Зоне. */
+    public static final double CONTRACT_NPC_TAKE_CHANCE = 0.35;
+    /** Сложность контрактов Кордона, которые разбирают NPC (1 — почти всегда удача). */
+    public static final int CONTRACT_DIFFICULTY = 1;
+
+
 
     // --- Доктрины трёх группировок Кордона (уточняют характер для локального среза) ---
 

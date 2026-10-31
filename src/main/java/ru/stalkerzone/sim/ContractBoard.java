@@ -16,6 +16,8 @@ import java.util.Random;
 public final class ContractBoard {
     public static final int MAX_OPEN = 12;
     public static final int MAX_PER_PLAYER = 3;
+    /** Шанс в день, что нейтральный сталкер возьмёт открытый контракт (сценарий «зона»). */
+    static final double NPC_TAKE_CHANCE = 0.12;
 
     public final List<Contract> list = new ArrayList<>();
     public int nextId = 1;
@@ -99,6 +101,23 @@ public final class ContractBoard {
         return c;
     }
 
+    /**
+     * Выдать контракт Кордона (карточка 006): награда целиком из кассы заказчика.
+     * Нет денег — контракт не выставляется. Залог учитывается в законе сохранения.
+     */
+    private Contract issueCash(Simulation s, Contract.Type t, int issuer, long reward, int days, int difficulty) {
+        Faction f = s.factions.get(issuer);
+        if (reward <= 0 || f.stock.money < reward) return null;
+        Contract c = new Contract(nextId++, t, issuer);
+        f.stock.money -= reward;
+        c.escrow = reward;
+        c.created = s.day;
+        c.deadline = s.day + days;
+        c.difficulty = difficulty;
+        list.add(c);
+        return c;
+    }
+
     private void refund(Simulation s, Contract c) {
         Faction f = s.factions.get(c.issuer);
         f.stock.money += c.escrow;
@@ -128,6 +147,12 @@ public final class ContractBoard {
                 refund(s, c);
             }
             if (c.active() && c.type == Contract.Type.LAB_DATA && s.labs.labs.get(c.lab).complete() && c.status != Contract.Status.READY) {
+                c.status = Contract.Status.EXPIRED;
+                refund(s, c);
+            }
+            // v16: заказчик контракта на захват уже занял узел — заказ больше не нужен
+            if (c.active() && c.type == Contract.Type.CAPTURE_NODE && s.nodes.get(c.node).owner == c.issuer
+                    && c.status != Contract.Status.READY) {
                 c.status = Contract.Status.EXPIRED;
                 refund(s, c);
             }
@@ -182,6 +207,86 @@ public final class ContractBoard {
                 break;
             }
         }
+        // v16 (карточка 006): у Кордона свои заказчики — Торговцы, Одиночки, военные
+        if (s.scenario.equals(Scenarios.KORDON)) generateKordon(s, r);
+    }
+
+    /**
+     * Доска Кордона (карточка 006). Торговцы заказывают артефакты, части мутантов и сопровождение курьера;
+     * Одиночки — захват элеватора; военные — зачистку логова у дороги. Награда только из кассы заказчика.
+     */
+    private void generateKordon(Simulation s, Random r) {
+        Faction traders = s.traders();
+        Faction loners = s.mercenaries();
+        Faction military = s.military();
+
+        if (traders != null && traders.members > 0 && openCount() < MAX_OPEN) {
+            // артефакты и части мутантов (в симуляции части мутантов — сырьё MEDS)
+            Good need = r.nextDouble() < 0.5 ? Good.ARTIFACT : Good.MEDS;
+            if (!has(Contract.Type.FETCH_ARTIFACT, traders.id, -1) && r.nextDouble() < KordonBalance.CONTRACT_FETCH_CHANCE) {
+                int q = 1 + r.nextInt(KordonBalance.CONTRACT_FETCH_MAX_QTY);
+                long unit = s.sellPrice(s.nodes.get(traders.baseNode), need);
+                Contract c = issueCash(s, Contract.Type.FETCH_ARTIFACT, traders.id,
+                        (long) (unit * q * KordonBalance.CONTRACT_FETCH_MARKUP), KordonBalance.CONTRACT_FETCH_DAYS,
+                        KordonBalance.CONTRACT_DIFFICULTY);
+                if (c != null) { c.node = traders.baseNode; c.good = need; c.qty = q; }
+            }
+            // сопровождение курьера до базы одной из живых группировок
+            if (!has(Contract.Type.ESCORT_COURIER, traders.id, -1) && r.nextDouble() < KordonBalance.CONTRACT_ESCORT_CHANCE) {
+                Faction buyer = escortBuyer(s, traders, r);
+                if (buyer != null) {
+                    long reward = KordonBalance.REWARD_ESCORT + r.nextInt(KordonBalance.REWARD_ESCORT_SPREAD);
+                    Contract c = issueCash(s, Contract.Type.ESCORT_COURIER, traders.id, reward,
+                            KordonBalance.CONTRACT_ESCORT_DAYS, KordonBalance.CONTRACT_DIFFICULTY);
+                    if (c != null) { c.node = buyer.baseNode; c.qty = buyer.id; }
+                }
+            }
+        }
+
+        // Одиночки заказывают элеватор: выбить врага с узла
+        if (loners != null && loners.members >= KordonBalance.CONTRACT_MIN_LONERS && openCount() < MAX_OPEN) {
+            int target = KordonBalance.CONTRACT_CAPTURE_NODE;
+            Node elev = s.nodes.get(target);
+            if (elev.owner != loners.id && !s.noCapture(target)
+                    && !has(Contract.Type.CAPTURE_NODE, loners.id, -1) && r.nextDouble() < KordonBalance.CONTRACT_CAPTURE_CHANCE) {
+                long reward = KordonBalance.REWARD_CAPTURE + r.nextInt(KordonBalance.REWARD_CAPTURE_SPREAD);
+                Contract c = issueCash(s, Contract.Type.CAPTURE_NODE, loners.id, reward,
+                        KordonBalance.CONTRACT_CAPTURE_DAYS, KordonBalance.CONTRACT_DIFFICULTY);
+                if (c != null) { c.node = target; c.qty = elev.owner; }
+            }
+        }
+
+        // Военные чистят логова у дороги
+        if (military != null && military.members >= KordonBalance.CONTRACT_MIN_MILITARY && openCount() < MAX_OPEN) {
+            for (Lair l : s.lairs) {
+                if (l.strength < KordonBalance.CONTRACT_LAIR_MIN_STRENGTH || !lairByRoad(s, l.node)) continue;
+                if (anyLairContract(l.node) || r.nextDouble() > KordonBalance.CONTRACT_MILITARY_LAIR_CHANCE) continue;
+                long reward = KordonBalance.REWARD_MILITARY_LAIR_BASE + (long) (l.strength * KordonBalance.REWARD_MILITARY_LAIR_PER_STRENGTH);
+                Contract c = issueCash(s, Contract.Type.CLEAR_LAIR, military.id, reward, 25, l.strength > 60 ? 4 : 3);
+                if (c != null) c.node = l.node;
+                break;
+            }
+        }
+    }
+
+    /** Логово стоит на дорожном узле военных или рядом с ним. */
+    private boolean lairByRoad(Simulation s, int node) {
+        for (int road : KordonBalance.MILITARY_ROAD_NODES) {
+            if (road >= s.nodes.size()) continue;
+            if (road == node || s.graph.dist(road, node) <= 1) return true;
+        }
+        return false;
+    }
+
+    /** База покупателя для сопровождения курьера: живая группировка, кроме самих Торговцев. */
+    private Faction escortBuyer(Simulation s, Faction traders, Random r) {
+        List<Faction> pool = new ArrayList<>();
+        for (Faction f : s.factions) {
+            if (f == traders || f.isService() || f.members < 5) continue;
+            if (f.baseNode == traders.baseNode) continue;
+            pool.add(f);
+        }
+        return pool.isEmpty() ? null : pool.get(r.nextInt(pool.size()));
     }
 
     private boolean anyLairContract(int node) {
@@ -201,10 +306,28 @@ public final class ContractBoard {
         if (g != null) g.node = m.venue;
         if (g != null) g.deadline = m.day;
         Faction h = s.politics.ambusher(s, m);
+        // v16 (карточка 006): на Кордоне из трёх фракций у встречи почти никогда нет врага рядом,
+        // поэтому засаду заказывает враждебная хозяину группировка и издалека
+        if (h == null && s.scenario.equals(Scenarios.KORDON)) h = kordonAmbusher(s, m);
         if (h != null) {
             Contract a = issue(s, Contract.Type.AMBUSH_MEETING, h.id, 2000 + r.nextInt(1000), m.day - s.day, 4);
             if (a != null) { a.node = m.venue; a.deadline = m.day; a.qty = m.host * 100 + m.guest; }
         }
+    }
+
+    /** Заказчик засады на встречу на Кордоне: враждебная хозяину группировка (заказчик нанимает исполнителя, не идёт сам). */
+    private Faction kordonAmbusher(Simulation s, Politics.Meeting m) {
+        Faction best = null;
+        double bestScore = 0;
+        for (Faction h : s.factions) {
+            if (h.id == m.host || h.id == m.guest || h.passive || h.isService()) continue;
+            if (h.members < KordonBalance.CONTRACT_MIN_LONERS) continue;
+            double hostile = Math.max(s.hostilityTo(h, m.host), s.hostilityTo(h, m.guest));
+            if (hostile < 0.6) continue;
+            double score = hostile * (0.4 + h.aggression);
+            if (score > bestScore) { bestScore = score; best = h; }
+        }
+        return best;
     }
 
     void meetingResolved(Simulation s, Politics.Meeting m, boolean success, boolean leaderDied) {
@@ -225,10 +348,15 @@ public final class ContractBoard {
     private void npcTake(Simulation s, Random r) {
         Faction loners = s.mercenaries();
         if (loners == null || loners.members < 10) return;
+        // v16 (карточка 006): на Кордоне одиночки берутся за работу охотнее
+        double chance = s.scenario.equals(Scenarios.KORDON) ? KordonBalance.CONTRACT_NPC_TAKE_CHANCE : NPC_TAKE_CHANCE;
         for (Contract c : list) {
-            if (c.status != Contract.Status.OPEN || c.issuer == loners.id || s.day - c.created < 3) continue;
-            if (c.type != Contract.Type.FETCH_ARTIFACT && c.type != Contract.Type.SUPPLY && c.type != Contract.Type.CLEAR_LAIR) continue;
-            if (r.nextDouble() > 0.12) continue;
+            // своё же сопровождение/поставка не заказываются себе; захват узла одиночки берут и у себя
+            if (c.issuer == loners.id && c.type != Contract.Type.CAPTURE_NODE) continue;
+            if (c.status != Contract.Status.OPEN || s.day - c.created < 3) continue;
+            if (c.type != Contract.Type.FETCH_ARTIFACT && c.type != Contract.Type.SUPPLY && c.type != Contract.Type.CLEAR_LAIR
+                    && c.type != Contract.Type.ESCORT_COURIER && c.type != Contract.Type.CAPTURE_NODE) continue;
+            if (r.nextDouble() > chance) continue;
             c.status = Contract.Status.TAKEN;
             c.taker = loners.id;
             c.resolveDay = s.day + 2 + r.nextInt(5);
@@ -242,10 +370,10 @@ public final class ContractBoard {
         switch (c.type) {
             case FETCH_ARTIFACT -> {
                 if (ok) {
-                    int moved = Stock.move(t.stock, iss.stock, Good.ARTIFACT, c.qty);
+                    int moved = Stock.move(t.stock, iss.stock, c.good, c.qty);
                     int rest = c.qty - moved;
-                    iss.stock.add(Good.ARTIFACT, rest);
-                    s.ledger.created[Good.ARTIFACT.ordinal()] += rest;
+                    iss.stock.add(c.good, rest);
+                    s.ledger.created[c.good.ordinal()] += rest;
                 }
             }
             case SUPPLY -> ok = ok && Stock.move(t.stock, iss.stock, c.good, c.qty) > 0;
@@ -255,6 +383,12 @@ public final class ContractBoard {
                 else if (ok) s.mutantKilled(l, l.strength, false);
                 else s.applyCasualtiesOf(t, 1 + r.nextInt(3));
             }
+            // v16 (карточка 006): курьер Торговцев дошёл до базы покупателя под охраной
+            case ESCORT_COURIER -> {
+                if (ok) s.courierArrived(c.qty);
+            }
+            // v16: узел закрывается только со сменой владельца
+            case CAPTURE_NODE -> ok = captureResolve(s, t, c, ok);
             default -> ok = false;
         }
         if (ok) {
@@ -269,6 +403,21 @@ public final class ContractBoard {
             c.status = Contract.Status.OPEN;
             c.taker = Contract.NOBODY;
         }
+    }
+
+    /**
+     * CAPTURE_NODE: контракт закрывается только со сменой владельца узла. Если врага уже выбили с узла —
+     * цель достигнута; иначе исполнитель сам выбивает владельца (если это вообще возможно) и узел переходит заказчику.
+     */
+    private boolean captureResolve(Simulation s, Faction t, Contract c, boolean roll) {
+        Node n = s.nodes.get(c.node);
+        if (n.owner != c.qty) return true;                  // владелец сменился — заказ выполнен
+        int to = c.issuer >= 0 ? c.issuer : t.id;           // узел займёт заказчик
+        if (n.owner == t.id || s.noCapture(c.node)) return false; // узел уже наш или его не берут
+        if (to == c.qty) return false;                      // у заказчика тот же владелец — брать нечего
+        if (!roll) return false;
+        s.contractCapture(t, to, c.node);
+        return true;
     }
 
     // ------------------------------------------------------------------ игрок
@@ -326,6 +475,18 @@ public final class ContractBoard {
         if (c.type != Contract.Type.FETCH_ARTIFACT && c.type != Contract.Type.SUPPLY) return null;
         s.factions.get(c.issuer).stock.add(c.good, c.qty);
         s.ledger.imported[c.good.ordinal()] += c.qty;
+        return payPlayer(s, c);
+    }
+
+    /**
+     * Курьер Торговцев дошёл до базы: закрыть контракт сопровождения.
+     * Игровой слой зовёт это, когда сопровождённый NPC-курьер доходит; быть рядом не обязательно.
+     */
+    public Reward escortArrived(Simulation s, int id, String player) {
+        Contract c = byId(id);
+        if (c == null || c.status != Contract.Status.TAKEN || c.type != Contract.Type.ESCORT_COURIER
+                || c.taker != Contract.PLAYER || !c.player.equals(player)) return null;
+        s.courierArrived(c.qty);
         return payPlayer(s, c);
     }
 
