@@ -8,7 +8,9 @@ import java.io.IOException;
 public final class Contract {
     public enum Type {
         FETCH_ARTIFACT("Принести артефакты"), SUPPLY("Поставка"), CLEAR_LAIR("Зачистить логово"),
-        LAB_DATA("Данные лаборатории"), GUARD_MEETING("Охрана встречи"), AMBUSH_MEETING("Засада на встречу");
+        LAB_DATA("Данные лаборатории"), GUARD_MEETING("Охрана встречи"), AMBUSH_MEETING("Засада на встречу"),
+        // v16 (карточка 006): контракты Кордона — сопровождение курьера Торговцев и захват узла
+        ESCORT_COURIER("Сопроводить курьера"), CAPTURE_NODE("Выбить врага с узла");
         public final String ru;
         Type(String ru) { this.ru = ru; }
     }
@@ -28,6 +30,11 @@ public final class Contract {
     public int node;
     public int lab = -1;
     public Good good = Good.ARTIFACT;
+    /**
+     * Количество товара (FETCH_ARTIFACT, SUPPLY). Особые случаи:
+     * AMBUSH_MEETING — host*100+guest, CAPTURE_NODE — исходный владелец узла,
+     * ESCORT_COURIER — id фракции-покупателя (куда ведут курьера).
+     */
     public int qty;
     /** Залог из кассы заказчика: учитывается в законе сохранения. */
     public long escrow;
@@ -63,7 +70,8 @@ public final class Contract {
     public String describe(Simulation s) {
         String who = issuer >= 0 ? s.factions.get(issuer).name : "Институты";
         String what = switch (type) {
-            case FETCH_ARTIFACT -> "принести артефакты (" + qty + " шт.) на «" + s.nodes.get(node).name + "»";
+            case FETCH_ARTIFACT -> "принести " + (good == Good.ARTIFACT ? "артефакты" : good.ru.toLowerCase())
+                    + " (" + qty + " шт.) на «" + s.nodes.get(node).name + "»";
             case SUPPLY -> "доставить " + good.ru.toLowerCase() + " (" + qty + " шт.) на базу «" + s.nodes.get(node).name + "»";
             case CLEAR_LAIR -> {
                 Lair l = s.lairAt(node);
@@ -73,6 +81,9 @@ public final class Contract {
                     + "» (премия институтов " + s.labs.labs.get(lab).playerReward() + " руб. за каждую часть)";
             case GUARD_MEETING -> "охранять встречу лидеров на «" + s.nodes.get(node).name + "» в день " + deadline;
             case AMBUSH_MEETING -> "убить лидера на встрече на «" + s.nodes.get(node).name + "» в день " + deadline;
+            case ESCORT_COURIER -> "сопроводить курьера Торговцев до базы «" + s.nodes.get(node).name + "»";
+            case CAPTURE_NODE -> "выбить " + (qty >= 0 ? "«" + s.factions.get(qty).name + "» " : "врага ")
+                    + "с «" + s.nodes.get(node).name + "»";
         };
         String diff = "★★★★★".substring(0, Math.max(1, Math.min(5, difficulty)));
         return String.format("#%d %s [%s] от «%s»: %s; награда %s; срок до дня %d; %s%s", id, type.ru, diff, who, what, rewardRu(),

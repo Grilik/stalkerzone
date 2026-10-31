@@ -1896,6 +1896,38 @@ public final class Simulation {
         }
     }
 
+    /** Привезено курьерских партий Торговцев: считается и когда курьер дошёл сам, и когда его сопроводили (v16). */
+    public int courierDelivered;
+
+    /** Курьер Торговцев дошёл до покупателя: учтена доставленная партия (в т.ч. по контракту сопровождения). */
+    public void courierArrived(int buyerId) {
+        courierDelivered++;
+        String who = buyerId >= 0 && buyerId < factions.size() ? "«" + factions.get(buyerId).name + "»" : "покупателя";
+        log("Курьер Торговцев дошёл до " + who);
+    }
+
+    /**
+     * Захват узла по контракту (v16, карточка 006): исполнитель выбивает прежнего владельца без войны,
+     * узел переходит заказчику. Смена владельца — единственное условие закрытия CAPTURE_NODE.
+     */
+    public void contractCapture(Faction executor, int customer, int node) {
+        Node n = nodes.get(node);
+        int old = n.owner;
+        int to = customer >= 0 ? customer : executor.id;
+        n.owner = to;
+        factions.get(to).nodesCaptured++;
+        n.supply = Math.max(0, n.supply * 0.5);
+        if (old >= 0 && old != to) {
+            Faction o = factions.get(old);
+            o.nodesLost++;
+            o.resent(to, 0.6);
+            log(executor.name + " по контракту выбили «" + o.name + "» с «" + n.name + "»; узел перешёл к «"
+                    + factions.get(to).name + "»");
+        } else {
+            log(executor.name + " заняли «" + n.name + "» по контракту");
+        }
+    }
+
     private void unload(Caravan c, Faction f) {
         for (Good g : Good.ALL) Stock.move(c.cargo, f.stock, g, c.cargo.get(g));
         Stock.moveMoney(c.cargo, f.stock, c.cargo.money);
@@ -1931,6 +1963,7 @@ public final class Simulation {
             if (!c.returning) {
                 if (c.courierFor >= 0) {
                     courierTrade(c, factions.get(c.courierFor), nodes.get(c.route[0]));
+                    courierDelivered++; // партия Торговцев дошла до базы покупателя
                 } else {
                     tradeAtHub(c, nodes.get(at));
                 }
@@ -2282,7 +2315,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(15); // v15: фракция Торговцев
+            out.writeInt(16); // v16: контракты Кордона — сопровождение курьера и захват узла (карточка 006)
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2415,6 +2448,7 @@ public final class Simulation {
                 out.writeInt(lairDistrictShift[i]);
             for (int i = 0; i < lairDistrictLastClear.length; i++)
                 out.writeInt(lairDistrictLastClear[i]);
+            out.writeInt(courierDelivered); // v16
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
@@ -2432,7 +2466,7 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 15) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 16) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
@@ -2597,6 +2631,7 @@ public final class Simulation {
                 for (int i = 0; i < sim.lairDistrictLastClear.length; i++)
                     sim.lairDistrictLastClear[i] = in.readInt();
             }
+            if (version >= 16) sim.courierDelivered = in.readInt();
             sim.recalcPassDanger();
             return sim;
         } catch (IOException e) {
