@@ -41,9 +41,17 @@ import ru.stalkerzone.sim.Simulation;
  */
 public class StalkerEntity extends PathfinderMob {
     public static final int ROLE_STALKER = 0, ROLE_TRADER = 1, ROLE_BUILDER = 2, ROLE_HERMIT = 3;
+    // карточка 032: роли NPC базы (совпадают с sim.BaseRoles)
+    public static final int ROLE_GUARD = ru.stalkerzone.sim.BaseRoles.GUARD;
+    public static final int ROLE_PATROL = ru.stalkerzone.sim.BaseRoles.PATROL;
+    public static final int ROLE_COOK = ru.stalkerzone.sim.BaseRoles.COOK;
+    public static final int ROLE_MECHANIC = ru.stalkerzone.sim.BaseRoles.MECHANIC;
+    public static final int ROLE_DUTY = ru.stalkerzone.sim.BaseRoles.DUTY;
+    public static final int ROLE_RESIDENT = ru.stalkerzone.sim.BaseRoles.RESIDENT;
 
     private static final EntityDataAccessor<Integer> FACTION = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ROLE = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> WORKROLE = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DOWNED = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.BOOLEAN);
 
     /** Именной сталкер симуляции (0: рядовой). */
@@ -78,11 +86,15 @@ public class StalkerEntity extends PathfinderMob {
         super.defineSynchedData();
         this.entityData.define(FACTION, 0);
         this.entityData.define(ROLE, ROLE_STALKER);
+        this.entityData.define(WORKROLE, ROLE_STALKER);
         this.entityData.define(DOWNED, false);
     }
 
     public int faction() { return this.entityData.get(FACTION); }
     public int role() { return this.entityData.get(ROLE); }
+    /** Рабочая роль NPC базы (карточка 032): GUARD/PATROL/COOK/MECHANIC/DUTY/RESIDENT, или 0 у обычных сталкеров. */
+    public int workRole() { return this.entityData.get(WORKROLE); }
+    public void setWorkRole(int r) { this.entityData.set(WORKROLE, r); }
     public int homeNode() { return homeNode; }
     /** Торговец или отшельник (Лесник, Болотный Доктор): неуязвим, стоит на месте, его не трогают. */
     public boolean isTrader() { return role() == ROLE_TRADER || role() == ROLE_HERMIT; }
@@ -99,6 +111,19 @@ public class StalkerEntity extends PathfinderMob {
     public boolean isGuard() { return getPersistentData().getBoolean("sz_guard"); }
     /** NPC отдыхает у костра (карточка 028): его место — в двух блоках от центра костра. */
     public boolean isCamper() { return getPersistentData().getBoolean("sz_campfire"); }
+
+    /** Подпись над головой при взгляде (карточка 032): роль NPC базы коротко. */
+    public String roleLabel() {
+        return switch (workRole()) {
+            case ROLE_GUARD -> "Часовой";
+            case ROLE_PATROL -> "Патруль";
+            case ROLE_COOK -> "Повар";
+            case ROLE_MECHANIC -> "Механик";
+            case ROLE_DUTY -> "Дежурный";
+            case ROLE_RESIDENT -> "Житель";
+            default -> "";
+        };
+    }
 
     /** Центр точки привязки в мировых координатах (для часового — откуда смотреть) или null. */
     public double[] nodeCenterXZ() {
@@ -228,9 +253,12 @@ public class StalkerEntity extends PathfinderMob {
         // Боевые цели выше по приоритету, поэтому с поста уходят только в бой и после возвращаются.
         this.goalSelector.addGoal(4, new GuardPostGoal(this));
         this.goalSelector.addGoal(4, new CampfireGoal(this));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.8));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0f));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        // карточка 032: распорядок NPC базы (работа/ужин/сон) вместо случайного брожения.
+        // Цель выигрывает у прогулки (ниже приоритет), бой (выше) по-прежнему прерывает работу.
+        this.goalSelector.addGoal(5, new WorkScheduleGoal(this));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0f));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, StalkerEntity.class, 10, true, false, this::isEnemyNpc));
@@ -241,7 +269,7 @@ public class StalkerEntity extends PathfinderMob {
                 m -> !isTrader() && !(m instanceof StalkerEntity) && m.getPersistentData().contains(ru.stalkerzone.mutant.MutantManager.TAG_LAIR)));
     }
 
-    private Simulation sim() {
+    Simulation sim() {
         MinecraftServer server = this.getServer();
         return server == null ? null : ZoneData.get(server).sim;
     }
@@ -437,6 +465,20 @@ public class StalkerEntity extends PathfinderMob {
         if (!this.level().isClientSide && combat != null && getTarget() == null && this.tickCount % 20 == 0) combat.morale.second(1, false, false, false);
         if (!this.level().isClientSide && !isDowned() && getTarget() == null && isCrouching()
                 && !isCamper() && this.tickCount % 40 == 0) setCrouch(false);
+        // карточка 032: подпись над головой — роль (Часовой, Патруль…) видна, когда игрок близко
+        if (!this.level().isClientSide && workRole() > 0 && !isTrader() && this.tickCount % 20 == 0) {
+            String label = roleLabel();
+            boolean near = false;
+            for (net.minecraft.server.level.ServerPlayer sp : ((net.minecraft.server.level.ServerLevel) this.level()).players()) {
+                if (sp.distanceToSqr(this) < 25.0) { near = true; break; }
+            }
+            if (near && !label.isEmpty()) {
+                this.setCustomName(Component.literal(label));
+                this.setCustomNameVisible(true);
+            } else {
+                this.setCustomNameVisible(false);
+            }
+        }
         if (this.level().isClientSide || !isDowned()) return;
         if (getPose() != net.minecraft.world.entity.Pose.SLEEPING) setPose(net.minecraft.world.entity.Pose.SLEEPING);
         if (--downTicks <= 0) {
@@ -609,6 +651,7 @@ public class StalkerEntity extends PathfinderMob {
         super.addAdditionalSaveData(tag);
         tag.putInt("Faction", faction());
         tag.putInt("Role", role());
+        tag.putInt("WorkRole", workRole());
         tag.putInt("HomeNode", homeNode);
         tag.putInt("HomeX", homeX);
         tag.putInt("HomeY", homeY);
@@ -625,6 +668,7 @@ public class StalkerEntity extends PathfinderMob {
         super.readAdditionalSaveData(tag);
         this.entityData.set(FACTION, tag.getInt("Faction"));
         this.entityData.set(ROLE, tag.getInt("Role"));
+        this.entityData.set(WORKROLE, tag.getInt("WorkRole"));
         this.homeNode = tag.getInt("HomeNode");
         this.homeX = tag.getInt("HomeX");
         this.homeY = tag.getInt("HomeY");
