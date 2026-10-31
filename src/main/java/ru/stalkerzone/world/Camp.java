@@ -503,53 +503,82 @@ public final class Camp {
 
     /**
      * Ставит декор на существующих постройках уровня: костёр, флаг фракции, лежанки, ящики.
-     * Вызывается при первом подходе игрока и при смене владельца (меняется цвет флага).
+     * Всё ставится на поверхность: ищем первый твёрдый блок вниз от точки (до 6 блоков), при пустоте
+     * под объектом подставляем опору из материала покрытия. Внутрь стен ничего не ставим, одиночных
+     * блоков-меток не остаётся (карточка 027). Вызывается при первом подходе игрока и при смене
+     * владельца (меняется цвет флага).
      */
     public static void placeLevelDecor(ServerLevel level, Node n, com.google.gson.JsonObject pts, int worldCX, int worldCZ) {
-        BlockPos ground = SpawnFinder.groundAt(level, worldCX, worldCZ);
-        Painter pt = new Painter(level, ground.getX(), ground.getY(), ground.getZ());
+        // координаты точек — уже в блоках мира, поэтому рисуем без смещения
+        Painter pt = new Painter(level, 0, 0, 0);
 
-        // Очищаем старый декор (если владелец сменился — перерисовываем флаг)
-        // Ставим флаг фракции
+        // Флаг фракции: столб на 3 блока и баннер сверху
         if (n.owner >= 0) {
             int[] flag = LevelPoints.readVec(pts, "flag");
             if (flag != null && flag.length >= 3) {
-                Block banner = bannerOf(n.owner);
-                // флаг на два блока вверх
-                pt.set(flag[0] - ground.getX(), flag[2] - ground.getZ(), -1, Blocks.COBBLESTONE.defaultBlockState());
-                pt.fill(flag[0] - ground.getX(), 0, flag[2] - ground.getZ(),
-                        flag[0] - ground.getX(), 2, flag[2] - ground.getZ(),
-                        Blocks.OAK_FENCE.defaultBlockState());
-                pt.set(flag[0] - ground.getX(), 3, flag[2] - ground.getZ(), banner.defaultBlockState());
+                BlockPos base = surface(pt, flag[0], flag[1], flag[2]);
+                if (base != null) {
+                    pt.fill(base.getX(), base.getY(), base.getZ(), base.getX(), base.getY() + 2, base.getZ(),
+                            Blocks.OAK_FENCE.defaultBlockState());
+                    pt.set(base.getX(), base.getY() + 3, base.getZ(), bannerOf(n.owner).defaultBlockState());
+                }
             }
         }
 
         // Костёр
         int[] campfire = LevelPoints.readVec(pts, "campfire");
         if (campfire != null && campfire.length >= 3) {
-            int fx = campfire[0] - ground.getX(), fz = campfire[2] - ground.getZ();
-            pt.set(fx, -1, fz, Blocks.COBBLESTONE.defaultBlockState());
-            pt.set(fx, 0, fz, Blocks.CAMPFIRE.defaultBlockState().setValue(
-                    net.minecraft.world.level.block.CampfireBlock.LIT, true));
+            BlockPos base = surface(pt, campfire[0], campfire[1], campfire[2]);
+            if (base != null) pt.set(base.getX(), base.getY(), base.getZ(),
+                    Blocks.CAMPFIRE.defaultBlockState().setValue(net.minecraft.world.level.block.CampfireBlock.LIT, true));
         }
 
         // Лежанки (сеном)
-        java.util.List<int[]> beds = LevelPoints.readVecs(pts, "beds");
-        for (int[] bed : beds) {
+        for (int[] bed : LevelPoints.readVecs(pts, "beds")) {
             if (bed.length < 3) continue;
-            int bx = bed[0] - ground.getX(), bz = bed[2] - ground.getZ();
-            pt.set(bx, 0, bz, Blocks.HAY_BLOCK.defaultBlockState());
+            BlockPos base = surface(pt, bed[0], bed[1], bed[2]);
+            if (base != null) pt.set(base.getX(), base.getY(), base.getZ(), Blocks.HAY_BLOCK.defaultBlockState());
         }
 
         // Ящики и бочки вокруг костра
         if (campfire != null && campfire.length >= 3) {
             Random r = new Random(n.id * 7727L + 13);
-            int fx = campfire[0] - ground.getX(), fz = campfire[2] - ground.getZ();
+            int fx = campfire[0], fz = campfire[2];
             for (int i = 0; i < 3; i++) {
                 int bx = fx + r.nextInt(5) - 2, bz = fz + r.nextInt(5) - 2;
                 if (Math.abs(bx - fx) < 2 && Math.abs(bz - fz) < 2) continue;
-                pt.set(bx, 0, bz, r.nextBoolean() ? Blocks.BARREL.defaultBlockState() : Blocks.CHEST.defaultBlockState());
+                BlockPos base = surface(pt, bx, campfire[1], bz);
+                if (base != null) pt.set(base.getX(), base.getY(), base.getZ(),
+                        r.nextBoolean() ? Blocks.BARREL.defaultBlockState() : Blocks.CHEST.defaultBlockState());
             }
         }
+    }
+
+    /**
+     * Место объекта на поверхности: ищем первый твёрдый блок вниз от точки (до 6 блоков), при пустоте
+     * под объектом ставим опору из материала покрытия. Если точка внутри стены/рельефа — поднимаем до
+     * свободного места, но не выше 8 блоков. null, если свободного места не нашлось (внутрь не ставим).
+     */
+    private static BlockPos surface(Painter pt, int x, int y, int z) {
+        int top = y;
+        for (int k = 0; k < 8 && solid(pt, x, top, z); k++) top++;
+        if (solid(pt, x, top, z)) return null;
+        int base = Integer.MIN_VALUE;
+        for (int dy = 1; dy <= 6; dy++) if (solid(pt, x, top - dy, z)) { base = top - dy; break; }
+        BlockState cover;
+        if (base == Integer.MIN_VALUE) { base = top - 6; cover = Blocks.DIRT.defaultBlockState(); }
+        else {
+            cover = pt.get(x, base, z);
+            if (cover.isAir() || cover.canBeReplaced() || !cover.getFluidState().isEmpty()) cover = Blocks.DIRT.defaultBlockState();
+        }
+        // опора из материала покрытия, если под объектом пусто
+        for (int yy = base + 1; yy < top; yy++) pt.set(x, yy, z, cover);
+        return new BlockPos(x, top, z);
+    }
+
+    /** Твёрдый ли блок: не воздух, не заменяемый и не жидкость. */
+    private static boolean solid(Painter pt, int x, int y, int z) {
+        BlockState s = pt.get(x, y, z);
+        return !s.isAir() && !s.canBeReplaced() && s.getFluidState().isEmpty();
     }
 }
