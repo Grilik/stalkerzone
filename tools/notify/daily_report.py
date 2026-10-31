@@ -89,7 +89,7 @@ def openrouter():
     s = (f"OpenRouter: сегодня {money(d.get('usage_daily'))}, неделя {money(d.get('usage_weekly'))}, "
          f"месяц {money(d.get('usage_monthly'))}")
     if d.get("limit_remaining") is not None:
-        s += f", остаток ключа {money(d['limit_remaining'])}"
+        s += f", лимит ключа: осталось {money(d['limit_remaining'])}"
     try:
         c = http_json("https://openrouter.ai/api/v1/credits", key).get("data", {})
         s += f", счёт {money(float(c['total_credits']) - float(c['total_usage']))}"
