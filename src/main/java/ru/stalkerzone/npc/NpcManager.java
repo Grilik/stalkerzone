@@ -332,38 +332,88 @@ public final class NpcManager {
         }
     }
 
-    /** Спавн на рабочих местах постройки: часовые на постах, остальные — на нарах и у костра. */
+    /** Спавн на рабочих местах постройки: распределение ролей (карточка 032). */
     private static StalkerEntity spawnAtPrefabPoint(ServerLevel level, Simulation sim, Node n,
-                                                     List<StalkerEntity> present, List<Prefabs.Point> pts) {
-        List<Prefabs.Point> guards = ofKind(pts, "guard");
-        List<Prefabs.Point> spots = new java.util.ArrayList<>(ofKind(pts, "bed"));
-        int beds = spots.size();
-        spots.addAll(ofKind(pts, "cook"));
-        // Сначала guards (первые двое — часовые)
-        int guardCount = 0;
-        for (StalkerEntity e : present) if (e.isGuard()) guardCount++;
-        if (guardCount < Math.min(2, guards.size())) {
-            Prefabs.Point p = guards.get(RND.nextInt(guards.size()));
-            StalkerEntity e = spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner,
-                    new BlockPos(p.x(), p.y(), p.z()));
-            if (e != null) { e.getPersistentData().putBoolean("sz_guard", true); return e; }
+                                                      List<StalkerEntity> present, List<Prefabs.Point> pts) {
+        int wanted = target(sim, n);
+        int[] kinds = new int[]{ofKind(pts, "guard").size(), ofKind(pts, "patrol").size(),
+                ofKind(pts, "cook").size(), ofKind(pts, "work").size(), ofKind(pts, "duty").size(),
+                ofKind(pts, "bed").size(), ofKind(pts, "rest").size()};
+        int[] want = ru.stalkerzone.sim.BaseRoles.assign(wanted, kinds);
+        int[] have = new int[6];
+        for (StalkerEntity e : present) {
+            int r = e.workRole();
+            if (r >= StalkerEntity.ROLE_GUARD && r <= StalkerEntity.ROLE_RESIDENT) have[r - StalkerEntity.ROLE_GUARD]++;
         }
-        // Потом нары и костёр
-        if (!spots.isEmpty()) {
-            int idx = RND.nextInt(spots.size());
-            Prefabs.Point p = spots.get(idx);
-            StalkerEntity e = spawnFixed(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner,
-                    new BlockPos(p.x(), p.y(), p.z()));
-            if (e != null && idx >= beds) {   // своё место у костра: NPC сидит здесь и смотрит на огонь
-                e.getPersistentData().putBoolean("sz_campfire", true);
-                e.getPersistentData().putInt("sz_fire_x", p.x());
-                e.getPersistentData().putInt("sz_fire_y", p.y());
-                e.getPersistentData().putInt("sz_fire_z", p.z());
+        int[] order = {StalkerEntity.ROLE_GUARD, StalkerEntity.ROLE_PATROL, StalkerEntity.ROLE_COOK,
+                StalkerEntity.ROLE_DUTY, StalkerEntity.ROLE_MECHANIC, StalkerEntity.ROLE_RESIDENT};
+        for (int role : order) {
+            int i = role - StalkerEntity.ROLE_GUARD;
+            if (have[i] < want[i]) {
+                String kind = switch (role) {
+                    case StalkerEntity.ROLE_GUARD -> "guard";
+                    case StalkerEntity.ROLE_PATROL -> "patrol";
+                    case StalkerEntity.ROLE_COOK -> "cook";
+                    case StalkerEntity.ROLE_MECHANIC -> "work";
+                    case StalkerEntity.ROLE_DUTY -> "duty";
+                    default -> "bed";
+                };
+                List<Prefabs.Point> list = role == StalkerEntity.ROLE_RESIDENT ? residentSpots(pts) : ofKind(pts, kind);
+                if (list.isEmpty()) continue;
+                Prefabs.Point p = pickRolePoint(list, role, pts, present);
+                StalkerEntity e = spawnWorkRole(level, sim, n, role, new BlockPos(p.x(), p.y(), p.z()));
+                if (e != null) return e;
             }
-            if (e != null) return e;
         }
+        return spawnFallback(level, sim, n);
+    }
+
+    private static List<Prefabs.Point> residentSpots(List<Prefabs.Point> pts) {
+        List<Prefabs.Point> out = new java.util.ArrayList<>(ofKind(pts, "bed"));
+        out.addAll(ofKind(pts, "rest"));
+        out.addAll(ofKind(pts, "cook"));
+        return out;
+    }
+
+    private static Prefabs.Point pickRolePoint(List<Prefabs.Point> list, int role, List<Prefabs.Point> pts,
+                                                List<StalkerEntity> present) {
+        if (role == StalkerEntity.ROLE_GUARD) {
+            java.util.Set<String> taken = new java.util.HashSet<>();
+            for (StalkerEntity e : present) if (e.workRole() == StalkerEntity.ROLE_GUARD) {
+                net.minecraft.world.phys.Vec3 hp = e.homePos();
+                if (hp != null) taken.add((int)hp.x + "," + (int)hp.y + "," + (int)hp.z);
+            }
+            List<Prefabs.Point> free = new java.util.ArrayList<>();
+            for (Prefabs.Point g : list) if (!taken.contains(g.x() + "," + g.y() + "," + g.z())) free.add(g);
+            if (!free.isEmpty()) return free.get(RND.nextInt(free.size()));
+        }
+        return list.get(RND.nextInt(list.size()));
+    }
+
+    private static StalkerEntity spawnWorkRole(ServerLevel level, Simulation sim, Node n, int workRole, BlockPos pos) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
+        BlockPos ground = SpawnFinder.groundAt(level, pos.getX(), pos.getZ());
+        StalkerEntity e = ModEntities.STALKER.get().create(level);
+        if (e == null) return null;
+        String name = CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " [" + rankFor(sim.factions.get(n.owner)) + "]";
+        e.moveTo(ground.getX() + 0.5, ground.getY(), ground.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
+        e.configure(n.owner, StalkerEntity.ROLE_STALKER, n.id, ground, Component.literal(name));
+        e.setWorkRole(workRole);
+        level.addFreshEntity(e);
+        return e;
+    }
+
+    private static StalkerEntity spawnFallback(ServerLevel level, Simulation sim, Node n) {
         int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
         return spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
+    }
+
+    /** Точки prefab заданного вида для узла (карточка 032). Кэшируется, безопасно для вызова из AI-целей. */
+    public static List<Prefabs.Point> prefabPointsByKind(net.minecraft.world.level.Level level, Simulation sim, int nodeId, String kind) {
+        if (!(level instanceof ServerLevel sl) || sim == null || nodeId < 0 || nodeId >= sim.nodes.size()) return List.of();
+        List<Prefabs.Point> all = prefabPoints(sl, sim, sim.nodes.get(nodeId));
+        if (all == null) return List.of();
+        return ofKind(all, kind);
     }
 
     /** Точки нужного вида, в порядке сборщика. */
