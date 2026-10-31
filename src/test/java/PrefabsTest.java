@@ -43,9 +43,9 @@ public class PrefabsTest {
                 if (st == null || st.equals("minecraft:air")) bedsFree++;
             }
         }
-        ck(guard >= 3, "часовых (guard) " + guard);
-        ck(bed >= 10, "спальных мест (bed) " + bed);
-        ck(patrol >= 4, "точек патруля " + patrol);
+        ck(guard >= 4, "часовых (guard) " + guard);
+        ck(bed >= 14, "спальных мест (bed) " + bed);
+        ck(patrol >= 16, "точек патруля " + patrol);
         ck(inBounds == marks.size(), "все точки в границах замены (" + inBounds + "/" + marks.size() + ")");
         ck(bedsFree == bedsTotal, "точки bed не в твёрдых блоках (" + bedsFree + "/" + bedsTotal + ")");
         ck(Prefabs.points("l02_garbage", (x, z) -> 75).isEmpty(), "другие уровни без рабочих мест");
@@ -61,6 +61,19 @@ public class PrefabsTest {
         ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
         for (Prefabs.Point p : marks) if (p.kind().equals("duty")) duty++;
         ck(duty >= 1, "рабочее место торговца (duty) " + duty);
+        // карточка 037: элеватор в списке сборщиков — свои границы, блоки, рабочие места
+        int elevatorSolid = 0, cook = 0;
+        for (Map.Entry<Long, String> e : m.entrySet()) {
+            if (e.getValue().equals("minecraft:air")) continue;
+            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
+            boolean inElevator = (x >= 128 && x <= 141 && z >= -272 && z <= -255)
+                    || (x >= 175 && x <= 246 && z >= -247 && z <= -158);
+            if (inElevator) elevatorSolid++;
+        }
+        ck(elevatorSolid > 500, "элеватор: блоков " + elevatorSolid);
+        for (Prefabs.Point p : marks) if (p.kind().equals("cook")) cook++;
+        ck(cook >= 1, "рабочее место повара (cook) " + cook);
+
         // карточка 040: дальний блокпост — свои блоки и рабочие места в его границах
         int farSolid = 0, farGate = 0, farGuard = 0, farCook = 0, farBed = 0, farPatrol = 0;
         for (Map.Entry<Long, String> e : m.entrySet()) {
@@ -90,7 +103,7 @@ public class PrefabsTest {
             int[] ra = cl.get(i), rb = cl.get(j);
             if (ra[0] <= rb[2] && rb[0] <= ra[2] && ra[1] <= rb[3] && rb[1] <= ra[3]) { overlap = true; break outer; }
         }
-        ck(!overlap && cl.size() >= 3, "сборщиков " + cl.size() + ", без пересечения границ");
+        ck(!overlap && cl.size() >= 5, "сборщиков " + cl.size() + ", без пересечения границ");
 
         // карточка 036: АТП — гаражи, мастерские, вышки, техника, забор
         int atpSolid = 0, workMark = 0;

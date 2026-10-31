@@ -42,7 +42,8 @@ public final class Prefabs {
             of(KordonBunker.CLEAR, KordonBunker::build),
             of(KordonATP.CLEAR, KordonATP::build),
             of(KordonFarPost.CLEAR, KordonFarPost::build),
-            of(KordonFarm.CLEAR, KordonFarm::build));
+            of(KordonFarm.CLEAR, KordonFarm::build),
+            of(KordonElevator.CLEAR, KordonElevator::build));
 
     /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками; пусто — уровень без замен. */
     public static List<int[]> clear(String levelId) {
