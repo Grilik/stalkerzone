@@ -34,6 +34,9 @@ public final class KordonScenario {
     /** Стартовая численность трёх живых группировок — баланс уточняет карточка 005. */
     public static final int LONER_MEMBERS = 30, MILITARY_MEMBERS = 14, BANDIT_MEMBERS = 20;
 
+    /** v16 (карточка 003): опасность проходов при выборе маршрута — туннель и дыра опаснее моста. */
+    public static final double PASS_RISK_TUNNEL = 0.14, PASS_RISK_BRIDGE = 0.05, PASS_RISK_HOLE = 0.24;
+
     private KordonScenario() {}
 
     public static Simulation create(long seed) {
@@ -186,6 +189,10 @@ public final class KordonScenario {
         sim.lairRandomSpawnDisabled = true;
         sim.lairRaidMin = 22;
         sim.lairRaidWeights = KordonBalance.RAID_TARGET_WEIGHT;
+        // v16 (карточка 003): три прохода через насыпь; пошлина берётся только за мост.
+        // Опасность: туннель (электры) и дыра (аномалии, радиация, мутанты) — высокая, мост — низкая.
+        sim.configureCrossings(new int[]{TUNNEL, BRIDGE, HOLE}, BRIDGE,
+                new double[]{PASS_RISK_TUNNEL, PASS_RISK_BRIDGE, PASS_RISK_HOLE});
 
         // сохранить базовую опасность проходов
         for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {
