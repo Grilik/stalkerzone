@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import ru.stalkerzone.world.ZoneBounds;
+
 /**
  * Симуляция Зоны. Один step() = один игровой день.
  *
@@ -237,22 +239,126 @@ public final class Simulation {
         return (int) Math.round(Math.max(2, n.artifactCap * 1.6));
     }
 
+    // v21 (карточка 029): аномалии не появляются в обжитых зданиях и почти не появляются на дорогах.
+    /** Радиус вокруг базы фракции, где аномалии не появляются, блоков. */
+    public static final int BASE_CLEAR_FORT = 55;
+    /** Радиус вокруг посёлка/города, где аномалии не появляются, блоков. */
+    public static final int BASE_CLEAR_SETTLE = 40;
+    /** Полуширина дороги, у которой аномалия появляется лишь изредка, блоков. */
+    public static final int ROAD_HALF = 8;
+    /** Шанс поставить аномалию вблизи дороги вместо запрета (карточка 029). */
+    public static final double ROAD_DISCOUNT = 0.2;
+
+    /** Радиус запрета аномалий вокруг узла: базы и посёлки — обжитые здания, остальное — 0. */
+    public int anomalyClearance(Node m) {
+        int cls = campClass(m);
+        if (cls >= 2) return BASE_CLEAR_FORT;
+        if (cls == 1) return BASE_CLEAR_SETTLE;
+        return 0;
+    }
+
+    /** Точка в блоках мира внутри радиуса запрета обжитого узла. */
+    private boolean tooCloseToBase(int bx, int bz) {
+        for (Node m : nodes) {
+            int c = anomalyClearance(m);
+            if (c <= 0) continue;
+            if (Math.hypot(bx - m.x * ZoneBounds.SCALE, bz - m.z * ZoneBounds.SCALE) < c) return true;
+        }
+        return false;
+    }
+
+    /** Точка в блоках мира рядом с ребром графа дорог (асфальт). */
+    private boolean nearRoad(int bx, int bz) {
+        for (int a = 0; a < nodes.size(); a++) {
+            for (int b = a + 1; b < nodes.size(); b++) {
+                if (!graph.open(a, b)) continue;
+                Node na = nodes.get(a), nb = nodes.get(b);
+                if (distToSegment(bx, bz, na.x * ZoneBounds.SCALE, na.z * ZoneBounds.SCALE,
+                        nb.x * ZoneBounds.SCALE, nb.z * ZoneBounds.SCALE) < ROAD_HALF) return true;
+            }
+        }
+        return false;
+    }
+
+    /** Расстояние от точки (px,pz) до отрезка (ax,az)-(bx,bz). */
+    private static double distToSegment(double px, double pz, double ax, double az, double bx, double bz) {
+        double vx = bx - ax, vz = bz - az;
+        double len2 = vx * vx + vz * vz;
+        double t = len2 <= 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * vx + (pz - az) * vz) / len2));
+        return Math.hypot(px - (ax + t * vx), pz - (az + t * vz));
+    }
+
+    /** Расстояние от точки до ближайшего обжитого узла (базы/посёлка), блоков. */
+    private double nearestBaseDist(int bx, int bz) {
+        double best = Double.MAX_VALUE;
+        for (Node m : nodes) {
+            if (anomalyClearance(m) <= 0) continue;
+            best = Math.min(best, Math.hypot(bx - m.x * ZoneBounds.SCALE, bz - m.z * ZoneBounds.SCALE));
+        }
+        return best;
+    }
+
     /** Подобрать место для аномалии вокруг точки, подальше от лагеря и от соседних аномалий. */
     private void placeAnomaly(Anomaly a, Node n, Random r) {
         int cls = campClass(n);
         int rmin = cls == 2 ? 46 : cls == 1 ? 34 : 26;
         int rmax = rmin + 55;
-        for (int attempt = 0; attempt < 30; attempt++) {
+        int bx0 = n.x * ZoneBounds.SCALE, bz0 = n.z * ZoneBounds.SCALE;
+        for (int attempt = 0; attempt < 80; attempt++) {
             double ang = r.nextDouble() * Math.PI * 2;
             double rad = rmin + r.nextDouble() * (rmax - rmin);
             int dx = (int) Math.round(Math.cos(ang) * rad), dz = (int) Math.round(Math.sin(ang) * rad);
+            if (tooCloseToBase(bx0 + dx, bz0 + dz)) continue;
             boolean ok = true;
             for (Anomaly o : anomalies) {
                 if (o != a && o.node == n.id && Math.hypot(o.dx - dx, o.dz - dz) < 14) { ok = false; break; }
             }
+            if (!ok) continue;
+            if (nearRoad(bx0 + dx, bz0 + dz) && r.nextDouble() > ROAD_DISCOUNT) continue;
             a.dx = dx;
             a.dz = dz;
-            if (ok) return;
+            return;
+        }
+        // запасной вариант: точка подальше от баз, даже если кольцо не сложилось
+        double best = -1;
+        for (int attempt = 0; attempt < 120; attempt++) {
+            double ang = r.nextDouble() * Math.PI * 2;
+            double rad = rmin + r.nextDouble() * (rmax - rmin);
+            int dx = (int) Math.round(Math.cos(ang) * rad), dz = (int) Math.round(Math.sin(ang) * rad);
+            double clear = nearestBaseDist(bx0 + dx, bz0 + dz);
+            if (clear > best) { best = clear; a.dx = dx; a.dz = dz; }
+            if (best >= BASE_CLEAR_FORT) break;
+        }
+    }
+
+    /** Поставить аномалию внутри поля района: центр поля фиксирован, меняется только место вокруг него. */
+    private void placeInDistrict(Anomaly a, AnomalyDistrict d, Node n, Random r) {
+        if (!d.isCentered()) d.setCenter((int) Math.round((r.nextDouble() - 0.5) * d.radius * 0.5),
+                (int) Math.round((r.nextDouble() - 0.5) * d.radius * 0.5));
+        int bx0 = n.x * ZoneBounds.SCALE, bz0 = n.z * ZoneBounds.SCALE;
+        for (int attempt = 0; attempt < 120; attempt++) {
+            double ang = r.nextDouble() * Math.PI * 2;
+            double rad = r.nextDouble() * d.radius;
+            int dx = d.cdx + (int) Math.round(Math.cos(ang) * rad), dz = d.cdz + (int) Math.round(Math.sin(ang) * rad);
+            if (tooCloseToBase(bx0 + dx, bz0 + dz)) continue;
+            boolean ok = true;
+            for (Anomaly o : anomalies) {
+                if (o != a && o.node == n.id && Math.hypot(o.dx - dx, o.dz - dz) < 14) { ok = false; break; }
+            }
+            if (!ok) continue;
+            if (nearRoad(bx0 + dx, bz0 + dz) && r.nextDouble() > ROAD_DISCOUNT) continue;
+            a.dx = dx;
+            a.dz = dz;
+            return;
+        }
+        double best = -1;
+        for (int attempt = 0; attempt < 120; attempt++) {
+            double ang = r.nextDouble() * Math.PI * 2;
+            double rad = r.nextDouble() * d.radius;
+            int dx = d.cdx + (int) Math.round(Math.cos(ang) * rad), dz = d.cdz + (int) Math.round(Math.sin(ang) * rad);
+            double clear = nearestBaseDist(bx0 + dx, bz0 + dz);
+            if (clear > best) { best = clear; a.dx = dx; a.dz = dz; }
+            if (best >= BASE_CLEAR_FORT) break;
         }
     }
 
@@ -267,7 +373,7 @@ public final class Simulation {
                 int count = d.min + (d.max > d.min ? r.nextInt(d.max - d.min + 1) : 0);
                 for (int i = 0; i < count; i++) {
                     Anomaly a = new Anomaly(n.id, 0, 0, d.pick(r));
-                    placeAnomaly(a, n, r);
+                    placeInDistrict(a, d, n, r);
                     a.charge = r.nextDouble();
                     anomalies.add(a);
                 }
@@ -350,9 +456,14 @@ public final class Simulation {
                 // v19 (карточка 013): поле меняет место внутри своего района и остаётся своим по составу,
                 // поэтому туннель на Кордоне после выброса — всё то же поле электр.
                 AnomalyDistrict d = districtAt(a.node);
-                placeAnomaly(a, nodes.get(a.node), rng);
-                if (d != null) a.type = d.pick(rng);
-                else if (rng.nextDouble() < 0.35) a.type = pickAnomaly(nodes.get(a.node), rng);
+                if (d != null) {
+                    // центр поля не трогаем: меняется только место аномалии внутри района
+                    placeInDistrict(a, d, nodes.get(a.node), rng);
+                    a.type = d.pick(rng);
+                } else {
+                    placeAnomaly(a, nodes.get(a.node), rng);
+                    if (rng.nextDouble() < 0.35) a.type = pickAnomaly(nodes.get(a.node), rng);
+                }
                 touched[a.node] = true;
             }
         }
