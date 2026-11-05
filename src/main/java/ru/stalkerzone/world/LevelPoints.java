@@ -84,6 +84,17 @@ public final class LevelPoints {
         JsonArray a = obj.getAsJsonArray(field);
         int[] v = new int[a.size()];
         for (int i = 0; i < a.size(); i++) v[i] = a.get(i).getAsInt();
+        return onPlateau(v);
+    }
+
+    /**
+     * П-02: точки на плато площадки (деревня) — на высоте плато, а не исходной земли из kordon_points.json
+     * (y = над верхним блоком земли уровня, уже исправленной площадкой).
+     */
+    static int[] onPlateau(int[] v) {
+        if (v.length < 3 || ru.stalkerzone.zonemap.build.Prefabs.plateauAt(v[0], v[2]) == null) return v;
+        ru.stalkerzone.world.xray.LevelRegion r = ru.stalkerzone.world.xray.LevelRegions.at(v[0], v[2]);
+        if (r != null) v[1] = r.groundBlock(v[0], v[2]) + 1;
         return v;
     }
 
@@ -97,7 +108,7 @@ public final class LevelPoints {
             JsonArray p = a.get(i).getAsJsonArray();
             int[] v = new int[p.size()];
             for (int j = 0; j < p.size(); j++) v[j] = p.get(j).getAsInt();
-            out.add(v);
+            out.add(onPlateau(v));
         }
         return out;
     }

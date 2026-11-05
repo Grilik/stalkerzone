@@ -53,6 +53,7 @@ public final class LevelRegion {
         short[] wt = new short[n];
         le(in, n * 2).asShortBuffer().get(wt);
         LevelRegion r = new LevelRegion(id, x0, z0, w, d, yOff, g, s, wt);
+        r.shapeSites();
         int nv = le(in, 4).getInt();
         ByteBuffer vb = le(in, nv * 7);
         Map<Long, List<int[]>> tmp = new HashMap<>();
@@ -79,6 +80,24 @@ public final class LevelRegion {
         }
         r.treeCount = nt;
         return r;
+    }
+
+    /**
+     * П-02: площадки уровня правят карту высот до генерации чанков (плато, выемки). На ровной части плато нет воды
+     * оригинала. В лог — высоты плато и исходная земля в контрольных точках (открытая проблема 5).
+     */
+    private void shapeSites() {
+        if (ru.stalkerzone.zonemap.build.Prefabs.sites(id).isEmpty()) return;
+        String log = ru.stalkerzone.zonemap.build.Prefabs.shape(id, new ru.stalkerzone.zonemap.build.Site.Grid() {
+            @Override public boolean contains(int x, int z) { return LevelRegion.this.contains(x, z); }
+            @Override public double get(int x, int z) { return ground[idx(x, z)] / 8.0; }
+            @Override public void set(int x, int z, double y) {
+                int i = idx(x, z);
+                ground[i] = (short) Math.round(y * 8);
+                if (ru.stalkerzone.zonemap.build.Prefabs.plateauAt(x, z) != null) water[i] = -1;
+            }
+        });
+        System.out.println(log);
     }
 
     private static int[] flat(List<int[]> l, int k) {

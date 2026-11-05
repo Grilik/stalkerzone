@@ -324,23 +324,26 @@ public final class NpcManager {
         return spawn(level, sim, n, StalkerEntity.ROLE_STALKER, n.owner, cx, cz, 22);
     }
 
-    /** Рабочие места постройки узла (карточка 031): точки не меняются, поэтому кэш по уровню. */
+    /** Рабочие места площадки узла (карточка 031, П-02): точки не меняются, поэтому кэш по уровню и узлу. */
     private static final java.util.Map<String, List<Prefabs.Point>> PREFAB_POINTS = new java.util.HashMap<>();
 
-    /** Точки постройки, в чьих границах замены лежит центр узла, или null, если постройки нет. */
+    /**
+     * Точки площадки узла (П-02: только свои места — жители деревни не уходят на нары южного блокпоста),
+     * или null, если у узла площадки нет.
+     */
     private static List<Prefabs.Point> prefabPoints(ServerLevel level, Simulation sim, Node n) {
         String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
-        if (levelId == null || Prefabs.clear(levelId).isEmpty()) return null;
-        int cx = n.x * ZoneBounds.SCALE, cz = n.z * ZoneBounds.SCALE;
-        if (!Prefabs.cleared(levelId, cx, cz)) return null;
+        if (levelId == null || Prefabs.site(levelId, n.id) == null) return null;
+        String key = levelId + "#" + n.id;
         synchronized (PREFAB_POINTS) {
-            List<Prefabs.Point> ps = PREFAB_POINTS.get(levelId);
+            List<Prefabs.Point> ps = PREFAB_POINTS.get(key);
             if (ps == null) {
-                // y нужен только точкам; непрогруженные чанки не генерируем
-                Prefabs.Ground g = (x, z) -> level.hasChunk(x >> 4, z >> 4)
-                        ? SpawnFinder.groundAt(level, x, z).getY() : 75;
-                ps = Prefabs.points(levelId, g);
-                PREFAB_POINTS.put(levelId, ps);
+                // y — по карте высот уровня (уже с площадками), чанки не нужны; без уровня — по миру, если чанк есть
+                ru.stalkerzone.world.xray.LevelRegion r = ru.stalkerzone.world.xray.LevelRegions.byId(levelId);
+                Prefabs.Ground g = r != null ? r::groundBlock : (x, z) -> level.hasChunk(x >> 4, z >> 4)
+                        ? SpawnFinder.groundAt(level, x, z).getY() - 1 : 75;
+                ps = Prefabs.points(levelId, g, Prefabs.POINT_LEVEL, n.id);
+                PREFAB_POINTS.put(key, ps);
             }
             return ps;
         }

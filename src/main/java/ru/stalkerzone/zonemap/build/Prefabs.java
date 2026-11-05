@@ -9,6 +9,10 @@ import java.util.Map;
 /**
  * Постройки уровней, собранные по геометрии оригинала (этап 1 плана после плейтеста): вместо вокселей .szl
  * в своих границах. Чистая Java (без Minecraft): мир получает готовый набор «позиция → состояние блока».
+ *
+ * <p>Постройки собраны в площадки ({@link Site}, П-02): площадка узла правит рельеф, расчищает оригинал и держит
+ * сборщики. Как добавить сборщик: класс в {@code zonemap/build/} с {@code CLEAR} и {@code build(BlockSink, lvl)},
+ * затем {@code .build(of(X.CLEAR, X::build))} в нужной площадке списка {@code SITES}.
  */
 public final class Prefabs {
     private Prefabs() {}
@@ -36,22 +40,59 @@ public final class Prefabs {
         };
     }
 
-    /** Сборщики уровня Kordon (l01_escape) в порядке применения; первый — южный блокпост. */
-    private static final List<Builder> BUILDERS = java.util.List.of(
-            of(KordonSouthPost.CLEAR, KordonSouthPost::build),
-            of(KordonBunker.CLEAR, KordonBunker::build),
-            of(KordonATP.CLEAR, KordonATP::build),
-            of(KordonFarPost.CLEAR, KordonFarPost::build),
-            of(KordonFarm.CLEAR, KordonFarm::build),
-            of(KordonElevator.CLEAR, KordonElevator::build),
-            of(KordonBridgeTunnel.CLEAR, KordonBridgeTunnel::build));
+    /** Узлы сценария «Кордон» ({@code KordonScenario}), у которых есть площадки. */
+    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2;
+
+    /** Плато деревни новичков (П-02): ровная часть и ширина откоса; высота — медиана уровня (AUTO). */
+    public static final int[] VILLAGE_PLATEAU = {-40, -24, 56, 34};
+    public static final int VILLAGE_MARGIN = 8;
+    /** Костёр деревни — центр жизни узла (точка campfire из kordon_points.json). */
+    public static final int[] VILLAGE_FIRE = {2, -1};
+
+    /**
+     * Площадки уровня Kordon (l01_escape), «Малый Кордон». Отключены (классы оставлены, 01.11): АТП, элеватор,
+     * свиноферма, дальний блокпост, мост/туннель — там снова воксели оригинала.
+     */
+    private static final List<Site> SITES = java.util.List.of(
+            new Site("village", NODE_VILLAGE)
+                    .plateau(VILLAGE_PLATEAU[0], VILLAGE_PLATEAU[1], VILLAGE_PLATEAU[2], VILLAGE_PLATEAU[3], Site.AUTO, VILLAGE_MARGIN)
+                    .build(List.of(), Prefabs::villagePoints),
+            // бункер Сидоровича — свой узел (торговец), стоит на плато деревни; облик переделывает «Строитель» (П-02б)
+            new Site("bunker", NODE_BUNKER).build(of(KordonBunker.CLEAR, KordonBunker::build)),
+            new Site("south_post", NODE_SOUTH_POST).build(of(KordonSouthPost.CLEAR, KordonSouthPost::build)));
+
+    /**
+     * Рабочие места деревни на плато (пока дома не построены, П-03): точки kordon_points.json узла 0 на высоте
+     * плато. Костёр ставит декор узла (Camp.placeLevelDecor) в точке campfire.
+     */
+    static void villagePoints(BlockSink b, int lvl) {
+        int fx = VILLAGE_FIRE[0], fz = VILLAGE_FIRE[1];
+        b.mark("cook", fx, b.ground(fx, fz - 2) + 1, fz - 2);
+        for (int[] d : new int[][] {{-2, 0}, {2, 0}, {0, 2}, {-2, 2}, {2, 2}})
+            b.mark("rest", fx + d[0], b.ground(fx + d[0], fz + d[1]) + 1, fz + d[1]);
+        for (int[] p : new int[][] {{-18, 6}, {-12, 6}, {49, 5}, {-7, 9}}) b.mark("guard", p[0], b.ground(p[0], p[1]) + 1, p[1]);
+        for (int[] p : new int[][] {{24, -7}, {-2, -20}, {-1, -16}}) b.mark("bed", p[0], b.ground(p[0], p[1]) + 1, p[1]);
+        for (int[] p : new int[][] {{1, -7}, {0, 11}, {2, -14}, {22, -3}, {43, -5}}) b.mark("patrol", p[0], b.ground(p[0], p[1]) + 1, p[1]);
+    }
+
+    /** Площадки уровня (пусто — уровень без площадок). */
+    public static List<Site> sites(String levelId) { return "l01_escape".equals(levelId) ? SITES : List.of(); }
+
+    /** Площадка узла или null. */
+    public static Site site(String levelId, int node) {
+        for (Site s : sites(levelId)) if (s.node == node) return s;
+        return null;
+    }
+
+    private static final java.util.Map<String, List<int[]>> CLEAR_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
 
     /** Границы {x0, z0, x1, z1}, где воксели уровня заменяются постройками; пусто — уровень без замен. */
     public static List<int[]> clear(String levelId) {
-        if (!"l01_escape".equals(levelId)) return List.of();
-        List<int[]> out = new java.util.ArrayList<>();
-        for (Builder b : BUILDERS) out.addAll(b.clear());
-        return out;
+        return CLEAR_CACHE.computeIfAbsent(levelId, id -> {
+            List<int[]> out = new java.util.ArrayList<>();
+            for (Site s : sites(id)) out.addAll(s.clearRects());
+            return List.copyOf(out);
+        });
     }
 
     public static boolean cleared(String levelId, int x, int z) {
@@ -59,18 +100,57 @@ public final class Prefabs {
         return false;
     }
 
+    /** Колонка в границах правки рельефа какой-либо площадки уровня (плато с откосом, выемка). */
+    public static boolean shaped(String levelId, int x, int z) {
+        for (Site s : sites(levelId)) for (Site.Shaper sh : s.shapers()) {
+            int[] b = sh.bounds();
+            if (x >= b[0] && x <= b[2] && z >= b[1] && z <= b[3]) return true;
+        }
+        return false;
+    }
+
+    /** Плато, на ровной части которого лежит (x, z), на любом уровне; null — не на плато. */
+    public static Site.Plateau plateauAt(int x, int z) {
+        for (Site s : SITES) { Site.Plateau p = s.plateauAt(x, z); if (p != null) return p; }
+        return null;
+    }
+
+    /**
+     * Править карту высот уровня площадками (до генерации чанков, из LevelRegion.load). Возвращает строку для лога:
+     * высоты плато и исходная земля в контрольных точках (открытая проблема 5 — расхождение высот).
+     */
+    public static String shape(String levelId, Site.Grid g) {
+        List<Site> ss = sites(levelId);
+        if (ss.isEmpty()) return "";
+        StringBuilder log = new StringBuilder("[stalkerzone] площадки " + levelId + ": исходная земля");
+        for (int[] p : new int[][] {{VILLAGE_FIRE[0], VILLAGE_FIRE[1]}, {154, -75}, {-35, -8}})
+            if (g.contains(p[0], p[1])) log.append(String.format(" (%d,%d)=%.1f", p[0], p[1], g.get(p[0], p[1])));
+        Site.apply(ss, g);
+        for (Site s : ss) for (Site.Shaper sh : s.shapers())
+            if (sh instanceof Site.Plateau p) log.append("; плато ").append(s.id).append(" y=").append(p.top())
+                    .append(p.fixed() ? "" : " (AUTO)");
+        return log.toString();
+    }
+
+    private static void run(String levelId, BlockSink s, int lvl, int node) {
+        for (Site site : sites(levelId)) if (node < 0 || site.node == node) for (Builder b : site.builders()) b.build(s, lvl);
+    }
+
     /** Рабочие места построек уровня (карточка 031): каждый сборщик выдаёт свои точки тем же проходом. */
     public static List<Point> points(String levelId, Ground g) { return points(levelId, g, POINT_LEVEL); }
 
     /** Рабочие места построек уровня на уровне развития lvl. */
-    public static List<Point> points(String levelId, Ground g, int lvl) {
+    public static List<Point> points(String levelId, Ground g, int lvl) { return points(levelId, g, lvl, -1); }
+
+    /** Рабочие места площадки узла node (П-02: NPC узла берут только свои места); node &lt; 0 — все. */
+    public static List<Point> points(String levelId, Ground g, int lvl, int node) {
         java.util.ArrayList<Point> out = new java.util.ArrayList<>();
         BlockSink s = new BlockSink() {
             @Override public void set(int x, int y, int z, String st) {}
             @Override public int ground(int x, int z) { return g.at(x, z); }
             @Override public void mark(String kind, int x, int y, int z) { out.add(new Point(kind, x, y, z)); }
         };
-        if ("l01_escape".equals(levelId)) for (Builder b : BUILDERS) b.build(s, lvl);
+        run(levelId, s, lvl, node);
         return out;
     }
 
@@ -87,7 +167,7 @@ public final class Prefabs {
             @Override public void set(int x, int y, int z, String st) { m.put(key(x, y, z), st); }
             @Override public int ground(int x, int z) { return g.at(x, z); }
         };
-        if ("l01_escape".equals(levelId)) for (Builder b : BUILDERS) b.build(s, lvl);
+        run(levelId, s, lvl, -1);
         connect(m);
         return m;
     }
