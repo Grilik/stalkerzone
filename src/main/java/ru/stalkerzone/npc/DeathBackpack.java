@@ -21,27 +21,29 @@ public final class DeathBackpack {
     public static final int HOLD_TICKS = 20 * 60 * 20;
     /** Ключ NBT предмета со списком содержимого (формат ItemStack.save). */
     private static final String ITEMS = "Items";
-    /** Значение pickupDelay, при котором предмет не подбирается никогда. */
-    private static final int NEVER_PICK_UP = 32767;
 
     private DeathBackpack() {}
 
-    /** Положить рюкзак на месте смерти игрока со всем его снаряжением. */
+    /**
+     * Положить рюкзак на месте смерти игрока со всем его снаряжением (П-10: сущность-рюкзак на земле,
+     * ПКМ — окно; раньше — выпавший предмет, по которому ПКМ почти не попадал).
+     */
     public static void place(ServerPlayer p, ListTag items) {
         ServerLevel level = p.serverLevel();
-        ItemStack st = new ItemStack(ModItems.DEATH_BACKPACK.get());
-        CompoundTag tag = new CompoundTag();
-        tag.put(ITEMS, items);
-        tag.putString("Owner", p.getGameProfile().getName());
-        st.setTag(tag);
-        ItemEntity ie = new ItemEntity(level, p.getX(), p.getY() + 0.5, p.getZ(), st);
-        ie.setInvulnerable(true);       // не сгорит в костре и не разлетится от взрыва
-        ie.setPickUpDelay(NEVER_PICK_UP); // забрать можно только ПКМ, а не пробегая мимо
-        ie.lifespan = HOLD_TICKS;       // через 20 минут исчезает
-        level.addFreshEntity(ie);
+        DeathBackpackEntity e = ModEntities.DEATH_BACKPACK.get().create(level);
+        if (e == null) return;
+        int slot = 0;
+        for (int i = 0; i < items.size() && slot < DeathBackpackEntity.SIZE; i++) {
+            ItemStack s = ItemStack.of(items.getCompound(i));
+            if (!s.isEmpty()) e.items.setItem(slot++, s);
+        }
+        e.owner = p.getGameProfile().getName();
+        double y = Math.max(p.getY(), level.getMinBuildHeight() + 1);
+        e.moveTo(p.getX(), y, p.getZ(), p.getYRot(), 0);
+        level.addFreshEntity(e);
     }
 
-    /** Рюкзак ли это (по предмету). */
+    /** Старый рюкзак-предмет (миры до П-10): ПКМ по нему по-прежнему отдаёт всё. */
     public static boolean isBackpack(ItemEntity ie) {
         return ie.isAlive() && ie.getItem().getItem() == ModItems.DEATH_BACKPACK.get();
     }

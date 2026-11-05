@@ -511,6 +511,11 @@ public final class Camp {
      * владельца (меняется цвет флага).
      */
     public static void placeLevelDecor(ServerLevel level, Node n, com.google.gson.JsonObject pts, int worldCX, int worldCZ) {
+        placeLevelDecor(level, n, pts, worldCX, worldCZ, true);
+    }
+
+    /** beds = false — лежанки-сено из файла уровня не ставить (у постройки свои нары, П-10). */
+    public static void placeLevelDecor(ServerLevel level, Node n, com.google.gson.JsonObject pts, int worldCX, int worldCZ, boolean beds) {
         // координаты точек — уже в блоках мира, поэтому рисуем без смещения
         Painter pt = new Painter(level, 0, 0, 0);
 
@@ -536,7 +541,7 @@ public final class Camp {
         }
 
         // Лежанки (сеном)
-        for (int[] bed : LevelPoints.readVecs(pts, "beds")) {
+        for (int[] bed : beds ? LevelPoints.readVecs(pts, "beds") : java.util.List.<int[]>of()) {
             if (bed.length < 3) continue;
             BlockPos base = surface(level, pt, bed[0], bed[1], bed[2]);
             if (base != null) pt.set(base.getX(), base.getY(), base.getZ(), Blocks.HAY_BLOCK.defaultBlockState());

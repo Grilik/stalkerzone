@@ -35,6 +35,7 @@ public class StalkerZoneMod {
         System.setProperty("stalkerzone.levels", net.minecraftforge.fml.loading.FMLPaths.GAMEDIR.get().resolve("stalkerzone").resolve("levels").toString());
         ru.stalkerzone.net.Net.register();
         ru.stalkerzone.npc.ModEntities.ENTITIES.register(modBus);
+        ru.stalkerzone.npc.ModMenus.MENUS.register(modBus);
         ru.stalkerzone.item.ModItems.ITEMS.register(modBus);
         ru.stalkerzone.item.ModItems.TABS.register(modBus);
         modBus.addListener(ru.stalkerzone.client.ZonePacks::addPacks);

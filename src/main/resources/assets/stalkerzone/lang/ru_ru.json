@@ -475,5 +475,8 @@
  "block.stalkerzone.zm_ground_earth_slab": "Земля Зоны: плита",
  "block.stalkerzone.zm_concrete_plate": "Плита перекрытия",
  "block.stalkerzone.zm_concrete_plate_stairs": "Плита перекрытия: ступени",
- "block.stalkerzone.zm_concrete_plate_slab": "Плита перекрытия: плита"
+ "block.stalkerzone.zm_concrete_plate_slab": "Плита перекрытия: плита",
+  "entity.stalkerzone.death_backpack": "Рюкзак на месте гибели",
+  "container.stalkerzone.death_backpack": "Рюкзак: %s",
+  "gui.stalkerzone.take_all": "Забрать всё"
 }
