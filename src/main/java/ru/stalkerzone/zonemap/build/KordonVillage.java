@@ -72,7 +72,7 @@ public final class KordonVillage {
         void wall(int x, int y, int z, String st) {
             int h = hash(x, y, z) % 100;
             if (lvl == 0 && h < 20) { s.set(x, y, z, AIR); return; }
-            if (lvl == 1 && h < 5) { s.set(x, y, z, st.contains("_stairs") ? BOARDS + "_stairs" + st.substring(st.indexOf('[')) : BOARDS); return; }
+            if (lvl == 1 && h < 5 && !st.startsWith("framedblocks:")) { s.set(x, y, z, st.contains("_stairs") ? BOARDS + "_stairs" + st.substring(st.indexOf('[')) : BOARDS); return; }
             s.set(x, y, z, st);
         }
 
@@ -99,6 +99,15 @@ public final class KordonVillage {
             new House(7, "мастерская", -16, 14, -6, 28, 3, 'Z', PLANKS, POST, CONC_O, PLANKS, new int[][] {{-11, 14, 1}, {-6, 21, 0}, {-6, 22, 0}}),
             new House(8, "казарма", 27, 15, 40, 25, 3, 'X', PAINTED, PLASTER, PLASTER, "stalkerzone:zm_shifer", new int[][] {{33, 15, 1}}),
     };
+
+    /**
+     * Пробник FramedBlocks (П-05): изба, у которой кровля — framed-скаты с текстурой кровли, а на окнах снаружи —
+     * наличники (доски на стену) и подоконники. Без FramedBlocks ставится прежний вид: ступени и плиты.
+     */
+    static boolean framed(House h) { return h.n == 2; }
+
+    /** Наличники: крашеные доски вокруг окна снаружи. */
+    static final String TRIM = "stalkerzone:zm_wood_painted";
 
     /** Подвалы у костра: вход (x, z) и направление спуска по X (−1 — на запад, +1 — на восток). */
     static final int[][] CELLARS = {{-4, 4, -1}, {9, 4, 1}};
@@ -141,7 +150,7 @@ public final class KordonVillage {
         // балки под кровлей (на них фонари) и кровля
         if (h.roof == 'Z') for (int z = h.z0 + 2; z <= h.z1 - 2; z += 4) for (int x = h.x0 + 1; x < h.x1; x++) b.set(x, top, z, LOG);
         else for (int x = h.x0 + 2; x <= h.x1 - 2; x += 4) for (int z = h.z0 + 1; z < h.z1; z++) b.set(x, top, z, LOG_Z);
-        String st = h.roofMat + "_stairs", full = h.roofMat;
+        String st = framed(h) ? "framed:" + h.roofMat : h.roofMat + "_stairs", full = h.roofMat;
         // первый ряд кровли — карнизный свес вровень с верхним венцом стен, следующий ложится на стену
         switch (h.roof) {
             case 'X' -> gableX(b, h, top - 1, st, full);
@@ -174,6 +183,21 @@ public final class KordonVillage {
                 : b.lvl >= 3 && h.n == 2 ? BARS : GLASS;
         b.set(x, y, z, w);
         if (b.lvl >= 2) b.set(x, y + 1, z, w.equals(GLASS) ? GLASS : h.wall);
+        if (framed(h) && b.lvl >= 1) trim(b, h, x, y, z, b.lvl >= 2 ? 2 : 1);
+    }
+
+    /** Наличники и подоконник окна высотой hgt снаружи стены (FramedBlocks: доски на стену и полплиты; без мода — подоконник-плита). */
+    static void trim(S b, House h, int x, int y, int z, int hgt) {
+        int ox = x == h.x0 ? -1 : x == h.x1 ? 1 : 0, oz = z == h.z0 ? -1 : z == h.z1 ? 1 : 0;
+        String toWall = ox < 0 ? "east" : ox > 0 ? "west" : oz < 0 ? "south" : "north";
+        int ax = oz != 0 ? 1 : 0, az = ox != 0 ? 1 : 0;            // вдоль стены
+        int cx = x + ox, cz = z + oz;                               // клетка снаружи окна
+        for (int k = 0; k < hgt; k++) {
+            b.set(cx - ax, y + k, cz - az, Framed.of(Framed.Shape.WALL_BOARD, TRIM, toWall, false));
+            b.set(cx + ax, y + k, cz + az, Framed.of(Framed.Shape.WALL_BOARD, TRIM, toWall, false));
+        }
+        b.set(cx, y + hgt, cz, Framed.of(Framed.Shape.WALL_BOARD, TRIM, toWall, false));
+        if (Framed.loaded) b.set(cx, y - 1, cz, Framed.of(Framed.Shape.SLAB_EDGE, TRIM, toWall, true));   // без мода — без подоконника, как было
     }
 
     /** Дверь 1×2 (на руинах — пустой проём), над ней — стена. */
@@ -191,6 +215,12 @@ public final class KordonVillage {
         b.set(ox, y - 1, oz, PLANKS);
     }
 
+    /** Скат кровли: высокая сторона — facing. st — «материал_stairs» или «framed:материал» для пробника FramedBlocks. */
+    static String slope(String st, String facing) {
+        if (st.startsWith("framed:")) return Framed.slope(st.substring(7), facing, false);
+        return st + "[facing=" + facing + ",half=bottom]";
+    }
+
     /** Двускатная кровля, конёк вдоль X: скаты на север и юг, фронтоны на западе и востоке. */
     static void gableX(S b, House h, int y, String st, String full) {
         int half = (h.z1 - h.z0 + 2) / 2;
@@ -199,8 +229,8 @@ public final class KordonVillage {
             if (za > zb) break;
             for (int x = h.x0 - 1; x <= h.x1 + 1; x++) {
                 if (za == zb) { b.wall(x, yy, za, full); continue; }
-                b.wall(x, yy, za, st + "[facing=south,half=bottom]");
-                b.wall(x, yy, zb, st + "[facing=north,half=bottom]");
+                b.wall(x, yy, za, slope(st, "south"));
+                b.wall(x, yy, zb, slope(st, "north"));
             }
             for (int z = za + 1; z < zb; z++) { b.wall(h.x0, yy, z, h.wall); b.wall(h.x1, yy, z, h.wall); }
         }
@@ -214,8 +244,8 @@ public final class KordonVillage {
             if (xa > xb) break;
             for (int z = h.z0 - 1; z <= h.z1 + 1; z++) {
                 if (xa == xb) { b.wall(xa, yy, z, h.n == 7 ? "stalkerzone:zm_rust" : full); continue; }
-                b.wall(xa, yy, z, st + "[facing=east,half=bottom]");
-                b.wall(xb, yy, z, st + "[facing=west,half=bottom]");
+                b.wall(xa, yy, z, slope(st, "east"));
+                b.wall(xb, yy, z, slope(st, "west"));
             }
             for (int x = xa + 1; x < xb; x++) { b.wall(x, yy, h.z0, h.wall); b.wall(x, yy, h.z1, h.wall); }
         }
@@ -230,12 +260,12 @@ public final class KordonVillage {
                 break;
             }
             for (int x = a; x <= c; x++) {
-                b.wall(x, yy, d, st + "[facing=south,half=bottom]");
-                b.wall(x, yy, e, st + "[facing=north,half=bottom]");
+                b.wall(x, yy, d, slope(st, "south"));
+                b.wall(x, yy, e, slope(st, "north"));
             }
             for (int z = d + 1; z < e; z++) {
-                b.wall(a, yy, z, st + "[facing=east,half=bottom]");
-                b.wall(c, yy, z, st + "[facing=west,half=bottom]");
+                b.wall(a, yy, z, slope(st, "east"));
+                b.wall(c, yy, z, slope(st, "west"));
             }
             a++; c--; d++; e--; yy++;
         }
