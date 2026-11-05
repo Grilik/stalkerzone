@@ -27,6 +27,7 @@
 1. `git checkout main && git pull`, ветка `task/NNN-коротко`.
 2. Новая задача в Cline: «Выполни docs/tasks/NNN-....md». Режим Plan → прочитать план → Act.
 3. Локально: `powershell -ExecutionPolicy Bypass -File tools/simtest.ps1` и `./gradlew.bat build` (с 009 — ещё `tools/smoketest.ps1`).
+   Пункты проверки в игре — новый файл `docs/checklist/NNN-<имя карточки>.md`, не `CHECKLIST.md` (П-06).
 4. `gh pr create`, описание — блок передачи смены из `.clinerules`. После зелёного CI — Squash and merge.
    Конвейер сливает свои PR сам (кроме вех), см. `SETUP.md` 7д.
 
