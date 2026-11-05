@@ -475,5 +475,8 @@
  "block.stalkerzone.zm_ground_earth_slab": "Ground earth slab",
  "block.stalkerzone.zm_concrete_plate": "Concrete plate",
  "block.stalkerzone.zm_concrete_plate_stairs": "Concrete plate stairs",
- "block.stalkerzone.zm_concrete_plate_slab": "Concrete plate slab"
+ "block.stalkerzone.zm_concrete_plate_slab": "Concrete plate slab",
+  "entity.stalkerzone.death_backpack": "Death backpack",
+  "container.stalkerzone.death_backpack": "Backpack: %s",
+  "gui.stalkerzone.take_all": "Take all"
 }

@@ -51,7 +51,13 @@ public final class Weight {
             };
         }
         var key = ForgeRegistries.ITEMS.getKey(it);
-        if (key != null && key.getNamespace().equals("tacz")) return 3.5;
+        if (key != null && key.getNamespace().equals("tacz")) {
+            // П-10: патроны по калибру, коробка по содержимому, оружие по классу (раньше всё TaCZ — 3,5 кг за штуку)
+            net.minecraft.nbt.CompoundTag t = s.getTag();
+            String id = t == null ? "" : t.contains("AmmoId") ? t.getString("AmmoId")
+                    : t.contains("GunId") ? t.getString("GunId") : t.getString("AttachmentId");
+            return TaczWeight.unit(key.getPath(), id, t == null ? 0 : t.getInt("AmmoCount"));
+        }
         if (it instanceof ArmorItem a) return 1 + a.getDefense() * 1.2;
         if (it instanceof BowItem || it instanceof CrossbowItem || it instanceof ShieldItem) return 1.5;
         if (it instanceof TieredItem) return 1.5;

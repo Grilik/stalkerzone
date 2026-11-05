@@ -174,7 +174,7 @@ public final class PlayerFaction {
     }
 
     /** Рюкзак подобран: с карты КПК снимается метка «Ваш рюкзак». */
-    static void backpackTaken(ServerPlayer p) {
+    public static void backpackTaken(ServerPlayer p) {
         Reputation.store(p).remove(BACKPACK);
     }
 

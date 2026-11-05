@@ -70,7 +70,10 @@ public final class StructureManager {
         // декор читал блоки незагруженного чанка, и серверный поток сам генерировал его синхронно
         if (!decorLoaded(level, pts)) return false;
 
-        Camp.placeLevelDecor(level, n, pts, cx, cz);
+        // П-10: у узла с нарами от сборщика (деревня П-03) лежанки-сено из файла уровня не ставим — точки
+        // оказывались внутри изб, и сено вставало на крышу штаба
+        boolean ownBeds = !LevelPoints.prefabVecs(levelId, n.id, "bed").isEmpty();
+        Camp.placeLevelDecor(level, n, pts, cx, cz, !ownBeds);
         // карточка 013: радиоактивные пятна (насыпь, техника у дыры, ферма) — блоки с тегом radioactive
         RadioactiveSpots.place(level, data.sim, n, cx, cz);
         data.rendered.put(decoKey, n.owner);

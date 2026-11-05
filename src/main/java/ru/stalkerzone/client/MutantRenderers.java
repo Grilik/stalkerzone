@@ -29,6 +29,7 @@ public final class MutantRenderers {
 
     @SubscribeEvent
     public static void layers(EntityRenderersEvent.RegisterLayerDefinitions e) {
+        e.registerLayerDefinition(DeathBackpackRenderer.LAYER, DeathBackpackRenderer::layer);   // П-10
         e.registerLayerDefinition(MutantModels.DOG, MutantModels::dog);
         e.registerLayerDefinition(MutantModels.CHIMERA, MutantModels::chimera);
     }
@@ -36,6 +37,7 @@ public final class MutantRenderers {
     @SubscribeEvent
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         e.registerEntityRenderer(ru.stalkerzone.npc.ModEntities.BOLT.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        e.registerEntityRenderer(ru.stalkerzone.npc.ModEntities.DEATH_BACKPACK.get(), DeathBackpackRenderer::new);   // П-10
         for (MutantType t : MutantType.ALL) {
             var type = MutantRegistry.TYPES[t.ordinal()].get();
             switch (t.model) {

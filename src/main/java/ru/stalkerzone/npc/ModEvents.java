@@ -27,7 +27,11 @@ public final class ModEvents {
     public static final class Client {
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent e) {
-            e.enqueueWork(() -> EntityRenderers.register(ModEntities.STALKER.get(), StalkerRenderer::new));
+            e.enqueueWork(() -> {
+                EntityRenderers.register(ModEntities.STALKER.get(), StalkerRenderer::new);
+                net.minecraft.client.gui.screens.MenuScreens.<net.minecraft.world.inventory.ChestMenu, ru.stalkerzone.client.DeathBackpackScreen>register(ModMenus.DEATH_BACKPACK.get(),
+                        ru.stalkerzone.client.DeathBackpackScreen::new);   // П-10
+            });
         }
     }
 }

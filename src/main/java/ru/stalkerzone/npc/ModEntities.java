@@ -25,5 +25,14 @@ public final class ModEntities {
                     .updateInterval(10)
                     .build("bolt"));
 
+    /** П-10: рюкзак на месте гибели игрока — стоит на земле, ПКМ открывает окно. */
+    public static final RegistryObject<EntityType<DeathBackpackEntity>> DEATH_BACKPACK = ENTITIES.register("death_backpack",
+            () -> EntityType.Builder.<DeathBackpackEntity>of(DeathBackpackEntity::new, MobCategory.MISC)
+                    .sized(0.6f, 0.6f)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .updateInterval(20)
+                    .build("death_backpack"));
+
     private ModEntities() {}
 }
