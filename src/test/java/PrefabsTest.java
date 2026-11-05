@@ -55,7 +55,8 @@ public class PrefabsTest {
         for (Map.Entry<Long, String> e : m.entrySet()) {
             if (e.getValue().equals("minecraft:air")) continue;
             int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            boolean inBunker = x >= -43 && x <= -27 && z >= -15 && z <= -2;
+            int[] bc = ru.stalkerzone.zonemap.build.KordonBunker.CLEAR.get(0);
+            boolean inBunker = x >= bc[0] && x <= bc[2] && z >= bc[1] && z <= bc[3];
             if (inBunker) bunkerSolid++;
         }
         ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
