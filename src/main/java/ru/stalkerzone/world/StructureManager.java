@@ -66,12 +66,25 @@ public final class StructureManager {
         for (int x = cx - 48; x <= cx + 48; x += 8)
             for (int z = cz - 48; z <= cz + 48; z += 8)
                 if (!level.hasChunk(x >> 4, z >> 4)) return false;
+        // П-01: точки декора бывают дальше ±48 от центра (у выхода на Тёмную долину — 55–59) — без этой проверки
+        // декор читал блоки незагруженного чанка, и серверный поток сам генерировал его синхронно
+        if (!decorLoaded(level, pts)) return false;
 
         Camp.placeLevelDecor(level, n, pts, cx, cz);
         // карточка 013: радиоактивные пятна (насыпь, техника у дыры, ферма) — блоки с тегом radioactive
         RadioactiveSpots.place(level, data.sim, n, cx, cz);
         data.rendered.put(decoKey, n.owner);
         data.setDirty();
+        return true;
+    }
+
+    /** Загружены ли чанки под всеми точками декора (флаг, костёр с ящиками вокруг ±2, лежанки). */
+    static boolean decorLoaded(ServerLevel level, JsonObject pts) {
+        java.util.List<int[]> ps = new java.util.ArrayList<>(LevelPoints.readVecs(pts, "beds"));
+        int[] f = LevelPoints.readVec(pts, "flag"), c = LevelPoints.readVec(pts, "campfire");
+        if (f != null) ps.add(f);
+        if (c != null) for (int dx = -2; dx <= 2; dx += 4) for (int dz = -2; dz <= 2; dz += 4) ps.add(new int[] {c[0] + dx, 0, c[2] + dz});
+        for (int[] p : ps) if (p.length >= 3 && !level.hasChunk(p[0] >> 4, p[2] >> 4)) return false;
         return true;
     }
 
