@@ -39,6 +39,7 @@ public class StalkerZoneMod {
         ru.stalkerzone.item.ModItems.TABS.register(modBus);
         modBus.addListener(ru.stalkerzone.client.ZonePacks::addPacks);
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new ServerWatchdog());   // П-01: стек в лог при зависании сервера
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.world.ZoneWorld.Events());
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.survival.PlayerNeeds());
         MinecraftForge.EVENT_BUS.register(ru.stalkerzone.survival.Radiation.events());

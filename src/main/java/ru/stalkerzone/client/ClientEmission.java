@@ -33,6 +33,7 @@ public final class ClientEmission {
     @SubscribeEvent
     public static void tick(TickEvent.ClientTickEvent e) {
         if (e.phase != TickEvent.Phase.END) return;
+        ru.stalkerzone.ServerWatchdog.clientPaused = Minecraft.getInstance().isPaused();   // П-01: пауза (Esc) — не зависание
         if (Minecraft.getInstance().level == null) {   // вышли из мира — краснота сбрасывается
             intensity = target = 0f;
             outside = false;
