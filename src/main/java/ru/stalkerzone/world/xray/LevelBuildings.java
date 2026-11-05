@@ -20,6 +20,7 @@ import java.util.Set;
  * крыша ступенями, окна, двери, заборы — с размерами и материалами оригинала.
  */
 public final class LevelBuildings {
+    private static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
     /** Дом: след стен (по осям, с карнизом), уровень земли, высота стен и конька, ось конька, материалы, целость крыши. */
     public record House(int x0, int z0, int x1, int z1, int y, int eave, int ridge, boolean alongX, int wall, int roof,
                         double cover, List<int[]> doors) {
@@ -74,7 +75,7 @@ public final class LevelBuildings {
                 for (long k : cells) b.fenceAt.put(k, fe);
             }
         } catch (Exception ex) {
-            System.err.println("[stalkerzone] не прочитан " + f + ": " + ex);
+            LOG.error("[stalkerzone] не прочитан " + f, ex);
         }
         return b;
     }
