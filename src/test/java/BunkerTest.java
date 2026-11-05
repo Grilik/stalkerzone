@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * Бункер Сидоровича (П-02б): от тропы перед входом можно дойти по лестнице до стойки и (через калитку) до места
- * торговца; торговец стоит в точке узла (−35, −8) на полу, под холмом есть грунт над потолком, рабочие места на месте.
+ * торговца; торговец стоит за стойкой на полу, комната под землёй, потолок не ниже 3 блоков над полом, рабочие места на месте.
  * Проверяется на ровной площадке и на неровной земле (до площадок), на всех уровнях развития.
  */
 public class BunkerTest {
@@ -51,7 +51,7 @@ public class BunkerTest {
             if (k.kind.equals("duty")) duty = k;
             if (k.kind.equals("shelter")) shelters++;
         }
-        ck(trader != null && trader.x == -35 && trader.z == -8, name + ": торговец в точке узла (−35, −8)");
+        ck(trader != null && trader.x == KordonBunker.TRADER_X && trader.z == KordonBunker.TRADER_Z, name + ": торговец за стойкой");
         ck(duty != null, name + ": место курьера/охраны (duty)");
         ck(shelters >= 4, name + ": укрытий от выброса " + shelters);
         if (trader == null) return;
@@ -60,17 +60,25 @@ public class BunkerTest {
             ck(ok, name + ": точка " + k.kind + " (" + k.x + ", " + k.y + ", " + k.z + ") на полу, не в стене");
         }
         // над комнатой — грунт (бункер под землёй), холм над лестницей не проломлен
-        int roomTop = trader.y + 3;
-        boolean covered = true;
-        for (int x = -39; x <= -32; x++) for (int z = -12; z <= -5; z++)
+        int roomTop = trader.y + 4;
+        boolean covered = true, high = true;
+        for (int x = KordonBunker.RX0; x <= KordonBunker.RX1; x++) for (int z = KordonBunker.RZ0; z <= KordonBunker.RZ1; z++)
             covered &= solid(at(m, g, x, roomTop, z)) && solid(at(m, g, x, roomTop + 1, z));
         ck(covered, name + ": потолок комнаты под землёй");
+        // не задевать потолок: над каждым местом, где можно стоять внутри, ≥ 3 блока воздуха (игрок 1,8 + прыжок)
+        int gy0 = trader.y + 4;
+        for (P p : reach(m, g, new P(KordonBunker.CUT_X1, gy0 + 1, KordonBunker.DOOR_Z))) {
+            if (p.x > KordonBunker.FACADE || p.x < KordonBunker.RX0 - 1) continue;
+            if (p.x == KordonBunker.FACADE || p.z == KordonBunker.RZ1 + 1) continue;   // дверные проёмы — 2 блока, как обычные двери
+            if (solid(at(m, g, p.x, p.y + 2, p.z))) { high = false; System.out.println("  низко над " + p); break; }
+        }
+        ck(high, name + ": внутри потолок не ниже 3 блоков над полом");
 
         // проход: от тропы перед входом до посетительской половины и до торговца
         int gy = trader.y + 4;   // F + 1 + 4 = g
-        P start = new P(-23, gy + 1, -2);
+        P start = new P(KordonBunker.CUT_X1, gy + 1, KordonBunker.DOOR_Z);
         Set<P> seen = reach(m, g, start);
-        boolean visitor = seen.contains(new P(-35, trader.y, -6));
+        boolean visitor = seen.contains(new P(trader.x, trader.y, -6));
         boolean behind = seen.contains(new P(trader.x, trader.y, trader.z));
         if (lvl >= 1) {
             ck(visitor, name + ": от входа дойти до стойки (" + seen.size() + " клеток)");
@@ -78,7 +86,7 @@ public class BunkerTest {
         } else {
             ck(visitor, name + ": в заброшенный бункер можно войти (" + seen.size() + " клеток)");
         }
-        ck(m.getOrDefault(new P(-28, gy + 1, -2), "").contains("door") || lvl == 0, name + ": наружная дверь на уровне земли");
+        ck(m.getOrDefault(new P(KordonBunker.FACADE, gy + 1, KordonBunker.DOOR_Z), "").contains("door") || lvl == 0, name + ": наружная дверь на уровне земли");
     }
 
     static String at(Map<P, String> m, G g, int x, int y, int z) {
