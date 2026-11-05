@@ -48,12 +48,22 @@ repositories {
     // TaCZ нужен только для запуска в среде разработки; в мод он не входит (связь через отражение).
     // Файл libs/tacz-1.20.1.jar скачивает скрипт сборки (get_tacz.ps1) с Modrinth.
     flatDir { dirs 'libs' }
+    // П-04: FramedBlocks (XFactHD, LGPL-3.0) — только для запуска в среде разработки; в мод не входит,
+    // связь без API: состояние блока + NBT камуфляжа (zonemap/build/Framed). Отключить: -PnoFramed
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     if (!project.hasProperty('noTacz') && file('libs/tacz-1.20.1.jar').exists()) {
         runtimeOnly fg.deobf("local:tacz:1.20.1")
+    }
+    if (!project.hasProperty('noFramed')) {
+        runtimeOnly fg.deobf("maven.modrinth:framedblocks:${framedblocks_version}")
     }
 }
 

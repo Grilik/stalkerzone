@@ -31,3 +31,11 @@ side="BOTH"
     versionRange="[1.1.0,)"
     ordering="NONE"
     side="BOTH"
+# П-04: необязательная связь — с FramedBlocks крыши, откосы и рамы построек из форм с текстурой нужного блока,
+# без него — ванильные ступени и плиты
+[[dependencies.stalkerzone]]
+    modId="framedblocks"
+    mandatory=false
+    versionRange="[9.4,)"
+    ordering="NONE"
+    side="BOTH"

@@ -39,6 +39,8 @@ public class StalkerZoneMod {
         ru.stalkerzone.item.ModItems.TABS.register(modBus);
         modBus.addListener(ru.stalkerzone.client.ZonePacks::addPacks);
         MinecraftForge.EVENT_BUS.register(this);
+        // П-04: формы FramedBlocks с камуфляжем в постройках, без мода — ванильные ступени и плиты
+        ru.stalkerzone.zonemap.build.Framed.loaded = net.minecraftforge.fml.ModList.get().isLoaded("framedblocks");
         MinecraftForge.EVENT_BUS.register(new ServerWatchdog());   // П-01: стек в лог при зависании сервера
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.world.ZoneWorld.Events());
         MinecraftForge.EVENT_BUS.register(new ru.stalkerzone.survival.PlayerNeeds());
