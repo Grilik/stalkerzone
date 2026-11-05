@@ -82,6 +82,18 @@ public class VillageTest {
             if (solid(at(m, g, p.x, p.y + 2, p.z)) && !under.contains("stairs")) { low++; if (low < 4) System.out.println("  низко: " + p); }
         }
         ck(low == 0, name + ": потолок не ниже 3 блоков над полом");
+
+        // П-11: в подвал с плато и обратно — пешком, без прыжков (подъём только по ступеням и полублокам)
+        for (int[] cl : KordonVillage.CELLARS) {
+            int ax = cl[0] - cl[2], az = cl[1];                    // клетка плато перед входом
+            P top = new P(ax, g.at(ax, az) + 1, az);
+            Set<P> down = walk(m, g, top);
+            Mk sh = null;
+            for (Mk k : marks) if (k.kind.equals("shelter") && Math.abs(k.x - cl[0]) < 16 && Math.abs(k.z - cl[1]) < 4) { sh = k; break; }
+            boolean in = sh != null && down.contains(new P(sh.x, sh.y, sh.z));
+            boolean back = sh != null && walk(m, g, new P(sh.x, sh.y, sh.z)).contains(top);
+            ck(in && back, name + ": подвал (" + cl[0] + ", " + cl[1] + "): с плато вниз до укрытия и обратно без прыжков");
+        }
     }
 
     static String at(Map<P, String> m, G g, int x, int y, int z) {
@@ -97,6 +109,32 @@ public class VillageTest {
 
     static boolean stand(Map<P, String> m, G g, P p) {
         return !solid(at(m, g, p.x, p.y, p.z)) && !solid(at(m, g, p.x, p.y + 1, p.z)) && solid(at(m, g, p.x, p.y - 1, p.z));
+    }
+
+    /** Обход пешком: шаг вверх только на ступень или нижний полублок (без прыжка), вниз — на блок. */
+    static Set<P> walk(Map<P, String> m, G g, P start) {
+        Set<P> seen = new HashSet<>();
+        ArrayDeque<P> q = new ArrayDeque<>();
+        if (stand(m, g, start)) { seen.add(start); q.add(start); }
+        int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        while (!q.isEmpty()) {
+            P p = q.poll();
+            if (seen.size() > 50000) break;
+            for (int[] e : d) for (int dy = -1; dy <= 1; dy++) {
+                P n = new P(p.x + e[0], p.y + dy, p.z + e[1]);
+                if (seen.contains(n) || !stand(m, g, n)) continue;
+                if (Math.abs(n.x - start.x) > 24 || Math.abs(n.z - start.z) > 24) continue;
+                if (dy == 1) {
+                    String sup = at(m, g, n.x, n.y - 1, n.z);
+                    // вверх — только на ступень или нижний полублок (полшага); на целый блок — это прыжок
+                    if (!(sup.contains("stairs") || sup.contains("type=bottom"))) continue;
+                }
+                if (dy == -1 && solid(at(m, g, n.x, n.y + 2, n.z))) continue;
+                seen.add(n);
+                q.add(n);
+            }
+        }
+        return seen;
     }
 
     static Set<P> reach(Map<P, String> m, G g, P start) {

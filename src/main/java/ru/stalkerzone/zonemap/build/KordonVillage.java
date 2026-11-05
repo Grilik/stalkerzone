@@ -101,7 +101,7 @@ public final class KordonVillage {
     };
 
     /** Подвалы у костра: вход (x, z) и направление спуска по X (−1 — на запад, +1 — на восток). */
-    static final int[][] CELLARS = {{-4, 4, -1}, {9, 4, 1}};
+    public static final int[][] CELLARS = {{-4, 4, -1}, {9, 4, 1}};
 
     /** Ворота в заборе: {сторона (N, S, W, E), от, до} — на дороги и к бункеру. */
     static final int[][] GATES = {{'N', 0, 3}, {'S', 20, 23}, {'E', 3, 6}, {'W', -5, 1}};
@@ -344,40 +344,41 @@ public final class KordonVillage {
     /**
      * Подвал-погреб: над входом дощатая будка, 5 ступеней вниз, комната 6 × 5 высотой 3 под землёй (кирпич, дощатый пол,
      * фонарь, нары и ящики). Укрытие от выброса: места «shelter» на полу.
+     *
+     * <p>П-11: верх первой ступени — вровень с площадкой входа (с плато заходишь без прыжка, обратно — тоже
+     * по полуступеням), над каждой ступенью 3 блока воздуха, проём в комнату — на ровном полу после последней ступени.
      */
     static void cellar(S b, int ex, int ez, int dir) {
         int g = b.ground(ex, ez);
         int F = g - 5;                                    // пол подвала (блок), стоят на F + 1, потолок F + 4 = g − 1
-        // ступени: k = 1..5 на x = ex + dir·k, на высоте g − k
-        for (int k = 0; k <= 5; k++) {
-            int x = ex + dir * k, s = g - k;
+        String step = STEPS + "[facing=" + (dir < 0 ? "east" : "west") + ",half=bottom]";
+        // k = 0 — площадка входа (пол g, как плато); k = 1..5 — ступени на высоте g − k + 1 (верх первой = g + 1);
+        // k = 6 — проём в комнату на полу F
+        for (int k = 0; k <= 6; k++) {
+            int x = ex + dir * k;
+            int floor = k == 0 ? g : k <= 5 ? g - k + 1 : F;          // блок, на котором стоят
+            int ceil = k == 6 ? F + 4 : floor + 4;                       // над ступенью — 3 блока воздуха
             for (int z = ez - 1; z <= ez + 1; z++) {
-                boolean side = z != ez;
-                if (side) { for (int yy = Math.min(s, F); yy <= g + (k <= 3 ? 2 : 0); yy++) b.set(x, yy, z, k <= 3 && yy > g ? BOARDS_V : BRICK_D); continue; }
-                if (k == 0) { b.set(x, g, z, PLANKS); continue; }
-                b.set(x, s, z, STEPS + "[facing=" + (dir < 0 ? "east" : "west") + ",half=bottom]");
-                for (int yy = F; yy < s; yy++) b.set(x, yy, z, BRICK_D);
-                for (int yy = s + 1; yy <= s + 3; yy++) b.set(x, yy, z, AIR);
-                b.set(x, s + 4, z, s + 4 > g ? PLANKS + "_slab[type=bottom]" : PLANKS);
+                if (z != ez) {                                           // стенки: кирпич под землёй, доски будки над ней
+                    for (int yy = F; yy < ceil; yy++) b.set(x, yy, z, yy > g ? BOARDS_V : BRICK_D);
+                    b.set(x, ceil, z, ceil > g ? PLANKS + "_slab[type=bottom]" : PLANKS);
+                    continue;
+                }
+                b.set(x, floor, z, k == 0 ? PLANKS : k <= 5 ? step : FLOOR);
+                for (int yy = F; yy < floor; yy++) b.set(x, yy, z, BRICK_D);
+                for (int yy = floor + 1; yy < ceil; yy++) b.set(x, yy, z, AIR);
+                b.set(x, ceil, z, ceil > g ? PLANKS + "_slab[type=bottom]" : PLANKS);   // крыша будки — плитами, ниже земли — доски
             }
         }
-        // будка над входом: дощатые стенки по бокам и крыша-плита, спереди открыто
-        for (int k = 0; k <= 3; k++) {
-            int x = ex + dir * k, roof = Math.max(g + 3, g - k + 4);
-            b.set(x, Math.min(roof, g + 3), ez, PLANKS + "_slab[type=bottom]");
-            for (int z = ez - 1; z <= ez + 1; z++) b.set(x, g + 3, z, PLANKS + "_slab[type=bottom]");
-        }
-        for (int yy = g + 1; yy <= g + 2; yy++) b.set(ex, yy, ez, AIR);
-        // комната
-        int rx0 = dir < 0 ? ex - 11 : ex + 6, rx1 = rx0 + 5, rz0 = ez - 2, rz1 = ez + 2;
+        // комната за проёмом
+        int rx0 = dir < 0 ? ex - 12 : ex + 7, rx1 = rx0 + 5, rz0 = ez - 2, rz1 = ez + 2;
         for (int x = rx0 - 1; x <= rx1 + 1; x++) for (int z = rz0 - 1; z <= rz1 + 1; z++) {
             boolean edge = x == rx0 - 1 || x == rx1 + 1 || z == rz0 - 1 || z == rz1 + 1;
+            if (x == ex + dir * 6 && z == ez) continue;                  // проём
             b.set(x, F, z, edge ? BRICK_D : FLOOR);
             b.set(x, F + 4, z, PLANKS);
             for (int yy = F + 1; yy <= F + 3; yy++) b.set(x, yy, z, edge ? BRICK_D : AIR);
         }
-        int dx = dir < 0 ? rx1 + 1 : rx0 - 1;              // проём со стороны лестницы
-        for (int yy = F + 1; yy <= F + 3; yy++) b.set(dx, yy, ez, AIR);   // без перемычки: со ступени не задеть головой
         int far = dir < 0 ? rx0 : rx1;
         if (b.lvl >= 1) {
             for (int z = rz0; z <= rz1; z += 2) b.set(far, F + 1, z, "stalkerzone:zm_mattress_slab[type=bottom]");
