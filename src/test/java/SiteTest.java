@@ -86,10 +86,10 @@ public class SiteTest {
         boolean vin = !vp.isEmpty(), vy = true;
         for (Prefabs.Point q : vp) {
             if (!village.covers(q.x(), q.z())) vin = false;
-            if (Prefabs.plateauAt(q.x(), q.z()) != null && q.y() != top + 1) vy = false;
+            if (!q.kind().equals("shelter") && Prefabs.plateauAt(q.x(), q.z()) != null && q.y() != top + 1) vy = false;   // укрытия — в подвалах (П-03)
         }
         ck(vin, "места деревни (" + vp.size() + ") — в площадке деревни");
-        ck(vy, "места деревни на высоте плато + 1");
+        ck(vy, "места деревни на высоте плато + 1 (кроме укрытий в подвалах)");
         String[] kinds = {"guard", "bed", "patrol", "cook", "rest"};
         for (String k : kinds) ck(vp.stream().anyMatch(q -> q.kind().equals(k)), "в деревне есть место " + k);
         Site south = Prefabs.site("l01_escape", Prefabs.NODE_SOUTH_POST);

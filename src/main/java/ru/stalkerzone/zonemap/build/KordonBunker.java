@@ -15,7 +15,7 @@ import java.util.List;
  * наружу, и сходит на нет плавно (без «бугра» на ровном месте). Над комнатой — вентиляционная труба, у входа антенна.
  *
  * <p>Высота внутри — 4 блока везде (комната, коридор, тамбур, над каждой ступенью), чтобы не задевать потолок.
- * Высота площадки {@code g} — медиана земли по восточному краю границ замены, он лежит на плато деревни.
+ * Высота площадки {@code g} — медиана земли на плато деревни (x −39), у выхода из выемки.
  *
  * <p>Уровень развития (как в MineColonies): 0 — заброшенный (дверей нет, стены побиты, мусор, без света),
  * 1 — обжитой (двери, свет, стойка), 2 — торгующий (рация, телевизор, аптечки, больше товара),
@@ -25,7 +25,7 @@ public final class KordonBunker {
     private KordonBunker() {}
 
     /** Область, где воксели и деревья уровня заменяет этот сборщик: {x0, z0, x1, z1} — склон с бункером и выемка. */
-    public static final List<int[]> CLEAR = List.of(new int[] {-76, -20, -38, 6});
+    public static final List<int[]> CLEAR = List.of(new int[] {-76, -20, -40, 6});
 
     static final String CONC = "stalkerzone:zm_concrete", CONC_OLD = "stalkerzone:zm_concrete_old",
             CONC_D = "stalkerzone:zm_concrete_dirty", CONC_SLAB = "stalkerzone:zm_concrete_slab",
@@ -52,7 +52,7 @@ public final class KordonBunker {
     public static final int SX0 = -59, SX1 = -55;                        // лестница: пять ступеней на восток, вверх к выходу
     public static final int LX0 = -54, LX1 = -53;                        // тамбур на уровне земли площадки
     public static final int FACADE = -52;                                // фасад в торце выемки, наружная дверь
-    public static final int CUT_X1 = -39;                                // выемка от фасада до плато деревни
+    public static final int CUT_X1 = -40;                                // выемка от фасада до края плато (x −39 — уже деревня)
     public static final int CZ0 = -3, CZ1 = -1;                          // ширина коридора, лестницы и тамбура (по z)
     public static final int DOOR_Z = -2;                                 // ось входа
     public static final int TRADER_X = -59, TRADER_Z = -8;               // торговец за стойкой
@@ -126,11 +126,11 @@ public final class KordonBunker {
         top(b, g, surf);
     }
 
-    /** Высота площадки: медиана земли по восточному краю границ замены (плато деревни). */
+    /** Высота площадки: медиана земли по краю плато деревни (x = край выемки + 1), у входа в бункер. */
     static int base(S b) {
         int[] c = CLEAR.get(0);
         int[] gs = new int[c[3] - c[1] + 1];
-        for (int z = c[1]; z <= c[3]; z++) gs[z - c[1]] = b.ground(c[2], z);
+        for (int z = c[1]; z <= c[3]; z++) gs[z - c[1]] = b.ground(CUT_X1 + 1, z);
         java.util.Arrays.sort(gs);
         return gs[gs.length / 2];
     }

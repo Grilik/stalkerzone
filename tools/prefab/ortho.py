@@ -1,5 +1,6 @@
 """Ортогональные виды постройки по дампу PrefabPreview: план сверху и вертикальный разрез.
-python3 -I tools/prefab/ortho.py <dump.txt> <out.png> <title> [разрез z=N | x=N ...]
+python3 -I tools/prefab/ortho.py <dump.txt> <out.png> <title> [разрез z=N | x=N ...] [labels=<файл>]
+labels — подписи на плане: строки «x z текст» в мировых координатах (например назначения домов).
 План: верхний блок колонки (цвет текстуры, тень по высоте), точки рабочих мест из <dump>.marks подписаны.
 Разрез: срез на линии z=N (смотрим на север: x вправо, y вверх) или x=N (смотрим на запад: z вправо).
 Координаты на осях — мировые."""
@@ -34,7 +35,13 @@ def font(sz):
 
 def main():
     dump, out, title = sys.argv[1], sys.argv[2], sys.argv[3]
-    cuts = sys.argv[4:]
+    cuts = [c for c in sys.argv[4:] if not c.startswith('labels=')]
+    labels = []
+    for c in sys.argv[4:]:
+        if c.startswith('labels='):
+            for line in open(c[7:], encoding='utf-8'):
+                p = line.strip().split(' ', 2)
+                if len(p) == 3: labels.append((int(p[0]), int(p[1]), p[2]))
     vox = {}
     for line in open(dump, encoding='utf-8'):
         p = line.split(' ', 3)
@@ -76,6 +83,9 @@ def main():
         d.ellipse([cx - 5, cz - 5, cx + 5, cz + 5], fill=COL.get(kind, (255, 255, 255)), outline=(0, 0, 0))
         d.text((cx + 7, cz - 7), kind, fill=(255, 255, 255), font=f, stroke_width=2, stroke_fill=(0, 0, 0))
     cuts = [c for c in cuts if not c.startswith('y=')]
+    for wx, wz, text in labels:
+        cx, cz = (wx - ox - X0) * S, (wz - oz - Z0) * S
+        d.text((cx, cz), text, fill=(255, 240, 160), font=font(14), anchor='mm', stroke_width=3, stroke_fill=(0, 0, 0))
     for cut in cuts:
         ax, v = cut.split('='); v = int(v) - (oz if ax == 'z' else ox)
         if ax == 'z': d.line([0, (v - Z0) * S + S // 2, W, (v - Z0) * S + S // 2], fill=(255, 80, 80), width=2)
