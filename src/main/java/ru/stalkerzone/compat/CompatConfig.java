@@ -51,6 +51,8 @@ public final class CompatConfig {
     /** Вид мутанта (bloodsucker, snork...) -> существа других модов. */
     public static final Map<String, List<String>> MUTANTS = new HashMap<>();
     public static int decorChance = 50;
+    /** П-01: сторож серверного потока (стек в лог, если сервер не тикает 10 с). Ключ "watchdog" в compat.json. */
+    public static boolean watchdog = true;
 
     private static boolean loaded;
     /** Версия раскладок по умолчанию: при росте старый compat.json обновляется (замены декора и мутантов сохраняются). */
@@ -74,7 +76,7 @@ public final class CompatConfig {
                 // новая версия мода принесла оружие и раскладки: старый файл сохраняем рядом, свои замены декора и мутантов переносим
                 Files.copy(p, p.resolveSibling("compat.json.v" + ver + ".bak"), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 JsonObject fresh = defaults();
-                for (String k : new String[] {"decor", "mutants", "decor_chance"}) if (root.has(k)) fresh.add(k, root.get(k));
+                for (String k : new String[] {"decor", "mutants", "decor_chance", "watchdog"}) if (root.has(k)) fresh.add(k, root.get(k));
                 try (Writer w = Files.newBufferedWriter(p, StandardCharsets.UTF_8)) { GSON.toJson(fresh, w); }
                 LOG.info("compat.json обновлён до версии {} (старый сохранён как compat.json.v{}.bak)", VERSION, ver);
                 root = fresh;
@@ -110,6 +112,7 @@ public final class CompatConfig {
         readLists(root.getAsJsonObject("decor"), DECOR);
         readLists(root.getAsJsonObject("mutants"), MUTANTS);
         if (root.has("decor_chance")) decorChance = root.get("decor_chance").getAsInt();
+        if (root.has("watchdog")) watchdog = root.get("watchdog").getAsBoolean();
     }
 
     private static void readLists(JsonObject o, Map<String, List<String>> into) {
@@ -263,6 +266,7 @@ public final class CompatConfig {
                 "stalkerzone:prop_sandbags"}) decor.add(k, new JsonArray());
         root.add("decor", decor);
         root.addProperty("decor_chance", 50);
+        root.addProperty("watchdog", true);
         JsonObject mut = new JsonObject();
         mut.addProperty("_example", "\"bloodsucker\": [\"other_mod:bloodsucker\"]");
         for (ru.stalkerzone.mutant.MutantType t : ru.stalkerzone.mutant.MutantType.ALL) { String k = t.id;
