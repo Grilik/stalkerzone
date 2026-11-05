@@ -56,24 +56,10 @@ public final class Prefabs {
     private static final List<Site> SITES = java.util.List.of(
             new Site("village", NODE_VILLAGE)
                     .plateau(VILLAGE_PLATEAU[0], VILLAGE_PLATEAU[1], VILLAGE_PLATEAU[2], VILLAGE_PLATEAU[3], Site.AUTO, VILLAGE_MARGIN)
-                    .build(List.of(), Prefabs::villagePoints),
+                    .build(of(KordonVillage.CLEAR, KordonVillage::build)),   // П-03: дома, подвалы, забор, места NPC
             // бункер Сидоровича — свой узел (торговец), стоит на плато деревни; облик переделывает «Строитель» (П-02б)
             new Site("bunker", NODE_BUNKER).build(of(KordonBunker.CLEAR, KordonBunker::build)),
             new Site("south_post", NODE_SOUTH_POST).build(of(KordonSouthPost.CLEAR, KordonSouthPost::build)));
-
-    /**
-     * Рабочие места деревни на плато (пока дома не построены, П-03): точки kordon_points.json узла 0 на высоте
-     * плато. Костёр ставит декор узла (Camp.placeLevelDecor) в точке campfire.
-     */
-    static void villagePoints(BlockSink b, int lvl) {
-        int fx = VILLAGE_FIRE[0], fz = VILLAGE_FIRE[1];
-        b.mark("cook", fx, b.ground(fx, fz - 2) + 1, fz - 2);
-        for (int[] d : new int[][] {{-2, 0}, {2, 0}, {0, 2}, {-2, 2}, {2, 2}})
-            b.mark("rest", fx + d[0], b.ground(fx + d[0], fz + d[1]) + 1, fz + d[1]);
-        for (int[] p : new int[][] {{-18, 6}, {-12, 6}, {49, 5}, {-7, 9}}) b.mark("guard", p[0], b.ground(p[0], p[1]) + 1, p[1]);
-        for (int[] p : new int[][] {{24, -7}, {-2, -20}, {-1, -16}}) b.mark("bed", p[0], b.ground(p[0], p[1]) + 1, p[1]);
-        for (int[] p : new int[][] {{1, -7}, {0, 11}, {2, -14}, {22, -3}, {43, -5}}) b.mark("patrol", p[0], b.ground(p[0], p[1]) + 1, p[1]);
-    }
 
     /** Площадки уровня (пусто — уровень без площадок). */
     public static List<Site> sites(String levelId) { return "l01_escape".equals(levelId) ? SITES : List.of(); }
