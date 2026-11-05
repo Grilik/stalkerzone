@@ -37,6 +37,8 @@ public final class ZoneMapPlacer {
     private static final Map<String, BlockState> CACHE = new HashMap<>();
 
     public static BlockState state(String s) {
+        int nbt = s.indexOf('{');   // П-04: NBT block entity (камуфляж FramedBlocks) ставится отдельно — applyNbt
+        if (nbt >= 0) s = s.substring(0, nbt);
         return CACHE.computeIfAbsent(s, k -> {
             try {
                 return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), k, false).blockState();
@@ -60,6 +62,31 @@ public final class ZoneMapPlacer {
         return ru.stalkerzone.compat.CompatConfig.decor(id, st, new java.util.Random(seed));
     }
 
+    /**
+     * П-04: NBT из строки сборщика ("блок[свойства]{nbt}") — в block entity поставленного блока: камуфляж FramedBlocks.
+     * В готовом чанке — сразу в block entity; в чанке генерации — отложенным NBT (Minecraft создаст block entity
+     * при переходе чанка в мир, id DUMMY — тип берётся из блока).
+     */
+    public static void applyNbt(net.minecraft.world.level.chunk.ChunkAccess c, BlockPos p, String s) {
+        int br = s.indexOf('{');
+        if (br < 0) return;
+        net.minecraft.nbt.CompoundTag t;
+        try { t = net.minecraft.nbt.TagParser.parseTag(s.substring(br)); }
+        catch (CommandSyntaxException e) { return; }
+        if (!c.getBlockState(p).hasBlockEntity()) return;
+        if (c instanceof net.minecraft.world.level.chunk.LevelChunk lc) {
+            net.minecraft.world.level.block.entity.BlockEntity be =
+                    lc.getBlockEntity(p, net.minecraft.world.level.chunk.LevelChunk.EntityCreationType.IMMEDIATE);
+            // НЕ be.setChanged(): при загрузке чанка он через Level запрашивает этот же чанк и вешает сервер
+            // (поймано на сервере 05.11, стек: setChanged → Level.blockEntityChanged → getChunk → managedBlock)
+            if (be != null) { be.load(t); c.setUnsaved(true); }
+        } else {
+            t.putString("id", "DUMMY");
+            t.putInt("x", p.getX()); t.putInt("y", p.getY()); t.putInt("z", p.getZ());
+            c.setBlockEntityNbt(t);
+        }
+    }
+
     /** Приёмник блоков поверх живого мира; запоминает позиции для второго прохода (соединение заборов, решёток). */
     static final class LevelSink implements BlockSink {
         final ServerLevel level;
@@ -70,6 +97,7 @@ public final class ZoneMapPlacer {
         @Override public void set(int x, int y, int z, String s) {
             BlockPos p = new BlockPos(x, y, z);
             level.setBlock(p, resolve(x, y, z, s), Block.UPDATE_CLIENTS);
+            applyNbt(level.getChunkAt(p), p, s);
             placed.add(p);
         }
 

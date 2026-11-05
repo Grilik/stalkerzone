@@ -47,8 +47,10 @@ public final class PrefabLayer {
         if (list == null) return;
         List<String> states = STATES.get(r.id);
         for (long[] b : list) {
-            BlockState st = ru.stalkerzone.world.ZoneMapPlacer.state(states.get((int) b[1]));
-            ObjPropBlock.safeSet(c, new BlockPos(Prefabs.kx(b[0]), Prefabs.ky(b[0]), Prefabs.kz(b[0])), st);
+            String str = states.get((int) b[1]);
+            BlockState st = ru.stalkerzone.world.ZoneMapPlacer.state(str);
+            BlockPos pos = new BlockPos(Prefabs.kx(b[0]), Prefabs.ky(b[0]), Prefabs.kz(b[0]));
+            if (ObjPropBlock.safeSet(c, pos, st)) ru.stalkerzone.world.ZoneMapPlacer.applyNbt(c, pos, str);   // П-04: камуфляж FramedBlocks
         }
     }
 
