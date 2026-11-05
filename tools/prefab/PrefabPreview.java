@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public class PrefabPreview {
     public static void main(String[] a) throws Exception {
+        // -Dframed=1 — как в игре с FramedBlocks (скаты, наличники); без него — запасной ванильный вид
+        ru.stalkerzone.zonemap.build.Framed.loaded = "1".equals(System.getProperty("framed"));
         LevelRegion r = null;
         int flat = 0;
         if (a[0].startsWith("flat:")) flat = Integer.parseInt(a[0].substring(5));

@@ -63,12 +63,20 @@ def load(name):
 
 
 def parse(state):
+    """Состояние блока → (имя, свойства). Framed-блок (FramedBlocks, П-05) со строкой NBT {camo:…state:{Name:"…"}}:
+    имя — framed_<форма>, текстура — камуфляж (свойство _camo)."""
+    camo = None
+    if '{' in state:
+        nbt = state[state.index('{'):]
+        state = state[:state.index('{')]
+        if 'Name:"' in nbt: camo = nbt.split('Name:"', 1)[1].split('"', 1)[0]
     sid = state.split('[')[0]
     ns, n = sid.split(':') if ':' in sid else ('minecraft', sid)
     props = {}
     if '[' in state:
         for kv in state[state.index('[') + 1:-1].split(','):
             if '=' in kv: k, v = kv.split('='); props[k] = v
+    if camo: props['_camo'] = camo
     return n, props
 
 
@@ -86,6 +94,9 @@ def mod_name(n):
 
 def faces_tex(n, props):
     """Текстуры граней: top, px (+x), pz (+z)."""
+    if '_camo' in props:
+        cn, cp = parse(props['_camo'])
+        return faces_tex(cn, cp)
     if n == 'car_wheel':
         ax = props.get('axis', 'y'); e, sd = 'mod:car_wheel', 'mod:car_wheel_tread'
         return {'y': (e, sd, sd), 'x': (sd, e, sd), 'z': (sd, sd, e)}[ax]
@@ -102,9 +113,39 @@ def faces_tex(n, props):
     return m, m, m
 
 
+def side_box(f, d0, d1, y0=0, y1=1):
+    """Коробка у стороны f (north/south/west/east) толщиной от d0 до d1 (доли от этой стороны)."""
+    return {'north': (0, y0, d0, 1, y1, d1), 'south': (0, y0, 1 - d1, 1, y1, 1 - d0),
+            'west': (d0, y0, 0, d1, y1, 1), 'east': (1 - d1, y0, 0, 1 - d0, y1, 1)}[f]
+
+
+def framed_boxes(n, props):
+    """Формы FramedBlocks (П-05) — приближённо коробками: скат — 4 уступа, панель — полблока у стороны и т.д."""
+    f = props.get('facing', 'north')
+    top = props.get('type') == 'top' or props.get('top') == 'true'
+    if n in ('framed_slope', 'framed_corner_slope', 'framed_inner_corner_slope'):
+        out = []
+        for k in range(4):                       # полоса k от высокой стороны: высота 1 − k/4
+            h = 1 - k / 4
+            out.append(side_box(f, k / 4, (k + 1) / 4, 1 - h if top else 0, 1 if top else h))
+        return out
+    if n == 'framed_panel': return [side_box(f, 0, 0.5)]
+    if n == 'framed_wall_board': return [side_box(f, 0, 0.0625)]
+    if n == 'framed_slab_edge': return [side_box(f, 0, 0.5, 0.5 if top else 0, 1 if top else 0.5)]
+    if n == 'framed_slab': return [(0, 0.5, 0, 1, 1, 1)] if top else [(0, 0, 0, 1, 0.5, 1)]
+    if n == 'framed_floor_board': return [(0, 0.9375, 0, 1, 1, 1)] if top else [(0, 0, 0, 1, 0.0625, 1)]
+    if n == 'framed_pillar':
+        ax = props.get('axis', 'y')
+        return [{'y': (0.25, 0, 0.25, 0.75, 1, 0.75), 'x': (0, 0.25, 0.25, 1, 0.75, 0.75), 'z': (0.25, 0.25, 0, 0.75, 0.75, 1)}[ax]]
+    if n == 'framed_stairs':
+        return [(0, 0.5, 0, 1, 1, 1) if top else (0, 0, 0, 1, 0.5, 1), side_box(f, 0, 0.5, 0 if top else 0.5, 0.5 if top else 1)]
+    return [(0, 0, 0, 1, 1, 1)]
+
+
 def boxes(n, props, nb):
     """Форма блока: список коробок (x0,y0,z0,x1,y1,z1) в долях блока."""
     full = [(0, 0, 0, 1, 1, 1)]
+    if n.startswith('framed_'): return framed_boxes(n, props)
     if n.endswith('_slab'):
         t = props.get('type', 'bottom')
         return full if t == 'double' else [(0, 0.5, 0, 1, 1, 1)] if t == 'top' else [(0, 0, 0, 1, 0.5, 1)]
@@ -152,6 +193,7 @@ def boxes(n, props, nb):
 
 
 def opaque(n, props):
+    if n.startswith('framed_'): return n == 'framed_cube'
     if n in PLANTS or n in ('glass', 'glass_pane', 'iron_bars', 'water', 'cobweb', 'lantern', 'chain', 'ladder', 'rail'): return False
     if any(n.endswith(s) for s in ('_slab', '_stairs', '_fence', '_wall', '_trapdoor', '_door', '_carpet', 'pressure_plate')): return n.endswith('_slab') and props.get('type') == 'double'
     if n in ('lightning_rod', 'campfire', 'skeleton_skull', 'stone_button', 'lever', 'anvil', 'farmland', 'green_banner',
