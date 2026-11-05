@@ -77,6 +77,44 @@ public final class LevelPoints {
         return new int[]{a.get(0).getAsInt(), a.get(2).getAsInt()};
     }
 
+    /** Рабочие места площадки узла (сборщики Prefabs) нужного вида; высота — по карте высот уровня (с площадками). */
+    public static java.util.List<int[]> prefabVecs(String levelId, int nodeId, String kind) {
+        java.util.List<int[]> out = new java.util.ArrayList<>();
+        if (levelId == null || ru.stalkerzone.zonemap.build.Prefabs.site(levelId, nodeId) == null) return out;
+        String key = levelId + "#" + nodeId;
+        java.util.List<ru.stalkerzone.zonemap.build.Prefabs.Point> ps = PREFAB.get(key);
+        if (ps == null) {
+            ru.stalkerzone.world.xray.LevelRegion r = ru.stalkerzone.world.xray.LevelRegions.byId(levelId);
+            if (r == null) return out;   // без уровня высоты построек неизвестны
+            ps = ru.stalkerzone.zonemap.build.Prefabs.points(levelId, r::groundBlock,
+                    ru.stalkerzone.zonemap.build.Prefabs.POINT_LEVEL, nodeId);
+            PREFAB.put(key, ps);
+        }
+        for (ru.stalkerzone.zonemap.build.Prefabs.Point p : ps) if (p.kind().equals(kind)) out.add(new int[] {p.x(), p.y(), p.z()});
+        return out;
+    }
+
+    private static final java.util.Map<String, java.util.List<ru.stalkerzone.zonemap.build.Prefabs.Point>> PREFAB =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * Точка узла вида kind: сначала рабочее место постройки (оно знает пол комнаты — торговец в подземном бункере),
+     * иначе точка из файла уровня. null — нет ни той, ни другой.
+     */
+    public static int[] pointOf(String levelId, int nodeId, String kind) {
+        java.util.List<int[]> pre = prefabVecs(levelId, nodeId, kind);
+        if (!pre.isEmpty()) return pre.get(0);
+        int[] v = readVec(nodePoints(levelId, nodeId), kind);
+        return v == null || v.length < 3 ? null : v;
+    }
+
+    /** Все точки узла вида kind: рабочие места построек и точки файла уровня (укрытия от выброса). */
+    public static java.util.List<int[]> pointsOf(String levelId, int nodeId, String kind) {
+        java.util.List<int[]> out = prefabVecs(levelId, nodeId, kind);
+        for (int[] v : readVecs(nodePoints(levelId, nodeId), kind)) if (v.length >= 3) out.add(v);
+        return out;
+    }
+
     /** Читает массив координат из поля JSON [x,y,z,...] (один вектор). */
     public static int[] readVec(JsonObject obj, String field) {
         if (obj == null || !obj.has(field) || obj.get(field).isJsonNull()) return null;
@@ -84,6 +122,17 @@ public final class LevelPoints {
         JsonArray a = obj.getAsJsonArray(field);
         int[] v = new int[a.size()];
         for (int i = 0; i < a.size(); i++) v[i] = a.get(i).getAsInt();
+        return onPlateau(v);
+    }
+
+    /**
+     * П-02: точки на плато площадки (деревня) — на высоте плато, а не исходной земли из kordon_points.json
+     * (y = над верхним блоком земли уровня, уже исправленной площадкой).
+     */
+    static int[] onPlateau(int[] v) {
+        if (v.length < 3 || ru.stalkerzone.zonemap.build.Prefabs.plateauAt(v[0], v[2]) == null) return v;
+        ru.stalkerzone.world.xray.LevelRegion r = ru.stalkerzone.world.xray.LevelRegions.at(v[0], v[2]);
+        if (r != null) v[1] = r.groundBlock(v[0], v[2]) + 1;
         return v;
     }
 
@@ -97,7 +146,7 @@ public final class LevelPoints {
             JsonArray p = a.get(i).getAsJsonArray();
             int[] v = new int[p.size()];
             for (int j = 0; j < p.size(); j++) v[j] = p.get(j).getAsInt();
-            out.add(v);
+            out.add(onPlateau(v));
         }
         return out;
     }

@@ -44,8 +44,8 @@ public class PrefabsTest {
             }
         }
         ck(guard >= 4, "часовых (guard) " + guard);
-        ck(bed >= 14, "спальных мест (bed) " + bed);
-        ck(patrol >= 16, "точек патруля " + patrol);
+        ck(bed >= 10, "спальных мест (bed) " + bed);
+        ck(patrol >= 10, "точек патруля " + patrol);
         ck(inBounds == marks.size(), "все точки в границах замены (" + inBounds + "/" + marks.size() + ")");
         ck(bedsFree == bedsTotal, "точки bed не в твёрдых блоках (" + bedsFree + "/" + bedsTotal + ")");
         ck(Prefabs.points("l02_garbage", (x, z) -> 75).isEmpty(), "другие уровни без рабочих мест");
@@ -61,125 +61,30 @@ public class PrefabsTest {
         ck(bunkerSolid > 100, "бункер: блоков " + bunkerSolid);
         for (Prefabs.Point p : marks) if (p.kind().equals("duty")) duty++;
         ck(duty >= 1, "рабочее место торговца (duty) " + duty);
-        // карточка 039: мост и туннель с электрами — блоки в своих границах, туннель это настоящий проход
-        int bridgeSolid = 0, tunnelSolid = 0;
-        for (Map.Entry<Long, String> e : m.entrySet()) {
-            if (e.getValue().equals("minecraft:air")) continue;
-            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            if (x >= 215 && x <= 326 && z >= -325 && z <= -238) bridgeSolid++;
-            if (x >= 95 && x <= 142 && z >= -273 && z <= -211) tunnelSolid++;
-        }
-        ck(bridgeSolid > 1500, "мост: блоков " + bridgeSolid);
-        ck(tunnelSolid > 400, "туннель: блоков " + tunnelSolid);
-        // туннель: сквозной проход по оси Z — в середине стены и арка, в створе воздух
-        int fy = Integer.MIN_VALUE;   // пол туннеля: гравий в створе (floor-1)
-        for (int y = 40; y <= 140; y++) if ("minecraft:gravel".equals(m.get(Prefabs.key(132, y, -266)))) fy = y + 1;
-        boolean passage = fy != Integer.MIN_VALUE;
-        for (int z = -268; passage && z <= -264; z++) {
-            for (int x = 132; x <= 132; x++) for (int y = fy; y <= fy + 2; y++) {
-                String c = m.get(Prefabs.key(x, y, z));
-                if (c != null && !c.equals("minecraft:air")) passage = false;
-            }
-            for (int y = fy; y <= fy + 2; y++) {
-                String w1 = m.get(Prefabs.key(130, y, z)), w2 = m.get(Prefabs.key(134, y, z));
-                if (w1 == null || w1.equals("minecraft:air") || w2 == null || w2.equals("minecraft:air")) passage = false;
-            }
-        }
-        ck(passage, "туннель: сквозной проход в створе" + (passage ? "" : " ЗАНЯТ"));
-
-        // карточка 037: элеватор в списке сборщиков — свои границы, блоки, рабочие места
-        int elevatorSolid = 0, cook = 0;
-        for (Map.Entry<Long, String> e : m.entrySet()) {
-            if (e.getValue().equals("minecraft:air")) continue;
-            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            boolean inElevator = x >= 175 && x <= 246 && z >= -247 && z <= -158;
-            if (inElevator) elevatorSolid++;
-        }
-        ck(elevatorSolid > 500, "элеватор: блоков " + elevatorSolid);
-        for (Prefabs.Point p : marks) if (p.kind().equals("cook")) cook++;
-        ck(cook >= 1, "рабочее место повара (cook) " + cook);
-
-        // карточка 040: дальний блокпост — свои блоки и рабочие места в его границах
-        int farSolid = 0, farGate = 0, farGuard = 0, farCook = 0, farBed = 0, farPatrol = 0;
-        for (Map.Entry<Long, String> e : m.entrySet()) {
-            if (e.getValue().equals("minecraft:air")) continue;
-            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            if (x >= 214 && x <= 280 && z >= -830 && z <= -750) farSolid++;
-        }
-        for (Prefabs.Point p : marks) {
-            if (p.x() < 214 || p.x() > 280 || p.z() < -830 || p.z() > -750) continue;
-            switch (p.kind()) {
-                case "gate" -> farGate++;
-                case "guard" -> farGuard++;
-                case "cook" -> farCook++;
-                case "bed" -> farBed++;
-                case "patrol" -> farPatrol++;
-                default -> { }
-            }
-        }
-        ck(farSolid > 500, "дальний блокпост: блоков " + farSolid);
-        ck(farGate >= 1 && farGuard >= 1 && farCook >= 1 && farBed >= 1 && farPatrol >= 1,
-                "дальний блокпост: gate/guard/cook/bed/patrol " + farGate + "/" + farGuard + "/" + farCook + "/" + farBed + "/" + farPatrol);
         // границы сборщиков не пересекаются
-        java.util.List<int[]> cl = Prefabs.clear("l01_escape");
+        // (площадка деревни — плато вокруг бункера: сравниваются границы сборщиков, не плато)
+        java.util.List<int[]> cl = new java.util.ArrayList<>();
+        for (ru.stalkerzone.zonemap.build.Site st : Prefabs.sites("l01_escape"))
+            for (Prefabs.Builder bb : st.builders()) cl.addAll(bb.clear());
         boolean overlap = false;
         outer:
         for (int i = 0; i < cl.size(); i++) for (int j = i + 1; j < cl.size(); j++) {
             int[] ra = cl.get(i), rb = cl.get(j);
             if (ra[0] <= rb[2] && rb[0] <= ra[2] && ra[1] <= rb[3] && rb[1] <= ra[3]) { overlap = true; break outer; }
         }
-        ck(!overlap && cl.size() >= 6, "сборщиков " + cl.size() + ", без пересечения границ");
+        ck(!overlap && cl.size() >= 2, "сборщиков " + cl.size() + ", без пересечения границ");
 
-        // карточка 036: АТП — гаражи, мастерские, вышки, техника, забор
-        int atpSolid = 0, workMark = 0;
+        // П-02: отключённые сборщики (АТП, элеватор, свиноферма, дальний блокпост, мост/туннель) в мире не стоят
+        int off = 0;
+        int[][] offRects = {{288, -160, 356, -86}, {175, -247, 246, -158}, {185, -445, 240, -389}, {214, -830, 280, -750},
+                {215, -325, 326, -238}, {95, -273, 142, -211}};
         for (Map.Entry<Long, String> e : m.entrySet()) {
-            if (e.getValue().equals("minecraft:air")) continue;
             int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            boolean inATP = x >= 288 && x <= 356 && z >= -160 && z <= -86;
-            if (inATP) atpSolid++;
+            for (int[] r : offRects) if (x >= r[0] && x <= r[2] && z >= r[1] && z <= r[3]) off++;
         }
-        ck(atpSolid > 2000, "АТП: блоков " + atpSolid);
-        // проверка, что у АТП есть рабочие места всех нужных видов
-        int atpGuard = 0, atpBed = 0, atpPatrol = 0, atpWork = 0;
-        for (Prefabs.Point p : marks) {
-            boolean inATP = p.x() >= 288 && p.x() <= 356 && p.z() >= -160 && p.z() <= -86;
-            if (!inATP) continue;
-            switch (p.kind()) {
-                case "guard" -> atpGuard++;
-                case "bed" -> atpBed++;
-                case "patrol" -> atpPatrol++;
-                case "work" -> atpWork++;
-                default -> { }
-            }
-        }
-        ck(atpGuard >= 2, "АТП: часовых (guard) " + atpGuard);
-        ck(atpBed >= 4, "АТП: спальных мест (bed) " + atpBed);
-        ck(atpPatrol >= 4, "АТП: точек патруля " + atpPatrol);
-        ck(atpWork >= 3, "АТП: рабочих мест у техники (work) " + atpWork);
-        // карточка 038: свиноферма — корпуса, подсобки, навесы, загоны и рабочие места
-        int farmSolid = 0, farmGuard = 0, farmBed = 0, farmCook = 0, farmWork = 0, farmPatrol = 0;
-        for (Map.Entry<Long, String> e : m.entrySet()) {
-            if (e.getValue().equals("minecraft:air")) continue;
-            int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey());
-            if (x >= 185 && x <= 240 && z >= -445 && z <= -389) farmSolid++;
-        }
-        for (Prefabs.Point p : marks) {
-            if (p.x() < 185 || p.x() > 240 || p.z() < -445 || p.z() > -389) continue;
-            switch (p.kind()) {
-                case "guard" -> farmGuard++;
-                case "bed" -> farmBed++;
-                case "cook" -> farmCook++;
-                case "work" -> farmWork++;
-                case "patrol" -> farmPatrol++;
-                default -> { }
-            }
-        }
-        ck(farmSolid > 2500, "свиноферма: блоков " + farmSolid);
-        ck(farmGuard >= 2, "свиноферма: часовых (guard) " + farmGuard);
-        ck(farmBed >= 4, "свиноферма: спальных мест (bed) " + farmBed);
-        ck(farmCook >= 1, "свиноферма: повар (cook) " + farmCook);
-        ck(farmWork >= 3, "свиноферма: рабочих мест у загонов (work) " + farmWork);
-        ck(farmPatrol >= 4, "свиноферма: точек патруля " + farmPatrol);
+        ck(off == 0, "отключённых построек нет (блоков в их границах: " + off + ")");
+        for (int[] r : offRects) ck(!Prefabs.cleared("l01_escape", (r[0] + r[2]) / 2, (r[1] + r[3]) / 2),
+                "воксели оригинала у отключённой постройки " + r[0] + "," + r[1] + " не расчищаются");
         System.exit(f > 0 ? 1 : 0);
     }
 }

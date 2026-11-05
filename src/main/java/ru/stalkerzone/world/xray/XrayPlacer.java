@@ -156,7 +156,10 @@ public final class XrayPlacer {
         }
         // 2. подземные помещения
         int[] a = r.air(cp.x, cp.z);
-        for (int i = 0; i + 2 < a.length; i += 3) ObjPropBlock.safeSet(c, new BlockPos(a[i], a[i + 1], a[i + 2]), b(Blocks.AIR));
+        for (int i = 0; i + 2 < a.length; i += 3) {
+            if (ru.stalkerzone.zonemap.build.Prefabs.shaped(r.id, a[i], a[i + 2])) continue;   // П-02: на плато и откосах вырезов оригинала нет
+            ObjPropBlock.safeSet(c, new BlockPos(a[i], a[i + 1], a[i + 2]), b(Blocks.AIR));
+        }
         // 3. постройки
         int[] v = PrefabLayer.without(r.voxels(cp.x, cp.z), r.id);   // этап 1: в границах построек по оригиналу — их блоки
         LevelBuildings lb = LevelBuildings.of(r.id);

@@ -85,9 +85,7 @@ public final class PdaService {
         String level = ru.stalkerzone.world.LevelPoints.levelForScenario(s.scenario);
         if (level == null) return;
         for (Node n : s.nodes) {
-            com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(level, n.id);
-            if (pts == null) continue;
-            for (int[] v : ru.stalkerzone.world.LevelPoints.readVecs(pts, "shelter")) {
+            for (int[] v : ru.stalkerzone.world.LevelPoints.pointsOf(level, n.id, "shelter")) {
                 if (v.length < 3) continue;
                 sb.append("W\t").append(v[0]).append('\t').append(v[2]).append('\t').append(clean(n.name)).append('\n');
             }
