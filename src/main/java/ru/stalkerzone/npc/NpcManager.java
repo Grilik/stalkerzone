@@ -108,7 +108,7 @@ public final class NpcManager {
         if (n.trader && trader == null) {
             // карточка 009: на постройках уровня торговец — в точке trader из points
             BlockPos tp = levelPointPos(level, sim, n, "trader");
-            if (tp != null) spawnAt(level, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), n, tp, Component.literal("Торговец " + traderName(n)));
+            if (tp != null) spawnExact(level, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), n, tp, Component.literal("Торговец " + traderName(n)));
             else spawn(level, sim, n, StalkerEntity.ROLE_TRADER, Math.max(0, n.owner), cx, cz, 0);
         }
 
@@ -197,6 +197,17 @@ public final class NpcManager {
         spawnAt(level, StalkerEntity.ROLE_BUILDER, n.owner, n, site, Component.literal("Строитель"));
     }
 
+    /** Встать ровно в точку (торговец за прилавком), если она загружена. */
+    private static void spawnExact(ServerLevel level, int role, int faction, Node n, BlockPos at, Component name) {
+        if (!level.hasChunk(at.getX() >> 4, at.getZ() >> 4)) return;
+        BlockPos pos = standAt(level, at);
+        StalkerEntity e = ModEntities.STALKER.get().create(level);
+        if (e == null) return;
+        e.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, RND.nextFloat() * 360f, 0f);
+        e.configure(faction, role, n.id, pos, name);
+        level.addFreshEntity(e);
+    }
+
     private static void spawnAt(ServerLevel level, int role, int faction, Node n, BlockPos around, Component name) {
         int x = around.getX() + RND.nextInt(7) - 3, z = around.getZ() + RND.nextInt(7) - 3;
         if (!level.hasChunk(x >> 4, z >> 4)) return;
@@ -232,15 +243,28 @@ public final class NpcManager {
     }
 
     /** Точка в мире из level points или null. */
+    /** Точка узла: рабочее место постройки (пол комнаты), иначе точка из файла уровня (П-02, запрос Строителя). */
     private static BlockPos levelPointPos(ServerLevel level, Simulation sim, Node n, String field) {
         String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
         if (levelId == null) return null;
-        com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(levelId, n.id);
-        if (pts == null) return null;
-        int[] v = ru.stalkerzone.world.LevelPoints.readVec(pts, field);
-        if (v == null || v.length < 3) return null;
-        return new BlockPos(v[0], v[1], v[2]);
+        int[] v = ru.stalkerzone.world.LevelPoints.pointOf(levelId, n.id, field);
+        return v == null ? null : new BlockPos(v[0], v[1], v[2]);
     }
+
+    /**
+     * Где встать на точке: сама точка, если там два блока свободны и под ногами твёрдое (комната, нары под крышей),
+     * иначе поверхность мира над точкой. Раньше всегда бралась поверхность — торговец бункера и жители домов
+     * оказывались на крыше.
+     */
+    static BlockPos standAt(ServerLevel level, BlockPos p) {
+        if (level.hasChunk(p.getX() >> 4, p.getZ() >> 4)
+                && level.getBlockState(p).getCollisionShape(level, p).isEmpty()
+                && level.getBlockState(p.above()).getCollisionShape(level, p.above()).isEmpty()
+                && !level.getBlockState(p.below()).getCollisionShape(level, p.below()).isEmpty()
+                && level.getFluidState(p).isEmpty()) return p;
+        return SpawnFinder.groundAt(level, p.getX(), p.getZ());
+    }
+
     /** Радиус «тихой зоны» у торговца: группировки не начинают бой (блоки, карточка 011). */
     public static final int QUIET_RADIUS = 12;
 
@@ -409,7 +433,7 @@ public final class NpcManager {
 
     private static StalkerEntity spawnWorkRole(ServerLevel level, Simulation sim, Node n, int workRole, BlockPos pos) {
         if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
-        BlockPos ground = SpawnFinder.groundAt(level, pos.getX(), pos.getZ());
+        BlockPos ground = standAt(level, pos);   // рабочее место под крышей — на полу, не на крыше
         StalkerEntity e = ModEntities.STALKER.get().create(level);
         if (e == null) return null;
         String name = CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " [" + rankFor(sim.factions.get(n.owner)) + "]";
@@ -444,7 +468,7 @@ public final class NpcManager {
     private static StalkerEntity spawnFixed(ServerLevel level, Simulation sim, Node n, int role, int faction,
                                             BlockPos pos) {
         if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
-        BlockPos ground = SpawnFinder.groundAt(level, pos.getX(), pos.getZ());
+        BlockPos ground = standAt(level, pos);   // рабочее место под крышей — на полу, не на крыше
         StalkerEntity e = ModEntities.STALKER.get().create(level);
         if (e == null) return null;
         String name = CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " ["

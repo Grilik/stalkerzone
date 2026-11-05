@@ -200,9 +200,8 @@ public final class EmissionEvent {
         int[] best = null;
         double bd = Double.MAX_VALUE;
         for (Node n : d.sim.nodes) {
-            com.google.gson.JsonObject pts = ru.stalkerzone.world.LevelPoints.nodePoints(levelId, n.id);
-            if (pts == null) continue;
-            for (int[] s : ru.stalkerzone.world.LevelPoints.readVecs(pts, "shelter")) {
+            // укрытия построек (подвалы, бункер) и точки файла уровня (П-02, запрос Строителя)
+            for (int[] s : ru.stalkerzone.world.LevelPoints.pointsOf(levelId, n.id, "shelter")) {
                 if (s.length < 3) continue;
                 double dist = Math.hypot(s[0] - x, s[2] - z);
                 if (dist < bd) { bd = dist; best = new int[]{s[0], s[1], s[2], n.id}; }
