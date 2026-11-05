@@ -28,6 +28,7 @@ import java.util.Map;
  */
 @Mod.EventBusSubscriber(modid = StalkerZoneMod.MOD_ID, value = Dist.CLIENT)
 public final class PdaMapCache {
+    private static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
     /** Сторона клетки подложки, блоков. */
     public static final int STEP = 4;
     /** Радиус сбора вокруг игрока, блоков. */
@@ -141,7 +142,7 @@ public final class PdaMapCache {
                 }
             }
         } catch (Exception e) {
-            System.err.println("[stalkerzone] подложка КПК не прочитана: " + e);
+            LOG.warn("[stalkerzone] подложка КПК не прочитана", e);
         }
     }
 
@@ -166,7 +167,7 @@ public final class PdaMapCache {
             Files.createDirectories(dir);
             ImageIO.write(img, "png", dir.resolve("pda_map_" + safe() + ".png").toFile());
         } catch (Exception e) {
-            System.err.println("[stalkerzone] подложка КПК не сохранена: " + e);
+            LOG.warn("[stalkerzone] подложка КПК не сохранена", e);
         }
     }
 

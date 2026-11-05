@@ -6,6 +6,7 @@ import java.util.List;
 
 /** Уровни оригинала, встроенные в мир 1:1. Загружаются лениво из папки игры (stalkerzone/levels/*.szl). */
 public final class LevelRegions {
+    private static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
     /** Уровни по умолчанию (если нет layout.json). */
     public static final String[] IDS = {"l01_escape"};
     /** Переход между уровнями: от края одного до края другого (точки уже в блоках мира). */
@@ -32,7 +33,7 @@ public final class LevelRegions {
                     Integer.parseInt(l.group(5)), Integer.parseInt(l.group(6))));
             return ids.isEmpty() ? IDS : ids.toArray(new String[0]);
         } catch (Exception e) {
-            System.err.println("[stalkerzone] layout.json не прочитан: " + e);
+            LOG.error("[stalkerzone] layout.json не прочитан", e);
             return IDS;
         }
     }
@@ -57,12 +58,21 @@ public final class LevelRegions {
             for (String id : readLayout(ls)) {
                 // данные уровня делаются из файлов игры у пользователя (tools/xray) и лежат рядом с игрой, не в моде:
                 // <папка игры>/stalkerzone/levels/<id>.szl; запасной путь — ресурсы мода
-                java.io.File ext = new java.io.File(dir(), id + ".szl");
+                java.io.File ext = new java.io.File(dir(), id + ".szl").getAbsoluteFile();
+                String src = ext.isFile() ? ext.getPath() : "ресурсы мода /data/stalkerzone/levels/" + id + ".szl";
                 try (InputStream in = ext.isFile() ? new java.io.FileInputStream(ext)
                         : LevelRegions.class.getResourceAsStream("/data/stalkerzone/levels/" + id + ".szl")) {
-                    if (in != null) out.add(LevelRegion.load(id, in));
+                    if (in == null) {
+                        LOG.warn("[stalkerzone] уровень {} не найден: нет файла {} — мир без рельефа и построек оригинала", id, ext.getPath());
+                        continue;
+                    }
+                    LevelRegion lr = LevelRegion.load(id, in);
+                    out.add(lr);
+                    LOG.info("[stalkerzone] уровень {} загружен: файл {}, {} байт, x0/z0/w/d {}/{}/{}/{}, вокселей {}",
+                            id, src, ext.isFile() ? ext.length() : -1, lr.x0, lr.z0, lr.w, lr.d, lr.voxelCount);
+                    if (!lr.sitesLog.isEmpty()) LOG.info(lr.sitesLog);
                 } catch (Exception e) {
-                    System.err.println("[stalkerzone] не загрузился уровень " + id + ": " + e);
+                    LOG.error("[stalkerzone] не загрузился уровень " + id + " (" + src + ")", e);
                 }
             }
             links = List.copyOf(ls);

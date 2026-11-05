@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
  * костры, места сна, часовые, укрытия и дороги разбирают карточки 009+.
  */
 public final class KordonPoints {
+    private static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
     public static final String RESOURCE = "/data/stalkerzone/kordon_points.json";
     /** Уровень оригинала, из которого сделан Кордон. */
     public static final String LEVEL = "l01_escape";
@@ -32,7 +33,7 @@ public final class KordonPoints {
                 if (in == null) return null;
                 root = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
             } catch (Exception e) {
-                System.err.println("[stalkerzone] kordon_points.json не прочитан: " + e);
+                LOG.error("[stalkerzone] kordon_points.json не прочитан", e);
                 return null;
             }
             return root;

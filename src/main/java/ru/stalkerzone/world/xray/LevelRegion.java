@@ -27,6 +27,8 @@ public final class LevelRegion {
     private final Map<Long, int[]> air = new HashMap<>();
     private final Map<Long, List<int[]>> trees = new HashMap<>();
     public int voxelCount, airCount, treeCount;
+    /** Строка о площадках для лога (пишет LevelRegions логгером мода; класс без Minecraft и log4j). */
+    public String sitesLog = "";
 
     /** Покрытие земли (код в .szl). */
     public static final int S_EARTH = 1, S_DIRT = 2, S_GRASS = 3, S_GRAVEL = 4, S_SAND = 5, S_ASPHALT = 6, S_DEATH = 7;
@@ -97,7 +99,7 @@ public final class LevelRegion {
                 if (ru.stalkerzone.zonemap.build.Prefabs.plateauAt(x, z) != null) water[i] = -1;
             }
         });
-        System.out.println(log);
+        sitesLog = log;
     }
 
     private static int[] flat(List<int[]> l, int k) {

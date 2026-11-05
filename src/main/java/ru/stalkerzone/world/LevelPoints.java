@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
  * Код мира берёт точки узла через сценарий (узел → уровень → точки).
  */
 public final class LevelPoints {
+    private static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
     public static final String RESOURCE_PREFIX = "/data/stalkerzone/points/";
     public static final String SUFFIX = ".json";
 
@@ -31,7 +32,7 @@ public final class LevelPoints {
                 if (in == null) return null;
                 return JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
             } catch (Exception e) {
-                System.err.println("[stalkerzone] points/" + id + ".json не прочитан: " + e);
+                LOG.error("[stalkerzone] points/" + id + ".json не прочитан", e);
                 return null;
             }
         });
