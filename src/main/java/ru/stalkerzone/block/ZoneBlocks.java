@@ -58,7 +58,9 @@ public final class ZoneBlocks {
             STAIRS.put(m, reg(n + "_stairs", () -> new StairBlock(() -> full.get().defaultBlockState(), props(m))));
             SLAB.put(m, reg(n + "_slab", () -> new SlabBlock(props(m))));
             BlockSetType set = m.kind == ZoneMat.Kind.METAL ? BlockSetType.IRON : BlockSetType.SPRUCE;
-            if (m.trapdoor) TRAPDOOR.put(m, reg(n + "_trapdoor", () -> new TrapDoorBlock(props(m).noOcclusion(), set)));
+            // П-02в: забор «люками» — секции не открываются (FixedTrapDoorBlock), прочие люки обычные
+            if (m.trapdoor) TRAPDOOR.put(m, reg(n + "_trapdoor", () -> m == ZoneMat.FENCE_BOARDS
+                    ? new FixedTrapDoorBlock(props(m).noOcclusion(), set) : new TrapDoorBlock(props(m).noOcclusion(), set)));
             if (m.fence) FENCE.put(m, reg(n + "_fence", () -> new FenceBlock(props(m).noOcclusion())));
             if (m.pane) PANE.put(m, reg(n + "_pane", () -> new IronBarsBlock(props(m).noOcclusion())));
             if (m.door) DOOR.put(m, reg(n + "_door", () -> new DoorBlock(props(m).noOcclusion(), set)));
