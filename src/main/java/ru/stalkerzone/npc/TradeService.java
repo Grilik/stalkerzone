@@ -16,6 +16,24 @@ import ru.stalkerzone.sim.Simulation;
 public final class TradeService {
     private TradeService() {}
 
+    /** П-07: пока открыто окно торговца, итог сделки идёт в окно (строка внизу), а не в чат. */
+    private static final ThreadLocal<java.util.List<String>> CAPTURE = new ThreadLocal<>();
+
+    static void say(ServerPlayer p, String msg) {
+        java.util.List<String> c = CAPTURE.get();
+        if (c != null) c.add(msg);
+        else p.sendSystemMessage(Component.literal(msg));
+    }
+
+    /** Выполнить сделки окна торговца, собрав их сообщения; возвращает сообщения по порядку. */
+    static java.util.List<String> captured(Runnable r) {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        java.util.List<String> prev = CAPTURE.get();
+        CAPTURE.set(out);
+        try { r.run(); } finally { CAPTURE.set(prev); }
+        return out;
+    }
+
     public static long countRubles(ServerPlayer p) {
         long sum = 0;
         Inventory inv = p.getInventory();
@@ -73,13 +91,13 @@ public final class TradeService {
             if (units == 1) break;
         }
         if (sold == 0) {
-            p.sendSystemMessage(Component.literal("Торговец сейчас не может заплатить за «" + name + "»."));
+            say(p, "Торговец сейчас не может заплатить за «" + name + "».");
             return;
         }
         held.shrink(sold);
         giveRubles(p, money);
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Продано: " + name + " x" + sold + " за " + money + " руб."));
+        say(p, "Продано: " + name + " x" + sold + " за " + money + " руб.");
     }
 
     public static void buy(ServerPlayer p, ZoneData data, Node n, Good g, int qty) {
@@ -91,7 +109,7 @@ public final class TradeService {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuy(n, g, qty, cash);
         if (d.qty() == 0) {
-            p.sendSystemMessage(Component.literal("Не вышло купить «" + g.ru + "»: нет на складе или не хватает денег (у вас " + cash + " руб.)."));
+            say(p, "Не вышло купить «" + g.ru + "»: нет на складе или не хватает денег (у вас " + cash + " руб.).");
             return;
         }
         takeRubles(p, d.money());
@@ -109,7 +127,7 @@ public final class TradeService {
                 rounds -= c;
             }
             data.setDirty();
-            p.sendSystemMessage(Component.literal("Куплено: " + (hand ? "кустарные" : "заводские") + " патроны " + spec.ammo() + " x" + total + " за " + d.money() + " руб."));
+            say(p, "Куплено: " + (hand ? "кустарные" : "заводские") + " патроны " + spec.ammo() + " x" + total + " за " + d.money() + " руб.");
             return;
         }
         int left = d.qty();
@@ -119,7 +137,7 @@ public final class TradeService {
             left -= c;
         }
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Куплено: " + g.ru + " x" + d.qty() + " за " + d.money() + " руб."));
+        say(p, "Куплено: " + g.ru + " x" + d.qty() + " за " + d.money() + " руб.");
     }
 
     /** Патроны TaCZ: торговец берёт их как товар «Патроны» (целыми единицами). */
@@ -133,40 +151,42 @@ public final class TradeService {
         int per = ru.stalkerzone.compat.CompatConfig.roundsPerUnit(ammo);
         int units = held.getCount() / per;
         if (units <= 0) {
-            p.sendSystemMessage(Component.literal("Слишком мало патронов: торговец берёт пачками по " + per + " шт."));
+            say(p, "Слишком мало патронов: торговец берёт пачками по " + per + " шт.");
             return;
         }
         Good g = ru.stalkerzone.compat.GunQuality.ammoGood(held);
         Simulation.Deal d = data.sim.playerSell(n, g, units);
         if (d.qty() == 0) {
-            p.sendSystemMessage(Component.literal("Торговец сейчас не может заплатить за патроны (или ему некуда их девать)."));
+            say(p, "Торговец сейчас не может заплатить за патроны (или ему некуда их девать).");
             return;
         }
         held.shrink(d.qty() * per);
         giveRubles(p, d.money());
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Продано: патроны " + ammo + " x" + d.qty() * per + " за " + d.money() + " руб."));
+        say(p, "Продано: патроны " + ammo + " x" + d.qty() * per + " за " + d.money() + " руб.");
     }
 
     /** Купить готовый предмет за единицы снаряжения со склада торговца (оружие TaCZ): good — кустарное или заводское. */
-    public static void buyStack(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
+    /** @return true, если куплено. */
+    public static boolean buyStack(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
         PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
-        try { buyStack0(p, data, n, stack, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
+        try { return buyStack0(p, data, n, stack, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
-    private static void buyStack0(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
+    private static boolean buyStack0(ServerPlayer p, ZoneData data, Node n, ItemStack stack, Good good, int units) {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuyAll(n, good, units, cash);
         String name = stack.getHoverName().getString();
         if (d.qty() == 0) {
-            p.sendSystemMessage(Component.literal("Не вышло купить «" + name + "»: нужно " + units + " ед. товара «" + good.ru + "» на складе (есть "
-                    + n.market.get(good) + ") и около " + units * data.sim.sellPrice(n, good) + " руб. (у вас " + cash + ")."));
-            return;
+            say(p, "Не вышло купить «" + name + "»: нужно " + units + " ед. товара «" + good.ru + "» на складе (есть "
+                    + n.market.get(good) + ") и около " + units * data.sim.sellPrice(n, good) + " руб. (у вас " + cash + ").");
+            return false;
         }
         takeRubles(p, d.money());
         giveItems(p, java.util.List.of(stack));
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Куплено: " + name + " за " + d.money() + " руб."));
+        say(p, "Куплено: " + name + " за " + d.money() + " руб.");
+        return true;
     }
 
     /** Каким товаром симуляции торгуется предмет: кустарное, прототипы или заводское снаряжение. */
@@ -188,28 +208,30 @@ public final class TradeService {
     }
 
     /** Купить костюм или рюкзак: со склада торговца уходит нужное число единиц снаряжения того же происхождения. */
-    public static void buyEquipment(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, int units) {
-        buyEquipment(p, data, n, item, gearGood(new ItemStack(item)), units);
+    public static boolean buyEquipment(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, int units) {
+        return buyEquipment(p, data, n, item, gearGood(new ItemStack(item)), units);
     }
 
-    public static void buyEquipment(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
+    /** @return true, если куплено. */
+    public static boolean buyEquipment(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
         PlayerFaction.applyTrade(p, data.sim, n);   // v1.16: скидки своим и друзьям
-        try { buyEquipment0(p, data, n, item, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
+        try { return buyEquipment0(p, data, n, item, good, units); } finally { PlayerFaction.resetTrade(data.sim); }
     }
 
-    private static void buyEquipment0(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
+    private static boolean buyEquipment0(ServerPlayer p, ZoneData data, Node n, net.minecraft.world.item.Item item, Good good, int units) {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuyAll(n, good, units, cash);
         String name = new ItemStack(item).getHoverName().getString();
         if (d.qty() == 0) {
-            p.sendSystemMessage(Component.literal("Не вышло купить «" + name + "»: нужно " + units + " ед. товара «" + good.ru + "» на складе (есть "
-                    + n.market.get(good) + ") и около " + units * data.sim.sellPrice(n, good) + " руб. (у вас " + cash + ")."));
-            return;
+            say(p, "Не вышло купить «" + name + "»: нужно " + units + " ед. товара «" + good.ru + "» на складе (есть "
+                    + n.market.get(good) + ") и около " + units * data.sim.sellPrice(n, good) + " руб. (у вас " + cash + ").");
+            return false;
         }
         takeRubles(p, d.money());
         giveItems(p, java.util.List.of(new ItemStack(item)));
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Куплено: " + name + " за " + d.money() + " руб."));
+        say(p, "Куплено: " + name + " за " + d.money() + " руб.");
+        return true;
     }
 
     /** Продать костюм или рюкзак из руки: цена зависит от износа. */
@@ -225,18 +247,18 @@ public final class TradeService {
         if (worth == 0 && units > 0 && cond >= 0.4) worth = 1; // дорогие единицы (импорт, прототипы): одна единица за вещь в приличном состоянии
         String name = held.getHoverName().getString();
         if (worth <= 0) {
-            p.sendSystemMessage(Component.literal("Торговец не берёт «" + name + "» в таком состоянии. Почините: /zone repair"));
+            say(p, "Торговец не берёт «" + name + "» в таком состоянии. Почините: /zone repair");
             return;
         }
         Simulation.Deal d = data.sim.playerSellAll(n, gearGood(held), worth);
         if (d.qty() == 0) {
-            p.sendSystemMessage(Component.literal("У торговца не хватает денег на «" + name + "»."));
+            say(p, "У торговца не хватает денег на «" + name + "».");
             return;
         }
         held.shrink(1);
         giveRubles(p, d.money());
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Продано: " + name + " (состояние " + Math.round(cond * 100) + "%) за " + d.money() + " руб."));
+        say(p, "Продано: " + name + " (состояние " + Math.round(cond * 100) + "%) за " + d.money() + " руб.");
     }
 
     /** Ремонт предмета в руке: тратит детали со склада торговца и плату за работу. */
@@ -247,7 +269,7 @@ public final class TradeService {
 
     private static void repair0(ServerPlayer p, ZoneData data, Node n, ItemStack held) {
         if (held.isEmpty() || !held.isDamageableItem() || held.getDamageValue() == 0) {
-            p.sendSystemMessage(Component.literal("Возьмите в руку изношенную вещь (костюм, оружие, инструмент)."));
+            say(p, "Возьмите в руку изношенную вещь (костюм, оружие, инструмент).");
             return;
         }
         double wear = held.getDamageValue() / (double) held.getMaxDamage();
@@ -257,14 +279,14 @@ public final class TradeService {
         long cash = countRubles(p);
         Simulation.Deal d = data.sim.playerBuyAll(n, Good.PARTS, parts, Math.max(0, cash - fee));
         if (d.qty() == 0) {
-            p.sendSystemMessage(Component.literal("Ремонт не вышел: нужно деталей " + parts + " (на складе " + n.market.get(Good.PARTS)
-                    + ") и около " + (parts * data.sim.sellPrice(n, Good.PARTS) + fee) + " руб. (у вас " + cash + ")."));
+            say(p, "Ремонт не вышел: нужно деталей " + parts + " (на складе " + n.market.get(Good.PARTS)
+                    + ") и около " + (parts * data.sim.sellPrice(n, Good.PARTS) + fee) + " руб. (у вас " + cash + ").");
             return;
         }
         data.sim.playerPay(n, fee);
         takeRubles(p, d.money() + fee);
         held.setDamageValue(0);
         data.setDirty();
-        p.sendSystemMessage(Component.literal("Починено: " + held.getHoverName().getString() + ". Деталей " + parts + ", всего " + (d.money() + fee) + " руб."));
+        say(p, "Починено: " + held.getHoverName().getString() + ". Деталей " + parts + ", всего " + (d.money() + fee) + " руб.");
     }
 }

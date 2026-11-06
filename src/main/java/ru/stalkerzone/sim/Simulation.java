@@ -862,10 +862,7 @@ public final class Simulation {
     public Deal playerBuyAll(Node n, Good g, int qty, long budget) {
         Deal d = playerBuy(n, g, qty, budget);
         if (d.qty() == qty) return d;
-        n.market.add(g, d.qty());
-        n.market.money -= d.money();
-        ledger.exported[g.ordinal()] -= d.qty();
-        ledger.moneyMinted -= d.money();
+        undoBuy(n, g, d);
         return new Deal(0, 0);
     }
 
@@ -873,11 +870,72 @@ public final class Simulation {
     public Deal playerSellAll(Node n, Good g, int qty) {
         Deal d = playerSell(n, g, qty);
         if (d.qty() == qty) return d;
+        undoSell(n, g, d);
+        return new Deal(0, 0);
+    }
+
+    /** Откат покупки игрока: товар обратно на склад, деньги из кассы, учёт как был. */
+    private void undoBuy(Node n, Good g, Deal d) {
+        n.market.add(g, d.qty());
+        n.market.money -= d.money();
+        ledger.exported[g.ordinal()] -= d.qty();
+        ledger.moneyMinted -= d.money();
+    }
+
+    /** Откат продажи игрока. */
+    private void undoSell(Node n, Good g, Deal d) {
         n.market.take(g, d.qty());
         n.market.money += d.money();
         ledger.imported[g.ordinal()] -= d.qty();
         ledger.moneyBurned -= d.money();
-        return new Deal(0, 0);
+    }
+
+    /**
+     * П-07: покупка packs вещей, каждая — per единиц товара g целиком (костюм, рюкзак, оружие).
+     * Возвращает число купленных вещей и сумму; останавливается на первой, на которую не хватило склада или денег.
+     */
+    public Deal playerBuyPacks(Node n, Good g, int per, int packs, long budget) {
+        if (per <= 0) return new Deal(0, 0);
+        int done = 0;
+        long spent = 0;
+        while (done < packs) {
+            Deal d = playerBuyAll(n, g, per, budget - spent);
+            if (d.qty() == 0) break;
+            spent += d.money();
+            done++;
+        }
+        return new Deal(done, spent);
+    }
+
+    /** П-07: продажа packs вещей по per единиц товара g, каждая целиком; останавливается, когда касса не тянет. */
+    public Deal playerSellPacks(Node n, Good g, int per, int packs) {
+        if (per <= 0) return new Deal(0, 0);
+        int done = 0;
+        long paid = 0;
+        while (done < packs) {
+            Deal d = playerSellAll(n, g, per);
+            if (d.qty() == 0) break;
+            paid += d.money();
+            done++;
+        }
+        return new Deal(done, paid);
+    }
+
+    /**
+     * П-07, окно торговца: «что вышло бы» — та же сделка, что {@link #playerBuyPacks}, но склад, касса и учёт
+     * остаются как были. per = 1 — обычный товар поштучно.
+     */
+    public Deal quoteBuy(Node n, Good g, int per, int packs, long budget) {
+        Deal d = playerBuyPacks(n, g, per, packs, budget);
+        undoBuy(n, g, new Deal(d.qty() * per, d.money()));
+        return d;
+    }
+
+    /** П-07: пробная продажа ({@link #playerSellPacks}) без изменений склада, кассы и учёта. */
+    public Deal quoteSell(Node n, Good g, int per, int packs) {
+        Deal d = playerSellPacks(n, g, per, packs);
+        undoSell(n, g, new Deal(d.qty() * per, d.money()));
+        return d;
     }
 
     /** Игрок платит торговцу за работу (ремонт): деньги приходят в кассу извне. */

@@ -77,20 +77,31 @@ public final class PdaSnapshot {
         return sb.toString();
     }
 
+    /**
+     * Что игрок me может сделать с контрактом (флаги CAN_*), или −1, если контракт ему не виден
+     * (завершён или взят другим игроком). Общий для КПК и окна торговца (П-07).
+     */
+    public static int actions(Contract c, String me) {
+        if (!c.active()) return -1;
+        boolean mine = c.taker == Contract.PLAYER && c.player.equals(me);
+        if (c.taker == Contract.PLAYER && !mine) return -1;
+        int act = 0;
+        if (c.status == Contract.Status.OPEN) act |= CAN_TAKE;
+        if (mine && c.status == Contract.Status.TAKEN) {
+            act |= CAN_ABANDON;
+            if (c.type == Contract.Type.FETCH_ARTIFACT || c.type == Contract.Type.SUPPLY || c.type == Contract.Type.LAB_DATA) act |= CAN_DELIVER;
+        }
+        if (mine && c.status == Contract.Status.READY) act |= CAN_CLAIM;
+        return act;
+    }
+
     /** Контракты: видны чужие открытые и свои взятые (вместе с целью на карте). */
     private static String contracts(Simulation s, String me) {
         StringBuilder sb = new StringBuilder();
         for (Contract c : s.contracts.list) {
-            if (!c.active()) continue;
+            int act = actions(c, me);
+            if (act < 0) continue;
             boolean mine = c.taker == Contract.PLAYER && c.player.equals(me);
-            if (c.taker == Contract.PLAYER && !mine) continue;
-            int act = 0;
-            if (c.status == Contract.Status.OPEN) act |= CAN_TAKE;
-            if (mine && c.status == Contract.Status.TAKEN) {
-                act |= CAN_ABANDON;
-                if (c.type == Contract.Type.FETCH_ARTIFACT || c.type == Contract.Type.SUPPLY || c.type == Contract.Type.LAB_DATA) act |= CAN_DELIVER;
-            }
-            if (mine && c.status == Contract.Status.READY) act |= CAN_CLAIM;
             // карточка 026: у своего контракта на логово видно счётчик целей — сколько мутантов убито из скольких
             String text = c.describe(s);
             if (mine && c.type == Contract.Type.CLEAR_LAIR && c.lairTotal > 0) {
