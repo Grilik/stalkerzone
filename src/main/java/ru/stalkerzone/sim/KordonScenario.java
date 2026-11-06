@@ -28,6 +28,15 @@ public final class KordonScenario {
     // v20 (карточка 059): заставы одиночек у входов туннеля — южный (со стороны деревни) и северный (со стороны свинофермы).
     public static final int TUNNEL_SOUTH = 22, TUNNEL_NORTH = 23;
 
+    /** Карточка 046: малые заставы — 2–4 человека, логово там не заводится. */
+    public static final int[] SMALL_OUTPOSTS = {WAGON, DUMP, TUNNEL_SOUTH, TUNNEL_NORTH};
+
+    /** Является ли узел малой заставой (2–4 человека, без логова). */
+    public static boolean isSmallOutpost(int id) {
+        for (int i : SMALL_OUTPOSTS) if (i == id) return true;
+        return false;
+    }
+
     /** Координаты узлов (x, z) в единицах ×10 блоков: center / 10 из data/stalkerzone/kordon_points.json. */
     public static final int[][] COORDS = {
             {0, 0}, {-4, -1}, {6, 22}, {8, 33}, {20, -22}, {33, -12}, {58, -8},
@@ -275,6 +284,8 @@ public final class KordonScenario {
 
         // v14: настройка логов для Кордона
         sim.lairExits = EXITS;
+        // v22 (карточка 046): на малых заставах логово не заводится
+        sim.lairForbidden = SMALL_OUTPOSTS;
         // EXITS + LAIR_SITES — фракции не захватывают
         int[] nc = new int[EXITS.length + LAIR_SITES.length];
         System.arraycopy(EXITS, 0, nc, 0, EXITS.length);

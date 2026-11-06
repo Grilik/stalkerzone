@@ -74,6 +74,8 @@ public final class Simulation {
 
     /** v14: узлы, где логова недопустимы (выходы за карту). */
     public int[] lairExits = {};
+    /** Карточка 046: узлы, где логово запрещено (малые заставы). */
+    public int[] lairForbidden = {};
     /** v14: узлы, которые фракции не могут захватить (выходы и логовища). */
     public int[] lairNoCapture = {};
     /** v14: сценарий задал фиксированный стартовый набор логов — seedLairs использует его вместо случайного. */
@@ -1062,6 +1064,7 @@ public final class Simulation {
     private boolean lairAllowed(int nodeId) {
         if (isAnyBase(nodeId)) return false;
         for (int e : lairExits) if (e == nodeId) return false;
+        for (int f : lairForbidden) if (f == nodeId) return false;
         return true;
     }
 
