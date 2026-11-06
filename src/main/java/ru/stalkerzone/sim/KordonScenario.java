@@ -25,13 +25,23 @@ public final class KordonScenario {
     // лес у свалки техники (логово Л3). Новые узлы только в конец списка.
     public static final int WAGON = 19, DUMP = 20, DUMP_FOREST = 21;
 
+    // v20 (карточка 059): заставы одиночек у входов туннеля — южный (со стороны деревни) и северный (со стороны свинофермы).
+    public static final int TUNNEL_SOUTH = 22, TUNNEL_NORTH = 23;
+
     /** Координаты узлов (x, z) в единицах ×10 блоков: center / 10 из data/stalkerzone/kordon_points.json. */
     public static final int[][] COORDS = {
             {0, 0}, {-4, -1}, {6, 22}, {8, 33}, {20, -22}, {33, -12}, {58, -8},
             {13, -26}, {27, -30}, {43, -35}, {21, -42}, {23, -81}, {24, -84},
             {24, -17}, {8, -36}, {26, -51}, {42, -21}, {35, -38}, {28, -76},
-            {12, -7}, {-4, -12}, {-9, -10}
+            {12, -7}, {-4, -12}, {-9, -10},
+            {13, -23}, {13, -29}
     };
+
+    /**
+     * v20 (карточка 059): таблица «аномальная зона → её заставы». Первый узел строки — сама зона, дальше заставы.
+     * У А6 (узел 20) застава О12 на том же узле; у туннеля (узел 7) две заставы — 22 (южный вход) и 23 (северный).
+     */
+    public static final int[][] ZONE_OUTPOSTS = {{DUMP, DUMP}, {TUNNEL, TUNNEL_SOUTH, TUNNEL_NORTH}};
 
     /** Узлы — выходы за карту: логова и цели налётов их исключают. */
     public static final int[] EXITS = {BIG_LAND, DARK_EXIT, SVALKA_EXIT};
@@ -122,6 +132,15 @@ public final class KordonScenario {
 
         Node dumpForest = node(nodes, "Лес у свалки техники", NodeType.RUINS, -9, -10);
 
+        // v20 (карточка 059): заставы одиночек у входов туннеля с электрами — по одной с каждой стороны насыпи
+        Node tunnelSouth = node(nodes, "Застава у южного входа в туннель", NodeType.OUTPOST, 13, -23);
+        tunnelSouth.existingBuildings = true;
+        tunnelSouth.housing = 6;
+
+        Node tunnelNorth = node(nodes, "Застава у северного входа в туннель", NodeType.OUTPOST, 13, -29);
+        tunnelNorth.existingBuildings = true;
+        tunnelNorth.housing = 6;
+
         ZoneGraph g = new ZoneGraph(nodes.size());
         // южная часть
         g.connect(VILLAGE, BUNKER, 1, 0.02);
@@ -152,6 +171,11 @@ public final class KordonScenario {
         g.connect(VILLAGE, WAGON, 1, 0.02);
         g.connect(VILLAGE, DUMP, 2, 0.04);
         g.connect(DUMP, DUMP_FOREST, 1, 0.03);
+        // v20 (карточка 059): дороги к заставам у входов туннеля (юг — от деревни, север — к свиноферме)
+        g.connect(VILLAGE, TUNNEL_SOUTH, 2, 0.02);
+        g.connect(TUNNEL_SOUTH, TUNNEL, 1, 0.02);
+        g.connect(TUNNEL, TUNNEL_NORTH, 1, 0.02);
+        g.connect(TUNNEL_NORTH, FARM, 2, 0.02);
         g.build();
 
         // baseNode непустых фракций; пустые фракции получают 0, чтобы их ИИ не падал на разыменовании
@@ -197,6 +221,9 @@ public final class KordonScenario {
         // v19 (карточка 044): застава О12 на краю свалки с начала, Л3 ничей
         wagon.owner = ZoneScenario.LONERS;
         dump.owner = ZoneScenario.LONERS;
+        // v20 (карточка 059): заставы у входов туннеля — одиночек с начала
+        tunnelSouth.owner = ZoneScenario.LONERS;
+        tunnelNorth.owner = ZoneScenario.LONERS;
 
         // стартовые склады трёх живых группировок
         for (Faction f : factions) {
