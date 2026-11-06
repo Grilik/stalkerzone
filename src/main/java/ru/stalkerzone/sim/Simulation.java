@@ -1155,6 +1155,8 @@ public final class Simulation {
         int dead = Math.min(f.members - 1, randomRound(garrisonPeople(f, target) * 0.15 * ratio));
         applyCasualties(f, dead);
         l.strength -= l.strength * 0.1 * (1 - ratio);
+        // убитые налётом люди — добыча логова (карточка 062)
+        l.feed(dead * KordonBalance.PREY_PER_PERSON);
         damageNode(target.id, 3 * ratio * 2);
         log("Логово «" + l.title() + "» у «" + nodes.get(l.node).name + "» напало на «" + target.name + "» (" + f.name + "), погибло " + dead);
         if (force > garrison * (target.id == f.baseNode ? 2.6 : 1.8)) overrun(l, f, target, born);
