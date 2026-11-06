@@ -14,12 +14,14 @@ public class LairDenSiteTest {
     static final String L = "l01_escape";
 
     public static void main(String[] a) {
+        // 060: место логова — из Prefabs.LAIR_L3 (логово переезжало), не из чисел в тесте
+        final int DX = Prefabs.LAIR_L3[0], DZ = Prefabs.LAIR_L3[1];
         Site s = Prefabs.site(L, 21);
         ck(s != null && s.id.equals("lair"), "у узла 21 площадка lair");
         if (s == null) { System.out.println("ПРОВАЛОВ: " + f); System.exit(1); }
         Node n = KordonScenario.create(1).nodes.get(21);
-        ck(s.covers(-92, -100) && s.covers(n.x * ZoneBounds.SCALE, n.z * ZoneBounds.SCALE), "площадка покрывает логово (−92, −100) и центр узла 21");
-        ck(s.plateauAt(-92, -100) == null, "без плато: рельеф леса не выравнивается");
+        ck(s.covers(DX, DZ) && s.covers(n.x * ZoneBounds.SCALE, n.z * ZoneBounds.SCALE), "площадка покрывает логово (−92, −100) и центр узла 21");
+        ck(s.plateauAt(DX, DZ) == null, "без плато: рельеф леса не выравнивается");
         int area = 0;
         for (int[] c : s.clearRects()) area += (c[2] - c[0] + 1) * (c[3] - c[1] + 1);
         ck(area > 0 && area <= 40 * 40, "площадка логова небольшая (≤ 40×40): " + area);
@@ -29,7 +31,7 @@ public class LairDenSiteTest {
         int inLair = 0, outside = 0, bones = 0;
         for (Map.Entry<Long, String> e : m.entrySet()) {
             int x = Prefabs.kx(e.getKey()), z = Prefabs.kz(e.getKey()), y = Prefabs.ky(e.getKey());
-            if (Math.hypot(x + 92, z + 100) > 16) continue;
+            if (Math.hypot(x - DX, z - DZ) > 16) continue;
             if (!s.covers(x, z)) { outside++; continue; }
             inLair++;
             if (y < 90 || y > 96) outside++;
@@ -39,12 +41,12 @@ public class LairDenSiteTest {
         ck(outside == 0, "все блоки логова в площадке и у земли (вне: " + outside + ")");
 
         List<Prefabs.Point> pts = Prefabs.points(L, g, Prefabs.POINT_LEVEL, 21);
-        ck(pts.stream().anyMatch(p -> p.kind().equals("den") && Math.hypot(p.x() + 92, p.z() + 100) <= 2 && p.y() == 95),
+        ck(pts.stream().anyMatch(p -> p.kind().equals("den") && Math.hypot(p.x() - DX, p.z() - DZ) <= 2 && p.y() == 95),
                 "место логова den у (−92, −100) на земле + 1");
         ck(pts.stream().noneMatch(p -> p.kind().equals("bed") || p.kind().equals("guard")), "у логова нет мест людей");
         for (Site o : Prefabs.sites(L)) {
             if (o == s) continue;
-            ck(!o.covers(-92, -100), "логово не внутри площадки " + o.id);
+            ck(!o.covers(DX, DZ), "логово не внутри площадки " + o.id);
         }
         System.out.println(f == 0 ? "Все проверки пройдены" : "ПРОВАЛОВ: " + f);
         System.exit(f > 0 ? 1 : 0);

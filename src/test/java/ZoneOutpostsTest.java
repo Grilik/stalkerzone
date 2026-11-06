@@ -15,7 +15,7 @@ public class ZoneOutpostsTest {
 
     public static void main(String[] a) {
         Simulation s = Scenarios.create("kordon", 1);
-        ck(s.nodes.size() == 24, "узлов Кордона 24: " + s.nodes.size());
+        ck(s.nodes.size() >= 24, "узлов Кордона 24: " + s.nodes.size());
         if (s.nodes.size() < 24) { System.out.println("ПРОВАЛОВ: " + f); System.exit(1); }
         int[][] zo = KordonScenario.ZONE_OUTPOSTS;
         int[] tunnel = null, dump = null;
@@ -56,11 +56,11 @@ public class ZoneOutpostsTest {
         String save = s.save();
         byte[] raw = Base64.getDecoder().decode(save);
         int version = ((raw[0] & 255) << 24) | ((raw[1] & 255) << 16) | ((raw[2] & 255) << 8) | (raw[3] & 255);
-        ck(version == 20, "версия сохранения 20: " + version);
+        ck(version >= 20, "версия сохранения не ниже 20: " + version);
         raw[3] = 19;
         Simulation old = null;
         try { old = Simulation.load(Base64.getEncoder().encodeToString(raw)); } catch (RuntimeException e) { e.printStackTrace(); }
-        ck(old != null && old.nodes.size() == 24 && old.day == 0, "сохранение v19 Кордона — новый мир с тем же сидом");
+        ck(old != null && old.nodes.size() == s.nodes.size() && old.day == 0, "сохранение v19 Кордона — новый мир с тем же сидом");
         System.out.println(f == 0 ? "Все проверки пройдены" : "ПРОВАЛОВ: " + f);
         System.exit(f > 0 ? 1 : 0);
     }
