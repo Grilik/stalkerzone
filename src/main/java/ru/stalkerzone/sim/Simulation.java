@@ -137,6 +137,7 @@ public final class Simulation {
 
     public Simulation(long seed, List<Node> nodes, ZoneGraph graph, List<Faction> factions, double[][] hostility) {
         this.seed = seed;
+        this.rng = new Random(seed * 1_000_003L);
         this.nodes = nodes;
         this.graph = graph;
         this.factions = factions;
