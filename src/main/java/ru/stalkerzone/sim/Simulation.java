@@ -1097,7 +1097,7 @@ public final class Simulation {
             if (l.raidCooldown > 0) l.raidCooldown--;
             if (n.owner < 0) {
                 l.strength += (l.cap() - l.strength) * 0.012 * l.growth();
-                if (l.strength > (lairRaidMin > 0 ? lairRaidMin : 30) && l.raidCooldown == 0) raid(l, born);
+                if (l.strength > (lairRaidMin > 0 ? lairRaidMin : 30) && l.raidCooldown == 0 && l.mutantCount() >= Lair.MAX_MUTANTS) raid(l, born);
                 continue;
             }
             Faction f = factions.get(n.owner);
