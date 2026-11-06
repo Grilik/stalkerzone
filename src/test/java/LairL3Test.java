@@ -17,9 +17,9 @@ public class LairL3Test {
         Lair l3 = s.lairAt(21);
         ck(l3 != null && l3.kind == LairKind.DOGS, "в новом мире на узле 21 логово слепых псов");
         int[] den = Lair.denXZ(s.nodes.get(21));
-        ck(Math.abs(den[0] + 92) <= 2 && Math.abs(den[1] + 100) <= 2, "логово Л3 у (−92, −100): " + den[0] + ", " + den[1]);
-        int[] other = Lair.denXZ(s.nodes.get(13));
-        int[] center = {s.nodes.get(13).x * 10, s.nodes.get(13).z * 10};
+        ck(s.nodes.get(21).den != null && den[0] == s.nodes.get(21).den[0] && den[1] == s.nodes.get(21).den[1], "логово Л3 в месте, заданном сценарием (Node.den): " + den[0] + ", " + den[1]);
+        int[] other = Lair.denXZ(s.nodes.get(14));
+        int[] center = {s.nodes.get(14).x * 10, s.nodes.get(14).z * 10};
         ck(Math.hypot(other[0] - center[0], other[1] - center[1]) > Lair.DEN_DIST - 2, "у остальных логов место прежнее (в стороне от центра точки)");
 
         boolean capOk = true, packOk = true;

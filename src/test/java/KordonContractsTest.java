@@ -143,7 +143,7 @@ public class KordonContractsTest {
             Set<Integer> issued = new HashSet<>();
             Set<Integer> checked = new HashSet<>();
             boolean closed = false, consistent = true;
-            for (int d = 0; d < 90; d++) {
+            for (int d = 0; d < 120; d++) {   // 063: налётов меньше (только от перенаселения) — окно 120 дней вместо 90
                 for (Contract c : s.contracts.list)
                     if (c.type == Contract.Type.CAPTURE_NODE) issued.add(c.id);
                 s.step();

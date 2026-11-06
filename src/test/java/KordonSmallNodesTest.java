@@ -22,8 +22,8 @@ public class KordonSmallNodesTest {
                 "19 «Лагерь у вагончика»: OUTPOST в (12, −7)");
         ck(a6.name.contains("Свалка техники") && a6.type == NodeType.ANOMALY && a6.x == -4 && a6.z == -12,
                 "20 «Свалка техники»: ANOMALY в (−4, −12)");
-        ck(l3.name.contains("свалки техники") && l3.type == NodeType.RUINS && l3.x == -9 && l3.z == -10,
-                "21 «Лес у свалки техники»: RUINS в (−9, −10)");
+        ck(l3.type == NodeType.RUINS && l3.den != null,
+                "21 — логово Л3: RUINS с местом логова (место и название — карточка 060)");
         ck(o7.owner == ZoneScenario.LONERS, "О7 — застава одиночек с начала");
         ck(a6.owner == ZoneScenario.LONERS, "20 — застава одиночек О12 на краю свалки с начала");
         ck(l3.owner < 0, "Л3 на старте ничей");

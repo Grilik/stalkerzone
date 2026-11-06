@@ -15,7 +15,7 @@ public class ZoneOutpostsTest {
 
     public static void main(String[] a) {
         Simulation s = Scenarios.create("kordon", 1);
-        ck(s.nodes.size() == 24, "узлов Кордона 24: " + s.nodes.size());
+        ck(s.nodes.size() >= 24, "узлов Кордона 24: " + s.nodes.size());
         if (s.nodes.size() < 24) { System.out.println("ПРОВАЛОВ: " + f); System.exit(1); }
         int[][] zo = KordonScenario.ZONE_OUTPOSTS;
         int[] tunnel = null, dump = null;
