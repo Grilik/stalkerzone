@@ -43,7 +43,7 @@ public class KordonContractsTest {
     /** За 45 дней выставлен каждый вид, кроме LAB_DATA (было 30: засада на встречу — случай 25 %, при 22 узлах сид 3 не успевал). */
     static void allTypesIssued() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             Set<Contract.Type> seen = new HashSet<>();
             boolean labData = false;
             for (int d = 0; d < 45; d++) {
@@ -61,7 +61,7 @@ public class KordonContractsTest {
     /** Нейтральные сталкеры закрыли ≥5 контрактов за 30 дней. */
     static void npcClosesContracts() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             for (int d = 0; d < 30; d++) s.step();
             ck(s.contracts.doneByNpc >= 5, "сид " + seed + ": NPC закрыли " + s.contracts.doneByNpc + " контрактов (нужно ≥5)");
         }
@@ -70,7 +70,7 @@ public class KordonContractsTest {
     /** Награды списаны с заказчиков: деньги лежат в залоге, аудит сходится каждый день. */
     static void rewardsDebited() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             boolean ok = true;
             long maxEscrow = 0;
             for (int d = 0; d < 30; d++) {
@@ -91,7 +91,7 @@ public class KordonContractsTest {
     /** Выполненное сопровождение курьера повышает число доставленных курьерских партий. */
     static void escortRaisesCourierBatches() {
         // прямое закрытие игроком: контракт сопровождения
-        Simulation s = Scenarios.create("kordon", 3);
+        Simulation s = KordonWar.create(3);
         for (int d = 0; d < 8; d++) s.step();
         Faction traders = s.traders();
         Contract c = new Contract(900001, Contract.Type.ESCORT_COURIER, traders.id);
@@ -113,7 +113,7 @@ public class KordonContractsTest {
         ck(s.audit().isEmpty(), "аудит после выплаты за сопровождение сходится");
 
         // живая симуляция: каждое закрытое NPC сопровождение увеличивает счётчик
-        Simulation sim = Scenarios.create("kordon", 4);
+        Simulation sim = KordonWar.create(4);
         boolean seen = false, ok = true;
         for (int d = 0; d < 90; d++) {
             int doneBefore = escortsDone(sim);
@@ -139,7 +139,7 @@ public class KordonContractsTest {
     /** Контракт на захват узла закрывается только со сменой владельца. */
     static void captureOnlyOnOwnerChange() {
         for (long seed : new long[]{2, 5}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             Set<Integer> issued = new HashSet<>();
             Set<Integer> checked = new HashSet<>();
             boolean closed = false, consistent = true;
@@ -162,7 +162,7 @@ public class KordonContractsTest {
         }
 
         // без смены владельца контракт не закрывается: деревня уже за одиночками
-        Simulation s = Scenarios.create("kordon", 9);
+        Simulation s = KordonWar.create(9);
         for (int d = 0; d < 3; d++) s.step();
         int village = KordonBalance.VILLAGE_NODE;
         int owner = s.nodes.get(village).owner;
@@ -201,7 +201,7 @@ public class KordonContractsTest {
 
     /** Старое сохранение (версия 15) загружается и даёт то же состояние. */
     static void oldSaveLoads() {
-        Simulation s1 = Scenarios.create("kordon", 7);
+        Simulation s1 = KordonWar.create(7);
         s1.step(5);
         s1.courierDelivered = 0;
         String save = s1.save();
@@ -223,7 +223,7 @@ public class KordonContractsTest {
     /** За 30 дней у Бандитов появляется хотя бы один заказ: засада на курьера или налёт (карточка 021). */
     static void banditContractsAppear() {
         for (long seed : new long[]{1, 2, 3, 4, 5}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             boolean ambush = false, raid = false;
             for (int d = 0; d < 30; d++) {
                 s.step();
@@ -240,7 +240,7 @@ public class KordonContractsTest {
     /** Заказы Бандитов берёт только игрок-бандит: NPC их не разбирают, но сами заказы появляются (карточки 021, 022). */
     static void npcDoNotTakeBanditContracts() {
         for (long seed : new long[]{1, 2, 3, 4, 5}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             boolean npcTook = false, appeared = false;
             for (int d = 0; d < 30; d++) {
                 s.step();
@@ -259,7 +259,7 @@ public class KordonContractsTest {
     /** При пустой кассе заказчика засада на встречу на Кордоне не выставляется (карточка 021). */
     static void meetingAmbushNeedsCash() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             boolean any = false;
             for (int d = 0; d < 40; d++) {
                 for (Faction f : s.factions) f.stock.money = 0; // кассы пусты: заказчик не может оплатить
@@ -272,7 +272,7 @@ public class KordonContractsTest {
 
     /** Налёт: запасы еды уходят бандитам, владелец не меняется; засада на курьера — груз пропал (карточка 021). */
     static void banditResolution() {
-        Simulation s = Scenarios.create("kordon", 5);
+        Simulation s = KordonWar.create(5);
         for (int d = 0; d < 3; d++) s.step();
         int farm = KordonBalance.CONTRACT_RAID_FARM;
         int owner = s.nodes.get(farm).owner;
@@ -302,7 +302,7 @@ public class KordonContractsTest {
 
     /** Засада на курьера: караван снят с пути, груз ушёл бандитам, получателю ничего не прибавилось (карточка 022). */
     static void ambushRemovesCourier() {
-        Simulation s = Scenarios.create("kordon", 5);
+        Simulation s = KordonWar.create(5);
         Faction traders = s.traders();
         int buyer = ZoneScenario.LONERS;
         int dest = s.factions.get(buyer).baseNode;
@@ -338,7 +338,7 @@ public class KordonContractsTest {
     /** RAID_NODE не выдаётся узлу без еды: даже единственная пустая ферма не даёт контракта (карточка 022). */
     static void raidNodeNeedsFood() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             int farm = KordonBalance.CONTRACT_RAID_FARM;
             // оставляем одну ферму — пустую и с владельцем-«мёртвой» группировкой, чья экономика еду не производит
             s.nodes.get(farm).owner = ZoneScenario.SCIENTISTS;
@@ -371,7 +371,7 @@ public class KordonContractsTest {
 
     /** Взятый игроком контракт на логово NPC не отбирают; счётчик целей и срок выставлены при взятии. */
     static void playerLairNotStolen() {
-        Simulation s = Scenarios.create("kordon", 3);
+        Simulation s = KordonWar.create(3);
         for (int d = 0; d < 3; d++) s.step();
         Lair l = s.lairs.get(0);
         Contract c = playerLairContract(s, l.node, 25, 1000, ZoneScenario.MILITARY);
@@ -392,7 +392,7 @@ public class KordonContractsTest {
 
     /** Логово уничтожил кто-то другой без игрока — контракт сорван, залог возвращён заказчику, игроку сообщение. */
     static void playerLairSoursWithoutPlayer() {
-        Simulation s = Scenarios.create("kordon", 3);
+        Simulation s = KordonWar.create(3);
         for (int d = 0; d < 3; d++) s.step();
         Lair l = s.lairs.get(0);
         Contract c = playerLairContract(s, l.node, 25, 1000, ZoneScenario.MILITARY);
@@ -410,7 +410,7 @@ public class KordonContractsTest {
 
     /** Логово уничтожено при участии игрока (он убил мутанта) — контракт засчитан игроку. */
     static void playerLairCreditedToPlayer() {
-        Simulation s = Scenarios.create("kordon", 3);
+        Simulation s = KordonWar.create(3);
         for (int d = 0; d < 3; d++) s.step();
         Lair l = s.lairs.get(0);
         Contract c = playerLairContract(s, l.node, 25, 1000, ZoneScenario.MILITARY);
@@ -429,7 +429,7 @@ public class KordonContractsTest {
 
     /** Счётчик целей контракта игрока на логово переживает сохранение (версия 18). */
     static void lairCounterSaved() {
-        Simulation s1 = Scenarios.create("kordon", 7);
+        Simulation s1 = KordonWar.create(7);
         s1.step(3);
         Lair l = s1.lairs.get(0);
         Contract c = playerLairContract(s1, l.node, 25, 1000, ZoneScenario.MILITARY);

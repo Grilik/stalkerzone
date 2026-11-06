@@ -23,7 +23,7 @@ public class TradersTest {
     /** Торговцы ни с кем не воюют. */
     static void noWars() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             Faction t = s.traders();
             ck(t != null, "фракция Торговцев есть (seed " + seed + ")");
             ck(t.passive, "Торговцы пассивны (seed " + seed + ")");
@@ -41,7 +41,7 @@ public class TradersTest {
     /** За 10 дней на Кордоне есть ≥1 доставка курьером каждой из трёх группировок. */
     static void couriers() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             int lon = 0, ban = 0, mil = 0;
             for (int d = 0; d < 10; d++) {
                 s.step();
@@ -62,7 +62,7 @@ public class TradersTest {
     /** Ни одна группировка не входит в бункер торговать сама. */
     static void noDirectTrade() {
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             int bad = 0;
             for (int d = 0; d < 15; d++) {
                 s.step();
@@ -88,7 +88,7 @@ public class TradersTest {
 
     /** Сохранение v15 загружается с фракцией Торговцев. */
     static void persistence() {
-        Simulation s1 = Scenarios.create("kordon", 7);
+        Simulation s1 = KordonWar.create(7);
         s1.step(5);
         Faction t1 = s1.traders();
         ck(t1 != null && t1.id == ZoneScenario.TRADERS, "Торговцы есть до сохранения");
@@ -105,7 +105,7 @@ public class TradersTest {
     static void auditCheck() {
         boolean auditOk = true;
         for (long seed : new long[]{1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             for (int d = 0; d < 15; d++) {
                 s.step();
                 String a = s.audit();

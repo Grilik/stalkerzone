@@ -20,7 +20,7 @@ public class KordonBalanceTest {
         for (int s = 0; s < seeds; s++) {
             long seed = s * 7 + 1;
             System.out.println("--- сид " + seed + " (" + (s + 1) + "/" + seeds + ") ---");
-            Simulation sim = Scenarios.create("kordon", seed);
+            Simulation sim = KordonWar.create(seed);
 
             int lonerStart = sim.factions.get(ZoneScenario.LONERS).members;
             int banditStart = sim.factions.get(ZoneScenario.BANDITS).members;
