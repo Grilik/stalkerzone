@@ -14,8 +14,9 @@ import java.util.List;
  * остовы по следам обмера, кучи, бетонную полосу, бочки и шины на дне чаши, барак заставы с нарами, костёр,
  * вышку и мешки. Рельеф чаши и плато дна — дело площадки (узел 20, у «Программиста»): сборщик берёт землю у {@code ground}.
  *
- * <p>Уровень развития: 0 — брошенная стоянка (выбитые окна, без двери и света, костёр потушен), 1 — застава
- * (барак обжит), 2 — пост (мешки, тент), 3 — укрепление (вышка и колючка по краю).
+ * <p>У свалки уровней развития нет — это аномальная зона, она одинакова всегда и просто детализирована. Уровень
+ * (0–3) касается только заставы О12: 0 — брошенная стоянка (выбитые окна, без двери и света, костёр потушен),
+ * 1 — застава (барак обжит), 2 — пост (мешки), 3 — укрепление (вышка и колючка по краю).
  */
 public final class KordonDump {
     private KordonDump() {}
@@ -41,6 +42,9 @@ public final class KordonDump {
     /** Вышка на восточном краю чаши (уровень 3). */
     public static final int TX = -6, TZ = -102;
 
+    /** Обход по краю чаши. */
+    static final int[][] PATROL = {{-20, -106}, {-20, -92}, {-8, -91}, {-4, -98}, {-28, -128}};
+
     private static int hash(int x, int y, int z) {
         int h = x * 0x27d4eb2d ^ y * 0x61c88647 ^ z * 0x165667b1;
         h ^= h >>> 15; h *= 0x2c1b3c6d; h ^= h >>> 12;
@@ -50,37 +54,41 @@ public final class KordonDump {
     /** Построить свалку и заставу. Блоки — в мировых координатах. */
     public static void build(BlockSink b, int lvl) {
         lvl = Math.max(0, Math.min(3, lvl));
-        wrecks(b, lvl);
-        piles(b, lvl);
-        concreteStrip(b, lvl);
+        scatter(b);                 // мелочь первой — крупное (остовы, кучи) ставится поверх
         junk(b);
+        concreteStrip(b);
+        piles(b);
+        wrecks(b);
         hut(b, lvl);
         camp(b, lvl);
         if (lvl >= 2) bags(b);
         if (lvl >= 3) { tower(b); wire(b); }
-        for (int[] p : new int[][] {{-20, -106}, {-20, -92}, {-8, -91}, {-4, -98}, {-28, -126}})
+        for (int[] p : PATROL)
             b.mark("patrol", p[0], b.ground(p[0], p[1]) + 1, p[1]);
     }
 
     static int g(BlockSink b, int x, int z) { return b.ground(x, z); }
 
     /** Остовы по следам обмера: тип техники, центр, куда смотрит нос (0 — на +x, 90 — на +z), повреждение. */
-    private static void wrecks(BlockSink b, int lvl) {
+    private static void wrecks(BlockSink b) {
         Object[][] w = {
                 {"laz", -49, -115, 0, 2}, {"kamaz", -52, -108, 90, 2}, {"paz", -27, -99, 0, 2},
-                {"zil", -26, -104, 0, 1}, {"btr", -8, -107, 90, 1}, {"zil_fire", -20, -119, 0, 2}};
+                {"zil", -26, -104, 0, 2}, {"btr", -8, -107, 90, 1}, {"zil_fire", -20, -119, 0, 2},
+                {"raf", -49, -122, 90, 2}, {"zhiguli", -34, -125, 0, 2}, {"moskvich", -30, -120, 90, 2},
+                {"zaporozhets", -41, -126, 0, 2}, {"uaz", -44, -133, 90, 1}, {"niva", -23, -113, 0, 2},
+                {"tractor", -58, -120, 0, 1}, {"zhiguli", -37, -131, 180, 1}, {"moskvich", -46, -128, 270, 2}};
         long seed = 7000;
         for (Object[] o : w) {
             int x = (Integer) o[1], z = (Integer) o[2];
-            B v = new B(b, x, z, (Integer) o[3], seed++, lvl);
+            B v = new B(b, x, z, (Integer) o[3], seed++, 2);
             Vehicles.vehicle(v, (String) o[0], 0, 0, 0, null, (Integer) o[4]);
         }
     }
 
     /** Кучи ржавого листа (обмер: высота 1–2): центр, радиусы, высота. Сверху — полублок. */
-    private static void piles(BlockSink b, int lvl) {
-        int[][] p = {{-44, -133, 3, 2, 2}, {-49, -122, 2, 3, 2}, {-34, -125, 3, 1, 1}, {-30, -120, 3, 2, 1},
-                {-17, -119, 4, 1, 2}, {-23, -113, 2, 1, 1}, {-41, -126, 3, 2, 1}};
+    private static void piles(BlockSink b) {
+        int[][] p = {{-41, -134, 3, 2, 2}, {-52, -124, 2, 2, 2}, {-33, -129, 3, 1, 1}, {-36, -121, 3, 1, 1},
+                {-14, -118, 3, 1, 2}, {-26, -125, 2, 1, 1}, {-47, -108, 1, 2, 1}, {-38, -116, 2, 1, 1}, {-56, -131, 3, 2, 2}};
         for (int[] q : p) for (int x = q[0] - q[2]; x <= q[0] + q[2]; x++) for (int z = q[1] - q[3]; z <= q[1] + q[3]; z++) {
             double d = Math.pow((x - q[0]) / (double) (q[2] + 1), 2) + Math.pow((z - q[1]) / (double) (q[3] + 1), 2);
             if (d > 1 || hash(x, 3, z) % 5 == 0) continue;
@@ -96,20 +104,21 @@ public final class KordonDump {
     }
 
     /** Бетонная полоса (обмер: x −33..−18, z −111..−110, высота 1): сломанные плиты, проходы через каждые 5 блоков. */
-    private static void concreteStrip(BlockSink b, int lvl) {
+    private static void concreteStrip(BlockSink b) {
         for (int x = -33; x <= -18; x++) {
             if (Math.floorMod(x, 5) == 0) continue;
             for (int z = -111; z <= -110; z++) {
-                if (hash(x, 7, z) % (lvl == 0 ? 3 : 7) == 0) continue;
+                if (hash(x, 7, z) % 5 == 0) continue;
                 b.set(x, g(b, x, z) + 1, z, hash(x, 8, z) % 2 == 0 ? CONC_O : CONC);
             }
         }
     }
 
-    /** Бочки, шины и ящики на дне чаши (x −50..−26, z −136..−112): по хешу, в стороне от остовов. */
+    /** Бочки, шины, ящики и стопки шин на дне чаши: по хешу, в стороне от остовов. */
     private static void junk(BlockSink b) {
-        for (int i = 0; i < 16; i++) {
-            int x = -50 + hash(i, 1, 11) % 25, z = -136 + hash(i, 2, 12) % 24;
+        for (int i = 0; i < 40; i++) {
+            int x = -56 + hash(i, 1, 11) % 40, z = -138 + hash(i, 2, 12) % 28;
+            if (g(b, x, z) > g(b, -40, -124) + 5) continue;           // выше дна чаши — не сбрасывают
             if (z >= -118 && z <= -102 && x <= -43) continue;      // остов автобуса и КамАЗа
             if (z >= -111 && z <= -110) continue;                     // бетонная полоса
             int gy = g(b, x, z) + 1;
@@ -118,6 +127,24 @@ public final class KordonDump {
                 case 1 -> b.set(x, gy, z, RAD);
                 case 2 -> { b.set(x, gy, z, TIRES); if (i % 8 == 2) b.set(x, gy + 1, z, TIRES); }
                 default -> b.set(x, gy, z, WCRATE);
+            }
+        }
+    }
+
+    /** Мелкий мусор по всей чаше: листы металла, доски, бетонные обломки, кости техники (двери, капоты). */
+    private static void scatter(BlockSink b) {
+        outer:
+        for (int i = 0; i < 90; i++) {
+            int x = -66 + hash(i, 21, 5) % 50, z = -138 + hash(i, 22, 6) % 40;
+            if (z >= -111 && z <= -110) continue;
+            for (int[] pp : PATROL) if (Math.abs(x - pp[0]) <= 1 && Math.abs(z - pp[1]) <= 1) continue outer;
+            if (x >= HX0 - 6 && x <= HX1 + 3 && z >= HZ0 - 4 && z <= HZ1 + 4) continue;     // двор заставы чистый
+            int gy = g(b, x, z) + 1;
+            switch (hash(i, 23, 7) % 5) {
+                case 0, 1 -> b.set(x, gy, z, RUST + "_slab[type=bottom]");
+                case 2 -> b.set(x, gy, z, PLANKS + "_slab[type=bottom]");
+                case 3 -> b.set(x, gy, z, CONC_O + "_slab[type=bottom]");
+                default -> b.set(x, gy, z, hash(i, 24, 8) % 2 == 0 ? "minecraft:coal_block" : "stalkerzone:zm_metal_plate");
             }
         }
     }
