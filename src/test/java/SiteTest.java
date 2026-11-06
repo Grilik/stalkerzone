@@ -100,6 +100,9 @@ public class SiteTest {
         int sum = 0;   // 045: площадок больше трёх — считаем по всем
         for (Site st : Prefabs.sites("l01_escape")) sum += Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, st.node).size();
         ck(sum == Prefabs.points("l01_escape", gr).size(), "сумма мест узлов = все места уровня");
+        List<Prefabs.Point> tp = Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, Prefabs.NODE_TUNNEL);   // П-23
+        ck(!tp.isEmpty() && tp.stream().allMatch(q -> Prefabs.site("l01_escape", Prefabs.NODE_TUNNEL).covers(q.x(), q.z())),
+                "места туннеля (" + tp.size() + ") — только его площадки");
         ck(Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, 5).isEmpty(), "у узла без площадки (АТП) мест нет");
 
         // центры узлов — в своих площадках (номера узлов не разъехались с KordonScenario)
