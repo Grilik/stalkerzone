@@ -9,7 +9,8 @@ import java.util.Iterator;
  * Чистая логика без Minecraft: и сервер ({@code PdaService}), и юнит-тест собирают один и тот же текст.
  *
  * <p>Строки: D — день и тик, P — игрок, B — границы Зоны, N — узлы, G — дороги, F — группировки,
- * H — вражда, T — перемирия, M — встреча лидеров, E — журнал Зоны (новости), C — контракты,
+ * H — вражда, T — перемирия, M — встреча лидеров, E — журнал Зоны (новости),
+ * Q — отряды в пути (караваны и конвои), U — население занятых узлов, C — контракты,
  * L — лаборатории, R — исследования, A — аномалии, Z — логова мутантов,
  * X — проходы через насыпь (цена и опасность), S — торговец точки (Сидорович).
  */
@@ -71,10 +72,55 @@ public final class PdaSnapshot {
         if (m != null) sb.append("M\t").append(clean(m.title(s))).append('\n');
         int ev = 0;
         for (Iterator<String> it = s.events.descendingIterator(); it.hasNext() && ev < 60; ev++) sb.append("E\t").append(clean(it.next())).append('\n');
+        sb.append(squads(s));
         sb.append(contracts(s, me));
         sb.append(scorcherAndLabs(s));
         sb.append(marks(s, px, pz, b, toll));
         return sb.toString();
+    }
+
+    /**
+     * Отряды в пути (карточка 051): караваны Торговцев и конвои логистики, плюс население занятых узлов.
+     * Формат Q: владелец, что делают, людей, x, z, узел цели, маршрут (id через ;), шаг маршрута.
+     * Формат U: id узла, число людей ({@link NodePopulation#number}).
+     */
+    private static String squads(Simulation s) {
+        StringBuilder sb = new StringBuilder();
+        for (Caravan c : s.caravans)
+            sb.append(squadLine(s, c.owner, c.courierFor >= 0 ? "курьер" : "караван", c.guards, c.route, c.leg, c.daysLeft));
+        for (Convoy c : s.logistics.convoys)
+            sb.append(squadLine(s, c.owner, c.kind.ru, c.guards + c.troops, c.route, c.leg, c.daysLeft));
+        for (Node n : s.nodes) {
+            if (n.owner < 0) continue;
+            int pop = n.owner < s.factions.size() ? NodePopulation.number(s, s.factions.get(n.owner), n) : 0;
+            sb.append("U\t").append(n.id).append('\t').append(pop).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /** Строка Q одного отряда: владелец, что делают, людей (≥ 1), x, z, узел цели, маршрут, шаг. */
+    private static String squadLine(Simulation s, int owner, String what, int people, int[] route, int leg, int daysLeft) {
+        int step = Math.max(0, Math.min(leg, route.length - 1));
+        int[] xz = squadPos(s, route, step, daysLeft);
+        StringBuilder ids = new StringBuilder();
+        for (int i = 0; i < route.length; i++) ids.append(i > 0 ? ";" : "").append(route[i]);
+        return "Q\t" + owner + '\t' + clean(what) + '\t' + Math.max(1, people) + '\t' + xz[0] + '\t' + xz[1] + '\t'
+                + route[route.length - 1] + '\t' + ids + '\t' + step + '\n';
+    }
+
+    /**
+     * Где отряд на отрезке {@code route[leg] → route[leg+1]} по доле пройденного пути
+     * {@code 1 − daysLeft / edgeDays}, в блоках мира ({@code × SCALE}). Узел-цель — последний в маршруте.
+     */
+    private static int[] squadPos(Simulation s, int[] route, int leg, int daysLeft) {
+        Node from = s.nodes.get(route[Math.max(0, Math.min(leg, route.length - 1))]);
+        Node to = route.length > 1 ? s.nodes.get(route[Math.min(leg + 1, route.length - 1)]) : from;
+        int days = route.length > 1 ? s.graph.edgeDays(from.id, to.id) : 0;
+        double f = days > 0 ? 1.0 - (double) daysLeft / days : 1;
+        if (f < 0) f = 0;
+        if (f > 1) f = 1;
+        return new int[] {(int) Math.round((from.x + (to.x - from.x) * f) * SCALE),
+                (int) Math.round((from.z + (to.z - from.z) * f) * SCALE)};
     }
 
     /**
