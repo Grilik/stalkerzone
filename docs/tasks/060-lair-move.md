@@ -19,7 +19,7 @@
 2. `KordonBalance`: убрать `LairDef(7, RODENTS, …)` из `START_LAIRS`; `ALL_DISTRICTS = {DISTRICT_SOUTH, DISTRICT_NORTH}`,
    `ALL_POOLS = {POOL_SOUTH, POOL_NORTH}` (массивы параллельны — убирать оба).
 3. `Prefabs.LAIR_L3 = {45, -175}`.
-4. `Simulation`: версия сохранения 21, Кордон версии < 21 — новый мир с тем же сидом.
+4. `Simulation`: версия сохранения +1 (21; если 054 уже слита — 22), Кордон старее — новый мир с тем же сидом.
 
 ## Готово, когда
 `LairMoveTest` зелёный, `bash tools/conveyor/check.sh` зелёный; статус 060 в `docs/tasks/README.md` — «готово (конвейер)».

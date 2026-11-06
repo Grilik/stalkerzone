@@ -3,8 +3,8 @@ import ru.stalkerzone.sim.*;
 /**
  * Карточка 061: территория логова — пустырь, где бродят мутанты логова (LairTerritory, чистая Java).
  * Круг вокруг логова (радиус по виду: псы 75, плоти 60, прочие 50 блоков) плюс «вытянутая» часть
- * (Node.reach — ломаная в блоках, ширина Node.reachWidth), минус зоны людей: у каждого занятого узла
- * круг по типу (BASE 70, SETTLEMENT 50, прочие 30 блоков), кроме узла самого логова.
+ * (Node.reach — ломаная в блоках, ширина Node.reachWidth), минус зоны людей: у каждого занятого узла и у каждой базы
+ * (NodeType.BASE, даже брошенной — АТП) круг по типу (BASE 70, SETTLEMENT 50, прочие 30 блоков), кроме узла самого логова.
  */
 public class LairTerritoryTest {
     static int f = 0;
@@ -25,7 +25,7 @@ public class LairTerritoryTest {
                     "узел " + l.node + ": за радиусом — не территория");
             boolean clean = true;
             for (Node n : s.nodes) {
-                if (n.id == l.node || n.owner < 0) continue;
+                if (n.id == l.node || (n.owner < 0 && n.type != NodeType.BASE)) continue;
                 if (LairTerritory.contains(s, l, n.x * 10, n.z * 10)) { clean = false; System.out.println("  в территории узла " + l.node + ": " + n.name); }
             }
             ck(clean, "узел " + l.node + ": ни одна база или застава людей не внутри территории");
