@@ -101,10 +101,13 @@ public final class KordonVillage {
     };
 
     /**
-     * Пробник FramedBlocks (П-05): изба, у которой кровля — framed-скаты с текстурой кровли, а на окнах снаружи —
-     * наличники (доски на стену) и подоконники. Без FramedBlocks ставится прежний вид: ступени и плиты.
+     * Кровля на FramedBlocks (П-05 пробник на штабе, П-16 — все избы): ровные скаты 45° с текстурой кровли избы
+     * (шифер, серые доски — по обмеру). Без FramedBlocks — прежние ступени. Вывод замера — docs/kordon_objects/framedblocks.md.
      */
-    static boolean framed(House h) { return h.n == 2; }
+    static boolean framed(House h) { return true; }
+
+    /** Наличники и подоконники — только на видных избах: штаб Волка (2) и медпункт (1). */
+    static boolean trimmed(House h) { return h.n == 2 || h.n == 1; }
 
     /** Наличники: крашеные доски вокруг окна снаружи. */
     static final String TRIM = "stalkerzone:zm_wood_painted";
@@ -191,7 +194,7 @@ public final class KordonVillage {
                 : b.lvl >= 3 && h.n == 2 ? BARS : GLASS;
         b.set(x, y, z, w);
         if (b.lvl >= 2) b.set(x, y + 1, z, w.equals(GLASS) ? GLASS : h.wall);
-        if (framed(h) && b.lvl >= 1) trim(b, h, x, y, z, b.lvl >= 2 ? 2 : 1);
+        if (trimmed(h) && b.lvl >= 1) trim(b, h, x, y, z, b.lvl >= 2 ? 2 : 1);
     }
 
     /** Наличники и подоконник окна высотой hgt снаружи стены (FramedBlocks: доски на стену и полплиты; без мода — подоконник-плита). */
