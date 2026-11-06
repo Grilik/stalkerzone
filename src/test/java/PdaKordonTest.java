@@ -70,7 +70,7 @@ public class PdaKordonTest {
     static void formatIntact() {
         Simulation s = Scenarios.create("kordon", 2);
         String text = PdaSnapshot.build(s, "Тестер", s.day, 0, 100, -200, 500, ZoneBounds.fromNodes(s.nodes), 90);
-        String known = "DPBNGFHTMECLRAZXSYW";
+        String known = "DPBNGFHTMECLRAZXSYWQU";   // 051: Q — отряды в пути, U — население узлов
         boolean bad = false;
         int nodes = 0;
         for (String line : text.split("\n", -1)) {

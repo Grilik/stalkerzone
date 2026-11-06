@@ -97,7 +97,9 @@ public class SiteTest {
         ck(vp.stream().noneMatch(q -> south.covers(q.x(), q.z())), "жители деревни не получают нар южного блокпоста");
         ck(bp.stream().anyMatch(q -> q.kind().equals("duty")) && bp.stream().noneMatch(q -> q.kind().equals("guard")),
                 "у бункера — место торговца, без чужих часовых");
-        ck(vp.size() + sp.size() + bp.size() == Prefabs.points("l01_escape", gr).size(), "сумма мест узлов = все места уровня");
+        int sum = 0;   // 045: площадок больше трёх — считаем по всем
+        for (Site st : Prefabs.sites("l01_escape")) sum += Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, st.node).size();
+        ck(sum == Prefabs.points("l01_escape", gr).size(), "сумма мест узлов = все места уровня");
         ck(Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, 5).isEmpty(), "у узла без площадки (АТП) мест нет");
 
         // центры узлов — в своих площадках (номера узлов не разъехались с KordonScenario)

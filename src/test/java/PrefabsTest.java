@@ -40,7 +40,7 @@ public class PrefabsTest {
             if (p.kind().equals("bed")) {
                 bedsTotal++;
                 String st = m.get(Prefabs.key(p.x(), p.y(), p.z()));
-                if (st == null || st.equals("minecraft:air")) bedsFree++;
+                if (st == null || st.equals("minecraft:air") || st.endsWith("_carpet")) bedsFree++;   // подстилка (ковёр) проходима
             }
         }
         ck(guard >= 4, "часовых (guard) " + guard);
