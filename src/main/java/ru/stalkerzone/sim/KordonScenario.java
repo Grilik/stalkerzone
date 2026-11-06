@@ -300,8 +300,15 @@ public final class KordonScenario {
                 AnomalyType.SPRINGBOARD, AnomalyType.MOSQUITO));
         sim.anomalyDistricts.add(new AnomalyDistrict(ELEVATOR, "Жарки у сгоревших домов", 1, 2, 1.0, 18, AnomalyType.FRY));
         sim.anomalyDistricts.add(new AnomalyDistrict(RAVINE, "Туман в овраге", 1, 1, 1.0, 16, AnomalyType.FOG));
-        // v19 (карточка 013): радиоактивные пятна — насыпь с цистернами (мост), техника у дыры, свиноферма
-        sim.radiationNodes = new int[]{BRIDGE, HOLE, FARM};
+        // карточка 048: узел 20 «Свалка техники» (А6) — поле в чаше: «комариные плеши» и трамплины,
+        // центр поля смещён в чашу (−35, −120) = узел (−40, −120) + (5, 0).
+        AnomalyDistrict dumpDistrict = new AnomalyDistrict(DUMP, "Свалка техники А6", 6, 9, 1.0, 20,
+                AnomalyType.MOSQUITO, AnomalyType.SPRINGBOARD);
+        dumpDistrict.setCenter(5, 0);
+        sim.anomalyDistricts.add(dumpDistrict);
+        // v19 (карточка 013): радиоактивные пятна — насыпь с цистернами (мост), техника у дыры, свиноферма;
+        // карточка 048: чаша свалки техники (А6) тоже радиоактивна.
+        sim.radiationNodes = new int[]{BRIDGE, HOLE, FARM, DUMP};
 
         // сохранить базовую опасность проходов
         for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {
