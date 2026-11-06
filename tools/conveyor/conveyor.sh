@@ -1,226 +1,118 @@
 #!/usr/bin/env bash
-# Конвейер карточек: исполнитель (дешёвая модель) -> проверка -> старший (сильная модель) при провале -> ревью -> PR.
-# Нужны: OPENROUTER_API_KEY, GH_TOKEN. Модели: AGENT_MODEL, STRONG_MODEL. Карточка: CARD (или выбирается сама).
+# Конвейер v2 (П-13, docs/claude/06-conveyor-v2.md): одна карточка = падающий тест + узкое задание.
+# Исполнитель (дешёвая модель в Cline) делает тест зелёным — одна попытка, с потолком по времени и деньгам.
+# Старшего Claude нет, правок по ревью нет, автослияния нет: PR сливает человек. Не вышло — PR «не вышло».
+# Нужны: OPENROUTER_API_KEY, GH_TOKEN. Карточка: CARD (иначе — следующая по docs/tasks/README.md).
 set -u
 cd "$(git rev-parse --show-toplevel)"
 AGENT_MODEL=${AGENT_MODEL:-deepseek/deepseek-v4.1-flash}
-# экономия (31.10): V4 Pro стоил ~$2 за карточку против ~$0.16 у Flash, а V4.1 Flash не слабее V4 Pro.
-# Карточки с меткой «сильная» тоже идут на Flash; при провале их добивает Claude по подписке.
-# V4 Pro из переменной репозитория игнорируется — вернуть можно только правкой этой строки.
-AGENT_MODEL_STRONG=${AGENT_MODEL_STRONG:-$AGENT_MODEL}
-case "$AGENT_MODEL_STRONG" in *v4-pro*) AGENT_MODEL_STRONG=$AGENT_MODEL;; esac
-STRONG_MODEL=${STRONG_MODEL:-anthropic/claude-sonnet-5-5}
-# старшая модель — через ProxyAPI (OpenAI-совместимый адрес), ключ PROXYAPI_KEY
-STRONG_BASE_URL=${STRONG_BASE_URL:-https://api.proxyapi.ru/v1}
-# уведомления в Telegram (карточка 017); без секретов — молча пропуск, ошибки не роняют конвейер
+case "$AGENT_MODEL" in *v4-pro*) AGENT_MODEL=deepseek/deepseek-v4.1-flash;; esac   # V4 Pro в 12 раз дороже (31.10)
+CARD_MINUTES=${CARD_MINUTES:-15}       # потолок времени исполнителя
+CARD_BUDGET=${CARD_BUDGET:-0.30}       # потолок денег на карточку, $ (разница расхода ключа OpenRouter)
+RETRIES=${CARD_RETRIES:-2}             # повторы запросов к модели внутри Cline (сеть, 429), не новые попытки
+MIN_BALANCE=${MIN_BALANCE:-2}
 tg() { python3 -I tools/notify/tg.py "$1" || true; }
 RUN_URL="${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}"
-CARD_GIVEN=${CARD:-}
+
 CARD=${CARD:-$(python3 -I tools/conveyor/next_card.py)}
-[ -z "$CARD" ] && { echo "Нет карточки, готовой к выполнению."; tg "💤 Конвейер (${LANE:-?}): нет готовых карточек"; exit 0; }
-# предохранитель бюджета (карточка 018): мало денег на OpenRouter — не начинаем
+[ -z "$CARD" ] && { echo "Нет карточки с меткой «Конвейер: да», готовой к выполнению."; tg "💤 Конвейер: нет готовых карточек"; exit 0; }
+FILE=$(ls docs/tasks/${CARD}-*.md 2>/dev/null | head -1)
+[ -z "$FILE" ] && { echo "::error::нет файла карточки $CARD"; exit 1; }
+# паспорт карточки: метка, тест, разрешённые файлы (tools/conveyor/card.py проверяет формат)
+PASSPORT=$(python3 -I tools/conveyor/card.py "$FILE" --shell) || { echo "::error title=Карточка $CARD::не для конвейера или неверный паспорт"; tg "⛔ $CARD: карточка не для конвейера (нужны «Конвейер: да», «Тест:», «Файлы:»)"; exit 1; }
+eval "$PASSPORT"
+TITLE=$(head -1 "$FILE" | sed -E 's/^# *([0-9]{3}\. *)?//')
+
 read U0 LEFT <<< "$(python3 -I tools/notify/balance.py)"
-MIN_BALANCE=${MIN_BALANCE:-2}
 if [ "$LEFT" != "-" ] && python3 -c "import sys; sys.exit(0 if float('$LEFT') < float('$MIN_BALANCE') else 1)"; then
   echo "::warning title=Бюджет::остаток OpenRouter \$$LEFT < \$$MIN_BALANCE — конвейер на паузе"
-  tg "⚠️ Доступно на OpenRouter \$$LEFT ($(python3 -I tools/notify/balance.py --text); порог \$$MIN_BALANCE) — конвейер на паузе, карточка $CARD не начата. Пополните счёт или поднимите лимит ключа (openrouter.ai/keys) и запустите conveyor вручную."
+  tg "⚠️ Доступно на OpenRouter \$$LEFT (порог \$$MIN_BALANCE) — карточка $CARD не начата."
   exit 0
 fi
+
 git config user.name "stalkerzone-conveyor"; git config user.email "conveyor@users.noreply.github.com"
-# захват карточки: две линии могут выбрать одну карточку одновременно. Каждая пушит в task/NNN-auto
-# свой пустой коммит — второй пуш отклоняется (не fast-forward), и линия берёт следующую карточку.
-EXPLICIT=${CARD_GIVEN:-}
-SKIP_CARDS=""
-for try in 1 2 3; do
-  BR="task/${CARD}-auto"
-  git checkout -q -B "$BR" origin/main 2>/dev/null || git checkout -q -B "$BR"
-  git commit -q --allow-empty -m "$CARD: захват линией ${LANE:-?} (${GITHUB_RUN_ID:-local})"
-  CLAIM_SHA=$(git rev-parse HEAD)
-  if git push -q origin "HEAD:refs/heads/$BR" 2>/tmp/claim.txt; then break; fi
-  echo "::notice title=Захват::карточку $CARD уже взяла другая линия"
-  [ -n "$EXPLICIT" ] && { tg "⚠️ $CARD: уже в работе у другой линии"; exit 0; }
-  SKIP_CARDS="$SKIP_CARDS $CARD"; CARD=$(SKIP_CARDS="$SKIP_CARDS" python3 -I tools/conveyor/next_card.py)
-  [ -z "$CARD" ] && { echo "Свободных карточек нет."; exit 0; }
-done
-# если запуск оборвётся до работы, снимаем захват, чтобы карточка не зависла
-release() { [ "$(git ls-remote origin "refs/heads/$BR" | cut -f1)" = "$CLAIM_SHA" ] && git push -q origin --delete "$BR" 2>/dev/null; true; }
-trap release EXIT
-FILE=$(ls docs/tasks/${CARD}-*.md | head -1)
-TITLE=$(head -1 "$FILE" | sed 's/^# *//')
-grep -q "Модель исполнителя: сильная" "$FILE" && AGENT_MODEL=$AGENT_MODEL_STRONG
-echo "::notice title=Карточка $CARD::$TITLE (модель $AGENT_MODEL, линия ${LANE:-?})"
-tg "▶️ $TITLE — старт ($AGENT_MODEL, линия ${LANE:-?})"
+BR="task/${CARD}-auto"
+git ls-remote --exit-code --heads origin "$BR" >/dev/null 2>&1 && { echo "Ветка $BR уже есть — карточка в работе или ждёт слияния."; exit 0; }
+git checkout -q -B "$BR" origin/main
+
+# 1. Тест карточки кладётся в src/test/java и обязан ПАДАТЬ до работы — иначе карточка пустая, деньги не тратим.
+mkdir -p src/test/java
+cp "$CARD_TEST_SRC" "src/test/java/$CARD_TEST.java"
+bash tools/conveyor/check.sh --only "$CARD_TEST" > /tmp/before.txt 2>&1
+if grep -q "^Тесты симуляции: все прошли" /tmp/before.txt; then
+  echo "::error title=Карточка $CARD::тест $CARD_TEST проходит ещё до работы — карточка не нужна или тест не ловит ошибку"
+  tg "⛔ $CARD: тест $CARD_TEST зелёный ещё до работы — карточку вернуть «Программисту»"; exit 1
+fi
+grep -q "КОМПИЛЯЦИЯ ТЕСТОВ НЕ ПРОШЛА" /tmp/before.txt && echo "Тест не компилируется — это тоже «красный»: исполнитель добавит нужный код."
+
+echo "::notice title=Карточка $CARD::$TITLE (модель $AGENT_MODEL, потолок $CARD_MINUTES мин / \$$CARD_BUDGET)"
+tg "▶️ $TITLE — старт ($AGENT_MODEL, потолок $CARD_MINUTES мин / \$$CARD_BUDGET)"
 cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$AGENT_MODEL" >/dev/null
-# старший (карточка 019): Claude Code по подписке, если задан CLAUDE_CODE_OAUTH_TOKEN; иначе — Claude через ProxyAPI
-CLAUDE_DAILY_LIMIT=${CLAUDE_DAILY_LIMIT:-5}
-if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-  STRONG_NAME="Claude Code"
-  # сколько раз старший-Claude уже звался сегодня (по этапам в PR конвейера за сутки МСК)
-  SINCE=$(date -u -d "$(TZ=Europe/Moscow date +%Y-%m-%d) 00:00 +0300" +%Y-%m-%dT%H:%M:%SZ)
-  # ручное обнуление счётчика: вызовы раньше CLAUDE_RESET_AT не считаются (31.10 — сброс после смены правил ревью)
-  CLAUDE_RESET_AT=${CLAUDE_RESET_AT:-2026-10-31T08:00:00Z}
-  [[ "$CLAUDE_RESET_AT" > "$SINCE" ]] && SINCE=$CLAUDE_RESET_AT
-  CLAUDE_USED=$(gh api "repos/${GITHUB_REPOSITORY:-Grilik/stalkerzone}/pulls?state=all&per_page=50" \
-    --jq "[.[] | select(.created_at >= \"$SINCE\") | (.body // \"\") | scan(\"\\(Claude Code\\)\")] | length" 2>/dev/null)
-  [[ "$CLAUDE_USED" =~ ^[0-9]+$ ]] || CLAUDE_USED=0
-  echo "Claude Code сегодня: ${CLAUDE_USED:-0} из $CLAUDE_DAILY_LIMIT"
-else
-  STRONG_NAME="$STRONG_MODEL"
-fi
-if [ -n "${PROXYAPI_KEY:-}" ]; then
-  cline --config /tmp/cfg-strong auth -p openai -k "$PROXYAPI_KEY" -m "$STRONG_MODEL" -b "$STRONG_BASE_URL" >/dev/null
-else
-  echo "PROXYAPI_KEY не задан — старшая модель недоступна"
-fi
-RULES='Ты работаешь в конвейере без человека. НЕ делай git commit, push и PR — это делает конвейер.
-Проверка: `bash tools/conveyor/check.sh` (тесты симуляции и сборка; печатает итог и хвост ошибок). Не читай большие логи целиком.
-Simulation.java и другие большие файлы читай кусками (поиск, затем диапазон строк).
-Если одна и та же ошибка не уходит после 3 попыток исправления — ОСТАНОВИСЬ: опиши проблему в файле ESCALATE.md
-(что делал, текст ошибки, гипотезы) и заверши работу. Дальше задачу подхватит старший разработчик.
-Смоук-тест сервера (tools/smoketest.ps1) в конвейере НЕ запускай: здесь Linux и нет файла уровня — проверяет архитектор на вехе.
-Не меняй файлы в .github/workflows: токен конвейера не может их запушить, работа пропадёт.
-Пункты проверки в игре — в НОВЫЙ файл docs/checklist/<имя файла карточки>.md (например 042-trader-ui.md) (заголовок «# …», таблица | № | Действие | Ожидаемо |); CHECKLIST.md и чужие файлы чек-листа не правь.
-Временные файлы клади в /tmp, не в репозиторий. В конце поставь карточке статус «готово (конвейер)» в docs/tasks/README.md.'
-run() { # роль (agent|strong), таймаут, файл с заданием
-  if [ "$1" = strong ] && [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
-    if [ "${CLAUDE_USED:-0}" -ge "$CLAUDE_DAILY_LIMIT" ]; then
-      echo "::warning title=Claude Code::дневной лимит вызовов ($CLAUDE_DAILY_LIMIT) исчерпан"; tg "⏸ $CARD: лимит вызовов Claude на сегодня ($CLAUDE_DAILY_LIMIT) исчерпан — карточка уйдёт человеку"; return
-    fi
-    CLAUDE_USED=$(( ${CLAUDE_USED:-0} + 1 ))
-    tg "🧠 $CARD: зову Claude Code (вызов $CLAUDE_USED из $CLAUDE_DAILY_LIMIT за сегодня)"
-    echo "::group::claude $1"
-    timeout "$2" claude -p "$(cat "$3")" --model sonnet --max-turns 80 --permission-mode acceptEdits \
-      --allowedTools "Bash,Read,Edit,Write,Glob,Grep" >/tmp/claude-$$.log 2>&1
-    rc=$?; tail -30 /tmp/claude-$$.log; echo "::endgroup::"
-    echo "::notice title=claude rc=$rc::$(tail -c 900 /tmp/claude-$$.log | tr '\n\r' '  ' | sed 's/::/ : /g')"
-    grep -qiE "usage limit|rate limit|limit reached" /tmp/claude-$$.log && tg "⚠️ $CARD: Claude Code упёрся в лимит подписки"
-    return
+
+{ echo "Выполни карточку $FILE — сделай тест src/test/java/$CARD_TEST.java зелёным, не трогая сам тест.";
+  echo; echo "Читать и менять можно ТОЛЬКО эти файлы (остальной репозиторий не открывай):"; printf '%s\n' $CARD_FILES | sed 's/^/- /';
+  echo "- docs/tasks/README.md (только статус своей карточки)"; [ -n "$CARD_CHECKLIST" ] && echo "- $CARD_CHECKLIST (новый файл пунктов проверки в игре)";
+  echo; cat tools/conveyor/rules.txt; echo; echo "## Карточка"; cat "$FILE"; } > /tmp/pA.txt
+
+# 2. Одна попытка исполнителя; сторож денег убивает его при перерасходе.
+T0=$(date +%s)
+( cat /tmp/pA.txt | timeout $((CARD_MINUTES * 60)) cline --config /tmp/cfg-agent -y -t $((CARD_MINUTES * 60)) --retries "$RETRIES" \
+    "Выполни задание из входных данных." > /tmp/cline.log 2>&1 ) &
+AGENT=$!
+OVER=""
+while kill -0 "$AGENT" 2>/dev/null; do
+  sleep 30
+  read U _ <<< "$(python3 -I tools/notify/balance.py)"
+  if [ "$U0" != "-" ] && [ "$U" != "-" ] && python3 -c "import sys; sys.exit(0 if float('$U')-float('$U0') > float('$CARD_BUDGET') else 1)"; then
+    OVER="бюджет \$$CARD_BUDGET превышен"; pkill -P "$AGENT" 2>/dev/null; kill "$AGENT" 2>/dev/null; break
   fi
-  if [ "$1" = strong ] && [ -z "${PROXYAPI_KEY:-}" ]; then echo "старший недоступен — пропуск"; return; fi
-  echo "::group::cline $1"; cat "$3" | cline --config "/tmp/cfg-$1" -y -t "$2" --retries 6 "Выполни задание из входных данных." >/tmp/cline-$$.log 2>&1
-  rc=$?; tail -30 /tmp/cline-$$.log; echo "::endgroup::"
-  # краткий итог в аннотацию (её видно в API без доступа к логам)
-  echo "::notice title=cline $1 rc=$rc::$(sed 's/\x1b\[[0-9;]*m//g' /tmp/cline-$$.log | tail -c 900 | tr '\n\r' '  ' | sed 's/::/ : /g')"
-}
-PHASES="исполнитель ($AGENT_MODEL)"
-{ echo "Выполни карточку $FILE. Сначала прочитай её и .clinerules (правила про git/PR выше в этом задании важнее)."; echo; echo "$RULES"; } > /tmp/pA.txt
-run agent 3600 /tmp/pA.txt
-bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
-tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: исполнитель закончил, проверка: $(head -1 /tmp/check1.txt)"
-if [ $ok -ne 0 ]; then
-  PHASES="$PHASES → старший ($STRONG_NAME)"
-  tg "🔁 $CARD: тесты не прошли, подключаю старшего ($STRONG_NAME)
-$(tail -5 /tmp/check1.txt)"
-  { echo "Ты старший разработчик. Младший агент выполнял карточку $FILE и не справился. Не переделывай с нуля — найди причину и исправь минимально.";
-    echo; echo "$RULES"; echo; echo "## ESCALATE.md от младшего"; cat ESCALATE.md 2>/dev/null || echo "(нет)";
-    echo; echo "## Изменённые файлы"; git status --short | head -50; echo; echo "## Результат проверки"; tail -80 /tmp/check1.txt; } > /tmp/pB.txt
-  run strong 1200 /tmp/pB.txt
-  bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
-fi
-rm -f ESCALATE.md
-git add -A -- src docs tools .github .gitignore CHECKLIST.md 2>/dev/null
-git commit -q -m "$CARD: $TITLE (конвейер: $PHASES)" || { echo "::error title=Агент ничего не изменил::карточка $CARD; см. аннотацию cline"; tg "❌ $CARD: агент ничего не изменил — $RUN_URL"; exit 1; }
-REVIEW=""
-if [ $ok -eq 0 ]; then
-  git push -q -u origin "$BR"
-  BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md
-  grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md && ! grep -q "### Блокеры" /tmp/review.md && tg "🔎 $CARD: ревью — ОК"
-  grep -q REVIEW_UNAVAILABLE /tmp/review.md && tg "🔎 $CARD: ревью моделью недоступно — старшего не зову, смотрите PR"
-  if grep -q "### Блокеры" /tmp/review.md || { ! grep -q REVIEW_UNAVAILABLE /tmp/review.md && ! grep -qE "Вердикт:\*\*\s*ОК" /tmp/review.md; }; then
-    # карточка 022: «ЕСТЬ ЗАМЕЧАНИЯ» правит дешёвый исполнитель; Claude — только для «БЛОКЕР» и механических блокеров
-    if grep -q "### Блокеры" /tmp/review.md || grep -qE "Вердикт:\*\*\s*БЛОКЕР" /tmp/review.md; then WHO=strong; WHO_NAME=$STRONG_NAME; else WHO=agent; WHO_NAME=$AGENT_MODEL; fi
-    PHASES="$PHASES → правки по ревью ($WHO_NAME)"
-    tg "🔎 $CARD: ревью — есть замечания, правит $WHO_NAME"
-    { echo "Ты разработчик. По карточке $FILE работа сделана, тесты зелёные, но ревьюер нашёл замечания.";
-      echo "Исправь обоснованные замечания минимально; необоснованные — пропусти и кратко объясни почему в файле REVIEW_REPLY.md."; echo; echo "$RULES"; echo; cat /tmp/review.md; } > /tmp/pC.txt
-    run $WHO 900 /tmp/pC.txt
-    bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; ok=$?
-    REPLY=$(cat REVIEW_REPLY.md 2>/dev/null); rm -f REVIEW_REPLY.md
-    git add -A -- src docs tools .github .gitignore CHECKLIST.md; git commit -q -m "$CARD: правки по ревью" || true
-    BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md
-    tg "$([ $ok -eq 0 ] && echo ✅ || echo ❌) $CARD: правки по ревью внесены, проверка: $(head -1 /tmp/check1.txt)"
-    [ -n "$REPLY" ] && printf '\n\n### Ответ исполнителя на ревью\n%s\n' "$REPLY" >> /tmp/review.md
-  fi
-fi
-# стоимость карточки (карточка 018): разница расхода ключа OpenRouter; при двух линиях сразу — сумма обеих
-read U1 LEFT1 <<< "$(python3 -I tools/notify/balance.py)"
-COST=$(python3 -c "u0,u1='$U0','$U1'; print('—' if '-' in (u0,u1) else f'\${float(u1)-float(u0):.2f}')")
-COST_LINE="Стоимость OpenRouter: $COST (за время карточки; если работали обе линии — их сумма). Остаток: $(python3 -I tools/notify/balance.py --text)"
-# --- карточка 020: подтянуть свежий main (другая линия могла слить своё) и починить конфликты ---
-sync_main() {
-  git fetch -q origin main
-  local before; before=$(git rev-parse HEAD)
-  if git merge -q --no-edit origin/main >/tmp/merge.txt 2>&1; then
-    [ "$(git rev-parse HEAD)" = "$before" ] && return 0
-  else
-    local files; files=$(git diff --name-only --diff-filter=U | tr '\n' ' ')
-    [ -z "${files// /}" ] && { git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1; }
-    tg "🔀 $CARD: конфликт со свежим main ($files) — чиню"
-    PHASES="$PHASES → конфликт с main"
-    { echo "В ветке карточки $FILE идёт слияние свежего main, конфликты в файлах: $files";
-      echo "Разреши конфликты, сохранив смысл ОБЕИХ сторон: изменения карточки и изменения из main (обычно нужно оставить и то и другое)."
-      echo "Убери все маркеры <<<<<<< ======= >>>>>>>. НЕ делай git commit/merge/abort. Затем запусти проверку."; echo; echo "$RULES"; } > /tmp/pM.txt
-    run agent 1500 /tmp/pM.txt
-    if grep -qE '^(<<<<<<<|>>>>>>>)' $files 2>/dev/null || ! bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; then
-      PHASES="$PHASES → старший по конфликту ($STRONG_NAME)"; run strong 1200 /tmp/pM.txt
-    fi
-    if grep -qE '^(<<<<<<<|>>>>>>>)' $files 2>/dev/null; then
-      git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1
-    fi
-    rm -f ESCALATE.md REVIEW_REPLY.md
-    git add -A -- $(ls -d src docs tools .gitignore CHECKLIST.md 2>/dev/null)
-    git commit -q --no-edit || { git merge --abort 2>/dev/null; git reset -q --hard "$before"; return 1; }
-  fi
-  # main изменился — перепроверка
-  if ! bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; then git reset -q --hard "$before"; return 1; fi
-  return 0
-}
-SYNC_OK=1
-if [ $ok -eq 0 ]; then
-  sync_main || { SYNC_OK=0; bash tools/conveyor/check.sh > /tmp/check1.txt 2>&1; tg "⚠️ $CARD: не удалось совместить со свежим main — автослияния не будет"; }
-fi
-git push -q -u origin "$BR" || { echo "::error title=Пуш отклонён::ветка $BR"; tg "❌ $CARD: пуш ветки отклонён, работа не сохранена — $RUN_URL"; exit 1; }
-{ echo "Карточка \`$FILE\` выполнена конвейером."; echo; echo "**Этапы:** $PHASES"; echo; echo "**Проверка (тесты симуляции + сборка):**";
-  echo '```'; tail -40 /tmp/check1.txt; echo '```';
-  [ $ok -ne 0 ] && echo && echo "⚠️ Проверка не прошла даже после старшего — нужен человек (@Grilik): перешлите ссылку архитектору.";
-  echo; echo "**$COST_LINE**"; echo; echo "🤖 Generated with [Claude Code](https://claude.com/claude-code)"; } > /tmp/body.md
-if [ $ok -eq 0 ]; then
-  URL=$(gh pr create --head "$BR" --base main --title "$CARD: $TITLE" --body-file /tmp/body.md) || {
-    echo "::error title=PR не создан::Включите Settings → Actions → General → Allow GitHub Actions to create and approve pull requests. Ветка $BR запушена."
-    tg "⚠️ $CARD: работа готова (ветка $BR), но PR не создан — нужен человек. $RUN_URL"; exit 1; }
-  tg "✅ $TITLE — PR готов к слиянию: $URL
-Этапы: $PHASES
-$COST_LINE"
+done
+wait "$AGENT" 2>/dev/null; RC=$?
+MINUTES=$(( ($(date +%s) - T0 + 59) / 60 ))
+[ -z "$OVER" ] && [ "$RC" = 124 ] && OVER="время $CARD_MINUTES мин вышло"
+sed 's/\x1b\[[0-9;]*m//g' /tmp/cline.log | tail -30
+ESC=$(head -c 3000 ESCALATE.md 2>/dev/null); rm -f ESCALATE.md REVIEW_REPLY.md
+
+# 3. Проверка: тест карточки зелёный, всё остальное зелёное, тест не тронут, чужие файлы не тронуты.
+WHY=""
+cmp -s "$CARD_TEST_SRC" "src/test/java/$CARD_TEST.java" || { WHY="исполнитель изменил тест карточки"; cp "$CARD_TEST_SRC" "src/test/java/$CARD_TEST.java"; }
+STRAY=$(python3 -I tools/conveyor/card.py "$FILE" --stray "$(git -c core.quotePath=false status --porcelain --untracked-files=all | cut -c4-)")
+[ -n "$STRAY" ] && WHY="${WHY:+$WHY; }изменены файлы вне карточки: $(echo $STRAY)"
+bash tools/conveyor/check.sh > /tmp/check.txt 2>&1 || WHY="${WHY:+$WHY; }проверка: $(head -1 /tmp/check.txt)"
+[ -n "$OVER" ] && WHY="${WHY:+$WHY; }$OVER"
+read U1 _ <<< "$(python3 -I tools/notify/balance.py)"
+COST=$(python3 -c "u0,u1='$U0','$U1'; print('-' if '-' in (u0,u1) else f'{float(u1)-float(u0):.2f}')")
+OK=$([ -z "$WHY" ] && echo 1 || echo 0)
+
+git add -A -- src docs tools 2>/dev/null
+git commit -q -m "$CARD: $TITLE (конвейер v2, $AGENT_MODEL)" || { tg "❌ $CARD: исполнитель ничего не изменил ($OVER) — $RUN_URL"; WHY="${WHY:-ничего не изменено}"; git commit -q --allow-empty -m "$CARD: не вышло"; }
+git push -q -u origin "$BR" || { tg "❌ $CARD: пуш ветки отклонён — $RUN_URL"; exit 1; }
+
+# 4. PR: «готов к просмотру» или «не вышло». Метрики — машиночитаемой строкой (их собирает tools/conveyor/metrics.py).
+METRICS="conveyor-metrics: card=$CARD ok=$OK cost=$COST minutes=$MINUTES attempts=1 model=$AGENT_MODEL"
+{ echo "Карточка \`$FILE\` — конвейер v2 (одна попытка, без старшего, без автослияния)."; echo;
+  if [ "$OK" = 1 ]; then echo "✅ Тест \`$CARD_TEST\` зелёный, остальные тесты и сборка — тоже. **Сливает человек** после взгляда «Программиста»."
+  else echo "⚠️ **Не вышло:** $WHY. Карточка возвращается «Программисту»: раздробить или сделать в чате.";
+    [ -n "$ESC" ] && { echo; echo "**Исполнитель (ESCALATE.md):**"; echo; echo "$ESC"; }; fi
+  echo; echo "Время: $MINUTES мин · стоимость OpenRouter: \$$COST · модель: $AGENT_MODEL"; echo;
+  echo '```'; tail -25 /tmp/check.txt; echo '```'; echo; echo "<!-- $METRICS -->"; echo;
+  echo "🤖 Generated with [Claude Code](https://claude.com/claude-code)"; } > /tmp/body.md
+gh label create conveyor --color 1D76DB --description "PR конвейера v2" 2>/dev/null || true
+if [ "$OK" = 1 ]; then
+  URL=$(gh pr create --head "$BR" --base main --label conveyor --title "$CARD: $TITLE" --body-file /tmp/body.md)
+  # дешёвое ревью — только подсказка в комментарии, на слияние не влияет
+  BASE_SHA=$(git merge-base HEAD origin/main) HEAD_REF="$BR" PR_BODY="КОНВЕЙЕР" python3 -I tools/review/ai_review.py > /tmp/review.md 2>/dev/null \
+    && ! grep -qE "REVIEW_UNAVAILABLE|пропущено" /tmp/review.md && gh pr comment "$URL" --body-file /tmp/review.md >/dev/null
+  tg "✅ $TITLE — PR ждёт просмотра: $URL
+$MINUTES мин, \$$COST"
 else
-  gh label create needs-human --color B60205 --description "Конвейер не справился" 2>/dev/null || true
-  URL=$(gh pr create --head "$BR" --base main --draft --label needs-human --title "$CARD: $TITLE — нужен человек" --body-file /tmp/body.md)
-  tg "⚠️ $CARD: нужен человек — $URL
-$(tail -5 /tmp/check1.txt)
-$RUN_URL"
+  gh label create "не вышло" --color B60205 --description "Конвейер v2 не справился — карточка возвращается Программисту" 2>/dev/null || true
+  URL=$(gh pr create --head "$BR" --base main --draft --label conveyor --label "не вышло" --title "$CARD: $TITLE — не вышло" --body-file /tmp/body.md)
+  tg "⚠️ $CARD не вышло: $WHY
+$URL ($MINUTES мин, \$$COST)"
 fi
 echo "PR: $URL"
-[ -f /tmp/review.md ] && gh pr comment "$URL" --body-file /tmp/review.md
-# --- карточка 020: автослияние (тесты зелёные, ревью «ОК», не веха, main совмещён) ---
-if [ $ok -eq 0 ]; then
-  why=""
-  case "$CARD" in 006|011|015) why="веха — ждёт проверки";; esac
-  [ "${AUTO_MERGE:-1}" = 0 ] && why="автослияние выключено (AUTO_MERGE=0)"
-  [ $SYNC_OK -eq 1 ] || why="${why:-конфликт со свежим main не решён}"
-  grep -q REVIEW_UNAVAILABLE /tmp/review.md 2>/dev/null && why="${why:-ревью моделью недоступно}"
-  # после раунда правок «ЕСТЬ ЗАМЕЧАНИЯ» не мешает автослиянию (ревьюер придирчив); мешают только блокеры
-  { grep -q "### Блокеры" /tmp/review.md || grep -qE "Вердикт:\*\*\s*БЛОКЕР" /tmp/review.md; } 2>/dev/null && why="${why:-ревью: блокер}"
-  { grep -qE "Вердикт:\*\*\s*(ОК|ЕСТЬ ЗАМЕЧАНИЯ)" /tmp/review.md; } 2>/dev/null || why="${why:-ревью без вердикта}"
-  if [ -z "$why" ]; then
-    if gh pr merge "$URL" --squash --delete-branch >/tmp/pm.txt 2>&1; then
-      tg "🤖✅ $CARD слит автоматически: $URL"
-      # слияние токеном Actions не запускает другие workflow — запускаем сами: сборку main (релиз 🎮) и следующую карточку линии
-      gh workflow run build.yml --ref main 2>/dev/null || true
-      gh workflow run conveyor.yml --ref main -f lane="${LANE:-both}" 2>/dev/null || true
-      exit 0
-    fi
-    why="слияние не удалось: $(tail -c 200 /tmp/pm.txt)"
-  fi
-  tg "👀 $CARD: PR ждёт тебя — $why. $URL"
-fi
+echo "$METRICS"
+# пуш токеном Actions не запускает другие workflow — сборку и сервер на ветке запускаем сами
 gh workflow run build.yml --ref "$BR" 2>/dev/null || true
-exit $ok
+[ "$OK" = 1 ]
