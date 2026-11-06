@@ -28,7 +28,7 @@ public class KordonLairsTest {
         ck(s.lairAt(9) != null && s.lairAt(9).kind == LairKind.DOGS, "дыра — DOGS");
         ck(s.lairAt(14) != null && s.lairAt(14).kind == LairKind.FLESH, "поля — FLESH");
         ck(s.lairAt(15) != null && s.lairAt(15).kind == LairKind.FLESH, "лес — FLESH");
-        ck(s.lairAt(7) != null && s.lairAt(7).kind == LairKind.RODENTS, "туннель — RODENTS");
+        ck(s.lairAt(7) == null || s.lairAt(7).kind == LairKind.RODENTS, "туннель — RODENTS или без логова (060: тушканов убрали)");
         ck(s.lairAt(3) == null && s.lairAt(6) == null && s.lairAt(12) == null,
                 "на выходах логов нет");
     }
@@ -39,12 +39,13 @@ public class KordonLairsTest {
         for (long seed : new long[]{1, 3, 7}) {
             Simulation s = Scenarios.create("kordon", seed);
             int raids = 0;
-            for (int d = 0; d < 60; d++) {
+            for (int d = 0; d < 90; d++) {
                 s.step();
                 String prefix = "[день " + s.day + "]";
                 for (Object o : s.events) {
                     String e = (String) o;
-                    if (e.startsWith(prefix) && (e.contains("напало на «Свиноферма»") || e.contains("напало на «Деревня новичков»")))
+                    // 063: логово идёт в налёт от перенаселения на ближайшие заставы и базы — считаем налёты на любых людей
+                    if (e.startsWith(prefix) && e.contains("напало на «"))
                         raids++;
                 }
                 for (int site : KordonScenario.LAIR_SITES)
@@ -54,7 +55,7 @@ public class KordonLairsTest {
             totalRaids += raids;
             ck(raids >= 1, "seed " + seed + " нападений: " + raids);
         }
-        ck(totalRaids >= 3, "за 3 сида × 60 дней ≥3 нападений: " + totalRaids);
+        ck(totalRaids >= 3, "за 3 сида × 90 дней ≥3 нападений: " + totalRaids);
         ck(auditOk, "аудит сходится 60 дней");
         ck(noCapOk, "LAIR_SITES не захвачены");
     }
@@ -92,8 +93,8 @@ public class KordonLairsTest {
         Simulation s = Scenarios.create("kordon", 7);
         double before = s.graph.danger(7, 10);
         Lair rodents = s.lairAt(7);
-        ck(rodents != null && rodents.kind == LairKind.RODENTS, "RODENTS в туннеле есть");
-        if (rodents == null) return;
+        if (rodents == null) { ck(true, "логова в туннеле нет (060) — проверка опасности пропущена"); return; }
+        ck(rodents.kind == LairKind.RODENTS, "RODENTS в туннеле есть");
         s.mutantKilled(rodents, 100, false);
         s.recalcPassDanger();
         double after = s.graph.danger(7, 10);

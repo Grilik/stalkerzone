@@ -34,6 +34,10 @@ public final class Node {
      * null — считать по общей формуле {@link Lair#denXZ}.
      */
     public int[] den;
+    /** Карточка 061: вытянутая часть территории логова — ломаная {{x, z}, …} в блоках мира; null — только круг. */
+    public int[][] reach;
+    /** Ширина вытянутой части (полуширина коридора), блоков. */
+    public int reachWidth;
 
     // торговец
     public boolean trader;

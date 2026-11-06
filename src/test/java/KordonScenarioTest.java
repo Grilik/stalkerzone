@@ -42,10 +42,11 @@ public class KordonScenarioTest {
 
         for (int i = 0; i < 19; i++) {
             Node n = s.nodes.get(i);
-            ck(n.name.equals(names[i]), "узел " + i + " имя: " + n.name);
+            boolean moved = i == 13 && n.name.equals("Лысый холм");   // 060: холм перенесён (место — LairMoveTest)
+            ck(moved || n.name.equals(names[i]), "узел " + i + " имя: " + n.name);
             ck(n.type == types[i], "узел " + i + " тип: " + n.type);
             ck(n.owner == owners[i], "узел " + i + " владелец: " + n.owner);
-            ck(n.x == xs[i] && n.z == zs[i], "узел " + i + " координаты (" + n.x + "," + n.z + ")");
+            ck(moved || n.x == xs[i] && n.z == zs[i], "узел " + i + " координаты (" + n.x + "," + n.z + ")");
             ck(n.trader == trader[i], "узел " + i + " trader=" + trader[i]);
         }
         // v14: 5 стартовых логов по таблице
@@ -54,7 +55,7 @@ public class KordonScenarioTest {
         ck(s.lairAt(9) != null && s.lairAt(9).kind == LairKind.DOGS, "дыра в заборе — DOGS");
         ck(s.lairAt(14) != null && s.lairAt(14).kind == LairKind.FLESH, "поля у свинофермы — FLESH");
         ck(s.lairAt(15) != null && s.lairAt(15).kind == LairKind.FLESH, "лес у дальнего блокпоста — FLESH");
-        ck(s.lairAt(7) != null && s.lairAt(7).kind == LairKind.RODENTS, "туннель с электрами — RODENTS");
+        ck(s.lairAt(7) == null || s.lairAt(7).kind == LairKind.RODENTS, "туннель с электрами — RODENTS или без логова (060)");
     }
 
     static void gates() {
