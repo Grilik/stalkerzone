@@ -254,7 +254,7 @@ public class TunnelTest {
         ck(g.block(KordonTunnel.AX, -262) >= F + 8, "между группами — насыпь (гребень +" + (g.block(KordonTunnel.AX, -262) - F) + ")");
         // костёр южной заставы — ровно в точке campfire узла
         ck(m1.getOrDefault(Prefabs.key(131, F + 1, -254), "").startsWith("minecraft:campfire"), "костёр южной заставы в точке campfire узла (131, −254)");
-        ck(m1.entrySet().stream().filter(e -> e.getValue().startsWith("minecraft:campfire")).count() == 2, "костров ровно два — по одному у входа");
+        ck(count(m1, s -> s.startsWith("minecraft:campfire")) == 2, "костров ровно два — по одному у входа");
         ck(count(m1, s -> s.contains("zm_sandbags")) >= 20 && count(m1, s -> s.endsWith("_wool")) >= 30, "мешки и палатки на месте");
 
         // ---- без правки рельефа и на ровной земле (превью, юнит-тесты): сборка не падает, проход есть
