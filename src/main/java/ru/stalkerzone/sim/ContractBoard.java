@@ -293,6 +293,33 @@ public final class ContractBoard {
             }
         }
 
+        // v23 (карточка 050): одиночки заказывают зачистку логова Л3 в лесу у свалки техники (узел 21).
+        // Отдельного «артефакта именно из А6» симуляция не различает — только зачистка логова.
+        if (loners != null && loners.members >= KordonBalance.CONTRACT_MIN_LONERS && openCount() < MAX_OPEN
+                && s.nodes.size() > KordonScenario.DUMP_FOREST) {
+            Lair l3 = s.lairAt(KordonScenario.DUMP_FOREST);
+            if (l3 != null && l3.strength >= KordonBalance.CONTRACT_LAIR_MIN_STRENGTH
+                    && !anyLairContract(KordonScenario.DUMP_FOREST)) {
+                long reward = 700 + (long) (l3.strength * 35);
+                Contract c = issueCash(s, Contract.Type.CLEAR_LAIR, loners.id, reward, 25,
+                        l3.strength > 60 ? 4 : l3.strength > 40 ? 3 : 2);
+                if (c != null) c.node = KordonScenario.DUMP_FOREST;
+            }
+        }
+
+        // v23 (карточка 050): одиночки заказывают доставку припасов на свою заставу О7 (узел 19).
+        // Оплата — из кассы заказчика через залог; цена берётся у деревни (базы одиночек).
+        if (loners != null && s.nodes.size() > KordonScenario.WAGON
+                && s.nodes.get(KordonScenario.WAGON).owner == loners.id
+                && !has(Contract.Type.SUPPLY, loners.id, KordonScenario.WAGON)
+                && r.nextDouble() < 0.15) {
+            Good need = r.nextDouble() < 0.5 ? Good.AMMO : Good.MEDS;
+            int q = need == Good.AMMO ? 60 : 6;
+            long unit = s.sellPrice(s.nodes.get(loners.baseNode), need);
+            Contract c = issueCash(s, Contract.Type.SUPPLY, loners.id, (long) (unit * q * 1.45), 15, 1);
+            if (c != null) { c.node = KordonScenario.WAGON; c.good = need; c.qty = q; }
+        }
+
         // Военные чистят логова у дороги
         if (military != null && military.members >= KordonBalance.CONTRACT_MIN_MILITARY && openCount() < MAX_OPEN) {
             for (Lair l : s.lairs) {
