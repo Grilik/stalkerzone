@@ -41,7 +41,7 @@ public final class Prefabs {
     }
 
     /** Узлы сценария «Кордон» ({@code KordonScenario}), у которых есть площадки. */
-    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2;
+    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_WAGON = 19;
 
     /** Плато деревни новичков (П-02): ровная часть и ширина откоса; высота — медиана уровня (AUTO). */
     public static final int[] VILLAGE_PLATEAU = {-40, -24, 56, 34};
@@ -59,7 +59,12 @@ public final class Prefabs {
                     .build(of(KordonVillage.CLEAR, KordonVillage::build)),   // П-03: дома, подвалы, забор, места NPC
             // бункер Сидоровича — свой узел (торговец), стоит на плато деревни; облик переделывает «Строитель» (П-02б)
             new Site("bunker", NODE_BUNKER).build(of(KordonBunker.CLEAR, KordonBunker::build)),
-            new Site("south_post", NODE_SOUTH_POST).build(of(KordonSouthPost.CLEAR, KordonSouthPost::build)));
+            new Site("south_post", NODE_SOUTH_POST).build(of(KordonSouthPost.CLEAR, KordonSouthPost::build)),
+            // О7 — лагерь у вагончика и дорожный мост через овраг (узел 19, П-21/П-22)
+            new Site("wagon", NODE_WAGON).plateau(104, -88, 130, -60, Site.AUTO, 6).shaper(KordonRoadBridge.RAVINE)
+                    .build(of(KordonWagon.CLEAR, KordonWagon::build)).build(of(KordonRoadBridge.CLEAR, KordonRoadBridge::build)),
+            // А6 — свалка техники и застава О12 на дне чаши (узел 20, П-23)
+            new Site("dump", 20).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)));
 
     /** Площадки уровня (пусто — уровень без площадок). */
     public static List<Site> sites(String levelId) { return "l01_escape".equals(levelId) ? SITES : List.of(); }
