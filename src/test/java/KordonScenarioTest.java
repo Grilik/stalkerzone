@@ -22,7 +22,7 @@ public class KordonScenarioTest {
         Simulation s = Scenarios.create("kordon", 0);
         ck(s.scenario.equals("kordon"), "сценарий запомнен: " + s.scenario);
         ck(Scenarios.create(0).scenario.equals("kordon"), "сценарий по умолчанию — kordon");
-        ck(s.nodes.size() == 19, "19 узлов Кордона: " + s.nodes.size());
+        ck(s.nodes.size() >= 19, "не меньше 19 узлов Кордона (044: +3 узла «Малого Кордона»): " + s.nodes.size());
 
         String[] names = {"Деревня новичков", "Бункер Сидоровича", "Южный блокпост", "Выход: Большая земля",
                 "Элеватор", "АТП", "Выход: Тёмная долина", "Туннель с электрами", "Разрушенный мост",
@@ -49,7 +49,7 @@ public class KordonScenarioTest {
             ck(n.trader == trader[i], "узел " + i + " trader=" + trader[i]);
         }
         // v14: 5 стартовых логов по таблице
-        ck(s.lairs.size() == 5, "5 стартовых логов: " + s.lairs.size());
+        ck(s.lairs.size() >= 5, "не меньше 5 стартовых логов (047: +Л3): " + s.lairs.size());
         ck(s.lairAt(13) != null && s.lairAt(13).kind == LairKind.DOGS, "холм за элеватором — DOGS");
         ck(s.lairAt(9) != null && s.lairAt(9).kind == LairKind.DOGS, "дыра в заборе — DOGS");
         ck(s.lairAt(14) != null && s.lairAt(14).kind == LairKind.FLESH, "поля у свинофермы — FLESH");
@@ -64,6 +64,9 @@ public class KordonScenarioTest {
 
         Simulation none = Scenarios.create("kordon", 0);
         close(none, tunnel);
+        // 059: у туннеля заставы у входов (узлы 22, 23) — закрываем все дороги через туннель
+        for (int o = 0; o < none.nodes.size(); o++) if (none.graph.edgeDays(7, o) > 0) none.graph.setClosed(7, o, true);
+        none.graph.build();
         close(none, bridge);
         close(none, hole);
         ck(!none.graph.reachable(0, 10) && !none.graph.reachable(0, 11) && !none.graph.reachable(0, 12),

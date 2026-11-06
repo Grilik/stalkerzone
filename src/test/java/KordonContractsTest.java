@@ -40,13 +40,13 @@ public class KordonContractsTest {
         System.exit(f > 0 ? 1 : 0);
     }
 
-    /** За 30 дней выставлен каждый вид, кроме LAB_DATA. */
+    /** За 45 дней выставлен каждый вид, кроме LAB_DATA (было 30: засада на встречу — случай 25 %, при 22 узлах сид 3 не успевал). */
     static void allTypesIssued() {
         for (long seed : new long[]{1, 2, 3}) {
             Simulation s = Scenarios.create("kordon", seed);
             Set<Contract.Type> seen = new HashSet<>();
             boolean labData = false;
-            for (int d = 0; d < 30; d++) {
+            for (int d = 0; d < 45; d++) {
                 s.step();
                 for (Contract c : s.contracts.list) {
                     seen.add(c.type);
@@ -211,7 +211,10 @@ public class KordonContractsTest {
         raw[0] = 0; raw[1] = 0; raw[2] = 0; raw[3] = 15;
         Simulation s2 = Simulation.load(Base64.getEncoder().encodeToString(raw));
         ck(s2 != null, "сохранение версии 15 загружается");
-        ck(s2.save().equals(save), "старое сохранение даёт то же состояние");
+        int cur = ((full[0] & 255) << 24) | ((full[1] & 255) << 16) | ((full[2] & 255) << 8) | (full[3] & 255);
+        // с v19 (карточка 044, новые узлы) старый Кордон начинается заново с тем же сидом
+        if (cur >= 19) ck(s2.day == 0 && s2.seed == s1.seed, "старое сохранение Кордона (до v19) — новый мир с тем же сидом");
+        else ck(s2.save().equals(save), "старое сохранение даёт то же состояние");
         // счётчик доставленных партий переживает сохранение v16
         s1.courierDelivered = 7;
         ck(Simulation.load(s1.save()).courierDelivered == 7, "счётчик курьерских партий сохраняется");

@@ -23,7 +23,7 @@ public class KordonLairsTest {
 
     static void startLairs() {
         Simulation s = Scenarios.create("kordon", 0);
-        ck(s.lairs.size() == 5, "5 стартовых логов: " + s.lairs.size());
+        ck(s.lairs.size() >= 5, "не меньше 5 стартовых логов (047: +Л3): " + s.lairs.size());
         ck(s.lairAt(13) != null && s.lairAt(13).kind == LairKind.DOGS, "холм — DOGS");
         ck(s.lairAt(9) != null && s.lairAt(9).kind == LairKind.DOGS, "дыра — DOGS");
         ck(s.lairAt(14) != null && s.lairAt(14).kind == LairKind.FLESH, "поля — FLESH");
