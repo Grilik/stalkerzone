@@ -50,6 +50,12 @@ public class VillageTest {
         ck(kinds.getOrDefault("guard", 0) >= 4 && kinds.getOrDefault("patrol", 0) >= 6 && kinds.getOrDefault("cook", 0) == 1
                 && kinds.getOrDefault("duty", 0) == 1 && kinds.getOrDefault("work", 0) >= 4, name + ": места " + kinds);
 
+        // пульт базы (П-09): одно место «console» в штабе, перед ним — блок пульта лицом к игроку
+        List<Mk> cons = marks.stream().filter(k -> k.kind.equals("console")).toList();
+        boolean consOk = cons.size() == 1 && cons.get(0).x >= 11 && cons.get(0).x <= 25 && cons.get(0).z >= -13 && cons.get(0).z <= -3
+                && at(m, g, cons.get(0).x, cons.get(0).y, cons.get(0).z - 1).startsWith(KordonVillage.CONSOLE + "[facing=south");
+        ck(consOk, name + ": пульт базы в штабе, место перед ним свободно");
+
         int bad = 0;
         for (Mk k : marks) if (!stand(m, g, new P(k.x, k.y, k.z))) { bad++; System.out.println("  не на полу: " + k); }
         ck(bad == 0, name + ": все места на полу и не в стене");

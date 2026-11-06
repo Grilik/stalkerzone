@@ -109,6 +109,14 @@ public final class KordonVillage {
     /** Наличники: крашеные доски вокруг окна снаружи. */
     static final String TRIM = "stalkerzone:zm_wood_painted";
 
+    /**
+     * Блок пульта базы — «журнал старшего» (П-09, ПКМ — окно базы как ратуша MineColonies). Пока ванильная кафедра:
+     * «Программист» в П-09 подставляет сюда id своего блока или вешает ПКМ на кафедру по месту «console»
+     * (место, где стоит игрок; сам блок — на клетку севернее, лицом на юг). Стоит в штабе Волка слева от стола старшего.
+     */
+    public static final String CONSOLE = "minecraft:lectern";
+    public static final int CONSOLE_X = 16, CONSOLE_Z = -9;
+
     /** Подвалы у костра: вход (x, z) и направление спуска по X (−1 — на запад, +1 — на восток). */
     public static final int[][] CELLARS = {{-4, 4, -1}, {9, 4, 1}};
 
@@ -301,6 +309,9 @@ public final class KordonVillage {
                 bedRow(b, h, h.x1 - 3, h.x1 - 1, h.z0 + 1, y, 'N');   // койки старшего и заместителя
                 b.mark("duty", tx, y, tz - 1);
                 b.mark("work", tx + 3, y, tz);
+                // пульт базы (П-09): «журнал старшего» у стола Волка, лицом в комнату; игрок стоит перед ним — точка console
+                b.set(CONSOLE_X, y, CONSOLE_Z, CONSOLE + "[facing=south,has_book=false,powered=false]");
+                b.mark("console", CONSOLE_X, y, CONSOLE_Z + 1);
             }
             case 3, 8 -> {       // казармы: койки вдоль длинных стен, печка, ящики
                 bedRow(b, h, h.x0 + 1, h.x1 - 1, h.z0 + 1, y, 'N');
