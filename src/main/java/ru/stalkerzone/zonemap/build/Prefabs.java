@@ -49,9 +49,11 @@ public final class Prefabs {
     /** Костёр деревни — центр жизни узла (точка campfire из kordon_points.json). */
     public static final int[] VILLAGE_FIRE = {2, -1};
 
-    /** Логово Л3 у узла 21 (карточка 053): без плато, Structures.lairDen у (−92, −100). */
+    /**
+     * Логово Л3 «Собачий лес» у узла 21 (карточки 053, 060): без плато, Structures.lairDen у (45, −175).
+     */
     public static final int NODE_LAIR_L3 = 21;
-    public static final int[] LAIR_L3 = {-92, -100};
+    public static final int[] LAIR_L3 = {45, -175};
     private static final List<int[]> LAIR_L3_CLEAR = List.of(new int[]{LAIR_L3[0] - 14, LAIR_L3[1] - 14, LAIR_L3[0] + 14, LAIR_L3[1] + 14});
 
     /**
@@ -72,10 +74,10 @@ public final class Prefabs {
             new Site("dump", 20).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)),
             // П-23: туннель с «электрами» под насыпью (смарт-террейн 4_9) — выемка у порталов, две заставы одиночек
             new Site("tunnel", NODE_TUNNEL).shaper(KordonTunnel.cut()).build(of(KordonTunnel.CLEAR, KordonTunnel::build)),
-            // Логово Л3 у узла 21 (карточка 053): без плато, Structures.lairDen у (−92, −100)
+            // Логово Л3 «Собачий лес» у узла 21 (карточки 053, 060): без плато, Structures.lairDen у (45, −175)
             new Site("lair", NODE_LAIR_L3).build(of(LAIR_L3_CLEAR, Prefabs::lairL3)));
 
-    /** Логово Л3: кости, череп, паутина у (−92, −100); место «den» для мутантов. */
+    /** Логово Л3: кости, череп, паутина у (45, −175); место «den» для мутантов. */
     static void lairL3(BlockSink s, int lvl) {
         Structures.lairDen(new B(s, LAIR_L3[0], LAIR_L3[1], 0, 2101L, lvl));
         s.mark("den", LAIR_L3[0], s.ground(LAIR_L3[0], LAIR_L3[1]) + 1, LAIR_L3[1]);

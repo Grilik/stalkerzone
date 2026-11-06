@@ -41,8 +41,8 @@ public final class KordonScenario {
     public static final int[][] COORDS = {
             {0, 0}, {-4, -1}, {6, 22}, {8, 33}, {20, -22}, {33, -12}, {58, -8},
             {13, -26}, {27, -30}, {43, -35}, {21, -42}, {23, -81}, {24, -84},
-            {24, -17}, {8, -36}, {26, -51}, {42, -21}, {35, -38}, {28, -76},
-            {12, -7}, {-4, -12}, {-9, -10},
+            {20, 5}, {8, -36}, {26, -51}, {42, -21}, {35, -38}, {28, -76},
+            {12, -7}, {-4, -12}, {5, -17},
             {13, -23}, {13, -29}
     };
 
@@ -55,8 +55,11 @@ public final class KordonScenario {
     /** Узлы — выходы за карту: логова и цели налётов их исключают. */
     public static final int[] EXITS = {BIG_LAND, DARK_EXIT, SVALKA_EXIT};
 
-    /** Узлы, где могут быть логова (старт и возрождение). Захват фракциями исключён. */
-    public static final int[] LAIR_SITES = {HILL, FIELDS, FOREST, RAVINE, MEADOW, EDGE, TUNNEL, HOLE, DUMP_FOREST};
+    /**
+     * Узлы, где могут быть логова (старт и возрождение). Захват фракциями исключён.
+     * v21 (карточка 060): туннель — аномальная зона с двумя заставами, логов там нет.
+     */
+    public static final int[] LAIR_SITES = {HILL, FIELDS, FOREST, RAVINE, MEADOW, EDGE, HOLE, DUMP_FOREST};
 
     /** Стартовая численность трёх живых группировок — баланс уточняет карточка 005. */
     public static final int LONER_MEMBERS = 40, MILITARY_MEMBERS = 24, BANDIT_MEMBERS = 28;
@@ -123,8 +126,10 @@ public final class KordonScenario {
         svalkaExit.existingBuildings = true;
         svalkaExit.housing = 2; svalkaExit.defense = 60;
 
-        // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
-        Node hill = node(nodes, "Холм за элеватором", NodeType.RUINS, 24, -17);
+        // v14: узлы логов (карточка 007); v21 (карточка 060): холм переехал к южному блокпосту
+        Node hill = node(nodes, "Лысый холм", NodeType.RUINS, 20, 5);
+        // v21 (карточка 060): логово «Лысого холма» — между О7, АТП и южным блокпостом
+        hill.den = new int[]{200, 45};
         Node fields = node(nodes, "Поля у свинофермы", NodeType.RUINS, 8, -36);
         Node forest = node(nodes, "Лес у дальнего блокпоста", NodeType.RUINS, 26, -51);
         Node ravine = node(nodes, "Овраг у АТП", NodeType.RUINS, 42, -21);
@@ -139,9 +144,9 @@ public final class KordonScenario {
         Node dump = node(nodes, "Свалка техники", NodeType.ANOMALY, -4, -12);
         dump.existingBuildings = true;
 
-        Node dumpForest = node(nodes, "Лес у свалки техники", NodeType.RUINS, -9, -10);
-        // v22 (карточка 047): логово Л3 стоит у (−92, −100) — в лесу к западу от площадки свалки (KordonDump.CLEAR до x −74).
-        dumpForest.den = new int[]{-92, -100};
+        // v21 (карточка 060): «Собачий лес» — лес между деревней, О7, А6/О12 и туннелем; логово псов у (45, −175)
+        Node dumpForest = node(nodes, "Собачий лес", NodeType.RUINS, 5, -17);
+        dumpForest.den = new int[]{45, -175};
 
         // v20 (карточка 059): заставы одиночек у входов туннеля с электрами — по одной с каждой стороны насыпи
         Node tunnelSouth = node(nodes, "Застава у южного входа в туннель", NodeType.OUTPOST, 13, -23);
@@ -171,8 +176,10 @@ public final class KordonScenario {
         g.connect(BRIDGE, FARM, 2, 0.03);
         g.connect(ATP, HOLE, 2, 0.10);
         g.connect(HOLE, FAR_POST, 2, 0.12);
-        // v14: дороги логовых узлов — только внутри своей части, проходов через насыпь три
-        g.connect(HILL, ELEVATOR, 1, 0.03);
+        // v14: дороги логовых узлов — только внутри своей части, проходов через насыпь три;
+        // v21 (карточка 060): «Лысый холм» — к О7 и южному блокпосту, к элеватору дороги больше нет
+        g.connect(HILL, WAGON, 1, 0.03);
+        g.connect(HILL, SOUTH_POST, 2, 0.03);
         g.connect(RAVINE, ATP, 1, 0.03);
         g.connect(FIELDS, FARM, 1, 0.03);
         g.connect(FOREST, FAR_POST, 1, 0.03);
@@ -182,6 +189,10 @@ public final class KordonScenario {
         g.connect(VILLAGE, WAGON, 1, 0.02);
         g.connect(VILLAGE, DUMP, 2, 0.04);
         g.connect(DUMP, DUMP_FOREST, 1, 0.03);
+        // v21 (карточка 060): «Собачий лес» — на перекрёстке дорог деревни, О7, свалки и южной заставы туннеля
+        g.connect(VILLAGE, DUMP_FOREST, 1, 0.02);
+        g.connect(WAGON, DUMP_FOREST, 1, 0.02);
+        g.connect(DUMP_FOREST, TUNNEL_SOUTH, 1, 0.02);
         // v20 (карточка 059): дороги к заставам у входов туннеля (юг — от деревни, север — к свиноферме)
         g.connect(VILLAGE, TUNNEL_SOUTH, 2, 0.02);
         g.connect(TUNNEL_SOUTH, TUNNEL, 1, 0.02);
