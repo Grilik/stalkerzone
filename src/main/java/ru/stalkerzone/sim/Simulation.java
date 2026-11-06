@@ -987,6 +987,16 @@ public final class Simulation {
     }
 
     /**
+     * Мутант одного логова убит мутантом другого вида (карточка 064): туша достаётся логову убийцы
+     * (половина «цены» мутанта идёт в добычу {@link Lair#feed}), а логово жертвы слабеет как при
+     * обычной гибели мутанта. Возвращает true, если логово жертвы этим уничтожено.
+     */
+    public boolean mutantKilledByMutant(Lair victim, Lair killer, double value) {
+        if (lairs.contains(killer)) killer.feed(value * 0.5);
+        return mutantKilled(victim, value, false);
+    }
+
+    /**
      * Мутант логова погиб в мире (от игрока или сталкера): логово слабеет на его «цену».
      * Возвращает true, если логово этим выбито до конца и уничтожено.
      */
