@@ -121,6 +121,8 @@ public final class KordonScenario {
         dump.existingBuildings = true;
 
         Node dumpForest = node(nodes, "Лес у свалки техники", NodeType.RUINS, -9, -10);
+        // v22 (карточка 047): логово Л3 стоит у (−92, −100) — в лесу к западу от площадки свалки (KordonDump.CLEAR до x −74).
+        dumpForest.den = new int[]{-92, -100};
 
         ZoneGraph g = new ZoneGraph(nodes.size());
         // южная часть

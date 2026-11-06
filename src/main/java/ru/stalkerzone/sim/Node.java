@@ -29,6 +29,11 @@ public final class Node {
     public int housing;
     /** Сила мутантов/аномалий при захвате нейтральной локации. */
     public double defense = 20;
+    /**
+     * Место логова в мировых координатах {x, z}, если задано сценарием (карточка 047).
+     * null — считать по общей формуле {@link Lair#denXZ}.
+     */
+    public int[] den;
 
     // торговец
     public boolean trader;
