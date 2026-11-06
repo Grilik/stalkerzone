@@ -11,11 +11,12 @@ import java.io.File;
 import java.util.*;
 
 /**
- * П-21: АТП (узел 5, смарт-террейн 7_11) — площадка atp, брошенная база по вокселям оригинала.
+ * П-21: АТП (узел 5, смарт-террейн 7_11) — площадка atp, база бандитов по вокселям оригинала, уровни 0–3.
  * Рельеф: наклонное поле ≈ 92 (перепад ±4 по площадке), правится площадками уровня (плато AUTO).
- * Проверяется: площадка у узла 5 и плато, ровно 4 shelter + 2 work и никаких жилых мест на уровнях 0–3,
- * места стоячие и под крышей, ко всем можно дойти от ворот (обход в 3D), у мест хабара — ящики, разруха
- * (нет дверей, света, кроватей; окна выбиты), постройки по обмеру на месте, блоки мода существуют, площадки не пересекаются.
+ * Проверяется: площадка у узла 5 и плато; места на всех уровнях — bed 6, rest 3, cook 1, guard 2 (ворота, крыша конторы),
+ * patrol вдоль забора, shelter 4; места стоячие, укрытия под крышей, ко всем можно дойти от ворот (обход в 3D, лестницы);
+ * костёр в жилом боксе у повара, нары у мест bed, бочки с огнём по уровням, разруха убывает с уровнем; постройки по обмеру
+ * на месте, блоки мода существуют, площадки не пересекаются.
  */
 public class AtpTest {
     static int f = 0;
@@ -34,6 +35,7 @@ public class AtpTest {
     }
 
     static Map<Long, String> blocks;
+    static int prevWall;
     static G g;
 
     static String at(int x, int y, int z) { return blocks.get(Prefabs.key(x, y, z)); }
@@ -51,6 +53,14 @@ public class AtpTest {
     static boolean free(int x, int y, int z) { return !solid(x, y, z); }
 
     static boolean stand(int x, int y, int z) { return free(x, y, z) && free(x, y + 1, z) && solid(x, y - 1, z); }
+
+    static boolean near(Prefabs.Point p, String what, int r) {
+        for (int dx = -r; dx <= r; dx++) for (int dz = -r; dz <= r; dz++) for (int dy = -1; dy <= 2; dy++) {
+            String b = at(p.x() + dx, p.y() + dy, p.z() + dz);
+            if (b != null && b.contains(what)) return true;
+        }
+        return false;
+    }
 
     public static void main(String[] a) {
         Site s = Prefabs.site(L, Prefabs.NODE_ATP);
@@ -83,9 +93,11 @@ public class AtpTest {
             };
             for (Prefabs.Builder bb : s.builders()) bb.build(sink, lvl);
             String L0 = "ур. " + lvl + ": ";
-            long shelter = pts.stream().filter(p -> p.kind().equals("shelter")).count();
-            long work = pts.stream().filter(p -> p.kind().equals("work")).count();
-            ck(shelter == 4 && work == 2 && pts.size() == 6, L0 + "места: shelter " + shelter + ", work " + work + ", всего " + pts.size() + " (нужно 4 + 2)");
+            Map<String, Integer> kinds = new TreeMap<>();
+            for (Prefabs.Point p : pts) kinds.merge(p.kind(), 1, Integer::sum);
+            ck(kinds.getOrDefault("bed", 0) == 6 && kinds.getOrDefault("rest", 0) == 3 && kinds.getOrDefault("cook", 0) == 1
+                    && kinds.getOrDefault("guard", 0) == 2 && kinds.getOrDefault("patrol", 0) >= 4 && kinds.getOrDefault("shelter", 0) == 4
+                    && kinds.size() == 6, L0 + "места " + kinds + " (bed 6, rest 3, cook 1, guard 2, patrol ≥ 4, shelter 4)");
             List<Prefabs.Point> sp = Prefabs.points(L, (x, z) -> g.block(x, z), lvl, 5);
             ck(sp.size() == pts.size(), L0 + "Prefabs.points узла 5 отдаёт те же места (" + sp.size() + ")");
             for (Prefabs.Point p : pts) {
@@ -95,15 +107,16 @@ public class AtpTest {
                 boolean roof = false;
                 for (int y = p.y() + 2; y <= p.y() + 9; y++) if (solid(p.x(), y, p.z())) roof = true;
                 if (p.kind().equals("shelter")) ck(roof, L0 + d + " под крышей");
-                if (p.kind().equals("work")) {
-                    int crates = 0;
-                    for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) for (int dy = 0; dy <= 1; dy++) {
-                        String b = at(p.x() + dx, p.y() + dy, p.z() + dz);
-                        if (b != null && (b.contains("crate"))) crates++;
-                    }
-                    ck(crates >= 2, L0 + d + " — у места хабара ящики (" + crates + ")");
-                }
+                if (p.kind().equals("bed") && lvl >= 1) ck(near(p, "mattress", 1), L0 + d + " — рядом нары");
+                if (p.kind().equals("cook")) ck(near(p, "campfire", 2), L0 + d + " — у костра");
             }
+            int gy = g.block(318, -146);
+            List<Prefabs.Point> gs = pts.stream().filter(p -> p.kind().equals("guard")).toList();
+            ck(gs.stream().anyMatch(p -> Math.abs(p.x() - 301) <= 5 && Math.abs(p.z() + 94) <= 3 && p.y() == g.block(p.x(), p.z()) + 1),
+                    L0 + "часовой у ворот");
+            ck(gs.stream().anyMatch(p -> p.x() >= KordonATP.KX0 && p.x() <= 330 && p.z() >= KordonATP.KZ0 && p.z() <= KordonATP.KZ1 && p.y() >= gy + 5),
+                    L0 + "часовой на крыше конторы");
+            ck(pts.stream().filter(p -> p.kind().equals("patrol")).allMatch(p -> p.z() >= -98 || p.x() >= 350), L0 + "обход вдоль забора");
             // проходимость: обход от ворот в заборе (301, −98)
             int sx = 301, sz = -98, sy = g.block(sx, sz) + 1;
             Set<Long> seen = new HashSet<>();
@@ -137,16 +150,20 @@ public class AtpTest {
             int y2 = g.block(318, -146) + 5;
             ck(seen.contains(Prefabs.key(320, y2, -144)) || seen.contains(Prefabs.key(320, y2, -142)), L0 + "второй этаж конторы достижим по стремянке");
 
-            // разруха: ни дверей, ни света, ни кроватей; окна выбиты
-            int doors = 0, light = 0, beds = 0, glass = 0;
+            // обжитость по уровням
+            int doors = 0, lit = 0, unlit = 0, mattress = 0, glass = 0;
             for (String b : blocks.values()) {
                 if (b.contains("_door[") || b.endsWith("_door")) doors++;
-                if (b.contains("lantern") || b.contains("torch") || b.contains("campfire") || b.contains("lamp")) light++;
-                if (b.contains("_bed") || b.contains("mattress")) beds++;
+                if (b.contains("campfire[lit=true")) lit++;
+                if (b.contains("campfire[lit=false")) unlit++;
+                if (b.contains("mattress")) mattress++;
                 if (b.contains("glass")) glass++;
             }
-            ck(doors == 0 && light == 0 && beds == 0, L0 + "брошено: дверей " + doors + ", света " + light + ", лежанок " + beds);
-            ck(glass <= 12, L0 + "окна выбиты (осколков стекла " + glass + ")");
+            int wantLit = lvl == 0 ? 0 : lvl == 1 ? 3 : 6;
+            ck(lit == wantLit && unlit == (lvl == 0 ? 1 : 0), L0 + "огонь: костёр + бочки горят " + lit + " (нужно " + wantLit + "), потушено " + unlit);
+            ck(lvl == 0 ? mattress == 0 : mattress >= 6, L0 + "нары: матрасов " + mattress);
+            ck(doors == 0, L0 + "проходы без дверей (" + doors + ")");
+            ck(glass <= 12, L0 + "стёкла выбиты (осколков " + glass + ")");
             // постройки по обмеру
             int y = g.block(318, -146);
             int[] wl = new int[2], wt = new int[2];
@@ -155,6 +172,8 @@ public class AtpTest {
                 for (int x : new int[] {KordonATP.KX0, KordonATP.KX1}) { wt[fl]++; if (solid(x, yy, z)) wl[fl]++; }
             }
             ck(wl[0] > wt[0] * 0.6 && wl[1] > wt[1] * 0.5, L0 + "контора: стены двух этажей (" + wl[0] + "/" + wt[0] + ", " + wl[1] + "/" + wt[1] + ")");
+            if (lvl > 0) ck(wl[0] + wl[1] >= prevWall, L0 + "разрухи не больше, чем на уровне ниже (" + (wl[0] + wl[1]) + " ≥ " + prevWall + ")");
+            prevWall = wl[0] + wl[1];
             int ridge = 0;
             for (int yy = y + 8; yy <= y + 13; yy++) if (at(318, yy, -145) != null && at(318, yy, -145).contains("boards_old_slab")) ridge = yy - y;
             ck(ridge >= 9 && ridge <= 11, L0 + "конёк конторы ≈ +11 (обмер 11): +" + ridge);
