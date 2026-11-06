@@ -377,10 +377,21 @@ public final class NpcManager {
     private static StalkerEntity spawnAtPrefabPoint(ServerLevel level, Simulation sim, Node n,
                                                       List<StalkerEntity> present, List<Prefabs.Point> pts) {
         int wanted = target(sim, n);
+        // карточка 056: первым — пулемётчик. Место «mg» есть только с уровня 2, и людей должно быть не меньше трёх.
+        List<Prefabs.Point> mgPoints = ofKind(pts, "mg");
+        int mgWant = ru.stalkerzone.sim.BaseRoles.machineGunners(wanted, mgPoints.size());
+        int mgHave = 0;
+        for (StalkerEntity e : present) if (e.workRole() == StalkerEntity.ROLE_MG) mgHave++;
+        if (mgHave < mgWant) {
+            Prefabs.Point mp = mgPoints.get(0);
+            StalkerEntity e = spawnMachineGunner(level, sim, n, new BlockPos(mp.x(), mp.y(), mp.z()));
+            if (e != null) return e;
+        }
         int[] kinds = new int[]{ofKind(pts, "guard").size(), ofKind(pts, "patrol").size(),
                 ofKind(pts, "cook").size(), ofKind(pts, "work").size(), ofKind(pts, "duty").size(),
                 ofKind(pts, "bed").size(), ofKind(pts, "rest").size()};
-        int[] want = ru.stalkerzone.sim.BaseRoles.assign(wanted, kinds);
+        // пулемётчик — тоже человек узла: на остальные роли людей остаётся на одного меньше
+        int[] want = ru.stalkerzone.sim.BaseRoles.assign(Math.max(0, wanted - mgHave), kinds);
         int[] have = new int[6];
         for (StalkerEntity e : present) {
             int r = e.workRole();
@@ -429,6 +440,26 @@ public final class NpcManager {
             if (!free.isEmpty()) return free.get(RND.nextInt(free.size()));
         }
         return list.get(RND.nextInt(list.size()));
+    }
+
+    /**
+     * Пулемётчик на месте «mg» (карточка 056): NPC роли MG с пулемётом {@link ru.stalkerzone.sim.BaseRoles#MG_GUN}
+     * в руках. Стоит на точке неподвижно, как часовой (сектор на север задаёт {@link GuardPostGoal}),
+     * уходит только в бой и после возвращается на пост.
+     */
+    private static StalkerEntity spawnMachineGunner(ServerLevel level, Simulation sim, Node n, BlockPos pos) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
+        BlockPos ground = standAt(level, pos);
+        StalkerEntity e = ModEntities.STALKER.get().create(level);
+        if (e == null) return null;
+        String name = CALLSIGNS[RND.nextInt(CALLSIGNS.length)] + " [" + rankFor(sim.factions.get(n.owner)) + "]";
+        e.moveTo(ground.getX() + 0.5, ground.getY(), ground.getZ() + 0.5, 180f, 0f);   // лицом на север
+        e.configure(n.owner, StalkerEntity.ROLE_STALKER, n.id, ground, Component.literal(name));
+        e.setWorkRole(StalkerEntity.ROLE_MG);
+        e.equipMachineGun();
+        e.getPersistentData().putBoolean("sz_guard", true);   // неподвижен на посту, как часовой
+        level.addFreshEntity(e);
+        return e;
     }
 
     private static StalkerEntity spawnWorkRole(ServerLevel level, Simulation sim, Node n, int workRole, BlockPos pos) {
