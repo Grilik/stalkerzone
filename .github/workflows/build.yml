@@ -21,10 +21,8 @@ jobs:
       - name: Sim tests (pure Java)
         run: |
           mkdir -p out
-          javac --release 17 -encoding UTF-8 -d out \
-            $(find src/main/java/ru/stalkerzone/sim src/main/java/ru/stalkerzone/zonemap -name '*.java') \
-            src/main/java/ru/stalkerzone/world/ZoneBounds.java src/main/java/ru/stalkerzone/artifact/ArtifactDef.java \
-            src/main/java/ru/stalkerzone/gear/TaczWeight.java src/test/java/*.java
+          # список исходников — один на CI и конвейер (П-13)
+          javac --release 17 -encoding UTF-8 -d out $(bash tools/ci/test_sources.sh)
           for f in src/test/java/*Test.java; do
             t=$(basename "$f" .java)
             echo "::group::$t"
@@ -67,3 +65,31 @@ jobs:
           if [ -n "$JAR_URL" ]; then extra="🎮 скачать для игры: $JAR_URL"; else extra="$RUN_URL"; fi
           python3 -I tools/notify/tg.py "$st сборка ${{ github.ref_name }}: $first ($AUTHOR)
           $extra" || true
+  # П-13 / открытая проблема 3: сервер на синтетическом уровне создаёт новый мир, держит тик и сохраняется
+  server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: server-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Сервер на синтетическом уровне
+        env:
+          JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+        run: |
+          bash tools/ci/server_smoke.sh | tee /tmp/smoke.txt
+          tail -1 /tmp/smoke.txt | grep -q "^СЕРВЕР: OK" || { echo "::error title=Сервер::$(tail -1 /tmp/smoke.txt)"; exit 1; }
+          echo "::notice title=Сервер::$(tail -1 /tmp/smoke.txt)"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: server-log
+          path: |
+            /tmp/sz-server.log
+            run/logs/latest.log
+            run/crash-reports/

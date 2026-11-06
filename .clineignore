@@ -1,0 +1,18 @@
+# Конвейер v2 (П-13): узкий контекст — исполнитель не читает документы, превью, инструменты уровней и сборку.
+docs/claude/
+docs/kordon_objects/
+docs/ui/
+tools/xray/
+tools/prefab/
+tools/zone_blocks/
+resourcepack/
+build/
+bin/
+run/
+.gradle/
+*.png
+*.szl
+*.log
+*.jar
+src/main/resources/assets/**/textures/
+src/main/resources/data/stalkerzone/points/

@@ -1,17 +1,15 @@
 name: conveyor
-# Конвейер карточек: Cline CLI (дешёвая модель) -> при провале старшая модель -> ревью -> PR (сливает человек).
-# Секреты: OPENROUTER_API_KEY (исполнитель, ревьюер), PROXYAPI_KEY (старшая модель Claude).
-# Переменные (необязательно): AGENT_MODEL, STRONG_MODEL, STRONG_BASE_URL.
+# Конвейер v2 (П-13, docs/claude/06-conveyor-v2.md): одна линия, карточка = падающий тест + узкое задание.
+# Исполнитель — Cline + дешёвая модель OpenRouter, одна попытка (≤ 15 мин, ≤ $0,30). Старшего Claude и автослияния нет:
+# PR конвейера сливает человек; после слияния конвейер берёт следующую карточку с паспортом «Конвейер: да».
+# Секрет: OPENROUTER_API_KEY. Переменные (необязательно): AGENT_MODEL, CARD_MINUTES, CARD_BUDGET, MIN_BALANCE,
+# CONVEYOR_PAUSED=1 — выключатель.
 on:
   workflow_dispatch:
     inputs:
       card:
-        description: "Номер карточки (пусто — следующая по таблице)"
+        description: "Номер карточки (пусто — следующая с паспортом «Конвейер: да»)"
         required: false
-      lane:
-        description: "Линия: sim, world или both"
-        required: false
-        default: both
   pull_request:
     types: [closed]
 permissions:
@@ -19,67 +17,39 @@ permissions:
   pull-requests: write
   issues: write
   actions: write
+concurrency:
+  group: conveyor
+  cancel-in-progress: false
 jobs:
   run:
-    # после слияния PR карточки — сразу следующая; на вехах (006, 011, 015) конвейер ждёт архитектора
-    # выключатель (карточка 019): переменная репозитория CONVEYOR_PAUSED=1 — конвейер не стартует
     if: >-
       vars.CONVEYOR_PAUSED != '1' && (
       github.event_name == 'workflow_dispatch' ||
-      (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'task/') &&
-       !startsWith(github.event.pull_request.head.ref, 'task/006') &&
-       !startsWith(github.event.pull_request.head.ref, 'task/011') &&
-       !startsWith(github.event.pull_request.head.ref, 'task/015')))
-    strategy:
-      fail-fast: false
-      matrix:
-        lane: [sim, world]
-    concurrency:
-      group: conveyor-${{ matrix.lane }}
-      cancel-in-progress: false
+      (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'task/')))
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 45
     steps:
-      - name: Линия
-        id: lane
-        run: |
-          want="${{ github.event.inputs.lane }}"; card="${{ github.event.inputs.card }}"
-          if [ -n "$card" ] && [ "${{ matrix.lane }}" = world ]; then echo "skip=1" >> $GITHUB_OUTPUT
-          elif [ -z "$want" ] || [ "$want" = both ] || [ "$want" = "${{ matrix.lane }}" ]; then echo "skip=0" >> $GITHUB_OUTPUT
-          else echo "skip=1" >> $GITHUB_OUTPUT; fi
       - uses: actions/checkout@v5
-        if: steps.lane.outputs.skip == '0'
         with:
           ref: main
           fetch-depth: 0
       - uses: actions/setup-java@v5
-        if: steps.lane.outputs.skip == '0'
         with:
           distribution: temurin
           java-version: 17
       - uses: actions/setup-node@v4
-        if: steps.lane.outputs.skip == '0'
         with:
           node-version: 22
-      - run: npm install -g cline @anthropic-ai/claude-code
-        if: steps.lane.outputs.skip == '0'
+      - run: npm install -g cline
       - name: Карточка
-        if: steps.lane.outputs.skip == '0'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GH_TOKEN: ${{ github.token }}
           CARD: ${{ github.event.inputs.card }}
-          LANE: ${{ matrix.lane }}
-          AGENT_MODEL_STRONG: ${{ vars.AGENT_MODEL_STRONG }}
           AGENT_MODEL: ${{ vars.AGENT_MODEL }}
-          STRONG_MODEL: ${{ vars.STRONG_MODEL }}
-          STRONG_BASE_URL: ${{ vars.STRONG_BASE_URL }}
-          PROXYAPI_KEY: ${{ secrets.PROXYAPI_KEY }}
+          CARD_MINUTES: ${{ vars.CARD_MINUTES }}
+          CARD_BUDGET: ${{ vars.CARD_BUDGET }}
+          MIN_BALANCE: ${{ vars.MIN_BALANCE }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          MIN_BALANCE: ${{ vars.MIN_BALANCE }}
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          CLAUDE_DAILY_LIMIT: ${{ vars.CLAUDE_DAILY_LIMIT }}
-          CLAUDE_RESET_AT: ${{ vars.CLAUDE_RESET_AT }}
-          AUTO_MERGE: ${{ vars.AUTO_MERGE }}
         run: bash tools/conveyor/conveyor.sh

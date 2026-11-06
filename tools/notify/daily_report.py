@@ -113,9 +113,16 @@ def proxyapi():
     return ["ProxyAPI: баланс по API недоступен"]
 
 
+def conveyor_v2():
+    """Конвейер v2"""
+    # П-13: цена слитой карточки и доля без переделок (tools/conveyor/metrics.py)
+    out = subprocess.run([sys.executable, "-I", "tools/conveyor/metrics.py", "--text"], capture_output=True, text=True, timeout=120)
+    return [out.stdout.strip() or "Конвейер v2: —"]
+
+
 def main():
     lines = [f"📊 Сводка за {NOW.astimezone(MSK):%d.%m %H:%M} МСК"]
-    for fn in (work, runs, cards, openrouter, proxyapi):
+    for fn in (work, runs, cards, conveyor_v2, openrouter, proxyapi):
         lines += block(fn)
     text = "\n".join(lines)
     if os.environ.get("DRY_RUN"):
