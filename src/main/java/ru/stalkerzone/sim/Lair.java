@@ -19,6 +19,8 @@ public final class Lair {
     public boolean lab;
     public int raidCooldown;
     public int age;
+    /** Сколько добычи стая уже съела (карточка 062). Не сохраняется: статистика одного мира. */
+    public double preyEaten;
 
     public Lair(int node, LairKind kind, double strength, boolean lab) {
         this.node = node;
@@ -30,6 +32,20 @@ public final class Lair {
     public double cap() { return kind.cap * (lab ? 1.15 : 1.0); }
 
     public double growth() { return kind.growth * (lab ? 1.4 : 1.0); }
+
+    /**
+     * Стая тащит добычу в логово (карточка 062): сила растёт на съеденное, но не выше потолка {@link #cap()}.
+     * Лишняя еда пропадает (сытое логово не растёт). Съеденное копится в {@link #preyEaten}.
+     *
+     * @return сколько еды логово действительно съело
+     */
+    public double feed(double food) {
+        if (food <= 0) return 0;
+        double eaten = Math.max(0, Math.min(food, cap() - strength));
+        strength += eaten;
+        preyEaten += eaten;
+        return eaten;
+    }
 
     public String title() { return kind.ru + (lab ? " (лаборатория)" : ""); }
 

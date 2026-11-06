@@ -12,6 +12,9 @@ public final class KordonBalance {
 
     private KordonBalance() {}
 
+    /** Сколько силы логова даёт один человек, убитый налётом стаи (карточка 062). */
+    public static final double PREY_PER_PERSON = 2.0;
+
     // --- стартовые логова: узел, вид, начальная сила ---------------------------------
     public static final LairDef[] START_LAIRS = {
             new LairDef(13, LairKind.DOGS, 20.0),
