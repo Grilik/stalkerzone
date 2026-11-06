@@ -8,7 +8,7 @@ public class PlayerStartTest {
     static void ck(boolean ok, String m) { System.out.println((ok ? "OK   " : "FAIL ") + m); if (!ok) f++; }
 
     public static void main(String[] a) {
-        Simulation s = KordonScenario.create(0);
+        Simulation s = KordonWar.create(0);
 
         // узел появления задан сценарием (деревня новичков), а не захардкожен в коде мира
         ck(s.spawnNode >= 0 && s.spawnNode < s.nodes.size(), "узел появления задан сценарием");

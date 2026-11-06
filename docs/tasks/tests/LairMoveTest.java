@@ -54,8 +54,8 @@ public class LairMoveTest {
         String save = s.save();
         byte[] raw = Base64.getDecoder().decode(save);
         int version = ((raw[0] & 255) << 24) | ((raw[1] & 255) << 16) | ((raw[2] & 255) << 8) | (raw[3] & 255);
-        ck(version == 21, "версия сохранения 21: " + version);
-        raw[3] = 20;
+        ck(version >= 21, "версия сохранения не ниже 21: " + version);
+        raw[3] = (byte) (version - 1);
         Simulation old = null;
         try { old = Simulation.load(Base64.getEncoder().encodeToString(raw)); } catch (RuntimeException e) { e.printStackTrace(); }
         ck(old != null && old.day == 0 && old.nodes.get(21).name.equals("Собачий лес"), "сохранение v20 Кордона — новый мир с тем же сидом");

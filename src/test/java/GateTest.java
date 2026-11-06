@@ -100,7 +100,7 @@ public class GateTest {
 
     /** Смена владельца: врагов владельца не пускают (кто враг — решает матрица вражды). */
     static void ownerChange() {
-        Simulation s = KordonScenario.create(0);
+        Simulation s = KordonWar.create(0);
         Faction mil = s.military();
         Faction ban = s.factions.get(ZoneScenario.BANDITS);
         Faction lon = s.factions.get(ZoneScenario.LONERS);
