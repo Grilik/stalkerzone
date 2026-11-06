@@ -41,7 +41,7 @@ public final class Prefabs {
     }
 
     /** Узлы сценария «Кордон» ({@code KordonScenario}), у которых есть площадки. */
-    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_ATP = 5, NODE_TUNNEL = 7, NODE_WAGON = 19;
+    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_ELEVATOR = 4, NODE_ATP = 5, NODE_TUNNEL = 7, NODE_WAGON = 19;
 
     /** Плато деревни новичков (П-02): ровная часть и ширина откоса; высота — медиана уровня (AUTO). */
     public static final int[] VILLAGE_PLATEAU = {-40, -24, 56, 34};
@@ -55,9 +55,9 @@ public final class Prefabs {
     private static final List<int[]> LAIR_L3_CLEAR = List.of(new int[]{LAIR_L3[0] - 14, LAIR_L3[1] - 14, LAIR_L3[0] + 14, LAIR_L3[1] + 14});
 
     /**
-     * Площадки уровня Kordon (l01_escape), «Малый Кордон». Отключены (классы оставлены, 01.11): элеватор,
+     * Площадки уровня Kordon (l01_escape), «Малый Кордон». Отключены (классы оставлены, 01.11):
      * свиноферма, дальний блокпост, мост — там снова воксели оригинала; туннель с электрами вернулся площадкой tunnel (П-23),
-     * АТП — площадкой atp (П-21, брошенная база).
+     * АТП — площадкой atp (П-21), элеватор — площадкой elevator (П-22, малая застава одиночек).
      */
     private static final List<Site> SITES = java.util.List.of(
             new Site("village", NODE_VILLAGE)
@@ -76,6 +76,9 @@ public final class Prefabs {
             // П-21: АТП (смарт-террейн 7_11) — брошенная база по вокселям оригинала, плато AUTO
             new Site("atp", NODE_ATP).plateau(KordonATP.PLATEAU[0], KordonATP.PLATEAU[1], KordonATP.PLATEAU[2], KordonATP.PLATEAU[3],
                     Site.AUTO, KordonATP.MARGIN).build(of(KordonATP.CLEAR, KordonATP::build)),
+            // П-22: элеватор (смарт-террейн 5_9) — башня, силосы, галерея, коровники; малая застава одиночек
+            new Site("elevator", NODE_ELEVATOR).plateau(KordonElevator.PLATEAU[0], KordonElevator.PLATEAU[1], KordonElevator.PLATEAU[2],
+                    KordonElevator.PLATEAU[3], Site.AUTO, KordonElevator.MARGIN).build(of(KordonElevator.CLEAR, KordonElevator::build)),
             // Логово Л3 у узла 21 (карточка 053): без плато, Structures.lairDen у (−92, −100)
             new Site("lair", NODE_LAIR_L3).build(of(LAIR_L3_CLEAR, Prefabs::lairL3)));
 
