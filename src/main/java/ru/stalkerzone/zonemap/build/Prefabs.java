@@ -49,6 +49,11 @@ public final class Prefabs {
     /** Костёр деревни — центр жизни узла (точка campfire из kordon_points.json). */
     public static final int[] VILLAGE_FIRE = {2, -1};
 
+    /** Логово Л3 у узла 21 (карточка 053): без плато, Structures.lairDen у (−92, −100). */
+    public static final int NODE_LAIR_L3 = 21;
+    public static final int[] LAIR_L3 = {-92, -100};
+    private static final List<int[]> LAIR_L3_CLEAR = List.of(new int[]{LAIR_L3[0] - 14, LAIR_L3[1] - 14, LAIR_L3[0] + 14, LAIR_L3[1] + 14});
+
     /**
      * Площадки уровня Kordon (l01_escape), «Малый Кордон». Отключены (классы оставлены, 01.11): АТП, элеватор,
      * свиноферма, дальний блокпост, мост/туннель — там снова воксели оригинала.
@@ -64,7 +69,15 @@ public final class Prefabs {
             new Site("wagon", NODE_WAGON).plateau(104, -88, 130, -60, Site.AUTO, 6).shaper(KordonRoadBridge.RAVINE)
                     .build(of(KordonWagon.CLEAR, KordonWagon::build)).build(of(KordonRoadBridge.CLEAR, KordonRoadBridge::build)),
             // А6 — свалка техники и застава О12 на дне чаши (узел 20, П-23)
-            new Site("dump", 20).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)));
+            new Site("dump", 20).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)),
+            // Логово Л3 у узла 21 (карточка 053): без плато, Structures.lairDen у (−92, −100)
+            new Site("lair", NODE_LAIR_L3).build(of(LAIR_L3_CLEAR, Prefabs::lairL3)));
+
+    /** Логово Л3: кости, череп, паутина у (−92, −100); место «den» для мутантов. */
+    static void lairL3(BlockSink s, int lvl) {
+        Structures.lairDen(new B(s, LAIR_L3[0], LAIR_L3[1], 0, 2101L, lvl));
+        s.mark("den", LAIR_L3[0], s.ground(LAIR_L3[0], LAIR_L3[1]) + 1, LAIR_L3[1]);
+    }
 
     /** Площадки уровня (пусто — уровень без площадок). */
     public static List<Site> sites(String levelId) { return "l01_escape".equals(levelId) ? SITES : List.of(); }
