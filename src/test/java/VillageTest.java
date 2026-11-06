@@ -25,6 +25,7 @@ public class VillageTest {
     public static void main(String[] a) {
         for (int lvl = 0; lvl <= 3; lvl++) run("плато 79, уровень " + lvl, (x, z) -> 79, lvl);
         run("неровная земля", (x, z) -> 79 + Math.floorMod(x * 7 + z * 13, 3), -1);   // только границы и места на полу
+        framedBudget();
         if (f > 0) { System.out.println("FAILED " + f); System.exit(1); }
     }
 
@@ -162,5 +163,28 @@ public class VillageTest {
             }
         }
         return seen;
+    }
+
+    /** П-16: с FramedBlocks кровли всех изб — framed-скаты, block entity деревни ≤ 2 000 (граница из замера П-05). */
+    static void framedBudget() {
+        boolean was = ru.stalkerzone.zonemap.build.Framed.loaded;
+        ru.stalkerzone.zonemap.build.Framed.loaded = true;
+        Map<P, String> m = new HashMap<>();
+        BlockSink s = new BlockSink() {
+            @Override public void set(int x, int y, int z, String st) { m.put(new P(x, y, z), st); }
+            @Override public int ground(int x, int z) { return 79; }
+        };
+        KordonVillage.build(s, 1);
+        ru.stalkerzone.zonemap.build.Framed.loaded = was;
+        int be = 0, framed = 0, stairsRoof = 0;
+        for (Map.Entry<P, String> e : m.entrySet()) {
+            String st = e.getValue();
+            if (st.startsWith("framedblocks:")) framed++;
+            if (st.startsWith("framedblocks:") || st.contains("_bed") || st.contains("barrel") || st.contains("furnace")
+                    || st.contains("brewing_stand") || st.contains("lectern")) be++;
+            if (e.getKey().y >= 83 && (st.startsWith("stalkerzone:zm_shifer_stairs") || st.startsWith("stalkerzone:zm_planks_gray_stairs"))) stairsRoof++;
+        }
+        ck(framed >= 1200 && stairsRoof < 20, "FramedBlocks: кровли изб — framed-скаты (" + framed + " framed, ступеней на кровлях " + stairsRoof + ")");
+        ck(be <= 2000, "FramedBlocks: block entity деревни " + be + " ≤ 2000");
     }
 }
