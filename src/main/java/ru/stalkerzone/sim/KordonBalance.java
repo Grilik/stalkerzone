@@ -364,6 +364,16 @@ public final class KordonBalance {
                     if (!already) cmds.add(new Command.Attack(4));
                 }
             }
+            // Карточка 046: ничья малая застава без логова снова у одиночек, если есть силы
+            if (f.members >= 10) {
+                for (int id : KordonScenario.SMALL_OUTPOSTS) {
+                    if (id >= sim.nodes.size()) continue;
+                    Node n = sim.nodes.get(id);
+                    if (n.owner < 0 && sim.lairAt(id) == null) {
+                        n.owner = f.id;
+                    }
+                }
+            }
             return cmds;
         }
     }

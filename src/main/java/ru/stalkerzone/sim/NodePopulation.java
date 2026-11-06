@@ -12,6 +12,8 @@ public final class NodePopulation {
     public static final int BASE_CAP = 12;
     /** Потолок NPC на прочих занятых узлах. */
     public static final int NODE_CAP = 6;
+    /** Потолок NPC на малых заставах (карточка 046). */
+    public static final int SMALL_OUTPOST_CAP = 4;
     /** Минимум NPC на занятом узле. */
     public static final int MIN_PER_NODE = 2;
 
@@ -23,13 +25,19 @@ public final class NodePopulation {
      */
     public static int number(Simulation s, Faction f, Node n) {
         if (s == null || f == null || n == null || n.owner != f.id) return 0;
-        return visible(peopleAtNode(s, f, n), away(s, f, n), n.type == NodeType.BASE);
+        return visible(peopleAtNode(s, f, n), away(s, f, n), n.type == NodeType.BASE,
+                KordonScenario.isSmallOutpost(n.id));
     }
 
     /** Число NPC по гарнизону узла и ушедшим: 0 при пустом гарнизоне, иначе в границах [2, потолок]. */
     public static int visible(int garrison, int away, boolean base) {
+        return visible(garrison, away, base, false);
+    }
+
+    /** Число NPC по гарнизону узла и ушедшим: 0 при пустом гарнизоне, иначе в границах [2, потолок]. */
+    public static int visible(int garrison, int away, boolean base, boolean smallOutpost) {
         if (garrison <= 0) return 0;
-        int cap = base ? BASE_CAP : NODE_CAP;
+        int cap = base ? BASE_CAP : (smallOutpost ? SMALL_OUTPOST_CAP : NODE_CAP);
         int here = garrison - Math.max(0, away);
         return Math.max(MIN_PER_NODE, Math.min(cap, here));
     }
