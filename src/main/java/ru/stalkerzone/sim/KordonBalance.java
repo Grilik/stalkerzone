@@ -19,6 +19,7 @@ public final class KordonBalance {
             new LairDef(14, LairKind.FLESH, 20.0),
             new LairDef(15, LairKind.FLESH, 20.0),
             new LairDef(7, LairKind.RODENTS, 18.0),
+            new LairDef(21, LairKind.DOGS, 20.0),
     };
 
     /** Описание стартового логова. */

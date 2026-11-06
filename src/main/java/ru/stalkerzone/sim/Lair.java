@@ -49,10 +49,19 @@ public final class Lair {
      * @return мировые координаты {x, z} без обрезки по границам Зоны
      */
     public static int[] denXZ(Node n) {
+        if (n.den != null) return new int[]{n.den[0], n.den[1]};
         double ang = ((n.id * 2654435761L) >>> 8) % 360 * Math.PI / 180;
         return new int[]{
                 n.x * ZoneBounds.SCALE + (int) Math.round(Math.cos(ang) * DEN_DIST),
                 n.z * ZoneBounds.SCALE + (int) Math.round(Math.sin(ang) * DEN_DIST)
         };
+    }
+
+    /**
+     * Радиус блуждания мутантов вокруг логова (карточка 047): днём псы держатся у логова,
+     * ночью выходят на охоту дальше.
+     */
+    public static int roamRadius(boolean night) {
+        return night ? 32 : 10;
     }
 }

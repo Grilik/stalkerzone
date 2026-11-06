@@ -85,7 +85,8 @@ public class MutantEntity extends Monster {
 
     public void bind(int lairNode, BlockPos den) {
         this.lairNode = lairNode;
-        this.restrictTo(den, 22);
+        // днём мутанты держатся у логова, ночью выходят дальше (карточка 047)
+        this.restrictTo(den, Lair.roamRadius(level().isNight()));
         this.setPersistenceRequired();
     }
 
