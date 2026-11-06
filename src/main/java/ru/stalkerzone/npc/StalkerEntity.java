@@ -543,22 +543,17 @@ public class StalkerEntity extends PathfinderMob {
                     String msg = ru.stalkerzone.pda.PdaService.deliverLabData(sp0, ZoneData.get(this.getServer()));
                     sp0.sendSystemMessage(Component.literal(msg));
                     ZoneData.get(this.getServer()).setDirty();
-                } else if (isTrader() && player instanceof net.minecraft.server.level.ServerPlayer sp
+                } else if (isTrader() && player.isShiftKeyDown() && player instanceof net.minecraft.server.level.ServerPlayer sp
                         && player.getItemInHand(hand).getItem() instanceof ru.stalkerzone.item.GoodItem) {
+                    // Shift+ПКМ товаром — быстрая продажа всего стака, как раньше
                     ZoneData data = ZoneData.get(this.getServer());
                     TradeService.sell(sp, data, sim.nodes.get(homeNode), player.getItemInHand(hand));
-                } else if (isTrader() && player instanceof net.minecraft.server.level.ServerPlayer sp2
+                } else if (isTrader() && player.isShiftKeyDown() && player instanceof net.minecraft.server.level.ServerPlayer sp2
                         && TradeService.gearUnits(player.getItemInHand(hand)) > 0) {
                     TradeService.sellEquipment(sp2, ZoneData.get(this.getServer()), sim.nodes.get(homeNode), player.getItemInHand(hand));
-                } else if (isTrader()) {
-                    player.sendSystemMessage(Component.literal("С товаром в руке: ПКМ продаёт весь стак (или костюм, рюкзак). Купить: /zone buy <товар> <число>, снаряжение: /zone buy заря, рюкзак... Ремонт: /zone repair"));
-                    for (String line : Report.market(sim, sim.nodes.get(homeNode)).split("\n")) {
-                        player.sendSystemMessage(Component.literal(line));
-                    }
-                    if (player instanceof net.minecraft.server.level.ServerPlayer spN) {
-                        String note = PlayerFaction.tradeNote(spN, sim, sim.nodes.get(homeNode));
-                        if (note != null) player.sendSystemMessage(Component.literal(note).withStyle(net.minecraft.ChatFormatting.AQUA));
-                    }
+                } else if (isTrader() && player instanceof net.minecraft.server.level.ServerPlayer spT) {
+                    // П-07: окно торговца (товары, ваш рюкзак, заказы, ремонт)
+                    TraderWindow.open(spT, this);
                 } else if (getPersistentData().getBoolean("sz_guard") && homeNode == sim.tollCrossing
                         && player instanceof net.minecraft.server.level.ServerPlayer spG) {
                     // пост на мосту (карточка 012): ПКМ по часовому оплачивает пошлину

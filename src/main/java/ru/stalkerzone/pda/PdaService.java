@@ -103,6 +103,13 @@ public final class PdaService {
     // ------------------------------------------------------------------ действия
 
     public static void action(ServerPlayer p, int action, int id) {
+        String msg = actionResult(p, action, id);
+        if (msg != null) p.sendSystemMessage(Component.literal(msg).withStyle(ChatFormatting.YELLOW));
+        open(p, false);
+    }
+
+    /** Выполнить действие с контрактом и вернуть сообщение (без чата) — для КПК и окна торговца (П-07). */
+    public static String actionResult(ServerPlayer p, int action, int id) {
         ZoneData data = ZoneData.get(p.getServer());
         Simulation s = data.sim;
         String me = id(p);
@@ -131,8 +138,7 @@ public final class PdaService {
             default -> { }
         }
         data.setDirty();
-        if (msg != null) p.sendSystemMessage(Component.literal(msg).withStyle(ChatFormatting.YELLOW));
-        open(p, false);
+        return msg;
     }
 
     public static String describe(ContractBoard.Reward r) {
