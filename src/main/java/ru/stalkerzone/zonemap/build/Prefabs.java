@@ -41,7 +41,7 @@ public final class Prefabs {
     }
 
     /** Узлы сценария «Кордон» ({@code KordonScenario}), у которых есть площадки. */
-    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_WAGON = 19;
+    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_TUNNEL = 7, NODE_WAGON = 19;
 
     /** Плато деревни новичков (П-02): ровная часть и ширина откоса; высота — медиана уровня (AUTO). */
     public static final int[] VILLAGE_PLATEAU = {-40, -24, 56, 34};
@@ -56,7 +56,7 @@ public final class Prefabs {
 
     /**
      * Площадки уровня Kordon (l01_escape), «Малый Кордон». Отключены (классы оставлены, 01.11): АТП, элеватор,
-     * свиноферма, дальний блокпост, мост/туннель — там снова воксели оригинала.
+     * свиноферма, дальний блокпост, мост — там снова воксели оригинала; туннель с электрами вернулся площадкой tunnel (П-23).
      */
     private static final List<Site> SITES = java.util.List.of(
             new Site("village", NODE_VILLAGE)
@@ -70,6 +70,8 @@ public final class Prefabs {
                     .build(of(KordonWagon.CLEAR, KordonWagon::build)).build(of(KordonRoadBridge.CLEAR, KordonRoadBridge::build)),
             // А6 — свалка техники и застава О12 на дне чаши (узел 20, П-23)
             new Site("dump", 20).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)),
+            // П-23: туннель с «электрами» под насыпью (смарт-террейн 4_9) — выемка у порталов, две заставы одиночек
+            new Site("tunnel", NODE_TUNNEL).shaper(KordonTunnel.cut()).build(of(KordonTunnel.CLEAR, KordonTunnel::build)),
             // Логово Л3 у узла 21 (карточка 053): без плато, Structures.lairDen у (−92, −100)
             new Site("lair", NODE_LAIR_L3).build(of(LAIR_L3_CLEAR, Prefabs::lairL3)));
 
@@ -130,9 +132,11 @@ public final class Prefabs {
         for (int[] p : new int[][] {{VILLAGE_FIRE[0], VILLAGE_FIRE[1]}, {154, -75}, {-35, -8}})
             if (g.contains(p[0], p[1])) log.append(String.format(" (%d,%d)=%.1f", p[0], p[1], g.get(p[0], p[1])));
         Site.apply(ss, g);
-        for (Site s : ss) for (Site.Shaper sh : s.shapers())
+        for (Site s : ss) for (Site.Shaper sh : s.shapers()) {
             if (sh instanceof Site.Plateau p) log.append("; плато ").append(s.id).append(" y=").append(p.top())
                     .append(p.fixed() ? "" : " (AUTO)");
+            else if (sh instanceof KordonTunnel.Cut c) log.append("; выемка ").append(s.id).append(" пол y=").append(c.floor());
+        }
         return log.toString();
     }
 
