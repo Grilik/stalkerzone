@@ -65,7 +65,7 @@ public final class KordonBalance {
     public static final int SHIFT_RESET_DAYS = 30;
 
     // --- веса целей для нападений -------------------------------------------------------
-    public static final double[] RAID_TARGET_WEIGHT = new double[19];
+    public static final double[] RAID_TARGET_WEIGHT = new double[22];
     static { RAID_TARGET_WEIGHT[0] = 1.5; RAID_TARGET_WEIGHT[10] = 1.5; }
     /** Минимальная сила логова для налёта на Кордоне. */
     public static final double LAIR_RAID_MIN = 25;

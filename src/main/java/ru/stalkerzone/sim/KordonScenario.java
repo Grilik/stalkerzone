@@ -21,18 +21,23 @@ public final class KordonScenario {
     // v14: узлы логов (карточка 007), координаты примерные — уточнить по меткам игрока
     private static final int HILL = 13, FIELDS = 14, FOREST = 15, RAVINE = 16, MEADOW = 17, EDGE = 18;
 
+    // v19 (карточка 044): узлы «Малого Кордона» — лагерь у вагончика (О7), свалка техники (А6/О12),
+    // лес у свалки техники (логово Л3). Новые узлы только в конец списка.
+    public static final int WAGON = 19, DUMP = 20, DUMP_FOREST = 21;
+
     /** Координаты узлов (x, z) в единицах ×10 блоков: center / 10 из data/stalkerzone/kordon_points.json. */
     public static final int[][] COORDS = {
             {0, 0}, {-4, -1}, {6, 22}, {8, 33}, {20, -22}, {33, -12}, {58, -8},
             {13, -26}, {27, -30}, {43, -35}, {21, -42}, {23, -81}, {24, -84},
-            {24, -17}, {8, -36}, {26, -51}, {42, -21}, {35, -38}, {28, -76}
+            {24, -17}, {8, -36}, {26, -51}, {42, -21}, {35, -38}, {28, -76},
+            {12, -7}, {-4, -12}, {-9, -10}
     };
 
     /** Узлы — выходы за карту: логова и цели налётов их исключают. */
     public static final int[] EXITS = {BIG_LAND, DARK_EXIT, SVALKA_EXIT};
 
     /** Узлы, где могут быть логова (старт и возрождение). Захват фракциями исключён. */
-    public static final int[] LAIR_SITES = {HILL, FIELDS, FOREST, RAVINE, MEADOW, EDGE, TUNNEL, HOLE};
+    public static final int[] LAIR_SITES = {HILL, FIELDS, FOREST, RAVINE, MEADOW, EDGE, TUNNEL, HOLE, DUMP_FOREST};
 
     /** Стартовая численность трёх живых группировок — баланс уточняет карточка 005. */
     public static final int LONER_MEMBERS = 40, MILITARY_MEMBERS = 24, BANDIT_MEMBERS = 28;
@@ -107,6 +112,16 @@ public final class KordonScenario {
         Node meadow = node(nodes, "Луг у фермы", NodeType.RUINS, 35, -38);
         Node edge = node(nodes, "Опушка у пути на Свалку", NodeType.RUINS, 28, -76);
 
+        // v19 (карточка 044): «Малый Кордон» — лагерь у вагончика (О7), свалка техники (А6/О12), логово Л3
+        Node wagon = node(nodes, "Лагерь у вагончика", NodeType.OUTPOST, 12, -7);
+        wagon.existingBuildings = true;
+        wagon.housing = 8; wagon.defense = 20;
+
+        Node dump = node(nodes, "Свалка техники", NodeType.ANOMALY, -4, -12);
+        dump.existingBuildings = true;
+
+        Node dumpForest = node(nodes, "Лес у свалки техники", NodeType.RUINS, -9, -10);
+
         ZoneGraph g = new ZoneGraph(nodes.size());
         // южная часть
         g.connect(VILLAGE, BUNKER, 1, 0.02);
@@ -133,6 +148,10 @@ public final class KordonScenario {
         g.connect(FOREST, FAR_POST, 1, 0.03);
         g.connect(MEADOW, FARM, 1, 0.03);
         g.connect(EDGE, FAR_POST, 1, 0.03);
+        // v19 (карточка 044): дороги «Малого Кордона»
+        g.connect(VILLAGE, WAGON, 1, 0.02);
+        g.connect(VILLAGE, DUMP, 2, 0.04);
+        g.connect(DUMP, DUMP_FOREST, 1, 0.03);
         g.build();
 
         // baseNode непустых фракций; пустые фракции получают 0, чтобы их ИИ не падал на разыменовании
@@ -175,6 +194,9 @@ public final class KordonScenario {
         southPost.owner = ZoneScenario.MILITARY;
         bridge.owner = ZoneScenario.MILITARY;
         bunker.owner = ZoneScenario.TRADERS;
+        // v19 (карточка 044): застава О12 на краю свалки с начала, Л3 ничей
+        wagon.owner = ZoneScenario.LONERS;
+        dump.owner = ZoneScenario.LONERS;
 
         // стартовые склады трёх живых группировок
         for (Faction f : factions) {
