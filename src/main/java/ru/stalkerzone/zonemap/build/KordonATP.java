@@ -9,9 +9,15 @@ import java.util.List;
  * АТП Кордона (узел 5, смарт-террейн {@code esc_smart_terrain_7_11}) — заново по вокселям оригинала l01_escape (Anomaly)
  * и обмеру {@code docs/kordon_objects/05-atp.md} (П-21). Прежний сборщик (отключён в PR #64) переписан целиком.
  *
- * <p>Решение пользователя: <b>брошенная база</b> — разруха на всех уровнях развития: выбитые окна, нет дверей,
- * дыры в кровлях и стенах, обвал перекрытия конторы, мусор, шины, ящики-хабар. Жилых мест нет: только укрытия
- * ({@code shelter} ×4 — в конторе и боксах) и места хабара ({@code work} ×2).
+ * <p>Решение пользователя (06.11, 23:50): <b>база бандитов, как в оригинале</b>, обжитая — костёр в жилом боксе
+ * (северный навес, точка костра узла), нары, бочки с огнём, шины, ржавые листы, мусор. Рабочие места: {@code bed} ×6,
+ * {@code rest} ×3, {@code cook}, {@code guard} ×2 (у ворот и на крыше конторы), {@code patrol} вдоль забора,
+ * {@code shelter} ×4 (контора, боксы).
+ *
+ * <p>Уровни базы 0–3, как у деревни: 0 — руины (дыры, костёр потушен, нар нет), 1 — лагерь (костёр, нары, две бочки
+ * с огнём, мешки на крыше), 2 — обжитая (дыры залатаны, часть окон заколочена, проломы забора — ржавыми листами,
+ * мешки у ворот, все бочки с огнём), 3 — укреплённая (решётки на нижних окнах, навес над постом на крыше,
+ * баррикада у ворот). Постройки и места те же на всех уровнях.
  *
  * <p>Объекты (номера обмера):
  * <ul>
@@ -19,7 +25,7 @@ import java.util.List;
  *   <li>3 — боксы: три гаражных бокса с воротами на запад (в среднем — сгоревший ЗИЛ), пристройка, северный навес;</li>
  *   <li>6 — мастерская: высокий цех со смотровой ямой, южная часть с воротами на запад, длинное восточное крыло;</li>
  *   <li>4 — дощатый склад под шифером; 7 — водокачка на столбах; 1 — прожекторная мачта;</li>
- *   <li>5, 8, 9 — брошенные грузовики и машины во дворе и у ворот; бетонный забор по югу и востоку (проём ворот x 299..303).</li>
+ *   <li>5, 8, 9 — разбитые грузовики и машины во дворе и у ворот; бетонный забор по югу и востоку (проём ворот x 299..303).</li>
  * </ul>
  * Высоты — от земли плато (AUTO, ≈ 92 в оригинале); на склоне каждая постройка садится на медиану земли своего следа.
  */
@@ -44,6 +50,9 @@ public final class KordonATP {
             AMMO = "stalkerzone:prop_ammo_crates[facing=north]", TRASH = "stalkerzone:prop_trash_bags[facing=north]",
             PROP_RUBBLE = "stalkerzone:prop_rubble[facing=north]", TIRE = "stalkerzone:prop_tire[facing=north]",
             TIRES = "stalkerzone:tires", BARREL = "stalkerzone:rusty_barrel", BARREL_L = "stalkerzone:prop_barrel_lying[facing=east]",
+            BAGS = "stalkerzone:zm_sandbags", MATTRESS = "stalkerzone:zm_mattress_slab[type=bottom]",
+            FIRE_ON = "minecraft:campfire[lit=true,facing=north,signal_fire=false,waterlogged=false]",
+            FIRE_OFF = "minecraft:campfire[lit=false,facing=north,signal_fire=false,waterlogged=false]",
             ANVIL = "minecraft:damaged_anvil[facing=north]", CHAIN = "minecraft:chain[axis=y]", COBWEB = "minecraft:cobweb",
             AIR = "minecraft:air";
 
@@ -70,8 +79,18 @@ public final class KordonATP {
     /** Доля p (0..1) по шуму позиции. */
     static boolean p(int x, int y, int z, double p) { return hash(x, y, z) % 1000 < p * 1000; }
 
-    /** Построить АТП. lvl не меняет облик: база брошена на всех уровнях. */
+    /** Множитель разрухи по уровню развития: 0 — руины после ухода хозяев, 3 — укреплённая база (дыры залатаны). */
+    static final double[] WEAR = {1.0, 0.6, 0.35, 0.2};
+    // сборка однопоточная в пределах вызова build (как у прочих сборщиков — статические методы без общего состояния
+    // между вызовами); уровень передаётся через поле, чтобы не тащить его в каждый помощник
+    private static final ThreadLocal<Integer> LVL = ThreadLocal.withInitial(() -> 1);
+    static int lvl() { return LVL.get(); }
+    /** Дыра с долей hole с учётом уровня. */
+    static boolean hole(int x, int y, int z, double hole) { return p(x, y, z, hole * WEAR[lvl()]); }
+
+    /** Построить АТП — базу бандитов на уровне развития lvl (0–3).  */
     public static void build(BlockSink b, int lvl) {
+        LVL.set(Math.max(0, Math.min(3, lvl)));
         office(b);
         boxes(b);
         workshop(b);
@@ -80,7 +99,64 @@ public final class KordonATP {
         mast(b);
         fence(b);
         vehicles(b);
+        guards(b);
+        fireBarrels(b);
         yard(b);
+    }
+
+    /** Костёр узла (точка campfire из kordon_points.json) — в жилом боксе. */
+    public static final int[] FIRE = {337, -151};
+    /** Обход вдоль забора (изнутри двора). */
+    static final int[][] PATROL = {{296, -96}, {312, -96}, {330, -96}, {348, -96}, {351, -104}, {351, -117}};
+    /** Бочки с огнём: первые две с ур. 1, остальные с ур. 2. */
+    static final int[][] FIRE_BARRELS = {{328, -131}, {306, -98}, {310, -142}, {345, -118}, {300, -112}};
+
+    /**
+     * Часовые: у ворот (за мешками с ур. 2) и на крыше конторы — площадка на плоской крыше восточной пристройки
+     * с лестницей снаружи (мешки с ур. 1, навес с ур. 3). Обход вдоль забора.
+     */
+    static void guards(BlockSink b) {
+        int l = lvl();
+        int gx = 305, gz = -96, g = b.ground(gx, gz);
+        b.mark("guard", gx, g + 1, gz);
+        if (l >= 2) for (int x = 304; x <= 307; x++) b.set(x, b.ground(x, -95) + 1, -95, BAGS);
+        if (l >= 3) for (int[] c : new int[][] {{297, -95}, {298, -95}, {297, -96}}) {
+            b.set(c[0], b.ground(c[0], c[1]) + 1, c[1], RUST);
+            b.set(c[0], b.ground(c[0], c[1]) + 2, c[1], BAGS);
+        }
+        // площадка на крыше пристройки конторы (x 325..329, z −154..−150, на g + 4)
+        int ga = base(b, KX1, KZ0, 329, -149), top = ga + 4;
+        for (int x = 325; x <= 329; x++) for (int z = -154; z <= -150; z++) {
+            b.set(x, top, z, PLANKS);
+            boolean edge = x == 325 || x == 329 || z == -154 || z == -150;
+            if (l >= 1 && edge && !(x >= 328 && z == -150)) b.set(x, top + 1, z, BAGS);   // проход с лестницы
+        }
+        for (int y = ga + 1; y <= ga + 3; y++) b.set(329, y, -150, CONC_O);              // стена под лестницей целая
+        for (int y = ga + 1; y <= top; y++) b.set(330, y, -150, "minecraft:ladder[facing=east]");
+        if (l >= 3) {
+            for (int[] c : new int[][] {{325, -154}, {329, -154}, {325, -150}})
+                for (int y = top + 1; y <= top + 2; y++) b.set(c[0], y, c[1], POST_F);
+            for (int x = 325; x <= 329; x++) for (int z = -154; z <= -150; z++) b.set(x, top + 3, z, RUST + "_slab[type=bottom]");
+        }
+        b.mark("guard", 327, top + 1, -152);
+        for (int[] p : PATROL) b.mark("patrol", p[0], b.ground(p[0], p[1]) + 1, p[1]);
+    }
+
+    /** Бочки с огнём во дворе (костёр на ржавой бочке): у ворот и между постройками. */
+    static void fireBarrels(BlockSink b) {
+        int l = lvl(), n = l == 0 ? 0 : l == 1 ? 2 : FIRE_BARRELS.length;
+        for (int i = 0; i < FIRE_BARRELS.length; i++) {
+            int x = FIRE_BARRELS[i][0], z = FIRE_BARRELS[i][1], g = b.ground(x, z);
+            if (i < n) { b.set(x, g + 1, z, BARREL); b.set(x, g + 2, z, FIRE_ON); }
+            else if (l == 0 && i < 2) b.set(x, g + 1, z, BARREL_L);
+        }
+        if (l >= 1) for (int[] t : new int[][] {{294, -98}, {295, -98}, {340, -97}, {341, -97}}) {   // шины и листы у забора
+            int g = b.ground(t[0], t[1]);
+            b.set(t[0], g + 1, t[1], TIRES);
+            if (l >= 2) b.set(t[0], g + 2, t[1], TIRE);
+        }
+        if (l >= 2) for (int[] t : new int[][] {{332, -97}, {333, -97}, {334, -97}})
+            b.set(t[0], b.ground(t[0], t[1]) + 1, t[1], RUST + "_slab[type=bottom]");
     }
 
     /** Медиана земли по следу. */
@@ -93,7 +169,7 @@ public final class KordonATP {
 
     /** Блок разрушенной стены: дыра с долей hole (чаще у верха), иначе материал. */
     static void wall(BlockSink b, int x, int y, int z, String st, double hole) {
-        b.set(x, y, z, p(x, y, z, hole) ? AIR : st);
+        b.set(x, y, z, hole(x, y, z, hole) ? AIR : st);
     }
 
     /**
@@ -118,8 +194,15 @@ public final class KordonATP {
         for (int z = z0 + 2; z <= z1 - 2; z += 3) for (int x : new int[] {x0, x1}) window(b, x, wy, z, wh);
     }
 
+    /** Окно: до ур. 1 выбито (редкий осколок), с ур. 2 часть заколочена досками, на ур. 3 нижние — в решётках. */
     static void window(BlockSink b, int x, int y, int z, int h) {
-        for (int k = 0; k < h; k++) b.set(x, y + k, z, k == 0 && p(x, y, z, 0.08) ? GLASS : AIR);
+        int l = lvl();
+        for (int k = 0; k < h; k++) {
+            String w = k == 0 && p(x, y, z, 0.08) ? GLASS : AIR;
+            if (l >= 2 && p(x, y + k, z, 0.4)) w = BOARDS;
+            if (l >= 3 && k == 0 && y <= b.ground(x, z) + 2 && !w.equals(BOARDS)) w = "minecraft:iron_bars";
+            b.set(x, y + k, z, w);
+        }
     }
 
     /** Проём (дверь без двери, ворота): воздух x0..x1, z0..z1, высотой h от y0. */
@@ -136,7 +219,7 @@ public final class KordonATP {
             int k = Math.min(x - (x0 - 1), (x1 + 1) - x);
             int y = yT + k / 2;
             for (int z = z0 - 1; z <= z1 + 1; z++) {
-                if (p(x, y, z, hole) || p(x >> 1, y, z >> 2, hole * 0.6)) continue;
+                if (hole(x, y, z, hole) || hole(x >> 1, y, z >> 2, hole * 0.6)) continue;
                 b.set(x, y, z, roof + "_slab[type=" + (k % 2 == 0 ? "bottom" : "top") + "]");
             }
             if (x >= x0 && x <= x1) for (int yy = yT; yy < y; yy++) for (int z : new int[] {z0, z1}) wall(b, x, yy, z, gable, 0.12);
@@ -146,7 +229,7 @@ public final class KordonATP {
     /** Плоская кровля из плит на высоте y (с дырами), с выносом over. */
     static void flat(BlockSink b, int x0, int z0, int x1, int z1, int y, String roof, double hole, int over) {
         for (int x = x0 - over; x <= x1 + over; x++) for (int z = z0 - over; z <= z1 + over; z++)
-            if (!p(x, y, z, hole) && !p(x >> 1, y, z >> 1, hole * 0.5)) b.set(x, y, z, roof + "_slab[type=bottom]");
+            if (!hole(x, y, z, hole) && !hole(x >> 1, y, z >> 1, hole * 0.5)) b.set(x, y, z, roof + "_slab[type=bottom]");
     }
 
     /** Укрытие: место shelter, над ним (3×3) кровля без дыр — от выброса прячутся под целым перекрытием. */
@@ -177,7 +260,7 @@ public final class KordonATP {
         box(b, KX0, KZ0, KX1, KZ1, y2, 3, BRICK, BRICK_O, 0.22, true);
         for (int x = KX0; x <= KX1; x++) for (int z = KZ0; z <= KZ1; z++) {
             boolean edge = x == KX0 || x == KX1 || z == KZ0 || z == KZ1;
-            b.set(x, slab, z, edge ? CONC_D : p(x, slab, z, 0.06) ? AIR : PLATE);
+            b.set(x, slab, z, edge ? CONC_D : hole(x, slab, z, 0.06) ? AIR : PLATE);
         }
         // обвал перекрытия в северной комнате: дыра в плитах и куча на полу первого этажа
         opening(b, 315, -152, 318, -149, slab, 1);
@@ -196,7 +279,7 @@ public final class KordonATP {
         b.set(KX1 - 1, slab, -140, "minecraft:ladder[facing=west]");
         // кровля и фронтоны
         gableZ(b, KX0, KZ0, KX1, KZ1, yT, BOARDS, BRICK_O, 0.10);
-        // обстановка: опрокинутые шкафы-ящики, мусор, паутина
+        // обстановка: ящики, мусор, паутина
         b.set(314, y1, -139, CRATE); b.set(322, y1, -154, TRASH); b.set(314, y1, -154, BARREL_L);
         b.set(321, y2, -141, CRATE); b.set(314, y2, -148, TRASH); b.set(320, y2, -154, COBWEB); b.set(316, y1 + 2, -139, COBWEB);
         rubble(b, 321, y2, -151, 1);
@@ -208,7 +291,7 @@ public final class KordonATP {
         for (int x = ax0 + 1; x <= ax1; x++) for (int z = az0; z <= az1; z++) {
             boolean edge = x == ax1 || z == az0 || z == az1;
             if (!edge) b.set(x, g, z, FLOOR);
-            for (int y = y1; y < y1 + 3; y++) b.set(x, y, z, edge ? (p(x, y, z, 0.12) ? AIR : CONC_O) : AIR);
+            for (int y = y1; y < y1 + 3; y++) b.set(x, y, z, edge ? (hole(x, y, z, 0.12) ? AIR : CONC_O) : AIR);
         }
         flat(b, ax0 + 1, az0, ax1, az1, y1 + 3, RUST, 0.25, 0);
         opening(b, KX1, -152, KX1, -152, y1, 2);
@@ -237,16 +320,15 @@ public final class KordonATP {
         b.set(340, y, -138, BARREL); b.set(341, y, -138, BARREL_L); b.set(341, y, -135, TIRES);
         // бокс 2: сгоревший грузовик
         Vehicles.vehicleAt(new B(b, 337, -131, 0, 5021L, 0), "zil", 0, 0, 0, 0, null, 2);
-        // бокс 3 (юг): хабар — ящики у стен, место work
+        // бокс 3 (юг): склад хабара — ящики у стен
         b.set(341, y, -128, MCRATE); b.set(341, y, -127, CRATE); b.set(341, y + 1, -127, AMMO); b.set(340, y, -126, CRATE);
         b.set(334, y, -126, TIRE); b.set(334, y + 1, -126, TIRE);
-        b.mark("work", 339, y, -127);
         // пристройка: укрытие
         int ax1 = 350, az0 = -132;
         for (int x = BX1 + 1; x <= ax1; x++) for (int z = az0; z <= BZ1; z++) {
             boolean edge = x == ax1 || z == az0 || z == BZ1;
             if (!edge) b.set(x, g, z, FLOOR);
-            for (int yy = y; yy < y + 3; yy++) b.set(x, yy, z, edge ? (p(x, yy, z, 0.10) ? AIR : CONC) : AIR);
+            for (int yy = y; yy < y + 3; yy++) b.set(x, yy, z, edge ? (hole(x, yy, z, 0.10) ? AIR : CONC) : AIR);
         }
         flat(b, BX1 + 1, az0, ax1, BZ1, y + 3, RUST, 0.15, 0);
         opening(b, BX1, -127, BX1, -127, y, 2);
@@ -258,12 +340,36 @@ public final class KordonATP {
         int gn = base(b, nx0, nz0, BX1, nz1), yn = gn + 1;
         for (int x = nx0; x <= BX1; x++) for (int z = nz0; z <= nz1; z++) {
             boolean edge = x == BX1 || z == nz0 || z == nz1 || (x == nx0 && Math.floorMod(z - nz0, 5) == 0);
-            for (int yy = yn; yy < yn + 3; yy++) b.set(x, yy, z, edge ? (p(x, yy, z, 0.12) ? AIR : x == nx0 ? CONC_O : BRICK_D) : AIR);
+            for (int yy = yn; yy < yn + 3; yy++) b.set(x, yy, z, edge ? (hole(x, yy, z, 0.12) ? AIR : x == nx0 ? CONC_O : BRICK_D) : AIR);
         }
         for (int z = nz0; z <= nz1; z += 5) for (int yy = yn; yy < yn + 3; yy++) b.set(331, yy, z, POST_F);
         flat(b, 331, nz0, BX1, nz1, yn + 3, RUST, 0.20, 0);
-        b.set(340, yn, -153, TIRES); b.set(341, yn, -153, TIRES); b.set(341, yn + 1, -153, TIRE); b.set(339, yn, -144, BARREL_L);
-        for (int z = -150; z <= -146; z++) b.set(341, yn, z, "stalkerzone:zm_shifer_slab[type=bottom]");
+        camp(b, yn);
+    }
+
+    /**
+     * Жилой бокс бандитов (северный навес, точка костра узла (337, −151)): костёр посередине с дырой в кровле,
+     * повар у огня, три места отдыха вокруг, шесть нар вдоль восточной стены. На ур. 0 костёр потушен, нар нет.
+     */
+    static void camp(BlockSink b, int yn) {
+        int l = lvl(), fx = FIRE[0], fz = FIRE[1];
+        b.set(fx, yn - 1, fz, CONC_O);
+        b.set(fx, yn, fz, l >= 1 ? FIRE_ON : FIRE_OFF);
+        for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) b.set(fx + dx, yn + 3, fz + dz, AIR);   // дымоход
+        b.mark("cook", fx, yn, fz + 2);
+        for (int[] r : new int[][] {{fx - 2, fz}, {fx + 2, fz}, {fx, fz - 2}}) {
+            b.mark("rest", r[0], yn, r[1]);
+            if (l >= 1) b.set(r[0] + Integer.signum(r[0] - fx), yn, r[1] + Integer.signum(r[1] - fz), TIRE);   // шина-сиденье за спиной
+        }
+        // нары: матрасы на дощатом настиле вдоль стены x 341, место bed — рядом
+        for (int z = -147; z <= -142; z++) {
+            b.set(BX1 - 1, yn, z, l >= 1 ? MATTRESS : p(BX1 - 1, yn, z, 0.5) ? BOARDS + "_slab[type=bottom]" : AIR);
+            if (l >= 2 && (z & 1) == 0) b.set(BX1 - 1, yn + 2, z, PLANKS + "_slab[type=bottom]");   // верхний ярус-полка
+            b.mark("bed", BX1 - 2, yn, z);
+        }
+        b.set(334, yn, -154, l >= 1 ? BARREL : BARREL_L); b.set(335, yn, -154, TIRES); b.set(334, yn + 1, -154, TIRE);
+        b.set(341, yn, -154, CRATE); b.set(340, yn, -154, TRASH);
+        if (l >= 1) { b.set(341, yn, -153, MCRATE); b.set(334, yn, -141, TRASH); }
     }
 
     // ---------------------------------------------------------------- мастерская
@@ -284,10 +390,9 @@ public final class KordonATP {
         // смотровая яма
         for (int z = -117; z <= -111; z++) { b.set(323, g, z, AIR); b.set(323, g - 1, z, AIR); b.set(323, g - 2, z, CONC_O); }
         b.set(322, y, -117, BARREL); b.set(324, y + 4, -114, CHAIN); b.set(324, y + 3, -114, CHAIN);
-        // верстак с хабаром: место work
+        // верстак с хабаром
         b.set(316, y, -116, ANVIL); b.set(316, y, -115, MCRATE); b.set(316, y, -114, CRATE); b.set(316, y + 1, -114, AMMO);
         b.set(317, y, -117, TIRES);
-        b.mark("work", 318, y, -115);
         // южная часть: одноэтажная, ворота на запад
         box(b, MX0, MZ1, MX1, MZS, y, 4, BRICK_D, CONC_O, 0.12, true);
         flat(b, MX0, MZ1 + 1, MX1, MZS, y + 4, SHIFER, 0.20, 1);
@@ -299,7 +404,7 @@ public final class KordonATP {
         for (int x = MX1 + 1; x <= wx1; x++) for (int z = wz0; z <= wz1; z++) {
             boolean edge = x == wx1 || z == wz0 || z == wz1;
             if (!edge) b.set(x, g, z, p(x, g, z, 0.3) ? CONC_O : FLOOR);
-            for (int yy = y; yy < y + 3; yy++) b.set(x, yy, z, edge ? (p(x, yy, z, 0.18) ? AIR : CONC_O) : AIR);
+            for (int yy = y; yy < y + 3; yy++) b.set(x, yy, z, edge ? (hole(x, yy, z, 0.18) ? AIR : CONC_O) : AIR);
         }
         flat(b, MX1 + 1, wz0, 338, wz1, y + 3, BOARDS, 0.25, 0);
         for (int x = 339; x <= wx1; x += 3) b.set(x, y, -110 + (x & 1), x % 2 == 0 ? RUBBLE_SL : PROP_RUBBLE);
@@ -311,7 +416,7 @@ public final class KordonATP {
         for (int x = cx0; x <= cx1; x++) for (int z = wz1 + 1; z <= cz1; z++) {
             boolean edge = x == cx0 || x == cx1 || z == cz1;
             if (!edge) b.set(x, g, z, FLOOR);
-            for (int yy = y; yy < y + 3; yy++) b.set(x, yy, z, edge ? (p(x, yy, z, 0.10) ? AIR : BRICK_D) : AIR);
+            for (int yy = y; yy < y + 3; yy++) b.set(x, yy, z, edge ? (hole(x, yy, z, 0.10) ? AIR : BRICK_D) : AIR);
         }
         flat(b, cx0, wz1 + 1, cx1, cz1, y + 3, RUST, 0.15, 0);
         opening(b, 343, wz1, 343, wz1, y, 2);
@@ -342,7 +447,7 @@ public final class KordonATP {
             for (int x = x0 + 1; x < x1; x++) { b.set(x, y, z0, POST_F); b.set(x, y, z1, POST_F); }
             for (int z = z0 + 1; z < z1; z++) { b.set(x0, y, z, POST_F); b.set(x1, y, z, POST_F); }
         }
-        for (int x = x0; x <= x1; x++) for (int z = z0; z <= z1; z++) if (!p(x, g + 8, z, 0.15)) b.set(x, g + 8, z, PLANKS + "_slab[type=bottom]");
+        for (int x = x0; x <= x1; x++) for (int z = z0; z <= z1; z++) if (!hole(x, g + 8, z, 0.15)) b.set(x, g + 8, z, PLANKS + "_slab[type=bottom]");
         for (int y = g + 9; y <= g + 11; y++) for (int x = x0; x <= x1; x++) for (int z = z0; z <= z1; z++) {
             boolean cornerCut = (x == x0 || x == x1) && (z == z0 || z == z1);
             boolean edge = x == x0 || x == x1 || z == z0 || z == z1;
@@ -373,7 +478,11 @@ public final class KordonATP {
 
     private static void fencePost(BlockSink b, int x, int z) {
         int g = b.ground(x, z), seg = hash(x >> 2, 7, z >> 2) % 100;
-        if (seg < 12) { if (p(x, g, z, 0.5)) b.set(x, g + 1, z, CONC_O + "_slab[type=bottom]"); return; }   // пролом, обломок плиты
+        if (seg < 12) {   // пролом: на ур. 0–1 обломок плиты, с ур. 2 залатан ржавыми листами
+            if (lvl() >= 2) { b.set(x, g + 1, z, RUST); b.set(x, g + 2, z, RUST); }
+            else if (p(x, g, z, 0.5)) b.set(x, g + 1, z, CONC_O + "_slab[type=bottom]");
+            return;
+        }
         b.set(x, g + 1, z, FENCE);
         if (seg >= 22) b.set(x, g + 2, z, FENCE);
     }
@@ -401,6 +510,8 @@ public final class KordonATP {
         // машины
         int[][] cars = {{317, -124}, {311, -108}, {299, -92}, {336, -122}};
         for (int[] c : cars) if (Math.abs(x - c[0]) <= 6 && Math.abs(z - c[1]) <= 6) return true;
+        for (int[][] set : new int[][][] {PATROL, FIRE_BARRELS, {{305, -96}}})
+            for (int[] c : set) if (Math.abs(x - c[0]) <= 1 && Math.abs(z - c[1]) <= 1) return true;
         return false;
     }
 }
