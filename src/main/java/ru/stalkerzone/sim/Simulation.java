@@ -137,6 +137,7 @@ public final class Simulation {
 
     public Simulation(long seed, List<Node> nodes, ZoneGraph graph, List<Faction> factions, double[][] hostility) {
         this.seed = seed;
+        this.rng = new Random(seed * 1_000_003L);
         this.nodes = nodes;
         this.graph = graph;
         this.factions = factions;
@@ -338,6 +339,7 @@ public final class Simulation {
             double ang = r.nextDouble() * Math.PI * 2;
             double rad = r.nextDouble() * d.radius;
             int dx = d.cdx + (int) Math.round(Math.cos(ang) * rad), dz = d.cdz + (int) Math.round(Math.sin(ang) * rad);
+            if (Math.hypot(dx - d.cdx, dz - d.cdz) > d.radius) continue;
             if (tooCloseToBase(bx0 + dx, bz0 + dz)) continue;
             boolean ok = true;
             for (Anomaly o : anomalies) {
@@ -354,6 +356,7 @@ public final class Simulation {
             double ang = r.nextDouble() * Math.PI * 2;
             double rad = r.nextDouble() * d.radius;
             int dx = d.cdx + (int) Math.round(Math.cos(ang) * rad), dz = d.cdz + (int) Math.round(Math.sin(ang) * rad);
+            if (Math.hypot(dx - d.cdx, dz - d.cdz) > d.radius) continue;
             double clear = nearestBaseDist(bx0 + dx, bz0 + dz);
             if (clear > best) { best = clear; a.dx = dx; a.dz = dz; }
             if (best >= BASE_CLEAR_FORT) break;
