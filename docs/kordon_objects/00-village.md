@@ -232,3 +232,5 @@ Z\X  56789   |  56789
 Превью: `bash tools/prefab/preview.sh <l01_escape.szl> /tmp/v.png 1 KordonVillage z=4 x=-10 y=81 labels=tools/prefab/village-labels.txt`; картинки — `docs/kordon_objects/previews/00-village-*.png`.
 
 **Пробник FramedBlocks (П-05):** у избы 2 (штаб) кровля — framed-скаты с текстурой шифера, на окнах снаружи — наличники (доски на стену, крашеное дерево) и подоконники (полплиты). Без FramedBlocks — прежние ступени, наличников и подоконников нет. Превью «до/после»: `previews/05-framed-hq.png`; `FRAMED=1 bash tools/prefab/preview.sh …` рисует вид с модом.
+
+Пульт базы (к П-09): «журнал старшего» — кафедра `KordonVillage.CONSOLE` в штабе Волка на (16, −9), лицом на юг; место игрока перед ней — рабочее место `console` (16, −8). Программист в П-09 подставляет свой блок в `CONSOLE` или вешает ПКМ на кафедру по месту `console`.
