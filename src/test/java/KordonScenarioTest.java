@@ -19,8 +19,8 @@ public class KordonScenarioTest {
     }
 
     static void nodes() {
-        Simulation s = Scenarios.create("kordon", 0);
-        ck(s.scenario.equals("kordon"), "сценарий запомнен: " + s.scenario);
+        Simulation s = KordonWar.create(0);
+        ck(s.scenario.equals(KordonWar.ID), "сценарий запомнен: " + s.scenario);
         ck(Scenarios.create(0).scenario.equals("kordon"), "сценарий по умолчанию — kordon");
         ck(s.nodes.size() >= 19, "не меньше 19 узлов Кордона (044: +3 узла «Малого Кордона»): " + s.nodes.size());
 
@@ -63,7 +63,7 @@ public class KordonScenarioTest {
         int[][] bridge = {{4, 8}, {8, 10}};
         int[][] hole = {{5, 9}, {9, 11}};
 
-        Simulation none = Scenarios.create("kordon", 0);
+        Simulation none = KordonWar.create(0);
         close(none, tunnel);
         // 059: у туннеля заставы у входов (узлы 22, 23) — закрываем все дороги через туннель
         for (int o = 0; o < none.nodes.size(); o++) if (none.graph.edgeDays(7, o) > 0) none.graph.setClosed(7, o, true);
@@ -75,20 +75,20 @@ public class KordonScenarioTest {
         ck(none.graph.reachable(0, 6), "южная часть остаётся связной");
         ck(none.graph.reachable(10, 12), "северная часть остаётся связной");
 
-        Simulation t = Scenarios.create("kordon", 0);
+        Simulation t = KordonWar.create(0);
         close(t, bridge);
         close(t, hole);
         ck(t.graph.reachable(0, 12), "через туннель юг и север связаны");
-        Simulation b = Scenarios.create("kordon", 0);
+        Simulation b = KordonWar.create(0);
         close(b, tunnel);
         close(b, hole);
         ck(b.graph.reachable(0, 12), "через мост юг и север связаны");
-        Simulation h = Scenarios.create("kordon", 0);
+        Simulation h = KordonWar.create(0);
         close(h, tunnel);
         close(h, bridge);
         ck(h.graph.reachable(0, 12), "через дыру юг и север связаны");
 
-        Simulation all = Scenarios.create("kordon", 0);
+        Simulation all = KordonWar.create(0);
         boolean full = true;
         for (int i = 0; i < 19; i++)
             for (int j = 0; j < 19; j++)
@@ -104,7 +104,7 @@ public class KordonScenarioTest {
     static void run() {
         boolean auditOk = true;
         for (long seed : new long[] {1, 2, 3}) {
-            Simulation s = Scenarios.create("kordon", seed);
+            Simulation s = KordonWar.create(seed);
             for (int d = 0; d < 10; d++) {
                 s.step();
                 String a = s.audit();
@@ -130,10 +130,10 @@ public class KordonScenarioTest {
     }
 
     static void persistence() {
-        Simulation s1 = Scenarios.create("kordon", 7);
+        Simulation s1 = KordonWar.create(7);
         s1.step(5);
         Simulation s2 = Simulation.load(s1.save());
-        ck(s2.scenario.equals("kordon"), "после загрузки сценарий kordon: " + s2.scenario);
+        ck(s2.scenario.equals(KordonWar.ID), "после загрузки сценарий kordon: " + s2.scenario);
         ck(s2.nodes.size() == s1.nodes.size(), "число узлов сохранилось: " + s2.nodes.size());
         ck(s2.save().equals(s1.save()), "повторное сохранение идентично");
 

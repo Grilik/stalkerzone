@@ -987,6 +987,16 @@ public final class Simulation {
     }
 
     /**
+     * Мутант одного логова убит мутантом другого вида (карточка 064): туша достаётся логову убийцы
+     * (половина «цены» мутанта идёт в добычу {@link Lair#feed}), а логово жертвы слабеет как при
+     * обычной гибели мутанта. Возвращает true, если логово жертвы этим уничтожено.
+     */
+    public boolean mutantKilledByMutant(Lair victim, Lair killer, double value) {
+        if (lairs.contains(killer)) killer.feed(value * 0.5);
+        return mutantKilled(victim, value, false);
+    }
+
+    /**
      * Мутант логова погиб в мире (от игрока или сталкера): логово слабеет на его «цену».
      * Возвращает true, если логово этим выбито до конца и уничтожено.
      */
@@ -1097,7 +1107,7 @@ public final class Simulation {
             if (l.raidCooldown > 0) l.raidCooldown--;
             if (n.owner < 0) {
                 l.strength += (l.cap() - l.strength) * 0.012 * l.growth();
-                if (l.strength > (lairRaidMin > 0 ? lairRaidMin : 30) && l.raidCooldown == 0) raid(l, born);
+                if (l.strength > (lairRaidMin > 0 ? lairRaidMin : 30) && l.raidCooldown == 0 && l.mutantCount() >= Lair.MAX_MUTANTS) raid(l, born);
                 continue;
             }
             Faction f = factions.get(n.owner);
@@ -1155,6 +1165,8 @@ public final class Simulation {
         int dead = Math.min(f.members - 1, randomRound(garrisonPeople(f, target) * 0.15 * ratio));
         applyCasualties(f, dead);
         l.strength -= l.strength * 0.1 * (1 - ratio);
+        // убитые налётом люди — добыча логова (карточка 062)
+        l.feed(dead * KordonBalance.PREY_PER_PERSON);
         damageNode(target.id, 3 * ratio * 2);
         log("Логово «" + l.title() + "» у «" + nodes.get(l.node).name + "» напало на «" + target.name + "» (" + f.name + "), погибло " + dead);
         if (force > garrison * (target.id == f.baseNode ? 2.6 : 1.8)) overrun(l, f, target, born);

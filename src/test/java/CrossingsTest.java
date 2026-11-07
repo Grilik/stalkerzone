@@ -21,7 +21,7 @@ public class CrossingsTest {
 
     /** Сценарий Кордона, у которого северные точки не отданы мутантам: между югом и севером ходит транспорт. */
     static Simulation sim(long seed) {
-        Simulation s = Scenarios.create("kordon", seed);
+        Simulation s = KordonWar.create(seed);
         for (int ln : new int[]{TUNNEL, HOLE, 14, 15}) {
             Lair l = s.lairAt(ln);
             if (l != null) s.mutantKilled(l, 100, false);

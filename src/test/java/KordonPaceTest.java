@@ -31,7 +31,7 @@ public class KordonPaceTest {
 
         for (int s = 0; s < seeds; s++) {
             long seed = s * 7 + 1;
-            Simulation sim = Scenarios.create("kordon", seed);
+            Simulation sim = KordonWar.create(seed);
             Faction lon = sim.factions.get(ZoneScenario.LONERS);
             Faction ban = sim.factions.get(ZoneScenario.BANDITS);
             Faction mil = sim.factions.get(ZoneScenario.MILITARY);

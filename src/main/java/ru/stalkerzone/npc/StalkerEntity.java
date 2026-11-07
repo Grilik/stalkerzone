@@ -34,6 +34,7 @@ import ru.stalkerzone.sim.Faction;
 import ru.stalkerzone.sim.Node;
 import ru.stalkerzone.sim.Report;
 import ru.stalkerzone.sim.Simulation;
+import ru.stalkerzone.zonemap.build.Prefabs;
 
 /**
  * Сталкер или торговец. Игровое отражение симуляции: фракция и точка привязки хранятся в сущности,
@@ -295,12 +296,35 @@ public class StalkerEntity extends PathfinderMob {
         return server == null ? null : ZoneData.get(server).sim;
     }
 
+    private boolean isMilitary() {
+        Simulation sim = sim();
+        return sim != null && faction() >= 0 && faction() < sim.factions.size() && sim.factions.get(faction()).military;
+    }
+
+    /** Запретные полосы перед периметром уровня (карточка 055): считаются один раз на уровень. */
+    private static final java.util.Map<String, java.util.List<int[]>> KILL_ZONES = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private java.util.List<int[]> killZones() {
+        Simulation sim = sim();
+        if (sim == null) return java.util.List.of();
+        String levelId = ru.stalkerzone.world.LevelPoints.levelForScenario(sim.scenario);
+        if (levelId == null) return java.util.List.of();
+        return KILL_ZONES.computeIfAbsent(levelId, id -> {
+            ru.stalkerzone.world.xray.LevelRegion r = ru.stalkerzone.world.xray.LevelRegions.byId(id);
+            Prefabs.Ground g = r != null ? r::groundBlock : (x, z) -> 75;
+            return Prefabs.killZones(id, g, Prefabs.POINT_LEVEL);
+        });
+    }
+
     private boolean isEnemyNpc(LivingEntity other) {
         if (isBuilder() || (other instanceof StalkerEntity os && os.isDowned())) return false;
         if (isTrader() || !(other instanceof StalkerEntity o) || o.isTrader() || o.faction() == faction()) return false;
         if (inQuietZone()) return false;   // карточка 011: у бункера Сидоровича не начинают бой
         Simulation sim = sim();
         if (sim == null || faction() >= sim.factions.size()) return false;
+        // карточка 055: военные блокпоста бьют одиночку только в запретной полосе перед периметром
+        if (isMilitary() && o.faction() == ru.stalkerzone.sim.ZoneScenario.LONERS)
+            return ru.stalkerzone.zonemap.KillZone.militaryHostile(killZones(), o.getX(), o.getZ());
         return sim.hostilityTo(sim.factions.get(faction()), o.faction()) >= 0.6;
     }
 
@@ -310,6 +334,8 @@ public class StalkerEntity extends PathfinderMob {
         if (inQuietZone()) return false;   // карточка 011: у бункера Сидоровича не начинают бой
         Simulation sim = sim();
         if (sim == null || faction() >= sim.factions.size()) return Reputation.hostile(sp, faction());
+        // карточка 055: военные блокпоста открывают огонь по игроку только в запретной полосе
+        if (isMilitary()) return ru.stalkerzone.zonemap.KillZone.militaryHostile(killZones(), sp.getX(), sp.getZ());
         return PlayerFaction.npcHostile(faction(), sp, sim);
     }
 

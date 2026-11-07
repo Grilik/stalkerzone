@@ -103,7 +103,7 @@ public class SiteTest {
         List<Prefabs.Point> tp = Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, Prefabs.NODE_TUNNEL);   // П-23
         ck(!tp.isEmpty() && tp.stream().allMatch(q -> Prefabs.site("l01_escape", Prefabs.NODE_TUNNEL).covers(q.x(), q.z())),
                 "места туннеля (" + tp.size() + ") — только его площадки");
-        ck(Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, 5).isEmpty(), "у узла без площадки (АТП) мест нет");
+        ck(Prefabs.points("l01_escape", gr, Prefabs.POINT_LEVEL, 8).isEmpty(), "у узла без площадки (мост, 8) мест нет");
 
         // центры узлов — в своих площадках (номера узлов не разъехались с KordonScenario)
         Simulation sim = KordonScenario.create(1);
