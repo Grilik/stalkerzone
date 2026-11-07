@@ -57,7 +57,7 @@ public final class PsiField {
         // NPC в смертельной зоне превращаются в зомби (Монолит невосприимчив)
         if (sim.scorcher.disabled) return;
         // карточка 024: в Кордоне 1.0 Выжигателя нет — пси-поле «всей карты» здесь никого не зомбирует
-        if (ru.stalkerzone.sim.Scenarios.KORDON.equals(sim.scenario)) return;
+        if (ru.stalkerzone.sim.Scenarios.isKordon(sim.scenario)) return;
         int[] src = ru.stalkerzone.sim.Psi.source(sim);
         if (src == null) return;
         AABB box = new AABB(src[0] - ru.stalkerzone.sim.Psi.LETHAL, level.getMinBuildHeight(), src[1] - ru.stalkerzone.sim.Psi.LETHAL,

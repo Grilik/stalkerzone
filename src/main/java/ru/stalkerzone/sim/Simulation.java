@@ -763,7 +763,7 @@ public final class Simulation {
         }
         // карточка 034: на Кордоне стройки закладываются чаще (BUILD_INTERVAL_DAYS), в полной Зоне — прежние 6 дней;
         // и война не замораживает стройку — иначе группировка, застрявшая в штурмах, не развивается вовсе.
-        boolean kordon = Scenarios.KORDON.equals(scenario);
+        boolean kordon = Scenarios.isKordon(scenario);
         int buildEvery = kordon ? KordonBalance.BUILD_INTERVAL_DAYS : 6;
         if ((day + f.id * 3) % buildEvery != 0 || (f.phase == Phase.WAR && !kordon)
                 || f.passive && !f.scientist || f.fanatic) return;
@@ -1306,7 +1306,7 @@ public final class Simulation {
 
     /** v14: пересчитать опасность рёбер-проходов по силе ближайших логов. */
     public void recalcPassDanger() {
-        if (!scenario.equals("kordon")) return;
+        if (!Scenarios.isKordon(scenario)) return;
         for (int i = 0; i < KordonBalance.PASS_EDGES.length; i++) {
             int a = KordonBalance.PASS_EDGES[i][0], b = KordonBalance.PASS_EDGES[i][1];
             double base = KordonBalance.PASS_BASE_DANGER[i];
@@ -1941,6 +1941,8 @@ public final class Simulation {
     // ------------------------------------------------------------------ решения командования
 
     private void think(Faction f) {
+        // карточка 054: гарнизон (напр. военные «Малого Кордона») не действует — ни войн, ни отрядов, ни захвата
+        if (f.garrisonOnly) return;
         f.decayMemory();
         for (Command c : f.brain.decide(this, f, rng)) apply(f, c);
     }
@@ -2579,7 +2581,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(21); // v21: перенос логов — «Собачий лес» (21), «Лысый холм» (13), без тушканов у туннеля (карточка 060)
+            out.writeInt(22); // v22 (карточка 054): военные Кордона — гарнизон, мост ничей; отдельный сценарий kordon_war
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2741,7 +2743,7 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 21) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 22) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
@@ -2749,12 +2751,14 @@ public final class Simulation {
             // v12 (v1.14): новые локации и группировки — старая Зона не переносится, начинается заново
             // v14: новые узлы Кордона — старые сохранения несовместимы
             if (version < 12) return Scenarios.create(scenario, seed);
-            if (version < 14 && scenario.equals("kordon")) return Scenarios.create(scenario, seed);
+            if (version < 14 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
             // v19 (карточка 044): новые узлы Кордона — старый мир начинается заново с тем же сидом
             // v20 (карточка 059): заставы у входов туннеля (узлы 22–23) — старый Кордон начинается заново с тем же сидом
-            if (version < 20 && scenario.equals("kordon")) return Scenarios.create(scenario, seed);
+            if (version < 20 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
             // v21 (карточка 060): перенос логов «Собачий лес»/«Лысый холм» — старый Кордон начинается заново с тем же сидом
-            if (version < 21 && scenario.equals("kordon")) return Scenarios.create(scenario, seed);
+            if (version < 21 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
+            // v22 (карточка 054): военные Кордона — только гарнизон, мост ничей; старый Кордон начинается заново с тем же сидом
+            if (version < 22 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);

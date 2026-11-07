@@ -70,6 +70,14 @@ public final class KordonScenario {
     private KordonScenario() {}
 
     public static Simulation create(long seed) {
+        return create(seed, false);
+    }
+
+    /**
+     * Карточка 054: {@code war = false} — «Малый Кордон» (военные только гарнизон южного блокпоста, мост ничей);
+     * {@code war = true} — полная война трёх группировок (прежнее поведение сценария «kordon»).
+     */
+    public static Simulation create(long seed, boolean war) {
         List<Node> nodes = new ArrayList<>();
 
         Node village = node(nodes, "Деревня новичков", NodeType.BASE, 0, 0);
@@ -221,6 +229,8 @@ public final class KordonScenario {
         factions.get(ZoneScenario.BANDITS).brain = new KordonBalance.BanditBrain();
         factions.get(ZoneScenario.MILITARY).military = true;
         factions.get(ZoneScenario.MILITARY).takesNewcomers = true;
+        // карточка 054: без полной войны военные — только гарнизон южного блокпоста, ИИ не действует
+        factions.get(ZoneScenario.MILITARY).garrisonOnly = !war;
         factions.get(ZoneScenario.MILITARY).idealLoyalty = 0.6;
         factions.get(ZoneScenario.MILITARY).idealGreed = -0.2;
         factions.get(ZoneScenario.MILITARY).brain = new KordonBalance.MilitaryBrain();
@@ -238,7 +248,8 @@ public final class KordonScenario {
         atp.owner = ZoneScenario.BANDITS;
         farPost.owner = ZoneScenario.BANDITS;
         southPost.owner = ZoneScenario.MILITARY;
-        bridge.owner = ZoneScenario.MILITARY;
+        // карточка 054: мост военные держат только в полной войне, в «Малом Кордоне» он ничей
+        if (war) bridge.owner = ZoneScenario.MILITARY;
         bunker.owner = ZoneScenario.TRADERS;
         // v19 (карточка 044): застава О12 на краю свалки с начала, Л3 ничей
         wagon.owner = ZoneScenario.LONERS;
@@ -275,7 +286,7 @@ public final class KordonScenario {
         }
 
         Simulation sim = new Simulation(seed, nodes, g, factions, h);
-        sim.scenario = "kordon";
+        sim.scenario = war ? Scenarios.KORDON_WAR : Scenarios.KORDON;
 
         // v20 (карточка 025): касса торговцев Кордона — минимум на 3 артефакта уровня 2 и 10 частей мутантов
         // по текущим ценам скупки плюс оборотный запас; выручка с Большой земли держит кассу на плаву месяц.
