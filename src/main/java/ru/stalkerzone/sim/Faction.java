@@ -24,6 +24,8 @@ public final class Faction {
     public boolean fanatic;
     /** Наёмники: сопровождают экспедицию к Выжигателю за плату. */
     public boolean mercenary;
+    /** Карточка 054: только гарнизон южного блокпоста — ИИ не действует (ни войн, ни отрядов, ни захвата). */
+    public boolean garrisonOnly;
 
     public int members;
     /** Средний опыт бойцов 0..100: растёт в боях, новички его разбавляют. */

@@ -40,7 +40,7 @@ public final class LevelPoints {
 
     /** ID уровня по ID сценария (null, если у сценария нет уровня 1:1). */
     public static String levelForScenario(String scenarioId) {
-        if (ru.stalkerzone.sim.Scenarios.KORDON.equals(scenarioId)) return "l01_escape";
+        if (ru.stalkerzone.sim.Scenarios.isKordon(scenarioId)) return "l01_escape";
         return null;
     }
 

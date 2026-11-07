@@ -31,7 +31,7 @@ public final class Psi {
      */
     public static int surfaceLevel(Simulation sim, double x, double z) {
         if (sim.scorcher.disabled) return 0;
-        if (Scenarios.KORDON.equals(sim.scenario)) return 0;
+        if (Scenarios.isKordon(sim.scenario)) return 0;
         int[] src = source(sim);
         if (src == null) return 0;
         double d = Math.hypot(x - src[0], z - src[1]);

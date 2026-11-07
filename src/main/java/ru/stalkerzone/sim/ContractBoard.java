@@ -245,7 +245,7 @@ public final class ContractBoard {
             }
         }
         // v16 (карточка 006): у Кордона свои заказчики — Торговцы, Одиночки, военные
-        if (s.scenario.equals(Scenarios.KORDON)) generateKordon(s, r);
+        if (Scenarios.isKordon(s.scenario)) generateKordon(s, r);
     }
 
     /**
@@ -427,12 +427,12 @@ public final class ContractBoard {
         Faction h = s.politics.ambusher(s, m);
         // v16 (карточка 006): на Кордоне из трёх фракций у встречи почти никогда нет врага рядом,
         // поэтому засаду заказывает враждебная хозяину группировка и издалека
-        if (h == null && s.scenario.equals(Scenarios.KORDON)) h = kordonAmbusher(s, m);
+        if (h == null && Scenarios.isKordon(s.scenario)) h = kordonAmbusher(s, m);
         if (h != null) {
             long reward = 2000 + r.nextInt(1000);
             // v17 (карточка 021): на Кордоне засаду на встречу заказчик оплачивает только из кассы;
             // нет денег — контракт не выставляется. В полной Зоне остаётся выдача товаром (issue).
-            Contract a = s.scenario.equals(Scenarios.KORDON)
+            Contract a = Scenarios.isKordon(s.scenario)
                     ? issueCash(s, Contract.Type.AMBUSH_MEETING, h.id, reward, m.day - s.day, 4)
                     : issue(s, Contract.Type.AMBUSH_MEETING, h.id, reward, m.day - s.day, 4);
             if (a != null) { a.node = m.venue; a.deadline = m.day; a.qty = m.host * 100 + m.guest; }
@@ -474,7 +474,7 @@ public final class ContractBoard {
         Faction loners = s.mercenaries();
         if (loners == null || loners.members < 10) return;
         // v16 (карточка 006): на Кордоне одиночки берутся за работу охотнее
-        boolean kordon = s.scenario.equals(Scenarios.KORDON);
+        boolean kordon = Scenarios.isKordon(s.scenario);
         double chance = kordon ? KordonBalance.CONTRACT_NPC_TAKE_CHANCE : NPC_TAKE_CHANCE;
         // карточка 034: на Кордоне заказы разбирают почти сразу, а не через три дня
         int takeDelay = kordon ? KordonBalance.CONTRACT_NPC_TAKE_DELAY_DAYS : NPC_TAKE_DELAY_DAYS;

@@ -34,7 +34,7 @@ public final class ZoneWorld {
         ZoneBounds nb = ZoneBounds.fromNodes(s.nodes);
         kordon = s.nodes.get(0);
         // v1.18 (карточка 004): в сценарии «Кордон» граница — реальный край уровня l01_escape (points/l01_escape.json)
-        if (Scenarios.KORDON.equals(s.scenario)) {
+        if (Scenarios.isKordon(s.scenario)) {
             String levelId = LevelPoints.levelForScenario(Scenarios.KORDON);
             if (levelId != null && ru.stalkerzone.world.xray.LevelRegions.byId(levelId) != null) {
                 ZoneBounds kb = LevelPoints.bounds(levelId);
@@ -59,7 +59,7 @@ public final class ZoneWorld {
     public static int[] spawnXZ() {
         init();
         // v1.18: в Кордоне — у костра деревни новичков (points/l01_escape.json)
-        if (Scenarios.KORDON.equals(Scenarios.current())) {
+        if (Scenarios.isKordon(Scenarios.current())) {
             String levelId = LevelPoints.levelForScenario(Scenarios.KORDON);
             if (levelId != null && ru.stalkerzone.world.xray.LevelRegions.byId(levelId) != null) {
                 int[] p = LevelPoints.spawnXZ(levelId);
