@@ -83,7 +83,33 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
             c.setUnsaved(true);
             return true;
         }
+        if (c instanceof net.minecraft.world.level.chunk.LevelChunk lc && !s.hasBlockEntity()) return rawSet(lc, pos, s);
         c.setBlockState(pos, s, false);
+        return true;
+    }
+
+    /**
+     * То же, что {@code LevelChunk.setBlockState}, но без {@code onPlace}/{@code onRemove}. Ванильный onPlace у
+     * рельсов, редстоуна, TNT, наблюдателей и т. п. опрашивает соседей через Level: соседний чанк ещё не готов,
+     * и серверный поток ждёт его вечно (зависание 07.11: рельсы туннеля, BaseRailBlock.onPlace → getChunk).
+     * Секция, карты высот, статус секции для света и проверка света — как в ванили.
+     */
+    private static boolean rawSet(net.minecraft.world.level.chunk.LevelChunk c, BlockPos pos, BlockState s) {
+        int idx = c.getSectionIndex(pos.getY());
+        if (idx < 0 || idx >= c.getSections().length) return false;
+        net.minecraft.world.level.chunk.LevelChunkSection sec = c.getSections()[idx];
+        boolean wasEmpty = sec.hasOnlyAir();
+        int x = pos.getX() & 15, y = pos.getY(), z = pos.getZ() & 15;
+        BlockState old = sec.setBlockState(x, y & 15, z, s, false);
+        if (old == s) return true;
+        for (Map.Entry<net.minecraft.world.level.levelgen.Heightmap.Types, net.minecraft.world.level.levelgen.Heightmap> e
+                : c.getHeightmaps()) e.getValue().update(x, y, z, s);
+        Level level = c.getLevel();
+        boolean empty = sec.hasOnlyAir();
+        if (wasEmpty != empty) level.getChunkSource().getLightEngine().updateSectionStatus(pos, empty);
+        if (net.minecraft.world.level.lighting.LightEngine.hasDifferentLightProperties(c, pos, old, s))
+            level.getChunkSource().getLightEngine().checkBlock(pos);
+        c.setUnsaved(true);
         return true;
     }
 
