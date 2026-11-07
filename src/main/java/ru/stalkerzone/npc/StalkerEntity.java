@@ -49,6 +49,8 @@ public class StalkerEntity extends PathfinderMob {
     public static final int ROLE_MECHANIC = ru.stalkerzone.sim.BaseRoles.MECHANIC;
     public static final int ROLE_DUTY = ru.stalkerzone.sim.BaseRoles.DUTY;
     public static final int ROLE_RESIDENT = ru.stalkerzone.sim.BaseRoles.RESIDENT;
+    // карточка 056: пулемётчик южного блокпоста (место «mg», уровень 2+)
+    public static final int ROLE_MG = ru.stalkerzone.sim.BaseRoles.MG;
 
     private static final EntityDataAccessor<Integer> FACTION = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ROLE = SynchedEntityData.defineId(StalkerEntity.class, EntityDataSerializers.INT);
@@ -141,6 +143,7 @@ public class StalkerEntity extends PathfinderMob {
             case ROLE_MECHANIC -> "Механик";
             case ROLE_DUTY -> "Дежурный";
             case ROLE_RESIDENT -> "Житель";
+            case ROLE_MG -> "Пулемётчик";
             default -> "";
         };
     }
@@ -241,6 +244,18 @@ public class StalkerEntity extends PathfinderMob {
         if (used == null) return false;
         ru.stalkerzone.compat.GunQuality.markLoaded(se.getMainHandItem(), used == ru.stalkerzone.sim.Good.AMMO);
         return true;
+    }
+
+    /**
+     * Оружие пулемётчика (карточка 056): пулемёт TaCZ {@link ru.stalkerzone.sim.BaseRoles#MG_GUN} с полным
+     * магазином. Если TaCZ нет — остаётся штатное оружие фракции, поставленное {@link #equip(int)}.
+     */
+    public void equipMachineGun() {
+        if (!ru.stalkerzone.compat.Tacz.loaded() || this.level().isClientSide) return;
+        ItemStack gun = ru.stalkerzone.compat.Tacz.gun(ru.stalkerzone.sim.BaseRoles.MG_GUN, "AUTO", 100);
+        if (gun.isEmpty()) return;
+        this.setItemSlot(EquipmentSlot.MAINHAND, gun);
+        this.setDropChance(EquipmentSlot.MAINHAND, 0f);
     }
 
     private void equip(int faction) {

@@ -10,8 +10,21 @@ package ru.stalkerzone.sim;
  */
 public final class BaseRoles {
     public static final int GUARD = 4, PATROL = 5, COOK = 6, MECHANIC = 7, DUTY = 8, RESIDENT = 9;
+    /** Роль пулемётчика (карточка 056): новая, после жителя; своего слота в {@link #assign} не имеет. */
+    public static final int MG = 10;
+
+    /** Пулемёт пулемётчика (ПКМ, TaCZ, пак szguns). */
+    public static final String MG_GUN = "szguns:pkm";
 
     private BaseRoles() {}
+
+    /**
+     * Сколько пулемётчиков ставить на огневую точку (карточка 056): один, если на узле есть место {@code mg}
+     * и людей не меньше трёх (двое на посту — пулемёт пустует). Больше одного пулемётчика не бывает.
+     */
+    public static int machineGunners(int people, int mgPoints) {
+        return mgPoints > 0 && people >= 3 ? 1 : 0;
+    }
 
     /**
      * Сколько людей на каждой роли. {@code kinds} — число свободных точек по видам в порядке
