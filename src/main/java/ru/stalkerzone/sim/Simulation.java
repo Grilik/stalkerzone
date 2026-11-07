@@ -2579,7 +2579,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(20); // v20: заставы у входов туннеля 22–23 (карточка 059)
+            out.writeInt(21); // v21: перенос логов — «Собачий лес» (21), «Лысый холм» (13), без тушканов у туннеля (карточка 060)
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2741,7 +2741,7 @@ public final class Simulation {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 20) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > 21) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
@@ -2753,6 +2753,8 @@ public final class Simulation {
             // v19 (карточка 044): новые узлы Кордона — старый мир начинается заново с тем же сидом
             // v20 (карточка 059): заставы у входов туннеля (узлы 22–23) — старый Кордон начинается заново с тем же сидом
             if (version < 20 && scenario.equals("kordon")) return Scenarios.create(scenario, seed);
+            // v21 (карточка 060): перенос логов «Собачий лес»/«Лысый холм» — старый Кордон начинается заново с тем же сидом
+            if (version < 21 && scenario.equals("kordon")) return Scenarios.create(scenario, seed);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);

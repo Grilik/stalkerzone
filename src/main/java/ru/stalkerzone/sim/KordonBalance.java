@@ -21,7 +21,6 @@ public final class KordonBalance {
             new LairDef(9, LairKind.DOGS, 20.0),
             new LairDef(14, LairKind.FLESH, 20.0),
             new LairDef(15, LairKind.FLESH, 20.0),
-            new LairDef(7, LairKind.RODENTS, 18.0),
             new LairDef(21, LairKind.DOGS, 20.0),
     };
 
@@ -38,8 +37,8 @@ public final class KordonBalance {
     // --- районы логов -----------------------------------------------------------------
     public static final int[] DISTRICT_SOUTH  = {13, 16, 9};
     public static final int[] DISTRICT_NORTH  = {14, 15, 17, 18};
-    public static final int[] DISTRICT_TUNNEL = {7};
-    public static final int[][] ALL_DISTRICTS = {DISTRICT_SOUTH, DISTRICT_NORTH, DISTRICT_TUNNEL};
+    // v21 (карточка 060): района туннеля больше нет — тушканы у туннеля не заводятся
+    public static final int[][] ALL_DISTRICTS = {DISTRICT_SOUTH, DISTRICT_NORTH};
 
     // --- пулы видов для возрождения ----------------------------------------------------
     public static final KindWeight[] POOL_SOUTH = {
@@ -50,10 +49,8 @@ public final class KordonBalance {
             new KindWeight(LairKind.FLESH, 40), new KindWeight(LairKind.DOGS, 35),
             new KindWeight(LairKind.POLTERGEISTS, 15), new KindWeight(LairKind.BLOODSUCKERS, 10),
     };
-    public static final KindWeight[] POOL_TUNNEL = {
-            new KindWeight(LairKind.RODENTS, 70), new KindWeight(LairKind.POLTERGEISTS, 30),
-    };
-    public static final KindWeight[][] ALL_POOLS = {POOL_SOUTH, POOL_NORTH, POOL_TUNNEL};
+    // v21 (карточка 060): пула тушканов у туннеля больше нет (массивы районов и пулов параллельны)
+    public static final KindWeight[][] ALL_POOLS = {POOL_SOUTH, POOL_NORTH};
 
     public static final class KindWeight {
         public final LairKind kind;
