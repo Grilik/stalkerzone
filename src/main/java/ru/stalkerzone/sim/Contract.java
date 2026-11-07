@@ -13,7 +13,9 @@ public final class Contract {
         ESCORT_COURIER("Сопроводить курьера"), CAPTURE_NODE("Выбить врага с узла"),
         // v17 (карточка 021): заказы Бандитов — засада на курьера Торговцев и налёт на чужую ферму.
         // Новые значения строго в конец: тип пишется ординалом, старые сохранения читаются.
-        AMBUSH_COURIER("Засада на курьера"), RAID_NODE("Налёт");
+        AMBUSH_COURIER("Засада на курьера"), RAID_NODE("Налёт"),
+        // v24 (карточка 058): одиночки платят игроку за разведку базы бандитов (АТП). Новое значение строго в конец.
+        SCOUT("Разведка");
         public final String ru;
         Type(String ru) { this.ru = ru; }
     }
@@ -97,6 +99,7 @@ public final class Contract {
             case AMBUSH_COURIER -> "устроить засаду на курьера Торговцев, идущего к "
                     + (qty >= 0 ? "«" + s.factions.get(qty).name + "»" : "покупателю") + " (груз должен пропасть)";
             case RAID_NODE -> "разорить «" + s.nodes.get(node).name + "» и увести запасы еды";
+            case SCOUT -> "провести разведку «" + s.nodes.get(node).name + "»";
         };
         String diff = "★★★★★".substring(0, Math.max(1, Math.min(5, difficulty)));
         return String.format("#%d %s [%s] от «%s»: %s; награда %s; срок до дня %d; %s%s", id, type.ru, diff, who, what, rewardRu(),

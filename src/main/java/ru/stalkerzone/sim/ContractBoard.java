@@ -358,6 +358,15 @@ public final class ContractBoard {
                 if (c != null) { c.node = farm; c.qty = s.nodes.get(farm).owner; }
             }
         }
+
+        // v24 (карточка 058): пока АТП (узел 5) у бандитов, одиночки заказывают разведку их базы.
+        // NPC «Разведку» не берут (тип не в списке npcTake) — заказ только для игрока.
+        if (loners != null && s.nodes.size() > 5 && s.nodes.get(5).owner == ZoneScenario.BANDITS
+                && loners.members >= KordonBalance.CONTRACT_MIN_LONERS && openCount() < MAX_OPEN
+                && !has(Contract.Type.SCOUT, loners.id, 5) && r.nextDouble() < 0.15) {
+            Contract c = issueCash(s, Contract.Type.SCOUT, loners.id, 450, 20, KordonBalance.CONTRACT_DIFFICULTY);
+            if (c != null) c.node = 5;
+        }
     }
 
     /** Курьер Торговцев, идущий в пути к покупателю (карточка 021). */
@@ -641,6 +650,14 @@ public final class ContractBoard {
         if (c == null || c.status != Contract.Status.TAKEN || c.type != Contract.Type.ESCORT_COURIER
                 || c.taker != Contract.PLAYER || !c.player.equals(player)) return null;
         s.courierArrived(c.qty);
+        return payPlayer(s, c);
+    }
+
+    /** Разведка базы выполнена игроком: закрыть заказ на разведку (карточка 058), награда из залога. */
+    public Reward scouted(Simulation s, int id, String player) {
+        Contract c = byId(id);
+        if (c == null || c.type != Contract.Type.SCOUT || c.status != Contract.Status.TAKEN
+                || c.taker != Contract.PLAYER || !c.player.equals(player)) return null;
         return payPlayer(s, c);
     }
 
