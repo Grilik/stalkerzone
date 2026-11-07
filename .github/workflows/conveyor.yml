@@ -21,11 +21,38 @@ concurrency:
   group: conveyor
   cancel-in-progress: false
 jobs:
+  # Статус «готово (конвейер)» в docs/tasks/README.md ставит конвейер в main после слияния PR карточки,
+  # а не исполнитель в своей ветке: иначе соседние строки таблицы конфликтуют (PR #109, #115).
+  # Работает и при CONVEYOR_PAUSED=1 — слитая карточка должна стать готовой в любом случае.
+  mark:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'task/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Статус карточки
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          N=$(echo "$HEAD_REF" | sed -n 's#^task/\([0-9]\{3\}\).*#\1#p')
+          [ -n "$N" ] || { echo "в ветке $HEAD_REF нет номера карточки"; exit 0; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3; do
+            git pull -q --rebase origin main
+            python3 -I tools/conveyor/mark_done.py "$N" || exit 0
+            git diff --quiet && exit 0
+            git commit -qam "$N: готово (конвейер) — статус после слияния" && git push -q origin HEAD:main && exit 0
+            git reset -q --hard origin/main
+          done
+          exit 1
   run:
+    needs: mark
     if: >-
-      vars.CONVEYOR_PAUSED != '1' && (
+      ${{ !cancelled() && needs.mark.result != 'failure' && vars.CONVEYOR_PAUSED != '1' && (
       github.event_name == 'workflow_dispatch' ||
-      (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'task/')))
+      (github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'task/'))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

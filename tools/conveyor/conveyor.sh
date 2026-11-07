@@ -51,7 +51,7 @@ cline --config /tmp/cfg-agent auth -p openrouter -k "$OPENROUTER_API_KEY" -m "$A
 
 { echo "Выполни карточку $FILE — сделай тест src/test/java/$CARD_TEST.java зелёным, не трогая сам тест.";
   echo; echo "Читать и менять можно ТОЛЬКО эти файлы (остальной репозиторий не открывай):"; printf '%s\n' $CARD_FILES | sed 's/^/- /';
-  echo "- docs/tasks/README.md (только статус своей карточки)"; [ -n "$CARD_CHECKLIST" ] && echo "- $CARD_CHECKLIST (новый файл пунктов проверки в игре)";
+  [ -n "$CARD_CHECKLIST" ] && echo "- $CARD_CHECKLIST (новый файл пунктов проверки в игре)";
   echo; cat tools/conveyor/rules.txt; echo; echo "## Карточка"; cat "$FILE"; } > /tmp/pA.txt
 
 # 2. Одна попытка исполнителя; сторож денег убивает его при перерасходе.
@@ -76,6 +76,7 @@ ESC=$(head -c 3000 ESCALATE.md 2>/dev/null); rm -f ESCALATE.md REVIEW_REPLY.md
 # 3. Проверка: тест карточки зелёный, всё остальное зелёное, тест не тронут, чужие файлы не тронуты.
 WHY=""
 cmp -s "$CARD_TEST_SRC" "src/test/java/$CARD_TEST.java" || { WHY="исполнитель изменил тест карточки"; cp "$CARD_TEST_SRC" "src/test/java/$CARD_TEST.java"; }
+git checkout -q -- docs/tasks/README.md 2>/dev/null   # таблицу правит только mark_done.py после слияния
 STRAY=$(python3 -I tools/conveyor/card.py "$FILE" --stray "$(git -c core.quotePath=false status --porcelain --untracked-files=all | cut -c4-)")
 [ -n "$STRAY" ] && WHY="${WHY:+$WHY; }изменены файлы вне карточки: $(echo $STRAY)"
 bash tools/conveyor/check.sh > /tmp/check.txt 2>&1 || WHY="${WHY:+$WHY; }проверка: $(head -1 /tmp/check.txt)"

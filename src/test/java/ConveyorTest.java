@@ -31,6 +31,12 @@ public class ConveyorTest {
         ck(sh.contains("не вышло"), "неудача — PR «не вышло»");
         ck(sh.contains("conveyor-metrics:") && Files.exists(Path.of("tools/conveyor/metrics.py")), "метрики в PR и сводка metrics.py");
         ck(!yml.contains("matrix") && yml.contains("group: conveyor"), "одна линия (без matrix, одна очередь)");
+        // таблицу карточек правит только конвейер после слияния (иначе соседние строки конфликтуют: PR #109, #115)
+        ck(yml.contains("mark_done.py") && Files.exists(Path.of("tools/conveyor/mark_done.py")),
+                "статус «готово» ставит конвейер после слияния (mark_done.py в conveyor.yml)");
+        ck(!read("tools/conveyor/card.py").contains("\"docs/tasks/README.md\"}") && !sh.contains("только статус своей карточки")
+                && read("tools/conveyor/rules.txt").contains("docs/tasks/README.md не меняй"),
+                "исполнитель не правит docs/tasks/README.md");
 
         ck(read("tools/conveyor/check.sh").contains("tools/ci/test_sources.sh")
                 && read(".github/workflows/build.yml").contains("tools/ci/test_sources.sh"),
