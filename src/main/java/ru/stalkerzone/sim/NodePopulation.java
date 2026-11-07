@@ -20,6 +20,14 @@ public final class NodePopulation {
     private NodePopulation() {}
 
     /**
+     * Гарнизон базы по уровню её построек (карточка 057): {@code min(BASE_CAP, 4 + 2 × level)}.
+     * Фракция «только гарнизон» (бандиты «Малого Кордона») не растёт сверх того, что построила на узле.
+     */
+    public static int garrisonByLevel(int level) {
+        return Math.min(BASE_CAP, 4 + 2 * Math.max(0, level));
+    }
+
+    /**
      * Сколько NPC показывать на узле: люди фракции на узле по симуляции минус ушедшие на задание,
      * в границах [минимум, потолок]. 0 — узел ничей или гарнизон пуст.
      */
@@ -30,8 +38,19 @@ public final class NodePopulation {
             int here = peopleAtNode(s, f, n) - Math.max(0, away(s, f, n));
             return Math.max(3, Math.min(4, here));
         }
-        return visible(peopleAtNode(s, f, n), away(s, f, n), n.type == NodeType.BASE,
+        int num = visible(peopleAtNode(s, f, n), away(s, f, n), n.type == NodeType.BASE,
                 KordonScenario.isSmallOutpost(n.id));
+        // карточка 057: фракция «только гарнизон» держит не больше гарнизона по максимальному уровню
+        // построек узла (гарнизонByLevel не ниже минимума занятого узла, поэтому нижняя граница не ломается).
+        if (f.garrisonOnly) num = Math.min(num, garrisonByLevel(maxBuildingLevel(s, n)));
+        return num;
+    }
+
+    /** Максимальный уровень построек узла (0, если построек нет). */
+    private static int maxBuildingLevel(Simulation s, Node n) {
+        int lvl = 0;
+        for (Building b : s.buildingsAt(n.id)) lvl = Math.max(lvl, b.level);
+        return lvl;
     }
 
     /** Число NPC по гарнизону узла и ушедшим: 0 при пустом гарнизоне, иначе в границах [2, потолок]. */

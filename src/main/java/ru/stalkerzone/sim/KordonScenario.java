@@ -233,6 +233,8 @@ public final class KordonScenario {
         factions.get(ZoneScenario.BANDITS).eliteShare = 0.05;
         factions.get(ZoneScenario.BANDITS).protoBuyer = true;
         factions.get(ZoneScenario.BANDITS).brain = new KordonBalance.BanditBrain();
+        // карточка 057: в «Малом Кордоне» бандиты — только гарнизон АТП (без отрядов и захвата точек), АТП их база
+        factions.get(ZoneScenario.BANDITS).garrisonOnly = !war;
         factions.get(ZoneScenario.MILITARY).military = true;
         factions.get(ZoneScenario.MILITARY).takesNewcomers = true;
         // карточка 054: без полной войны военные — только гарнизон южного блокпоста, ИИ не действует
@@ -254,7 +256,8 @@ public final class KordonScenario {
         // карточка 066: без войны элеватор — застава одиночек (в полной войне остаётся ничейным)
         if (!war) elevator.owner = ZoneScenario.LONERS;
         atp.owner = ZoneScenario.BANDITS;
-        farPost.owner = ZoneScenario.BANDITS;
+        // карточка 057: дальний блокпост бандитов только в полной войне, в «Малом Кордоне» он ничей
+        if (war) farPost.owner = ZoneScenario.BANDITS;
         southPost.owner = ZoneScenario.MILITARY;
         // карточка 054: мост военные держат только в полной войне, в «Малом Кордоне» он ничей
         if (war) bridge.owner = ZoneScenario.MILITARY;
