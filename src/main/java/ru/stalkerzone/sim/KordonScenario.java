@@ -121,6 +121,10 @@ public final class KordonScenario {
         Node hole = node(nodes, "Дыра в заборе", NodeType.RUINS, 43, -35);
         hole.existingBuildings = true;
         hole.artifactCap = 3; hole.housing = 6; hole.defense = 28;
+        // v22 (карточка 061): вытянутая территория логова «Дыры» — к старому месту холма, мимо АТП
+        // и элеватора; с Лысым холмом не соединяется.
+        hole.reach = new int[][]{{433, -295}, {410, -225}, {340, -200}, {270, -172}};
+        hole.reachWidth = 34;
 
         Node farm = node(nodes, "Свиноферма", NodeType.SETTLEMENT, 21, -42);
         farm.existingBuildings = true;
