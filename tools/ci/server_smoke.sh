@@ -46,6 +46,11 @@ START=$(( $(date +%s) - t0 ))
 
 # чанк деревни (там уровень и площадки), потом мир живёт минуту: тик должен идти, сторож молчать
 python3 -I tools/ci/rcon.py "forceload add 0 0" >/dev/null 2>&1 || fail "RCON не отвечает"
+# площадки за пределами view-distance 10 (у игрока 20 — грузятся сразу): туннель с рельсами, АТП, элеватор, О7, свалка.
+# Зависание 07.11: рельсы туннеля ставились с onPlace при загрузке чанка → сервер ждал соседний чанк вечно.
+for AREA in "110 -265 154 -259" "300 -140 340 -100" "190 -235 225 -200" "104 -88 130 -60" "-54 -134 -22 -108"; do
+  timeout 150 python3 -I tools/ci/rcon.py "forceload add $AREA" >/dev/null 2>&1 || fail "RCON не отвечает после загрузки площадки ($AREA)"
+done
 sleep 60
 TPS_LINE=$(python3 -I tools/ci/rcon.py "forge tps" 2>/dev/null | tr '\n' ' ')
 TPS=$(printf '%s' "$TPS_LINE" | grep -oE "Overall: Mean tick time: [0-9.]+ ms. Mean TPS: [0-9.]+" | grep -oE "[0-9.]+$")
