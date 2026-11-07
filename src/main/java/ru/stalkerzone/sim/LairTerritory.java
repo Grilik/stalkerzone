@@ -13,6 +13,14 @@ public final class LairTerritory {
         return 0;
     }
 
+    /**
+     * Грызня видов (карточка 064): мутанты разных видов враждебны друг другу, только если людей
+     * поблизости нет. Один вид своих не трогает; при людях рядом все бьют людей.
+     */
+    public static boolean hostile(LairKind a, LairKind b, boolean humansNear) {
+        return a != b && !humansNear;
+    }
+
     /** Точка (x, z) — зона людей: рядом с занятым узлом (кроме узла exceptNode). */
     public static boolean humanZone(Simulation s, int x, int z, int exceptNode) {
         return false;

@@ -169,6 +169,18 @@ public final class Prefabs {
         return out;
     }
 
+    /**
+     * Запретные полосы перед периметром (карточка 055): метки «kill_line» всех площадок уровня по порядку,
+     * каждые 4 точки — углы одного прямоугольника {@link ru.stalkerzone.zonemap.KillZone}.
+     */
+    public static List<int[]> killZones(String levelId, Ground g, int lvl) {
+        java.util.ArrayList<int[]> pts = new java.util.ArrayList<>();
+        for (Site site : sites(levelId))
+            for (Point p : points(levelId, g, lvl, site.node))
+                if ("kill_line".equals(p.kind())) pts.add(new int[]{p.x(), p.z()});
+        return ru.stalkerzone.zonemap.KillZone.fromPoints(pts);
+    }
+
     // упаковка позиции: x и z по 21 бит (±1 млн), y — 21 бит; раньше z+2^21 вылезал в поле y и ломал координаты
     public static long key(int x, int y, int z) { return ((long) (x + (1 << 20)) << 42) | ((long) (y + 2048) << 21) | (z + (1 << 20)); }
     public static int kx(long k) { return (int) (k >>> 42) - (1 << 20); }
