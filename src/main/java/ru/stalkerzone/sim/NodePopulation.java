@@ -33,6 +33,11 @@ public final class NodePopulation {
      */
     public static int number(Simulation s, Faction f, Node n) {
         if (s == null || f == null || n == null || n.owner != f.id) return 0;
+        // карточка 066: элеватор «Малого Кордона» (узел 4) — малая застава одиночек на 3–4 человека.
+        if (n.id == 4 && Scenarios.KORDON.equals(s.scenario)) {
+            int here = peopleAtNode(s, f, n) - Math.max(0, away(s, f, n));
+            return Math.max(3, Math.min(4, here));
+        }
         int num = visible(peopleAtNode(s, f, n), away(s, f, n), n.type == NodeType.BASE,
                 KordonScenario.isSmallOutpost(n.id));
         // карточка 057: фракция «только гарнизон» держит не больше гарнизона по максимальному уровню
