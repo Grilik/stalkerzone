@@ -1,6 +1,7 @@
 package ru.stalkerzone.sim;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -98,7 +99,8 @@ public final class KordonScenario {
         bigLand.existingBuildings = true;
         bigLand.housing = 2; bigLand.defense = 60;
 
-        Node elevator = node(nodes, "Элеватор", NodeType.RUINS, 20, -22);
+        // карточка 066: без войны элеватор — малая застава одиночек, в полной войне — прежние руины
+        Node elevator = node(nodes, "Элеватор", war ? NodeType.RUINS : NodeType.OUTPOST, 20, -22);
         elevator.existingBuildings = true;
         elevator.partsCap = 24; elevator.artifactCap = 3; elevator.housing = 12; elevator.defense = 14;
 
@@ -249,6 +251,8 @@ public final class KordonScenario {
 
         village.owner = ZoneScenario.LONERS;
         farm.owner = ZoneScenario.LONERS;
+        // карточка 066: без войны элеватор — застава одиночек (в полной войне остаётся ничейным)
+        if (!war) elevator.owner = ZoneScenario.LONERS;
         atp.owner = ZoneScenario.BANDITS;
         farPost.owner = ZoneScenario.BANDITS;
         southPost.owner = ZoneScenario.MILITARY;
@@ -311,7 +315,13 @@ public final class KordonScenario {
         // v14: настройка логов для Кордона
         sim.lairExits = EXITS;
         // v22 (карточка 046): на малых заставах логово не заводится
-        sim.lairForbidden = SMALL_OUTPOSTS;
+        // карточка 066: без войны на элеваторе тоже (это малая застава одиночек)
+        if (war) {
+            sim.lairForbidden = SMALL_OUTPOSTS;
+        } else {
+            sim.lairForbidden = Arrays.copyOf(SMALL_OUTPOSTS, SMALL_OUTPOSTS.length + 1);
+            sim.lairForbidden[SMALL_OUTPOSTS.length] = ELEVATOR;
+        }
         // EXITS + LAIR_SITES — фракции не захватывают
         int[] nc = new int[EXITS.length + LAIR_SITES.length];
         System.arraycopy(EXITS, 0, nc, 0, EXITS.length);
