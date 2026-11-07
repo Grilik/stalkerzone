@@ -1361,11 +1361,36 @@ public final class Simulation {
     }
 
     /**
+     * Маршрут фракции. Сперва прежний путь с учётом проходов (карточка 003), затем — карточка 058: если путь
+     * проходит (не концами) через базу неподвижного гарнизона, враждебного фракции (напр. АТП бандитов для
+     * одиночек), и есть обход, берём обход. В сценариях без гарнизонов (kordon_war) маршруты прежние.
+     */
+    public int[] route(Faction f, int from, int to, Random r) {
+        int[] base = routeThroughCrossings(f, from, to, r);
+        int n = graph.count();
+        boolean[] avoid = new boolean[n];
+        boolean any = false;
+        for (int i = 0; i < n; i++) {
+            int owner = nodes.get(i).owner;
+            if (owner >= 0 && factions.get(owner).garrisonOnly && hostilityTo(f, owner) >= Crossings.ENEMY) {
+                avoid[i] = true;
+                any = true;
+            }
+        }
+        if (!any) return base;
+        boolean passes = false;
+        for (int i = 1; i + 1 < base.length; i++) if (avoid[base[i]]) { passes = true; break; }
+        if (!passes) return base;
+        int[] alt = pathAvoiding(from, to, avoid);
+        return alt != null ? alt : base;
+    }
+
+    /**
      * Маршрут с учётом трёх проходов (карточка 003). Врагов владельца прохода не пускает;
      * проход выбирается по цене пути (время + опасность + пошлина) с учётом денег и смелости фракции.
      * Без настроенных проходов — обычный кратчайший путь.
      */
-    public int[] route(Faction f, int from, int to, Random r) {
+    private int[] routeThroughCrossings(Faction f, int from, int to, Random r) {
         if (crossingNodes.length == 0 || from == to) return graph.path(from, to);
         int[] base = graph.path(from, to);
         if (!crosses(base)) return base;
