@@ -50,7 +50,7 @@ def passport(path):
 
 
 def allowed(p):
-    return set(p["files"]) | {"src/test/java/%s.java" % p["test"], "docs/tasks/README.md"} | ({p["checklist"]} if p["checklist"] else set())
+    return set(p["files"]) | {"src/test/java/%s.java" % p["test"]} | ({p["checklist"]} if p["checklist"] else set())
 
 
 def main(argv):
