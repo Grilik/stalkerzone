@@ -5,8 +5,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    timeout-minutes: 60
     concurrency:
       group: build-${{ github.ref }}
       cancel-in-progress: false
@@ -23,55 +22,50 @@ jobs:
           mkdir -p out
           # список исходников — один на CI и конвейер (П-13)
           javac --release 17 -encoding UTF-8 -d out $(bash tools/ci/test_sources.sh)
+          # Э0-01: все тесты до конца (не останавливаться на первом красном), таймаут на тест, список упавших в конце
+          set +e
+          failed=""; total=0
           for f in src/test/java/*Test.java; do
-            t=$(basename "$f" .java)
+            t=$(basename "$f" .java); total=$((total + 1))
             echo "::group::$t"
-            java -Dfile.encoding=UTF-8 -cp out "$t"
+            timeout 600 java -Dfile.encoding=UTF-8 -cp out "$t"; rc=$?
             echo "::endgroup::"
+            if [ "$rc" -ne 0 ]; then
+              if [ "$rc" -eq 124 ]; then why="таймаут 600 с"; else why="код выхода $rc"; fi
+              echo "::error title=Тест $t::$why"
+              failed="$failed $t"
+            fi
           done
+          if [ -n "$failed" ]; then echo "Упали:$failed"; exit 1; fi
+          echo "Все тесты прошли: $total"
       - name: Build mod
         run: ./gradlew build --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: stalkerzone-mod
           path: build/libs/*.jar
-      - name: Сборка для игры (релиз nightly)
-        id: rel
-        # карточка 018: после каждого зелёного main — jar в Releases, ссылка уходит в Telegram
-        if: success() && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BEFORE: ${{ github.event.before }}
-        run: |
-          JAR=$(ls build/libs/*.jar | grep -vE -- '-(sources|slim|dev)\.jar$' | head -1)
-          { echo "Сборка из main, коммит ${GITHUB_SHA::7}. Установка: заменить jar в папке mods."; echo;
-            echo "Изменения:"; if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE" 2>/dev/null; then git log --pretty='- %s' "$BEFORE..HEAD" | head -20; else git log -5 --pretty='- %s'; fi; } > /tmp/notes.md
-          gh release delete nightly --cleanup-tag -y 2>/dev/null || true
-          gh release create nightly "$JAR" --prerelease --target "$GITHUB_SHA" \
-            --title "Сборка $(TZ=Europe/Moscow date +'%d.%m %H:%M') (${GITHUB_SHA::7})" --notes-file /tmp/notes.md
-          echo "url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/nightly/$(basename "$JAR")" >> "$GITHUB_OUTPUT"
       - name: Telegram
-        if: always() && !(startsWith(github.ref_name, 'task/') && endsWith(github.ref_name, '-auto') && job.status == 'success')
+        # Э0-01: об успехе на main сообщает задание release (после зелёного server); здесь — провалы и ветки
+        if: always() && !(startsWith(github.ref_name, 'task/') && endsWith(github.ref_name, '-auto') && job.status == 'success') && !(github.ref == 'refs/heads/main' && job.status == 'success')
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           MSG: ${{ github.event.head_commit.message }}
           AUTHOR: ${{ github.event.head_commit.author.name || github.actor }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          JAR_URL: ${{ steps.rel.outputs.url }}
         run: |
           if [ "${{ job.status }}" = success ]; then st="✅"; else st="❌"; fi
           first=$(printf '%s' "${MSG:-ручной запуск}" | head -1)
-          if [ -n "$JAR_URL" ]; then extra="🎮 скачать для игры: $JAR_URL"; else extra="$RUN_URL"; fi
           python3 -I tools/notify/tg.py "$st сборка ${{ github.ref_name }}: $first ($AUTHOR)
-          $extra" || true
+          $RUN_URL" || true
   # П-13 / открытая проблема 3: сервер на синтетическом уровне создаёт новый мир, держит тик и сохраняется
   server:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
       group: server-${{ github.ref }}
-      cancel-in-progress: true
+      # Э0-01 (P-05): на main прогон не отменяется следующим пушем — иначе релиз ждал бы отменённое задание
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -81,6 +75,7 @@ jobs:
       - name: Сервер на синтетическом уровне
         env:
           JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+          SMOKE_MIN_TPS: 1000   # ПРОБНЫЙ ПРОГОН Э0-01: принудительный провал
         run: |
           bash tools/ci/server_smoke.sh | tee /tmp/smoke.txt
           tail -1 /tmp/smoke.txt | grep -q "^СЕРВЕР: OK" || { echo "::error title=Сервер::$(tail -1 /tmp/smoke.txt)"; exit 1; }
@@ -93,3 +88,64 @@ jobs:
             /tmp/sz-server.log
             run/logs/latest.log
             run/crash-reports/
+      - name: Telegram
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MSG: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name || github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          first=$(printf '%s' "${MSG:-ручной запуск}" | head -1)
+          python3 -I tools/notify/tg.py "❌ сервер в CI ${{ github.ref_name }}: $first ($AUTHOR)
+          $RUN_URL" || true
+  # Э0-01 (P-05): сборка для игры — только после зелёных build И server; при красном любом из них релиза нет
+  release:
+    needs: [build, server]
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/e0-01-ci-gates') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')   # ПРОБНЫЙ ПРОГОН
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    concurrency:
+      group: release-main
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 30
+      - uses: actions/download-artifact@v4
+        with:
+          name: stalkerzone-mod
+          path: build/libs
+      - name: Сборка для игры (релиз nightly)
+        id: rel
+        # карточка 018: после каждого зелёного main — jar в Releases, ссылка уходит в Telegram
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          echo 'ПРОБНЫЙ ПРОГОН Э0-01: сюда дойти не должно — server красный'; exit 1
+          JAR=$(ls build/libs/*.jar | grep -vE -- '-(sources|slim|dev)\.jar$' | head -1)
+          { echo "Сборка из main, коммит ${GITHUB_SHA::7}. Установка: заменить jar в папке mods."; echo;
+            echo "Изменения:"; if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE" 2>/dev/null; then git log --pretty='- %s' "$BEFORE..HEAD" | head -20; else git log -5 --pretty='- %s'; fi; } > /tmp/notes.md
+          gh release delete nightly --cleanup-tag -y 2>/dev/null || true
+          gh release create nightly "$JAR" --prerelease --target "$GITHUB_SHA" \
+            --title "Сборка $(TZ=Europe/Moscow date +'%d.%m %H:%M') (${GITHUB_SHA::7})" --notes-file /tmp/notes.md
+          echo "url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/nightly/$(basename "$JAR")" >> "$GITHUB_OUTPUT"
+      - name: Telegram
+        if: false   # ПРОБНЫЙ ПРОГОН
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MSG: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name || github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JAR_URL: ${{ steps.rel.outputs.url }}
+        run: |
+          if [ "${{ job.status }}" = success ]; then st="✅"; else st="❌"; fi
+          first=$(printf '%s' "${MSG:-ручной запуск}" | head -1)
+          if [ -n "$JAR_URL" ]; then extra="🎮 скачать для игры: $JAR_URL"; else extra="$RUN_URL"; fi
+          python3 -I tools/notify/tg.py "$st сборка main: $first ($AUTHOR)
+          $extra" || true
