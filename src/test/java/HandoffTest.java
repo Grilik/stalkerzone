@@ -19,7 +19,7 @@ public class HandoffTest {
     public static void main(String[] a) throws Exception {
         Path claude = Path.of("CLAUDE.md");
         ck(Files.exists(claude), "CLAUDE.md в корне");
-        String root = Files.exists(claude) ? Files.readString(claude) : "";
+        String root = Files.exists(claude) ? Files.readString(claude).replace("\r\n", "\n") : "";
         ck(root.contains("docs/claude/00-start-here.md"), "CLAUDE.md указывает на docs/claude/00-start-here.md");
         // все пути docs/... и .claude/... из CLAUDE.md существуют
         Matcher m = Pattern.compile("`((?:docs|\\.claude)/[^`]+)`").matcher(root);
@@ -28,7 +28,7 @@ public class HandoffTest {
         Path skill = Path.of(".claude/skills/stalkerzone-dev/SKILL.md");
         ck(Files.exists(skill), "навык " + skill);
         if (Files.exists(skill)) {
-            String s = Files.readString(skill);
+            String s = Files.readString(skill).replace("\r\n", "\n");
             ck(s.startsWith("---") && s.matches("(?s)---\\s*\\nname: \"?stalkerzone-dev\"?\\s*\\n.*"), "у навыка заголовок с name: stalkerzone-dev");
         }
 
@@ -38,7 +38,7 @@ public class HandoffTest {
             ck(ok, "docs/claude/" + d + ".md есть и не пустой");
         }
         if (Files.exists(Path.of("docs/claude/02-prompts.md")))
-            ck(Files.readString(Path.of("docs/claude/02-prompts.md")).contains("### Промпт «Программист»"),
+            ck(Files.readString(Path.of("docs/claude/02-prompts.md")).replace("\r\n", "\n").contains("### Промпт «Программист»"),
                "в 02-prompts.md есть ролевой промпт «Программист»");
 
         // данных игры GSC в репозитории нет

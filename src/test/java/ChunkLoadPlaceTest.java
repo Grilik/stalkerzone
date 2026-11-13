@@ -23,7 +23,7 @@ public class ChunkLoadPlaceTest {
     }
 
     public static void main(String[] a) throws Exception {
-        String src = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/ObjPropBlock.java"));
+        String src = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/ObjPropBlock.java")).replace("\r\n", "\n");
         String safe = body(src, "public static boolean safeSet(");
         String raw = body(src, "private static boolean rawSet(");
         ck(!safe.isEmpty() && !raw.isEmpty(), "есть safeSet и rawSet");

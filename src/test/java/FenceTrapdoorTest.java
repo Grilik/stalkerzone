@@ -11,8 +11,8 @@ public class FenceTrapdoorTest {
     static void ck(boolean c, String m) { System.out.println((c ? "OK   " : "FAIL ") + m); if (!c) f++; }
 
     public static void main(String[] a) throws Exception {
-        String reg = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/ZoneBlocks.java"));
-        String blk = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/FixedTrapDoorBlock.java"));
+        String reg = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/ZoneBlocks.java")).replace("\r\n", "\n");
+        String blk = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/FixedTrapDoorBlock.java")).replace("\r\n", "\n");
         ck(reg.contains("m == ZoneMat.FENCE_BOARDS") && reg.contains("new FixedTrapDoorBlock("),
                 "zm_fence_boards_trapdoor регистрируется неоткрываемым люком");
         ck(blk.contains("extends TrapDoorBlock"), "состояния и модели — как у люка");
