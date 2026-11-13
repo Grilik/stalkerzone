@@ -13,6 +13,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import ru.stalkerzone.sim.Node;
 import ru.stalkerzone.sim.Scenarios;
@@ -21,6 +22,7 @@ import ru.stalkerzone.sim.Simulation;
 /** Мир Зоны: границы, точка появления, возврат игроков с края. Шкала и границы берутся из карты симуляции. */
 public final class ZoneWorld {
     private static final String ENTERED_TAG = "stalkerzone_entered";
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 
     private static ZoneBounds bounds;
     private static Node kordon;
@@ -93,6 +95,12 @@ public final class ZoneWorld {
             wb.setWarningBlocks(4);
             int[] sp = spawnXZ();
             level.setDefaultSpawnPos(SpawnFinder.safeNear(level, b, sp[0], sp[1]), 0f);
+        }
+
+        /** Э0-08: сводка подмен блоков воздухом (неизвестные состояния в сборщиках) — в лог при остановке; CI ждёт substitutions=0. */
+        @SubscribeEvent
+        public void onServerStopping(ServerStoppingEvent e) {
+            LOGGER.info("[stalkerzone] {}", ZoneMapPlacer.substitutionReport());
         }
 
         @SubscribeEvent
