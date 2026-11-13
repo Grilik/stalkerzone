@@ -1,9 +1,0 @@
-{
-  "name": "szguns.gun.pm.name",
-  "display": "szguns:pm_display",
-  "data": "szguns:pm_data",
-  "tooltip": "szguns.gun.pm.desc",
-  "type": "pistol",
-  "item_type": "modern_kinetic",
-  "sort": 1
-}

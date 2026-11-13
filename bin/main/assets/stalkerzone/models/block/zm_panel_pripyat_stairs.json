@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/stairs",
- "textures": {
-  "bottom": "stalkerzone:block/zm_panel_pripyat",
-  "top": "stalkerzone:block/zm_panel_pripyat",
-  "side": "stalkerzone:block/zm_panel_pripyat"
- }
-}

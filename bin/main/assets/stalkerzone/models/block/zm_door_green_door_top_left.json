@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/door_top_left",
- "textures": {
-  "bottom": "stalkerzone:block/zm_door_green_door_bottom",
-  "top": "stalkerzone:block/zm_door_green_door_top"
- },
- "render_type": "minecraft:cutout"
-}
