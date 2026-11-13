@@ -95,7 +95,6 @@ public final class ZoneWorld {
             wb.setWarningBlocks(4);
             int[] sp = spawnXZ();
             level.setDefaultSpawnPos(SpawnFinder.safeNear(level, b, sp[0], sp[1]), 0f);
-            ZoneMapPlacer.state("stalkerzone:e0_08_probe[oops=1]");   // ПРОБНЫЙ ПРОГОН Э0-08: одна заведомая подмена → server красный
         }
 
         /** Э0-08: сводка подмен блоков воздухом (неизвестные состояния в сборщиках) — в лог при остановке; CI ждёт substitutions=0. */
