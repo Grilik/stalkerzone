@@ -1,8 +1,0 @@
-newmtl lamp
-Kd 1 1 1
-map_Kd #lamp
-
-newmtl steel_dark
-Kd 1 1 1
-map_Kd #steel_dark
-

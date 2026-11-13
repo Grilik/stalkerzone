@@ -1,8 +1,0 @@
-newmtl sack
-Kd 1 1 1
-map_Kd #sack
-
-newmtl wood
-Kd 1 1 1
-map_Kd #wood
-

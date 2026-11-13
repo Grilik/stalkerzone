@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/slab_top",
- "textures": {
-  "bottom": "stalkerzone:block/zm_bark_birch",
-  "top": "stalkerzone:block/zm_bark_birch",
-  "side": "stalkerzone:block/zm_bark_birch"
- }
-}

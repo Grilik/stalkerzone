@@ -1,9 +1,0 @@
-{
- "parent": "minecraft:block/slab_top",
- "textures": {
-  "bottom": "stalkerzone:block/zm_glass_dirty",
-  "top": "stalkerzone:block/zm_glass_dirty",
-  "side": "stalkerzone:block/zm_glass_dirty"
- },
- "render_type": "minecraft:translucent"
-}

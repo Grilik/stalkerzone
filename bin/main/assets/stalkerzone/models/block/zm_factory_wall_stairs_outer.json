@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/outer_stairs",
- "textures": {
-  "bottom": "stalkerzone:block/zm_factory_wall",
-  "top": "stalkerzone:block/zm_factory_wall",
-  "side": "stalkerzone:block/zm_factory_wall"
- }
-}

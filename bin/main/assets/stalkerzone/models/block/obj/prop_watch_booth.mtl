@@ -1,8 +1,0 @@
-newmtl paint_olive
-Kd 1 1 1
-map_Kd #paint_olive
-
-newmtl stripe
-Kd 1 1 1
-map_Kd #stripe
-

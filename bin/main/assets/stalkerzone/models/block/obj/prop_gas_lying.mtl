@@ -1,8 +1,0 @@
-newmtl chrome
-Kd 1 1 1
-map_Kd #chrome
-
-newmtl gas_blue
-Kd 1 1 1
-map_Kd #gas_blue
-

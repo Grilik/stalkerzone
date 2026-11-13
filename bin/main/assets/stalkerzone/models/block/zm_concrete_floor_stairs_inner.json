@@ -1,8 +1,0 @@
-{
- "parent": "minecraft:block/inner_stairs",
- "textures": {
-  "bottom": "stalkerzone:block/zm_concrete_floor",
-  "top": "stalkerzone:block/zm_concrete_floor",
-  "side": "stalkerzone:block/zm_concrete_floor"
- }
-}
