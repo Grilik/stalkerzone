@@ -24,9 +24,10 @@ import java.util.List;
 /** Отладочные команды /zone. Позже заменятся КПК, пока позволяют наблюдать за симуляцией. */
 public final class ZoneCommands {
     private ZoneCommands() {}
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 
     public static void register(CommandDispatcher<CommandSourceStack> d) {
-        d.register(Commands.literal("zone")
+        com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> zone = Commands.literal("zone")
                 .then(Commands.literal("factions")
                         .executes(c -> send(c, Report.factions(sim(c)))))
                 .then(Commands.literal("scorcher")
@@ -271,7 +272,49 @@ public final class ZoneCommands {
                                 .executes(c -> {
                                     ZoneData.get(c.getSource().getServer()).reset(LongArgumentType.getLong(c, "seed"));
                                     return send(c, "Зона пересоздана.");
-                                }))));
+                                })));
+        // Э0-07: dev-подкоманда только для сервера в CI (-Dstalkerzone.ci=true) — поведенческая проверка BlockEntity
+        if (Boolean.getBoolean("stalkerzone.ci"))
+            zone.then(Commands.literal("wallbe").requires(s -> s.hasPermission(2)).executes(ZoneCommands::wallBe));
+        d.register(zone);
+    }
+
+    /**
+     * Э0-07 (только при -Dstalkerzone.ci=true): поведенческая проверка замены блока с BlockEntity в стене периметра на
+     * живом сервере. Это НЕ воспроизведение контекста ChunkEvent.Load — чанк уже загружен; проверяется, что путь
+     * WallBuilder → ObjPropBlock.replaceBlockEntity не оставляет осиротевшего BlockEntity и не бросает исключений.
+     * Шаги: столбец BARRIER у западной границы на z точки появления; основание столбца → камень (чтобы WallBuilder
+     * считал столбец непостроенным); сундук обычным setBlock (BlockEntity создаётся штатно); WallBuilder.build внутри
+     * ObjPropBlock.worldgen; проверки. В лог и в ответ — «wallbe: OK …» или «wallbe: FAIL …».
+     */
+    private static int wallBe(CommandContext<CommandSourceStack> c) {
+        ServerLevel level = c.getSource().getServer().overworld();
+        ZoneBounds b = ZoneWorld.bounds();
+        int x = b.minX - 1, z = ZoneWorld.spawnXZ()[1];
+        String r;
+        try {
+            if (b.kind(x, z) != ZoneBounds.Kind.BARRIER) throw new IllegalStateException("столбец (" + x + ", " + z + ") не BARRIER");
+            net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunk(x >> 4, z >> 4);
+            BlockPos base = new BlockPos(x, chunk.getMinBuildHeight(), z);
+            BlockPos chest = new BlockPos(x, level.getSeaLevel() + 10, z);
+            level.setBlock(base, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+            level.setBlock(chest, net.minecraft.world.level.block.Blocks.CHEST.defaultBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+            if (chunk.getBlockEntity(chest) == null) throw new IllegalStateException("сундук не создал BlockEntity");
+            ru.stalkerzone.block.ObjPropBlock.worldgen(() -> ru.stalkerzone.world.WallBuilder.build(chunk, b));
+            List<String> bad = new ArrayList<>();
+            if (!chunk.getBlockState(chest).is(net.minecraft.world.level.block.Blocks.BARRIER)) bad.add("на месте сундука не барьер: " + chunk.getBlockState(chest));
+            if (chunk.getBlockEntity(chest) != null) bad.add("BlockEntity остался в чанке");
+            if (level.getBlockEntity(chest) != null) bad.add("BlockEntity виден через Level");
+            if (chunk.getBlockEntitiesPos().contains(chest)) bad.add("позиция осталась в getBlockEntitiesPos");
+            if (!chunk.getBlockState(base).is(net.minecraft.world.level.block.Blocks.BARRIER)) bad.add("основание столбца не барьер: " + chunk.getBlockState(base));
+            r = bad.isEmpty()
+                    ? "wallbe: OK — сундук в столбце барьера (" + x + ", " + chest.getY() + ", " + z + ") заменён без BlockEntity и без исключений"
+                    : "wallbe: FAIL — " + String.join("; ", bad);
+        } catch (Throwable t) {
+            r = "wallbe: FAIL — исключение " + t;
+        }
+        LOGGER.info("[stalkerzone] {}", r);
+        return send(c, r);
     }
 
     private static Simulation sim(CommandContext<CommandSourceStack> c) {

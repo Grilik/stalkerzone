@@ -75,17 +75,28 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
      */
     public static boolean safeSet(net.minecraft.world.level.chunk.ChunkAccess c, BlockPos pos, BlockState s) {
         if (c.getBlockState(pos).hasBlockEntity()) return false;
-        if (!s.getFluidState().isEmpty() && c instanceof net.minecraft.world.level.chunk.LevelChunk) {
-            // жидкость: её onPlace смотрит соседей через Level (чанк ещё не готов — зависание); ставим прямо в секцию
-            int idx = c.getSectionIndex(pos.getY());
-            if (idx < 0 || idx >= c.getSections().length) return false;
-            c.getSections()[idx].setBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15, s, false);
-            c.setUnsaved(true);
-            return true;
-        }
+        // жидкость: её onPlace смотрит соседей через Level (чанк ещё не готов — зависание); пишем через rawSet —
+        // как твёрдые блоки, с картами высот и светом (Э0-07; раньше — прямо в секцию без них)
+        if (!s.getFluidState().isEmpty() && c instanceof net.minecraft.world.level.chunk.LevelChunk fc) return rawSet(fc, pos, s);
         if (c instanceof net.minecraft.world.level.chunk.LevelChunk lc && !s.hasBlockEntity()) return rawSet(lc, pos, s);
         c.setBlockState(pos, s, false);
         return true;
+    }
+
+    /**
+     * Э0-07 (P-03): заменить при загрузке чанка блок с BlockEntity (улей, сундук, спавнер) на {@code s} без BlockEntity,
+     * не выходя в Level. Ванильный {@code LevelChunk.setBlockState} звал бы {@code onRemove} блока, а тот у многих
+     * блоков опрашивает соседей через Level — соседний чанк ещё не готов, и серверный поток ждёт его вечно.
+     * BlockEntity снимается средствами самого чанка: отложенный поднимается из NBT (как делает ваниль перед заменой),
+     * {@code removeBlockEntity} чистит карту сущностей, тикер и слушатель событий внутри чанка; состояние пишется
+     * через {@link #rawSet}. Единственный вызов — {@code WallBuilder}; поведение на сервере проверяет «zone wallbe» в CI.
+     */
+    public static boolean replaceBlockEntity(net.minecraft.world.level.chunk.ChunkAccess c, BlockPos pos, BlockState s) {
+        if (s.hasBlockEntity()) return false;
+        if (!(c instanceof net.minecraft.world.level.chunk.LevelChunk lc)) { c.setBlockState(pos, s, false); return true; }
+        lc.getBlockEntity(pos);
+        lc.removeBlockEntity(pos);
+        return rawSet(lc, pos, s);
     }
 
     /**

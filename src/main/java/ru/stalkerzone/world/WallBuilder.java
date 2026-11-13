@@ -38,8 +38,9 @@ public final class WallBuilder {
                     for (int y = minY; y < maxY; y++) {
                         p.set(x, y, z);
                         if (chunk.getBlockState(p).is(Blocks.BARRIER)) continue; // уже стоит
-                        // блок с сущностью (улей, сундук) оставлял бы в стене дыру: заменяем на барьер (карточка 027)
-                        if (chunk.getBlockState(p).hasBlockEntity()) { chunk.setBlockState(p.immutable(), barrier, false); changed = true; }
+                        // блок с сущностью (улей, сундук) оставлял бы в стене дыру: заменяем на барьер (карточка 027) —
+                        // средствами чанка, без onRemove через Level: соседний чанк ещё не готов, это класс зависания P-03 (Э0-07)
+                        if (chunk.getBlockState(p).hasBlockEntity()) { if (ru.stalkerzone.block.ObjPropBlock.replaceBlockEntity(chunk, p.immutable(), barrier)) changed = true; }
                         else if (ru.stalkerzone.block.ObjPropBlock.safeSet(chunk, p.immutable(), barrier)) changed = true;
                     }
                 } else {

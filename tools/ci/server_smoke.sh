@@ -2,6 +2,7 @@
 # П-13 / открытая проблема 3: сервер на синтетическом уровне (без данных GSC) создаёт новый мир, держит тик и сохраняется.
 # Э0-02: грузит все 9 площадок Prefabs.SITES и полосу периметра (там работает WallBuilder), проверяет аудит экономики
 # («zone audit») и чистоту лога: строки Exception|ERROR|СТОРОЖ вне белого списка tools/ci/smoke_allow.txt — провал.
+# Э0-07: «zone wallbe» — поведенческая проверка замены блока с BlockEntity в стене (сервер идёт с -Dstalkerzone.ci=true).
 # Запуск: bash tools/ci/server_smoke.sh   (из корня репозитория; нужен JDK 17)
 # Итог — последняя строка: «СЕРВЕР: OK …» или «СЕРВЕР: ПРОВАЛ …»; код выхода 0/1. Лог сервера — /tmp/sz-server.log.
 # Порог TPS — SMOKE_MIN_TPS (по умолчанию 15), время на подъём мира — SMOKE_START_TIMEOUT (900 с),
@@ -43,6 +44,8 @@ simulation-distance=8
 spawn-protection=0
 EOF
 
+# Э0-07: системное свойство для dev-команд CI («zone wallbe»); JAVA_TOOL_OPTIONS читает и JVM сервера под Gradle
+export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Dstalkerzone.ci=true"
 ( timeout $((START_TIMEOUT + 600)) ./gradlew runServer --no-daemon --console=plain > "$LOG" 2>&1 ) &
 PID=$!
 t0=$(date +%s)
@@ -94,6 +97,13 @@ if ! printf '%s\n' "$AUD" | grep -q "сходятся"; then
 fi
 echo "аудит: $(printf '%s' "$AUD" | head -1)"
 
+# Э0-07: поведенческая проверка замены блока с BlockEntity в столбце барьера периметра (dev-команда есть только при
+# -Dstalkerzone.ci=true). Это отдельная проверка BlockEntity, не воспроизведение контекста ChunkEvent.Load: сундук
+# ставится в уже загруженный чанк, затем WallBuilder.build внутри ObjPropBlock.worldgen; ожидается «wallbe: OK».
+WB=$(rcon "zone wallbe" 120 | sed 's/^zone wallbe -> //')
+printf '%s\n' "$WB" | grep -q "wallbe: OK" || fail "wallbe: ${WB:-нет ответа RCON}"
+echo "$WB"
+
 rcon "save-all flush" >/dev/null || fail "RCON: save-all"
 python3 -I tools/ci/rcon.py stop >/dev/null 2>&1 || true
 for _ in $(seq 1 90); do kill -0 "$PID" 2>/dev/null || break; sleep 2; done
@@ -102,6 +112,7 @@ grep -qE "Saving worlds|All chunks are saved|All dimensions are saved" "$LOG" ||
 PID=""
 # строка LevelRegions: «уровень l01_escape загружен: … x0/z0/w/d …» или «… не найден: нет файла …» (кириллица в логе может быть «?»)
 grep -q "LevelRegions.*l01_escape.*x0/z0/w/d" "$LOG" || { echo "СЕРВЕР: ПРОВАЛ — мод не загрузил синтетический уровень l01_escape"; grep -m2 "LevelRegions" "$LOG" | cut -c1-300; exit 1; }
+grep -q "wallbe: OK" "$LOG" || { echo "СЕРВЕР: ПРОВАЛ — в логе сервера нет строки «wallbe: OK»"; exit 1; }
 # Э0-02: лог за весь прогон (запуск, площадки, остановка) чист от Exception|ERROR|СТОРОЖ вне белого списка
 ERRS=$(log_errors)
 if [ -n "$ERRS" ]; then
