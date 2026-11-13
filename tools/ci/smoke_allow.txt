@@ -2,3 +2,9 @@
 # По одному регулярному выражению (grep -E) в строке; пустые строки и строки с # пропускаются.
 # Сюда попадают только строки, не относящиеся к моду: предупреждения Forge/Gradle без последствий
 # (например, отсутствующие в CI необязательные моды). Ошибки Stalker Zone в список не вносить — их чинят.
+
+# Netty на Java 17 пробует jdk.internal.misc.Unsafe через отражение и пишет отладочный стек (первый прогон Э0-02,
+# run 43454204757): к моду не относится, сервер работает штатно.
+UnsupportedOperationException: Reflective setAccessible\(true\) disabled
+IllegalAccessException: class io\.netty\.util\.internal\.PlatformDependent0
+at jdk\.internal\.reflect\.Reflection\.newIllegalAccessException\(Reflection\.java
