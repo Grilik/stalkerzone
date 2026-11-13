@@ -1,0 +1,11 @@
+# Э0-05: концы строк не зависят от core.autocrlf конкретного ПК.
+# Исходники, скрипты и документы хранятся и выдаются с LF: их читают тесты «по исходникам» и bash на Linux.
+# Windows-скрипты хранятся с LF, выдаются с CRLF на любой платформе (BOM .ps1 не затрагивается); бинарные — как есть.
+*.java text eol=lf
+*.sh text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.png binary
+*.szl binary

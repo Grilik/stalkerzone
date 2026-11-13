@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class ConveyorTest {
     static int f = 0;
     static void ck(boolean c, String m) { System.out.println((c ? "OK   " : "FAIL ") + m); if (!c) f++; }
-    static String read(String p) throws Exception { return Files.exists(Path.of(p)) ? Files.readString(Path.of(p)) : ""; }
+    static String read(String p) throws Exception { return Files.exists(Path.of(p)) ? Files.readString(Path.of(p)).replace("\r\n", "\n") : ""; }
 
     static String field(String text, String name) {
         Matcher m = Pattern.compile("^\\*\\*" + name + ":\\*\\*\\s*(.+)$", Pattern.MULTILINE).matcher(text);
@@ -48,7 +48,7 @@ public class ConveyorTest {
         int cards = 0;
         try (Stream<Path> s = Files.list(Path.of("docs/tasks"))) {
             for (Path p : s.filter(x -> x.getFileName().toString().matches("\\d{3}-.*\\.md")).sorted().toList()) {
-                String t = Files.readString(p);
+                String t = Files.readString(p).replace("\r\n", "\n");
                 if (!field(t, "Конвейер").startsWith("да")) continue;
                 cards++;
                 String n = p.getFileName().toString();
@@ -58,7 +58,7 @@ public class ConveyorTest {
                 ck(testOk, n + ": тест карточки в docs/tasks/tests/ есть");
                 if (testOk) {
                     String cls = Path.of(test.get(0)).getFileName().toString().replace(".java", "");
-                    ck(Files.readString(Path.of(test.get(0))).contains("class " + cls), n + ": имя класса теста = имя файла");
+                    ck(Files.readString(Path.of(test.get(0))).replace("\r\n", "\n").contains("class " + cls), n + ": имя класса теста = имя файла");
                 }
                 List<String> files = paths(field(t, "Файлы"));
                 ck(!files.isEmpty() && files.stream().allMatch(x -> Files.exists(Path.of(x))

@@ -9,7 +9,7 @@ public class ChecklistTest {
     static void ck(boolean c, String m) { System.out.println((c ? "OK   " : "FAIL ") + m); if (!c) f++; }
 
     public static void main(String[] a) throws Exception {
-        String root = Files.readString(Path.of("CHECKLIST.md"));
+        String root = Files.readString(Path.of("CHECKLIST.md")).replace("\r\n", "\n");
         ck(root.lines().noneMatch(l -> l.startsWith("|")), "в CHECKLIST.md нет пунктов (они в docs/checklist/<задача>.md)");
         List<Path> files;
         try (Stream<Path> s = Files.list(Path.of("docs/checklist"))) {

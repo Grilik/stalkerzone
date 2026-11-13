@@ -40,7 +40,7 @@ public class FramedTest {
 
         // зависание 05.11: BlockEntity.setChanged() при загрузке чанка запрашивает этот же чанк у сервера
         try {
-            String zp = java.nio.file.Files.readString(java.nio.file.Path.of("src/main/java/ru/stalkerzone/world/ZoneMapPlacer.java"));
+            String zp = java.nio.file.Files.readString(java.nio.file.Path.of("src/main/java/ru/stalkerzone/world/ZoneMapPlacer.java")).replace("\r\n", "\n");
             int a0 = zp.indexOf("public static void applyNbt"), a1 = zp.indexOf("\n    }\n", a0);
             String body = zp.substring(a0, a1);
             ck(!body.replaceAll("//.*", "").contains("setChanged"), "applyNbt не зовёт setChanged (иначе зависание при загрузке чанка)");
