@@ -35,17 +35,37 @@ public final class ZoneMapPlacer {
     }
 
     private static final Map<String, BlockState> CACHE = new HashMap<>();
+    // Э0-08 (P-17): неизвестное состояние блока молча становилось воздухом — дыра в постройке без следа в логе.
+    // Теперь: предупреждение на каждое новое неизвестное состояние (первые 10), счётчик подмен, сводка при остановке.
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+    private static final java.util.Set<String> UNKNOWN = new java.util.LinkedHashSet<>();
+    private static int substitutions = 0;
 
     public static BlockState state(String s) {
         int nbt = s.indexOf('{');   // П-04: NBT block entity (камуфляж FramedBlocks) ставится отдельно — applyNbt
         if (nbt >= 0) s = s.substring(0, nbt);
-        return CACHE.computeIfAbsent(s, k -> {
-            try {
-                return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), k, false).blockState();
-            } catch (CommandSyntaxException e) {
-                return Blocks.AIR.defaultBlockState(); // неизвестный блок (например, мод не загружен) — пропуск
-            }
-        });
+        BlockState st = CACHE.computeIfAbsent(s, ZoneMapPlacer::parse);
+        if (st.isAir() && UNKNOWN.contains(s)) substitutions++;   // Э0-08: каждая подмена воздухом — в счётчик
+        return st;
+    }
+
+    private static BlockState parse(String k) {
+        try {
+            return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), k, false).blockState();
+        } catch (CommandSyntaxException e) {
+            // неизвестный блок (опечатка в сборщике или мод не загружен) — воздух, но не молча (Э0-08)
+            if (UNKNOWN.add(k) && UNKNOWN.size() <= 10)
+                LOGGER.warn("[stalkerzone] подмена блока воздухом: неизвестное состояние «{}» ({})", k, e.getMessage());
+            return Blocks.AIR.defaultBlockState();
+        }
+    }
+
+    /** Э0-08: сводка подмен для лога при остановке сервера и проверки в CI (ASCII-ключ substitutions= для grep). */
+    public static String substitutionReport() {
+        StringBuilder sb = new StringBuilder("подмен блоков воздухом: ").append(substitutions)
+                .append(" (substitutions=").append(substitutions).append("; неизвестных состояний: ").append(UNKNOWN.size());
+        if (!UNKNOWN.isEmpty()) sb.append(": ").append(String.join(", ", UNKNOWN));
+        return sb.append(')').toString();
     }
 
     /**

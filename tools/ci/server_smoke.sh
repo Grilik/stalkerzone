@@ -3,6 +3,7 @@
 # Э0-02: грузит все 9 площадок Prefabs.SITES и полосу периметра (там работает WallBuilder), проверяет аудит экономики
 # («zone audit») и чистоту лога: строки Exception|ERROR|СТОРОЖ вне белого списка tools/ci/smoke_allow.txt — провал.
 # Э0-07: «zone wallbe» — поведенческая проверка замены блока с BlockEntity в стене (сервер идёт с -Dstalkerzone.ci=true).
+# Э0-08: сводка подмен блоков воздухом при остановке сервера — должно быть substitutions=0 (опечатки в сборщиках).
 # Запуск: bash tools/ci/server_smoke.sh   (из корня репозитория; нужен JDK 17)
 # Итог — последняя строка: «СЕРВЕР: OK …» или «СЕРВЕР: ПРОВАЛ …»; код выхода 0/1. Лог сервера — /tmp/sz-server.log.
 # Порог TPS — SMOKE_MIN_TPS (по умолчанию 15), время на подъём мира — SMOKE_START_TIMEOUT (900 с),
@@ -110,6 +111,11 @@ for _ in $(seq 1 90); do kill -0 "$PID" 2>/dev/null || break; sleep 2; done
 kill -0 "$PID" 2>/dev/null && fail "сервер не остановился за 3 мин после stop"
 grep -qE "Saving worlds|All chunks are saved|All dimensions are saved" "$LOG" || fail "нет «Saving worlds» при остановке"
 PID=""
+# Э0-08: подмен блоков воздухом (неизвестные состояния блоков в сборщиках) быть не должно; сводка пишется при остановке
+SUB=$(grep -m1 "substitutions=" "$LOG" | sed 's/.*\[stalkerzone\] //' | cut -c1-300)
+[ -n "$SUB" ] || { echo "СЕРВЕР: ПРОВАЛ — при остановке нет сводки подмен блоков (substitutions=)"; exit 1; }
+printf '%s' "$SUB" | grep -q "substitutions=0" || { echo "$SUB"; echo "СЕРВЕР: ПРОВАЛ — подмены блоков воздухом: неизвестные состояния блоков в сборщиках"; exit 1; }
+echo "подмены: $SUB"
 # строка LevelRegions: «уровень l01_escape загружен: … x0/z0/w/d …» или «… не найден: нет файла …» (кириллица в логе может быть «?»)
 grep -q "LevelRegions.*l01_escape.*x0/z0/w/d" "$LOG" || { echo "СЕРВЕР: ПРОВАЛ — мод не загрузил синтетический уровень l01_escape"; grep -m2 "LevelRegions" "$LOG" | cut -c1-300; exit 1; }
 grep -q "wallbe: OK" "$LOG" || { echo "СЕРВЕР: ПРОВАЛ — в логе сервера нет строки «wallbe: OK»"; exit 1; }
