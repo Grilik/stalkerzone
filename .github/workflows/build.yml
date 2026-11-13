@@ -75,7 +75,6 @@ jobs:
       - name: Сервер на синтетическом уровне
         env:
           JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-          SMOKE_MIN_TPS: 1000   # ПРОБНЫЙ ПРОГОН Э0-01: принудительный провал
         run: |
           bash tools/ci/server_smoke.sh | tee /tmp/smoke.txt
           tail -1 /tmp/smoke.txt | grep -q "^СЕРВЕР: OK" || { echo "::error title=Сервер::$(tail -1 /tmp/smoke.txt)"; exit 1; }
@@ -103,7 +102,7 @@ jobs:
   # Э0-01 (P-05): сборка для игры — только после зелёных build И server; при красном любом из них релиза нет
   release:
     needs: [build, server]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/e0-01-ci-gates') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')   # ПРОБНЫЙ ПРОГОН
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -126,7 +125,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BEFORE: ${{ github.event.before }}
         run: |
-          echo 'ПРОБНЫЙ ПРОГОН Э0-01: сюда дойти не должно — server красный'; exit 1
           JAR=$(ls build/libs/*.jar | grep -vE -- '-(sources|slim|dev)\.jar$' | head -1)
           { echo "Сборка из main, коммит ${GITHUB_SHA::7}. Установка: заменить jar в папке mods."; echo;
             echo "Изменения:"; if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE" 2>/dev/null; then git log --pretty='- %s' "$BEFORE..HEAD" | head -20; else git log -5 --pretty='- %s'; fi; } > /tmp/notes.md
@@ -135,7 +133,7 @@ jobs:
             --title "Сборка $(TZ=Europe/Moscow date +'%d.%m %H:%M') (${GITHUB_SHA::7})" --notes-file /tmp/notes.md
           echo "url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/nightly/$(basename "$JAR")" >> "$GITHUB_OUTPUT"
       - name: Telegram
-        if: false   # ПРОБНЫЙ ПРОГОН
+        if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
