@@ -116,6 +116,9 @@ def write_chunk(path, cx, cz, name, comp):
     blob = struct.pack(">IB", len(payload) + 1, 2) + payload
     need = math.ceil(len(blob) / 4096)
     blob += b"\0" * (need * 4096 - len(blob))
+    if not os.path.exists(path):  # новый файл региона (например, entities/) — пустой заголовок
+        with open(path, "wb") as f:
+            f.write(b"\0" * 8192)
     with open(path, "r+b") as f:
         hdr = bytearray(f.read(8192))
         i = 4 * ((cx & 31) + (cz & 31) * 32)
