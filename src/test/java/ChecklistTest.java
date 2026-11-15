@@ -10,7 +10,7 @@ public class ChecklistTest {
 
     /** Э0-22: отметка «Проверено» — «✅|❌ ГГГГ-ММ-ДД, хеш сборки (7+), кто» и, по желанию, « — примечание». */
     static final java.util.regex.Pattern MARK =
-            java.util.regex.Pattern.compile("^(✅|❌) \\d{4}-\\d{2}-\\d{2}, [0-9a-f]{7,40}, [^,—]+?( — .+)?$");
+            java.util.regex.Pattern.compile("^((✅|❌) \\d{4}-\\d{2}-\\d{2}, [0-9a-f]{7,40}, [^,—]+?( — .+)?|➖ не применимо — .+)$");
 
     /** В таблицах с колонкой «Проверено» каждая заполненная ячейка — в формате {@link #MARK}. */
     static void checked(String name, List<String> ls) {
@@ -50,6 +50,7 @@ public class ChecklistTest {
         }
         // проба формата отметки
         ck(MARK.matcher("✅ 2026-11-14, a581fc2, пользователь — 15 мин").matches()
+                && MARK.matcher("➖ не применимо — старый Кордон").matches() && !MARK.matcher("➖ не применимо").matches()
                 && !MARK.matcher("✅ 14.11, a581fc2").matches() && !MARK.matcher("ок").matches(), "формат отметки «Проверено» распознаётся");
         System.exit(f > 0 ? 1 : 0);
     }
