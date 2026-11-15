@@ -16,7 +16,7 @@ ORIG = os.path.join(ROOT, "src/main/resources/data/stalkerzone/atlas/original")
 SURV = os.path.join(ROOT, "docs/thezone/survey")
 LEVELS = {  # локация съёмки → уровни Anomaly (docs/thezone/06-original-markup.md)
     "cordon": ["l01_escape"], "garbage": ["l02_garbage"], "agroprom": ["l03_agroprom"],
-    "dark_valley": ["l04_darkvalley"], "swamps": ["k00_marsh"], "bar": ["l05_bar"],
+    "dark_valley": ["l04_darkvalley"], "swamps": ["k00_marsh"], "bar_rostok": ["l05_bar+l06_rostok"],
     "army_warehouses": ["l07_military"], "yantar": ["l08_yantar"], "dead_city": ["l09_deadcity"],
     "limansk": ["l10_limansk"], "radar": ["l10_radar"], "hospital": ["l11_hospital"],
     "chnpp": ["l12_stancia", "l12_stancia_2"], "generators": ["l13_generators"], "dark_hollow": ["k01_darkscape"],
@@ -25,6 +25,11 @@ LEVELS = {  # локация съёмки → уровни Anomaly (docs/thezone
     "pripyat_center": ["l11_pripyat", "pripyat"], "pripyat_east": ["l11_pripyat", "pripyat"],
     "pripyat_west": ["l11_pripyat", "pripyat"],
 }
+# локации по меткам border.json (съёмка Э1-04 их не выделяла: Бар и Дикая территория — один участок «bar»)
+# l05_bar и l06_rostok в Anomaly в общей системе координат (переходы Бар↔Росток в одной точке) —
+# одно подобие на обе метки, якоря потом делятся по меткам: 6 — Дикая территория, 7 — Бар.
+MARKS = {"bar_rostok": (6, 7)}
+SPLIT = {"bar_rostok": {6: "wild_territory", 7: "bar"}}
 KINDS = ("base", "trader", "outpost", "landmark")
 SIGMA, HIT = 30.0, 25.0
 
@@ -69,8 +74,27 @@ def spread(c, k=6):
     return out
 
 
+def survey(loc):
+    if loc not in MARKS:
+        return json.load(open(os.path.join(SURV, loc + ".json"), encoding="utf-8"))
+    ms = [m for m in json.load(open(os.path.join(ROOT, "docs/thezone/border.json"), encoding="utf-8"))["marks"]
+          if m["n"] in MARKS[loc]]
+    x0, z0 = min(m["bbox"][0] for m in ms), min(m["bbox"][1] for m in ms)
+    x1, z1 = max(m["bbox"][2] for m in ms), max(m["bbox"][3] for m in ms)
+    seen, B = set(), []
+    for f in sorted(os.listdir(SURV)):
+        if f.startswith("_"):
+            continue
+        for b in json.load(open(os.path.join(SURV, f), encoding="utf-8")).get("buildings", []):
+            cx, cz = (b["bbox"][0] + b["bbox"][2]) / 2, (b["bbox"][1] + b["bbox"][3]) / 2
+            if x0 <= cx <= x1 and z0 <= cz <= z1 and tuple(b["bbox"]) not in seen:
+                seen.add(tuple(b["bbox"])); B.append(b)
+    return {"id": loc, "ru": " + ".join(m["ru"] for m in ms), "point": [(x0 + x1) // 2, 70, (z0 + z1) // 2],
+            "bbox": [x0, z0, x1, z1], "buildings": B, "marks": ms}
+
+
 def run(loc):
-    S = json.load(open(os.path.join(SURV, loc + ".json"), encoding="utf-8"))
+    S = survey(loc)
     B = [b for b in S["buildings"] if b.get("inside_border", True)]
     if not B:
         return None
@@ -80,7 +104,10 @@ def run(loc):
     half = max(bx[2] - bx[0], bx[3] - bx[1]) / 2
     res = []
     for lv in LEVELS.get(loc, []):
-        objs = [o for o in json.load(open(os.path.join(ORIG, lv + ".json"), encoding="utf-8"))["objects"] if o["kind"] in KINDS]
+        allo = [o for part in lv.split("+") for o in json.load(open(os.path.join(ORIG, part + ".json"), encoding="utf-8"))["objects"]]
+        objs = [o for o in allo if o["kind"] in KINDS]
+        if len(objs) < 8:  # маленький уровень — добавить логова
+            objs += [o for o in allo if o["kind"] == "lair"]
         if len(objs) < 3:
             continue
         O = np.array([[o["original"][0], o["original"][2]] for o in objs], float)
@@ -104,8 +131,20 @@ def run(loc):
                 seen.add(tuple(a["building_bbox"])); uniq.append(a)
         res.append({"level": lv, "score": round(float(score), 2), "objects": len(objs), "matched": len(uniq),
                     "guess": {"scale": round(s, 3), "angle": 0, "dx": round(tx, 1), "dz": round(tz, 1)},
-                    "anchors": spread(uniq) if uniq else []})
+                    "anchors": spread(uniq) if uniq else [], "anchors_all": uniq})
     res.sort(key=lambda r: -r["matched"] - r["score"] / 100)
+    if loc in SPLIT:
+        out = []
+        for m in S["marks"]:
+            x0, z0, x1, z1 = m["bbox"]
+            inside = lambda a: x0 <= a["thezone_guess"][0] <= x1 and z0 <= a["thezone_guess"][2] <= z1
+            fits = [dict(r, anchors=[a for a in r["anchors_all"] if inside(a)], matched=sum(map(inside, r["anchors_all"])))
+                    for r in res]
+            out.append({"location": SPLIT[loc][m["n"]], "ru": m["ru"], "mark": m["n"], "point": S["point"],
+                        "buildings": len(B), "fits": [{k: v for k, v in f.items() if k != "anchors_all"} for f in fits]})
+        return out
+    for r in res:
+        r.pop("anchors_all", None)
     return {"location": loc, "ru": S.get("ru"), "point": S["point"], "buildings": len(B), "fits": res}
 
 
@@ -113,9 +152,10 @@ def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "docs/thezone/anchor-candidates.json")
     allr = []
     for loc in LEVELS:
-        r = run(loc)
-        if r:
+        rr = run(loc)
+        for r in (rr if isinstance(rr, list) else [rr] if rr else []):
             allr.append(r)
+            loc = r["location"]
             f = r["fits"][0] if r["fits"] else None
             print("%-16s построек %3d  %s" % (loc, r["buildings"], "%s: совпало %d из %d, масштаб %.2f, сдвиг (%.0f, %.0f)" % (
                 f["level"], f["matched"], f["objects"], f["guess"]["scale"], f["guess"]["dx"], f["guess"]["dz"]) if f else "—"))

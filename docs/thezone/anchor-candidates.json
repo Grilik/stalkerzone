@@ -802,88 +802,41 @@
   ]
  },
  {
-  "location": "bar",
-  "ru": "Бар «100 рентген»",
+  "location": "wild_territory",
+  "ru": "Дикая территория",
+  "mark": 6,
   "point": [
-   -4379,
-   76,
-   1277
+   -4624,
+   70,
+   1184
   ],
-  "buildings": 43,
+  "buildings": 35,
   "fits": [
    {
-    "level": "l05_bar",
-    "score": 11.74,
-    "objects": 5,
-    "matched": 4,
+    "level": "l05_bar+l06_rostok",
+    "score": 14.31,
+    "objects": 8,
+    "matched": 2,
     "guess": {
-     "scale": 0.87,
+     "scale": 1.11,
      "angle": 0,
-     "dx": -4866.6,
-     "dz": 1261.4
+     "dx": -4650.7,
+     "dz": 1320.1
     },
     "anchors": [
      {
-      "original_id": "l05_bar.bar_dolg_bunker",
+      "original_id": "l06_rostok.ros_smart_killers1",
       "kind": "base",
-      "faction": "duty",
+      "faction": "bandits",
       "original": [
-       224.3,
-       -5.4,
-       -127.0
-      ],
-      "thezone_guess": [
-       -4671,
-       74,
-       1151
-      ],
-      "building_bbox": [
-       -4660,
-       1132,
-       -4349,
-       1303
-      ],
-      "building_area": 53181,
-      "building_top_y": 96,
-      "dist": 11.4
-     },
-     {
-      "original_id": "l05_bar.bar_zastava",
-      "kind": "base",
-      "faction": "duty",
-      "original": [
-       225.4,
+       -95.6,
        -0.0,
-       -6.1
+       -148.4
       ],
       "thezone_guess": [
-       -4670,
+       -4757,
        74,
-       1256
-      ],
-      "building_bbox": [
-       -4800,
-       1256,
-       -4677,
-       1343
-      ],
-      "building_area": 10701,
-      "building_top_y": 103,
-      "dist": 6.5
-     },
-     {
-      "original_id": "l05_bar.bar_visitors",
-      "kind": "base",
-      "faction": "loners",
-      "original": [
-       145.5,
-       -0.0,
-       -59.3
-      ],
-      "thezone_guess": [
-       -4740,
-       74,
-       1210
+       1155
       ],
       "building_bbox": [
        -4844,
@@ -896,18 +849,18 @@
       "dist": 0.0
      },
      {
-      "original_id": "l05_bar.bar_dolg_general",
+      "original_id": "l06_rostok.ros_smart_stalker1",
       "kind": "base",
-      "faction": "duty",
+      "faction": "loners",
       "original": [
-       202.4,
-       -0.0,
-       -98.5
+       -29.8,
+       0.1,
+       -148.6
       ],
       "thezone_guess": [
-       -4690,
+       -4684,
        74,
-       1176
+       1155
       ],
       "building_bbox": [
        -4684,
@@ -917,7 +870,82 @@
       ],
       "building_area": 121,
       "building_top_y": 76,
-      "dist": 6.5
+      "dist": 8.8
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "bar",
+  "ru": "Бар «100 рентген»",
+  "mark": 7,
+  "point": [
+   -4624,
+   70,
+   1184
+  ],
+  "buildings": 35,
+  "fits": [
+   {
+    "level": "l05_bar+l06_rostok",
+    "score": 14.31,
+    "objects": 8,
+    "matched": 2,
+    "guess": {
+     "scale": 1.11,
+     "angle": 0,
+     "dx": -4650.7,
+     "dz": 1320.1
+    },
+    "anchors": [
+     {
+      "original_id": "l05_bar.bar_dolg_bunker",
+      "kind": "base",
+      "faction": "duty",
+      "original": [
+       224.3,
+       -5.4,
+       -127.0
+      ],
+      "thezone_guess": [
+       -4402,
+       74,
+       1179
+      ],
+      "building_bbox": [
+       -4660,
+       1132,
+       -4349,
+       1303
+      ],
+      "building_area": 53181,
+      "building_top_y": 96,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l05_bar.bar_zastava",
+      "kind": "base",
+      "faction": "duty",
+      "original": [
+       225.4,
+       -0.0,
+       -6.1
+      ],
+      "thezone_guess": [
+       -4400,
+       74,
+       1313
+      ],
+      "building_bbox": [
+       -4400,
+       1152,
+       -4229,
+       1315
+      ],
+      "building_area": 27873,
+      "building_top_y": 96,
+      "dist": 0.5
      }
     ]
    }
@@ -1105,29 +1133,29 @@
   "fits": [
    {
     "level": "l08_yantar",
-    "score": 5.32,
-    "objects": 5,
+    "score": 7.71,
+    "objects": 17,
     "matched": 2,
     "guess": {
-     "scale": 1.3,
+     "scale": 0.67,
      "angle": 0,
-     "dx": -5443.8,
-     "dz": 1377.4
+     "dx": -5210.8,
+     "dz": 1467.8
     },
     "anchors": [
      {
-      "original_id": "l08_yantar.yan_smart_terrain_3_6",
+      "original_id": "l08_yantar.yan_smart_terrain_6_4",
       "kind": "base",
       "faction": "scientists",
       "original": [
-       163.6,
-       -7.9,
-       100.3
+       11.7,
+       -11.9,
+       271.6
       ],
       "thezone_guess": [
-       -5231,
+       -5203,
        71,
-       1508
+       1650
       ],
       "building_bbox": [
        -5360,
@@ -1140,28 +1168,28 @@
       "dist": 0.0
      },
      {
-      "original_id": "l08_yantar.yan_smart_terrain_5_6",
-      "kind": "landmark",
+      "original_id": "l08_yantar.red_smart_terrain_5_5",
+      "kind": "lair",
       "faction": null,
       "original": [
-       172.9,
-       4.3,
-       243.8
+       -49.7,
+       2.2,
+       333.9
       ],
       "thezone_guess": [
-       -5219,
+       -5244,
        67,
-       1694
+       1692
       ],
       "building_bbox": [
-       -5236,
-       1692,
-       -5209,
-       1719
+       -5248,
+       1696,
+       -5241,
+       1699
       ],
-      "building_area": 729,
-      "building_top_y": 73,
-      "dist": 0.0
+      "building_area": 21,
+      "building_top_y": 69,
+      "dist": 4.5
      }
     ]
    }
@@ -1179,14 +1207,14 @@
   "fits": [
    {
     "level": "l09_deadcity",
-    "score": 13.24,
-    "objects": 3,
-    "matched": 3,
+    "score": 25.76,
+    "objects": 8,
+    "matched": 5,
     "guess": {
-     "scale": 1.14,
+     "scale": 0.97,
      "angle": 0,
-     "dx": -5337.5,
-     "dz": 781.0
+     "dx": -5468.4,
+     "dz": 767.6
     },
     "anchors": [
      {
@@ -1199,67 +1227,115 @@
        -57.3
       ],
       "thezone_guess": [
-       -5388,
-       65,
-       716
+       -5512,
+       64,
+       712
       ],
       "building_bbox": [
-       -5468,
-       640,
-       -5385,
-       735
+       -5644,
+       692,
+       -5461,
+       955
       ],
-      "building_area": 7885,
+      "building_area": 48129,
       "building_top_y": 91,
       "dist": 0.0
      },
      {
-      "original_id": "l09_deadcity.cit_killers_vs_bandits",
-      "kind": "base",
-      "faction": "mercs",
+      "original_id": "l09_deadcity.cit_kanaliz2",
+      "kind": "lair",
+      "faction": null,
       "original": [
-       -61.8,
-       1.6,
-       70.1
+       128.4,
+       -7.0,
+       159.8
       ],
       "thezone_guess": [
-       -5408,
+       -5344,
        61,
-       861
+       923
       ],
       "building_bbox": [
-       -5412,
-       848,
-       -5393,
-       875
+       -5404,
+       808,
+       -5337,
+       955
       ],
-      "building_area": 513,
+      "building_area": 9849,
       "building_top_y": 69,
       "dist": 0.0
      },
      {
-      "original_id": "l09_deadcity.cit_killers_merc_trader_smart_cover",
-      "kind": "trader",
+      "original_id": "l09_deadcity.cit_kanaliz1",
+      "kind": "lair",
       "faction": null,
       "original": [
-       -41.2,
-       1.7,
-       -36.4
+       -198.0,
+       4.6,
+       165.9
       ],
       "thezone_guess": [
-       -5384,
-       60,
-       740
+       -5660,
+       61,
+       929
       ],
       "building_bbox": [
-       -5400,
-       732,
-       -5389,
-       771
+       -5708,
+       896,
+       -5657,
+       951
       ],
-      "building_area": 429,
-      "building_top_y": 65,
-      "dist": 4.6
+      "building_area": 2805,
+      "building_top_y": 72,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l09_deadcity.cit_killers_2",
+      "kind": "lair",
+      "faction": "mercs",
+      "original": [
+       98.5,
+       1.1,
+       -34.9
+      ],
+      "thezone_guess": [
+       -5373,
+       61,
+       734
+      ],
+      "building_bbox": [
+       -5372,
+       660,
+       -5301,
+       767
+      ],
+      "building_area": 7597,
+      "building_top_y": 72,
+      "dist": 0.8
+     },
+     {
+      "original_id": "l09_deadcity.cit_bandits",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       45.0,
+       1.0,
+       74.5
+      ],
+      "thezone_guess": [
+       -5425,
+       65,
+       840
+      ],
+      "building_bbox": [
+       -5484,
+       784,
+       -5417,
+       863
+      ],
+      "building_area": 5293,
+      "building_top_y": 91,
+      "dist": 0.0
      }
     ]
    }
@@ -1277,29 +1353,29 @@
   "fits": [
    {
     "level": "l10_limansk",
-    "score": 14.36,
-    "objects": 7,
-    "matched": 6,
+    "score": 17.43,
+    "objects": 10,
+    "matched": 9,
     "guess": {
-     "scale": 1.35,
+     "scale": 1.1,
      "angle": 0,
-     "dx": -5528.1,
-     "dz": -772.6
+     "dx": -5508.8,
+     "dz": -803.1
     },
     "anchors": [
      {
-      "original_id": "l10_limansk.lim_smart_terrain_4",
+      "original_id": "l10_limansk.lim_smart_terrain_3",
       "kind": "base",
       "faction": "mercs",
       "original": [
-       -23.7,
-       -5.1,
-       106.8
+       -39.7,
+       -5.2,
+       178.5
       ],
       "thezone_guess": [
-       -5560,
+       -5552,
        64,
-       -628
+       -607
       ],
       "building_bbox": [
        -5560,
@@ -1309,7 +1385,7 @@
       ],
       "building_area": 5025,
       "building_top_y": 97,
-      "dist": 0.1
+      "dist": 0.0
      },
      {
       "original_id": "l10_limansk.lim_smart_terrain_9",
@@ -1321,9 +1397,9 @@
        -185.1
       ],
       "thezone_guess": [
-       -5479,
+       -5469,
        75,
-       -1022
+       -1007
       ],
       "building_bbox": [
        -5480,
@@ -1333,79 +1409,55 @@
       ],
       "building_area": 2025,
       "building_top_y": 177,
-      "dist": 6.5
+      "dist": 0.0
      },
      {
-      "original_id": "l10_limansk.lim_smart_terrain_2",
-      "kind": "landmark",
+      "original_id": "l10_limansk.lim_smart_terrain_7",
+      "kind": "lair",
       "faction": null,
       "original": [
-       -37.3,
-       -2.8,
-       246.3
+       -66.0,
+       -7.0,
+       -69.1
       ],
       "thezone_guess": [
-       -5578,
+       -5581,
+       65,
+       -879
+      ],
+      "building_bbox": [
+       -5608,
+       -888,
+       -5585,
+       -865
+      ],
+      "building_area": 529,
+      "building_top_y": 75,
+      "dist": 3.6
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -18.2,
+       1.5,
+       320.6
+      ],
+      "thezone_guess": [
+       -5529,
        70,
-       -440
+       -450
       ],
       "building_bbox": [
-       -5576,
-       -432,
-       -5565,
-       -425
-      ],
-      "building_area": 77,
-      "building_top_y": 83,
-      "dist": 8.4
-     },
-     {
-      "original_id": "l10_limansk.lim_smart_terrain_6",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       23.8,
-       1.0,
-       -46.2
-      ],
-      "thezone_guess": [
-       -5496,
-       65,
-       -835
-      ],
-      "building_bbox": [
-       -5512,
-       -852,
-       -5489,
-       -837
-      ],
-      "building_area": 345,
-      "building_top_y": 72,
-      "dist": 2.1
-     },
-     {
-      "original_id": "l10_limansk.lim_smart_terrain_3",
-      "kind": "base",
-      "faction": "mercs",
-      "original": [
-       -39.7,
-       -5.2,
-       178.5
-      ],
-      "thezone_guess": [
-       -5582,
-       65,
-       -532
-      ],
-      "building_bbox": [
-       -5580,
-       -548,
-       -5573,
-       -541
+       -5540,
+       -460,
+       -5533,
+       -453
       ],
       "building_area": 49,
-      "building_top_y": 75,
-      "dist": 9.5
+      "building_top_y": 83,
+      "dist": 4.9
      },
      {
       "original_id": "l10_limansk.lim_smart_terrain_5",
@@ -1417,19 +1469,43 @@
        53.2
       ],
       "thezone_guess": [
-       -5520,
+       -5502,
        68,
-       -701
+       -745
       ],
       "building_bbox": [
-       -5516,
-       -692,
-       -5493,
-       -685
+       -5508,
+       -724,
+       -5497,
+       -701
       ],
-      "building_area": 161,
-      "building_top_y": 82,
-      "dist": 9.6
+      "building_area": 253,
+      "building_top_y": 78,
+      "dist": 20.6
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       23.8,
+       1.0,
+       -46.2
+      ],
+      "thezone_guess": [
+       -5483,
+       52,
+       -854
+      ],
+      "building_bbox": [
+       -5520,
+       -884,
+       -5453,
+       -849
+      ],
+      "building_area": 2345,
+      "building_top_y": 79,
+      "dist": 0.0
      }
     ]
    }
@@ -1627,77 +1703,15 @@
   "buildings": 69,
   "fits": [
    {
-    "level": "l12_stancia_2",
-    "score": 6.56,
-    "objects": 4,
-    "matched": 2,
-    "guess": {
-     "scale": 1.16,
-     "angle": 0,
-     "dx": -1019.5,
-     "dz": 1000.3
-    },
-    "anchors": [
-     {
-      "original_id": "l12_stancia_2.aes2_monolith_camp3",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       566.9,
-       18.2,
-       -286.2
-      ],
-      "thezone_guess": [
-       -362,
-       68,
-       668
-      ],
-      "building_bbox": [
-       -620,
-       596,
-       431,
-       1119
-      ],
-      "building_area": 549673,
-      "building_top_y": 180,
-      "dist": 0.0
-     },
-     {
-      "original_id": "l12_stancia_2.aes2_monolith_camp1",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       20.3,
-       4.7,
-       -154.4
-      ],
-      "thezone_guess": [
-       -996,
-       69,
-       821
-      ],
-      "building_bbox": [
-       -996,
-       824,
-       -813,
-       1115
-      ],
-      "building_area": 53253,
-      "building_top_y": 212,
-      "dist": 2.8
-     }
-    ]
-   },
-   {
     "level": "l12_stancia",
-    "score": 6.67,
-    "objects": 3,
+    "score": 11.13,
+    "objects": 9,
     "matched": 1,
     "guess": {
-     "scale": 0.64,
+     "scale": 0.82,
      "angle": 0,
-     "dx": -542.0,
-     "dz": 736.4
+     "dx": -747.7,
+     "dz": 721.7
     },
     "anchors": [
      {
@@ -1710,9 +1724,47 @@
        42.6
       ],
       "thezone_guess": [
-       24,
+       -23,
        68,
-       764
+       757
+      ],
+      "building_bbox": [
+       -620,
+       596,
+       431,
+       1119
+      ],
+      "building_area": 549673,
+      "building_top_y": 180,
+      "dist": 0.0
+     }
+    ]
+   },
+   {
+    "level": "l12_stancia_2",
+    "score": 10.81,
+    "objects": 9,
+    "matched": 1,
+    "guess": {
+     "scale": 0.76,
+     "angle": 0,
+     "dx": -665.5,
+     "dz": 984.4
+    },
+    "anchors": [
+     {
+      "original_id": "l12_stancia_2.aes2_monolith_camp3",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       566.9,
+       18.2,
+       -286.2
+      ],
+      "thezone_guess": [
+       -235,
+       68,
+       767
       ],
       "building_bbox": [
        -620,
@@ -1740,16 +1792,40 @@
   "fits": [
    {
     "level": "l13_generators",
-    "score": 2.85,
-    "objects": 4,
-    "matched": 3,
+    "score": 4.13,
+    "objects": 10,
+    "matched": 4,
     "guess": {
-     "scale": 0.66,
+     "scale": 0.63,
      "angle": 0,
-     "dx": 113.7,
-     "dz": -149.5
+     "dx": 107.5,
+     "dz": -139.2
     },
     "anchors": [
+     {
+      "original_id": "l13_generators.gen_smart_terrain_urod",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -104.8,
+       31.2,
+       111.3
+      ],
+      "thezone_guess": [
+       41,
+       60,
+       -69
+      ],
+      "building_bbox": [
+       16,
+       -64,
+       43,
+       -37
+      ],
+      "building_area": 729,
+      "building_top_y": 92,
+      "dist": 5.1
+     },
      {
       "original_id": "l13_generators.gen_undeground_smart_mlr_controller",
       "kind": "landmark",
@@ -1760,9 +1836,9 @@
        252.7
       ],
       "thezone_guess": [
-       -98,
+       -95,
        60,
-       17
+       20
       ],
       "building_bbox": [
        -92,
@@ -1772,21 +1848,21 @@
       ],
       "building_area": 729,
       "building_top_y": 92,
-      "dist": 8.6
+      "dist": 9.3
      },
      {
-      "original_id": "l13_generators.gen_undeground_smart_mlr_giant",
-      "kind": "landmark",
-      "faction": null,
+      "original_id": "l13_generators.gen_smart_terrain_lab_entrance_2",
+      "kind": "lair",
+      "faction": "monsters",
       "original": [
-       -101.6,
-       5.6,
-       276.6
+       -139.1,
+       30.5,
+       299.6
       ],
       "thezone_guess": [
-       47,
+       20,
        61,
-       33
+       50
       ],
       "building_bbox": [
        24,
@@ -1796,7 +1872,7 @@
       ],
       "building_area": 729,
       "building_top_y": 93,
-      "dist": 23.0
+      "dist": 7.7
      },
      {
       "original_id": "l13_generators.gen_undeground_smart_mlr_burers",
@@ -1810,7 +1886,7 @@
       "thezone_guess": [
        -15,
        60,
-       45
+       46
       ],
       "building_bbox": [
        -48,
@@ -1820,7 +1896,7 @@
       ],
       "building_area": 529,
       "building_top_y": 92,
-      "dist": 12.6
+      "dist": 11.5
      }
     ]
    }
@@ -1838,39 +1914,63 @@
   "fits": [
    {
     "level": "k01_darkscape",
-    "score": 1.96,
-    "objects": 3,
-    "matched": 1,
+    "score": 2.95,
+    "objects": 14,
+    "matched": 2,
     "guess": {
-     "scale": 1.42,
+     "scale": 0.69,
      "angle": 0,
-     "dx": -3141.0,
-     "dz": 3145.2
+     "dx": -2602.6,
+     "dz": 3301.3
     },
     "anchors": [
      {
-      "original_id": "k01_darkscape.ds2_domik_st",
-      "kind": "base",
-      "faction": "loners",
+      "original_id": "k01_darkscape.ds_ptr4",
+      "kind": "lair",
+      "faction": null,
       "original": [
-       290.5,
-       -0.5,
-       189.2
+       -352.0,
+       -5.4,
+       499.3
       ],
       "thezone_guess": [
-       -2728,
-       56,
-       3414
+       -2846,
+       59,
+       3646
       ],
       "building_bbox": [
-       -2724,
+       -2880,
+       3632,
+       -2845,
+       3647
+      ],
+      "building_area": 525,
+      "building_top_y": 64,
+      "dist": 0.0
+     },
+     {
+      "original_id": "k01_darkscape.ds2_lager_st",
+      "kind": "base",
+      "faction": "bandits",
+      "original": [
+       -183.5,
+       0.3,
+       161.7
+      ],
+      "thezone_guess": [
+       -2729,
+       56,
+       3413
+      ],
+      "building_bbox": [
+       -2756,
        3412,
-       -2705,
+       -2733,
        3423
       ],
-      "building_area": 209,
+      "building_area": 253,
       "building_top_y": 90,
-      "dist": 4.5
+      "dist": 3.7
      }
     ]
    }
@@ -2386,16 +2486,112 @@
    },
    {
     "level": "l11_pripyat",
-    "score": 6.6,
-    "objects": 4,
-    "matched": 4,
+    "score": 14.41,
+    "objects": 16,
+    "matched": 10,
     "guess": {
-     "scale": 0.78,
+     "scale": 1.18,
      "angle": 0,
-     "dx": -3365.5,
-     "dz": -3087.2
+     "dx": -3120.4,
+     "dz": -2913.7
     },
     "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker3",
+      "kind": "lair",
+      "faction": "monolith",
+      "original": [
+       33.3,
+       -2.2,
+       55.7
+      ],
+      "thezone_guess": [
+       -3081,
+       63,
+       -2848
+      ],
+      "building_bbox": [
+       -3152,
+       -2904,
+       -3061,
+       -2833
+      ],
+      "building_area": 6461,
+      "building_top_y": 105,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_giant_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       27.2,
+       1.0,
+       -346.3
+      ],
+      "thezone_guess": [
+       -3088,
+       63,
+       -3322
+      ],
+      "building_bbox": [
+       -3072,
+       -3392,
+       -3049,
+       -3313
+      ],
+      "building_area": 1817,
+      "building_top_y": 97,
+      "dist": 16.3
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_bloodsucker_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -113.1,
+       -2.0,
+       -91.0
+      ],
+      "thezone_guess": [
+       -3254,
+       64,
+       -3021
+      ],
+      "building_bbox": [
+       -3268,
+       -3024,
+       -3193,
+       -2985
+      ],
+      "building_area": 2925,
+      "building_top_y": 70,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_tushkano_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       131.0,
+       0.0,
+       -117.6
+      ],
+      "thezone_guess": [
+       -2966,
+       62,
+       -3053
+      ],
+      "building_bbox": [
+       -2960,
+       -3056,
+       -2905,
+       -3045
+      ],
+      "building_area": 605,
+      "building_top_y": 69,
+      "dist": 5.8
+     },
      {
       "original_id": "l11_pripyat.pri_monolith",
       "kind": "base",
@@ -2406,91 +2602,43 @@
        -185.1
       ],
       "thezone_guess": [
-       -3363,
-       63,
-       -3232
+       -3117,
+       95,
+       -3132
       ],
       "building_bbox": [
-       -3524,
-       -3220,
-       -3365,
-       -3193
+       -3188,
+       -3152,
+       -3129,
+       -3061
       ],
-      "building_area": 4293,
+      "building_area": 5369,
       "building_top_y": 97,
-      "dist": 11.7
+      "dist": 11.8
      },
      {
-      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
-      "kind": "base",
-      "faction": "monolith",
+      "original_id": "l11_pripyat.pri_smart_pseudodog_lair1",
+      "kind": "lair",
+      "faction": null,
       "original": [
-       14.0,
-       -2.5,
-       230.2
-      ],
-      "thezone_guess": [
-       -3355,
-       63,
-       -2908
-      ],
-      "building_bbox": [
-       -3400,
-       -2904,
-       -3353,
-       -2833
-      ],
-      "building_area": 3337,
-      "building_top_y": 105,
-      "dist": 3.6
-     },
-     {
-      "original_id": "l11_pripyat.pri_depot",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       -100.6,
+       170.8,
        -2.2,
-       7.5
+       -242.0
       ],
       "thezone_guess": [
-       -3444,
-       64,
-       -3081
+       -2919,
+       63,
+       -3199
       ],
       "building_bbox": [
-       -3516,
-       -3108,
-       -3441,
-       -3065
+       -2980,
+       -3200,
+       -2901,
+       -3185
       ],
-      "building_area": 3225,
-      "building_top_y": 70,
-      "dist": 0.0
-     },
-     {
-      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       31.3,
-       -0.6,
-       -256.8
-      ],
-      "thezone_guess": [
-       -3341,
-       79,
-       -3287
-      ],
-      "building_bbox": [
-       -3360,
-       -3300,
-       -3349,
-       -3297
-      ],
-      "building_area": 33,
+      "building_area": 1185,
       "building_top_y": 97,
-      "dist": 12.4
+      "dist": 0.0
      }
     ]
    }
@@ -2666,87 +2814,63 @@
    },
    {
     "level": "l11_pripyat",
-    "score": 7.24,
-    "objects": 4,
-    "matched": 4,
+    "score": 16.04,
+    "objects": 16,
+    "matched": 10,
     "guess": {
-     "scale": 0.62,
+     "scale": 1.24,
      "angle": 0,
-     "dx": -2944.1,
-     "dz": -1775.4
+     "dx": -2949.6,
+     "dz": -1744.8
     },
     "anchors": [
      {
-      "original_id": "l11_pripyat.pri_depot",
-      "kind": "base",
-      "faction": "monolith",
+      "original_id": "l11_pripyat.pri_smart_controler_lair2",
+      "kind": "lair",
+      "faction": null,
       "original": [
-       -100.6,
-       -2.2,
-       7.5
+       -157.4,
+       -2.4,
+       -57.2
       ],
       "thezone_guess": [
-       -3006,
+       -3145,
        63,
-       -1771
+       -1816
       ],
       "building_bbox": [
-       -3068,
-       -1792,
-       -3013,
-       -1705
+       -3220,
+       -1892,
+       -3153,
+       -1777
       ],
-      "building_area": 4785,
-      "building_top_y": 80,
-      "dist": 6.5
+      "building_area": 7705,
+      "building_top_y": 105,
+      "dist": 8.2
      },
      {
-      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
-      "kind": "base",
-      "faction": "monolith",
+      "original_id": "l11_pripyat.pri_smart_controler_lair1",
+      "kind": "lair",
+      "faction": null,
       "original": [
-       31.3,
-       -0.6,
-       -256.8
+       134.6,
+       3.9,
+       26.8
       ],
       "thezone_guess": [
-       -2925,
+       -2783,
        63,
-       -1935
+       -1712
       ],
       "building_bbox": [
-       -2924,
-       -1924,
-       -2889,
-       -1897
+       -2820,
+       -1720,
+       -2793,
+       -1693
       ],
-      "building_area": 945,
-      "building_top_y": 97,
-      "dist": 10.6
-     },
-     {
-      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       14.0,
-       -2.5,
-       230.2
-      ],
-      "thezone_guess": [
-       -2935,
-       63,
-       -1633
-      ],
-      "building_bbox": [
-       -2936,
-       -1732,
-       -2921,
-       -1629
-      ],
-      "building_area": 1545,
-      "building_top_y": 83,
-      "dist": 0.0
+      "building_area": 729,
+      "building_top_y": 105,
+      "dist": 10.3
      },
      {
       "original_id": "l11_pripyat.pri_monolith",
@@ -2758,19 +2882,91 @@
        -185.1
       ],
       "thezone_guess": [
-       -2942,
+       -2946,
        63,
-       -1890
+       -1974
       ],
       "building_bbox": [
        -2988,
-       -1908,
+       -1956,
        -2937,
-       -1893
+       -1945
       ],
-      "building_area": 765,
+      "building_area": 561,
       "building_top_y": 80,
-      "dist": 2.9
+      "dist": 18.3
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_monster_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -33.3,
+       -2.4,
+       126.0
+      ],
+      "thezone_guess": [
+       -2991,
+       63,
+       -1589
+      ],
+      "building_bbox": [
+       -3016,
+       -1620,
+       -2909,
+       -1601
+      ],
+      "building_area": 2033,
+      "building_top_y": 82,
+      "dist": 12.4
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_tushkano_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       131.0,
+       0.0,
+       -117.6
+      ],
+      "thezone_guess": [
+       -2787,
+       63,
+       -1891
+      ],
+      "building_bbox": [
+       -2792,
+       -1888,
+       -2717,
+       -1873
+      ],
+      "building_area": 1125,
+      "building_top_y": 82,
+      "dist": 2.6
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker4",
+      "kind": "lair",
+      "faction": "monolith",
+      "original": [
+       7.3,
+       -2.4,
+       6.9
+      ],
+      "thezone_guess": [
+       -2941,
+       63,
+       -1736
+      ],
+      "building_bbox": [
+       -2936,
+       -1732,
+       -2921,
+       -1629
+      ],
+      "building_area": 1545,
+      "building_top_y": 83,
+      "dist": 6.3
      }
     ]
    }
@@ -2786,6 +2982,164 @@
   ],
   "buildings": 39,
   "fits": [
+   {
+    "level": "l11_pripyat",
+    "score": 17.19,
+    "objects": 16,
+    "matched": 11,
+    "guess": {
+     "scale": 1.12,
+     "angle": 0,
+     "dx": -2953.8,
+     "dz": -2121.6
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_smart_giant_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       27.2,
+       1.0,
+       -346.3
+      ],
+      "thezone_guess": [
+       -2923,
+       64,
+       -2509
+      ],
+      "building_bbox": [
+       -2916,
+       -2544,
+       -2797,
+       -2461
+      ],
+      "building_area": 9877,
+      "building_top_y": 92,
+      "dist": 7.4
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_monster_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -33.3,
+       -2.4,
+       126.0
+      ],
+      "thezone_guess": [
+       -2991,
+       63,
+       -1980
+      ],
+      "building_bbox": [
+       -2988,
+       -2036,
+       -2957,
+       -2001
+      ],
+      "building_area": 1085,
+      "building_top_y": 76,
+      "dist": 20.8
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_tushkano_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       131.0,
+       0.0,
+       -117.6
+      ],
+      "thezone_guess": [
+       -2807,
+       63,
+       -2253
+      ],
+      "building_bbox": [
+       -2820,
+       -2308,
+       -2757,
+       -2237
+      ],
+      "building_area": 4473,
+      "building_top_y": 95,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_controler_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       134.6,
+       3.9,
+       26.8
+      ],
+      "thezone_guess": [
+       -2803,
+       63,
+       -2092
+      ],
+      "building_bbox": [
+       -2820,
+       -2096,
+       -2729,
+       -2077
+      ],
+      "building_area": 1729,
+      "building_top_y": 82,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_depot",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       -100.6,
+       -2.2,
+       7.5
+      ],
+      "thezone_guess": [
+       -3067,
+       63,
+       -2113
+      ],
+      "building_bbox": [
+       -3064,
+       -2108,
+       -3009,
+       -2021
+      ],
+      "building_area": 4785,
+      "building_top_y": 80,
+      "dist": 5.8
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_pseudodog_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       170.8,
+       -2.2,
+       -242.0
+      ],
+      "thezone_guess": [
+       -2763,
+       63,
+       -2393
+      ],
+      "building_bbox": [
+       -2804,
+       -2400,
+       -2773,
+       -2397
+      ],
+      "building_area": 93,
+      "building_top_y": 65,
+      "dist": 11.3
+     }
+    ]
+   },
    {
     "level": "pripyat",
     "score": 17.09,
@@ -2941,116 +3295,6 @@
       "building_area": 4473,
       "building_top_y": 95,
       "dist": 0.0
-     }
-    ]
-   },
-   {
-    "level": "l11_pripyat",
-    "score": 8.11,
-    "objects": 4,
-    "matched": 4,
-    "guess": {
-     "scale": 0.87,
-     "angle": 0,
-     "dx": -2942.8,
-     "dz": -2254.6
-    },
-    "anchors": [
-     {
-      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       31.3,
-       -0.6,
-       -256.8
-      ],
-      "thezone_guess": [
-       -2916,
-       64,
-       -2478
-      ],
-      "building_bbox": [
-       -2916,
-       -2544,
-       -2797,
-       -2461
-      ],
-      "building_area": 9877,
-      "building_top_y": 92,
-      "dist": 0.0
-     },
-     {
-      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       14.0,
-       -2.5,
-       230.2
-      ],
-      "thezone_guess": [
-       -2931,
-       63,
-       -2054
-      ],
-      "building_bbox": [
-       -2928,
-       -2048,
-       -2913,
-       -1945
-      ],
-      "building_area": 1545,
-      "building_top_y": 83,
-      "dist": 6.9
-     },
-     {
-      "original_id": "l11_pripyat.pri_depot",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       -100.6,
-       -2.2,
-       7.5
-      ],
-      "thezone_guess": [
-       -3030,
-       63,
-       -2248
-      ],
-      "building_bbox": [
-       -3040,
-       -2268,
-       -2933,
-       -2253
-      ],
-      "building_area": 1605,
-      "building_top_y": 83,
-      "dist": 4.9
-     },
-     {
-      "original_id": "l11_pripyat.pri_monolith",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       2.7,
-       -0.4,
-       -185.1
-      ],
-      "thezone_guess": [
-       -2940,
-       64,
-       -2416
-      ],
-      "building_bbox": [
-       -2984,
-       -2408,
-       -2941,
-       -2357
-      ],
-      "building_area": 2193,
-      "building_top_y": 78,
-      "dist": 7.7
      }
     ]
    }
@@ -3226,87 +3470,39 @@
    },
    {
     "level": "l11_pripyat",
-    "score": 5.44,
-    "objects": 4,
-    "matched": 4,
+    "score": 10.52,
+    "objects": 16,
+    "matched": 9,
     "guess": {
-     "scale": 0.69,
+     "scale": 1.15,
      "angle": 0,
-     "dx": -2506.8,
-     "dz": -2186.3
+     "dx": -2449.1,
+     "dz": -2170.7
     },
     "anchors": [
      {
-      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
-      "kind": "base",
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker3",
+      "kind": "lair",
       "faction": "monolith",
       "original": [
-       31.3,
-       -0.6,
-       -256.8
-      ],
-      "thezone_guess": [
-       -2485,
-       62,
-       -2363
-      ],
-      "building_bbox": [
-       -2556,
-       -2428,
-       -2469,
-       -2369
-      ],
-      "building_area": 5133,
-      "building_top_y": 72,
-      "dist": 5.5
-     },
-     {
-      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       14.0,
-       -2.5,
-       230.2
-      ],
-      "thezone_guess": [
-       -2497,
-       63,
-       -2027
-      ],
-      "building_bbox": [
-       -2564,
-       -2024,
-       -2489,
-       -2009
-      ],
-      "building_area": 1125,
-      "building_top_y": 80,
-      "dist": 3.4
-     },
-     {
-      "original_id": "l11_pripyat.pri_depot",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       -100.6,
+       33.3,
        -2.2,
-       7.5
+       55.7
       ],
       "thezone_guess": [
-       -2576,
-       62,
-       -2181
+       -2411,
+       63,
+       -2107
       ],
       "building_bbox": [
-       -2564,
-       -2196,
-       -2493,
-       -2145
+       -2492,
+       -2136,
+       -2433,
+       -2033
       ],
-      "building_area": 3621,
-      "building_top_y": 76,
-      "dist": 12.2
+      "building_area": 6077,
+      "building_top_y": 80,
+      "dist": 22.2
      },
      {
       "original_id": "l11_pripyat.pri_monolith",
@@ -3318,19 +3514,115 @@
        -185.1
       ],
       "thezone_guess": [
-       -2505,
-       63,
-       -2314
+       -2446,
+       62,
+       -2384
       ],
       "building_bbox": [
-       -2532,
-       -2312,
-       -2509,
-       -2289
+       -2556,
+       -2428,
+       -2469,
+       -2369
       ],
-      "building_area": 529,
-      "building_top_y": 105,
-      "dist": 4.5
+      "building_area": 5133,
+      "building_top_y": 72,
+      "dist": 23.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -2433,
+       63,
+       -1906
+      ],
+      "building_bbox": [
+       -2432,
+       -1920,
+       -2393,
+       -1853
+      ],
+      "building_area": 2613,
+      "building_top_y": 79,
+      "dist": 1.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_bloodsucker_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -113.1,
+       -2.0,
+       -91.0
+      ],
+      "thezone_guess": [
+       -2579,
+       63,
+       -2275
+      ],
+      "building_bbox": [
+       -2592,
+       -2284,
+       -2577,
+       -2229
+      ],
+      "building_area": 825,
+      "building_top_y": 95,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_tushkano_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       131.0,
+       0.0,
+       -117.6
+      ],
+      "thezone_guess": [
+       -2298,
+       66,
+       -2306
+      ],
+      "building_bbox": [
+       -2328,
+       -2344,
+       -2297,
+       -2313
+      ],
+      "building_area": 961,
+      "building_top_y": 73,
+      "dist": 7.1
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_controler_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       134.6,
+       3.9,
+       26.8
+      ],
+      "thezone_guess": [
+       -2294,
+       63,
+       -2140
+      ],
+      "building_bbox": [
+       -2308,
+       -2164,
+       -2257,
+       -2145
+      ],
+      "building_area": 969,
+      "building_top_y": 76,
+      "dist": 5.2
      }
     ]
    }
@@ -3346,6 +3638,164 @@
   ],
   "buildings": 40,
   "fits": [
+   {
+    "level": "l11_pripyat",
+    "score": 15.69,
+    "objects": 16,
+    "matched": 12,
+    "guess": {
+     "scale": 1.06,
+     "angle": 0,
+     "dx": -3312.6,
+     "dz": -2390.5
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_smart_pseudodog_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       170.8,
+       -2.2,
+       -242.0
+      ],
+      "thezone_guess": [
+       -3132,
+       62,
+       -2647
+      ],
+      "building_bbox": [
+       -3204,
+       -2768,
+       -3109,
+       -2653
+      ],
+      "building_area": 10925,
+      "building_top_y": 72,
+      "dist": 6.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -3298,
+       63,
+       -2147
+      ],
+      "building_bbox": [
+       -3312,
+       -2180,
+       -3233,
+       -2101
+      ],
+      "building_area": 6241,
+      "building_top_y": 80,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_bloodsucker_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       -113.1,
+       -2.0,
+       -91.0
+      ],
+      "thezone_guess": [
+       -3432,
+       63,
+       -2487
+      ],
+      "building_bbox": [
+       -3468,
+       -2568,
+       -3405,
+       -2461
+      ],
+      "building_area": 6741,
+      "building_top_y": 105,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_controler_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       134.6,
+       3.9,
+       26.8
+      ],
+      "thezone_guess": [
+       -3170,
+       62,
+       -2362
+      ],
+      "building_bbox": [
+       -3188,
+       -2440,
+       -3157,
+       -2369
+      ],
+      "building_area": 2201,
+      "building_top_y": 69,
+      "dist": 6.9
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_giant_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       27.2,
+       1.0,
+       -346.3
+      ],
+      "thezone_guess": [
+       -3284,
+       63,
+       -2758
+      ],
+      "building_bbox": [
+       -3340,
+       -2784,
+       -3293,
+       -2749
+      ],
+      "building_area": 1645,
+      "building_top_y": 105,
+      "dist": 9.3
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_tushkano_lair1",
+      "kind": "lair",
+      "faction": null,
+      "original": [
+       131.0,
+       0.0,
+       -117.6
+      ],
+      "thezone_guess": [
+       -3174,
+       63,
+       -2515
+      ],
+      "building_bbox": [
+       -3184,
+       -2560,
+       -3113,
+       -2521
+      ],
+      "building_area": 2769,
+      "building_top_y": 76,
+      "dist": 5.8
+     }
+    ]
+   },
    {
     "level": "pripyat",
     "score": 17.66,
@@ -3501,116 +3951,6 @@
       "building_area": 253,
       "building_top_y": 67,
       "dist": 1.5
-     }
-    ]
-   },
-   {
-    "level": "l11_pripyat",
-    "score": 8.07,
-    "objects": 4,
-    "matched": 4,
-    "guess": {
-     "scale": 0.7,
-     "angle": 0,
-     "dx": -3218.8,
-     "dz": -2214.3
-    },
-    "anchors": [
-     {
-      "original_id": "l11_pripyat.pri_depot",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       -100.6,
-       -2.2,
-       7.5
-      ],
-      "thezone_guess": [
-       -3289,
-       63,
-       -2209
-      ],
-      "building_bbox": [
-       -3332,
-       -2224,
-       -3253,
-       -2145
-      ],
-      "building_area": 6241,
-      "building_top_y": 80,
-      "dist": 0.0
-     },
-     {
-      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       31.3,
-       -0.6,
-       -256.8
-      ],
-      "thezone_guess": [
-       -3197,
-       62,
-       -2394
-      ],
-      "building_bbox": [
-       -3224,
-       -2392,
-       -3193,
-       -2369
-      ],
-      "building_area": 713,
-      "building_top_y": 69,
-      "dist": 2.0
-     },
-     {
-      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       14.0,
-       -2.5,
-       230.2
-      ],
-      "thezone_guess": [
-       -3209,
-       63,
-       -2053
-      ],
-      "building_bbox": [
-       -3288,
-       -2136,
-       -3209,
-       -2057
-      ],
-      "building_area": 6241,
-      "building_top_y": 80,
-      "dist": 3.9
-     },
-     {
-      "original_id": "l11_pripyat.pri_monolith",
-      "kind": "base",
-      "faction": "monolith",
-      "original": [
-       2.7,
-       -0.4,
-       -185.1
-      ],
-      "thezone_guess": [
-       -3217,
-       62,
-       -2344
-      ],
-      "building_bbox": [
-       -3224,
-       -2328,
-       -3121,
-       -2317
-      ],
-      "building_area": 1133,
-      "building_top_y": 80,
-      "dist": 15.8
      }
     ]
    }
