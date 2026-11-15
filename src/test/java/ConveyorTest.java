@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-/** П-13: конвейер v2 — одна линия, одна попытка с потолком, без старшего Claude и автослияния; паспорта карточек верны. */
+/** П-13, Э0-13: конвейер v2 — одна линия, одна попытка с потолком, без старшего Claude и автослияния; паспорта карточек верны. */
 public class ConveyorTest {
     static int f = 0;
     static void ck(boolean c, String m) { System.out.println((c ? "OK   " : "FAIL ") + m); if (!c) f++; }
@@ -71,6 +71,15 @@ public class ConveyorTest {
             }
         }
         ck(cards >= 2, "карточек конвейера v2: " + cards);
+
+        // Э0-13: копия теста карточки в docs/tasks/tests/ совпадает с src/test/java/ (конвейер копирует её поверх)
+        try (Stream<Path> s = Files.list(Path.of("docs/tasks/tests"))) {
+            for (Path p : s.filter(x -> x.getFileName().toString().endsWith(".java")).sorted().toList()) {
+                Path src = Path.of("src/test/java").resolve(p.getFileName());
+                if (!Files.exists(src)) continue;
+                ck(read(p.toString()).equals(read(src.toString())), "копия " + p.getFileName() + " совпадает с src/test/java");
+            }
+        }
         System.exit(f > 0 ? 1 : 0);
     }
 }
