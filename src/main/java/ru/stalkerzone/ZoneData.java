@@ -60,12 +60,13 @@ public class ZoneData extends SavedData {
                 // старый режим: журнал лагерей прежней симуляции не читаем — лагеря новой ставятся заново
                 ZoneData d = new ZoneData(sim, 0);
                 d.resetNotice = notice(sim);
+                d.setDirty(); // сброс — сразу на диск при ближайшем сохранении
                 return d;
             }
             // режим TheZone (решение а3): сброшена только симуляция; журнал постановок и чанки не трогаем
         }
         ZoneData d = new ZoneData(sim, sim.resetFromVersion >= 0 ? 0 : tag.getInt("tick"));
-        if (sim.resetFromVersion >= 0) d.resetNotice = notice(sim);
+        if (sim.resetFromVersion >= 0) { d.resetNotice = notice(sim); d.setDirty(); }
         for (int id : tag.getIntArray("built")) d.built.add(id);
         int[] cy = tag.getIntArray("campY");
         for (int i = 0; i + 1 < cy.length; i += 2) d.campY.put(cy[i], cy[i + 1]);
