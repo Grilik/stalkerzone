@@ -1,5 +1,7 @@
 package ru.stalkerzone.npc;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -643,10 +645,18 @@ public class StalkerEntity extends PathfinderMob {
                     sim.npcKilled(faction());
                 }
                 // sz_caravan_idx — старый тег (до карточки 023), читаем как fallback для уже заспавненных NPC
+                List<ItemStack> courier = new ArrayList<>();
                 if (getPersistentData().getBoolean("sz_caravan") || getPersistentData().contains("sz_caravan_idx")) {
-                    CaravanManager.caravanNpcKilled(this, sim);
+                    courier = CaravanManager.caravanNpcKilled(this, sim);
                 }
-                if (source.getEntity() instanceof Player) dropLoot(sim);
+                List<ItemStack> loot = source.getEntity() instanceof Player ? dropLoot(sim) : new ArrayList<>();
+                if (!courier.isEmpty() && this.level() instanceof net.minecraft.server.level.ServerLevel sl) {
+                    // Э0-09: курьер — деньги, товар, КПК и его снаряжение в один рюкзак на месте гибели
+                    courier.addAll(loot);
+                    DeathBackpack.placeNpc(sl, this.getX(), this.getY(), this.getZ(), this.getName().getString(), courier);
+                } else {
+                    for (ItemStack st : loot) this.spawnAtLocation(st);
+                }
                 if (source.getEntity() instanceof net.minecraft.server.level.ServerPlayer spK) {
                     PlayerFaction.onKill(spK, sim, faction(), wasLeader);
                     Reputation.killed(spK, sim, faction());
@@ -657,8 +667,9 @@ public class StalkerEntity extends PathfinderMob {
         }
     }
 
-    /** Добыча с убитого игроком сталкера берётся из склада и кассы его фракции. */
-    private void dropLoot(Simulation sim) {
+    /** Добыча с убитого игроком сталкера берётся из склада и кассы его фракции (список предметов; Э0-09). */
+    private List<ItemStack> dropLoot(Simulation sim) {
+        List<ItemStack> out = new ArrayList<>();
         int[] loot = sim.npcLoot(faction(), new java.util.Random());
         ItemStack held = this.getMainHandItem();
         boolean gun = ru.stalkerzone.compat.Tacz.isGun(held);
@@ -671,7 +682,7 @@ public class StalkerEntity extends PathfinderMob {
                 int rounds = q * ru.stalkerzone.compat.CompatConfig.roundsPerUnit(spec.ammo()) / 3;
                 while (rounds > 0) {
                     int c = Math.min(60, rounds);
-                    this.spawnAtLocation(ru.stalkerzone.compat.GunQuality.markAmmo(ru.stalkerzone.compat.Tacz.ammo(spec.ammo(), c), g == ru.stalkerzone.sim.Good.AMMO));
+                    out.add(ru.stalkerzone.compat.GunQuality.markAmmo(ru.stalkerzone.compat.Tacz.ammo(spec.ammo(), c), g == ru.stalkerzone.sim.Good.AMMO));
                     rounds -= c;
                 }
                 continue;
@@ -682,8 +693,8 @@ public class StalkerEntity extends PathfinderMob {
                 if (suit.getItem() instanceof ru.stalkerzone.gear.SuitItem) {
                     ItemStack drop = suit.copy();
                     drop.setDamageValue(Math.min(drop.getMaxDamage() - 1, drop.getDamageValue() + drop.getMaxDamage() / 4));
-                    this.spawnAtLocation(drop);
-                    if (q > 1) this.spawnAtLocation(new ItemStack(ru.stalkerzone.item.ModItems.of(g), q - 1));
+                    out.add(drop);
+                    if (q > 1) out.add(new ItemStack(ru.stalkerzone.item.ModItems.of(g), q - 1));
                     continue;
                 }
             }
@@ -691,13 +702,14 @@ public class StalkerEntity extends PathfinderMob {
                 // единица снаряжения с тела — это его оружие с остатком магазина
                 ItemStack drop = held.copy();
                 ru.stalkerzone.compat.Tacz.setAmmoIn(drop, Math.min(ru.stalkerzone.compat.Tacz.ammoIn(drop), 3 + this.random.nextInt(6)));
-                this.spawnAtLocation(drop);
-                if (q > 1) this.spawnAtLocation(new ItemStack(ru.stalkerzone.item.ModItems.of(g), q - 1));
+                out.add(drop);
+                if (q > 1) out.add(new ItemStack(ru.stalkerzone.item.ModItems.of(g), q - 1));
                 continue;
             }
-            this.spawnAtLocation(new ItemStack(ru.stalkerzone.item.ModItems.of(g), q));
+            out.add(new ItemStack(ru.stalkerzone.item.ModItems.of(g), q));
         }
-        for (ItemStack s : ru.stalkerzone.item.ModItems.rubleStacks(loot[Simulation.G])) this.spawnAtLocation(s);
+        out.addAll(ru.stalkerzone.item.ModItems.rubleStacks(loot[Simulation.G]));
+        return out;
     }
 
     @Override

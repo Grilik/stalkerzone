@@ -43,6 +43,30 @@ public final class DeathBackpack {
         level.addFreshEntity(e);
     }
 
+    /**
+     * Э0-09: рюкзак на месте гибели NPC (курьер Торговцев): все предметы по порядку; не влезло в
+     * {@link DeathBackpackEntity#SIZE} ячеек — следующий рюкзак рядом, ни одна вещь не теряется.
+     */
+    public static void placeNpc(ServerLevel level, double x, double y, double z, String owner, java.util.List<ItemStack> items) {
+        int i = 0, n = 0;
+        while (i < items.size()) {
+            DeathBackpackEntity e = ModEntities.DEATH_BACKPACK.get().create(level);
+            if (e == null) {
+                // рюкзак не создался — вещи на землю, но не пропадают
+                for (; i < items.size(); i++)
+                    level.addFreshEntity(new ItemEntity(level, x, y + 0.5, z, items.get(i)));
+                return;
+            }
+            int slot = 0;
+            for (; i < items.size() && slot < DeathBackpackEntity.SIZE; i++)
+                if (!items.get(i).isEmpty()) e.items.setItem(slot++, items.get(i));
+            e.owner = owner;
+            e.moveTo(x + n * 0.8, Math.max(y, level.getMinBuildHeight() + 1), z, 0, 0);
+            level.addFreshEntity(e);
+            n++;
+        }
+    }
+
     /** Старый рюкзак-предмет (миры до П-10): ПКМ по нему по-прежнему отдаёт всё. */
     public static boolean isBackpack(ItemEntity ie) {
         return ie.isAlive() && ie.getItem().getItem() == ModItems.DEATH_BACKPACK.get();
