@@ -38,10 +38,34 @@ public class ZoneData extends SavedData {
                 NAME);
     }
 
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+
+    /** Э0-14b: сообщение игрокам о сбросе симуляции (не сохраняется; показывает ZoneWorld.onLogin один раз). */
+    public String resetNotice;
+
+    private static String notice(Simulation sim) {
+        return "Сохранение Зоны от прежней версии мода (v" + sim.resetFromVersion + ", нужна v" + Simulation.SAVE_VERSION
+                + ") несовместимо: Кордон начат заново. Мир, постройки и ваш инвентарь на месте.";
+    }
+
     public static ZoneData load(CompoundTag tag) {
         // v1.11: состояние хранится байтами (строка NBT ограничена 65 535 байтами, а Зона выросла)
         String state = tag.contains("simBytes") ? java.util.Base64.getEncoder().encodeToString(tag.getByteArray("simBytes")) : tag.getString("sim");
-        ZoneData d = new ZoneData(Simulation.load(state), tag.getInt("tick"));
+        Simulation sim = Simulation.load(state);
+        // Э0-14b (D3): сохранение симуляции старой версии — Кордон начат заново. Ничего вне ZoneData не удаляется.
+        if (sim.resetFromVersion >= 0) {
+            LOGGER.warn("[stalkerzone] сохранение симуляции v{} → v{}: Кордон начат заново (режим {})",
+                    sim.resetFromVersion, Simulation.SAVE_VERSION, ru.stalkerzone.world.WorldMode.current());
+            if (!ru.stalkerzone.world.WorldMode.theZone()) {
+                // старый режим: журнал лагерей прежней симуляции не читаем — лагеря новой ставятся заново
+                ZoneData d = new ZoneData(sim, 0);
+                d.resetNotice = notice(sim);
+                return d;
+            }
+            // режим TheZone (решение а3): сброшена только симуляция; журнал постановок и чанки не трогаем
+        }
+        ZoneData d = new ZoneData(sim, sim.resetFromVersion >= 0 ? 0 : tag.getInt("tick"));
+        if (sim.resetFromVersion >= 0) d.resetNotice = notice(sim);
         for (int id : tag.getIntArray("built")) d.built.add(id);
         int[] cy = tag.getIntArray("campY");
         for (int i = 0; i + 1 < cy.length; i += 2) d.campY.put(cy[i], cy[i + 1]);

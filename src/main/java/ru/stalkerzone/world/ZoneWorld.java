@@ -142,6 +142,12 @@ public final class ZoneWorld {
         @SubscribeEvent
         public void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
             if (!(e.getEntity() instanceof ServerPlayer sp)) return;
+            // Э0-14b: сохранение симуляции было старой версии — сказать один раз (первому вошедшему)
+            ru.stalkerzone.ZoneData zd = ru.stalkerzone.ZoneData.get(sp.getServer());
+            if (zd.resetNotice != null) {
+                sp.sendSystemMessage(net.minecraft.network.chat.Component.literal(zd.resetNotice));
+                zd.resetNotice = null;
+            }
             CompoundTag root = sp.getPersistentData();
             CompoundTag persisted = root.getCompound(Player.PERSISTED_NBT_TAG);
             if (persisted.getBoolean(ENTERED_TAG)) return;
