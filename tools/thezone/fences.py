@@ -7,7 +7,7 @@
      2 дыры во весь рост и 1 лаз (нет нижней доски).
   Б  Южный блокпост — сетка-рабица: stalkerzone:prop_chainlink (секция 3×2 на трубах, колючка поверху),
      корпус секции — stalkerzone:prop_hitbox (как ObjPropBlock.placeInChunk); остатки линии и углы —
-     zm_grating_pane в 2 блока.
+     zm_grating_pane в 2 блока и колючка поверху — ванильная цепь вдоль линии (minecraft:chain).
   В  АТП, Дальний блокпост, стенка под мостом — плиты ПО-2: framed_pane с камуфляжем concrete_fence, 2 блока;
      на АТП 2 выбитые плиты (нет верхнего ряда на 2 клетках) и 1 пролом (2 клетки пусто).
 Проходы и ворота (iron_bars) не трогаются: меняются только колонки сплошной стенки.
@@ -35,6 +35,12 @@ SITES = {
     "far": ("C", -4158, -4130, 2888, 2914, {"smooth_stone_slab"}, set()),
     "bridge": ("C", -4168, -4146, 3478, 3482, {"quartz_block", "quartz_slab"}, set()),
 }
+# просмотрено вручную (Э2-16, этап 3): куски стенки, которые автопоиск отсекает (короткий кусок, примыкание к дому),
+# но это забор, а не стена дома
+INCL = {
+    "far": {(-4155, 2912), (-4154, 2912), (-4153, 2912), (-4146, 2892), (-4145, 2892), (-4144, 2892),
+            (-4136, 2892), (-4135, 2892)},
+}
 GATE = {"iron_bars"}
 SOFT = {"air", "cave_air", "grass", "fern", "tall_grass", "large_fern", "dead_bush", "poppy", "dandelion", "snow",
         "spruce_sapling", "oak_sapling", "birch_sapling", "sweet_berry_bush", "brown_mushroom", "red_mushroom"}
@@ -47,6 +53,7 @@ PANE = "framedblocks:framed_pane[east=%s,glowing=false,locked=false,north=%s,pro
 GRATING = "stalkerzone:zm_grating_pane[east=%s,north=%s,south=%s,waterlogged=false,west=%s]"
 CHAIN = "stalkerzone:prop_chainlink[facing=%s]"
 HITBOX = "stalkerzone:prop_hitbox"
+WIRE = "minecraft:chain[axis=%s,waterlogged=false]"
 BOARDS, POST, PO2 = "minecraft:birch_planks", "minecraft:oak_log[axis=y]", "stalkerzone:concrete_fence"
 DIRS = {"east": (1, 0), "north": (0, -1), "south": (0, 1), "west": (-1, 0)}
 
@@ -136,6 +143,13 @@ def find(w, site):
                         seen.add(q); comp.append(q); stack.append(q)
         if len(comp) >= 4:
             keep.update({q: out[q] for q in comp})
+    for k in INCL.get(site, ()):
+        g, st = column(w, *k)
+        h = 0
+        while h < len(st) and bid(st[h]) not in SOFT:
+            h += 1
+        if g is not None and 1 <= h <= 3 and all(bid(s) in mats for s in st[:h]):
+            keep[k] = (g, st[:h])
     return keep
 
 
@@ -232,6 +246,8 @@ def plan(w, site):
             g = cells[k][0]
             for dy in (1, 2):
                 new[(k[0], g + dy, k[1])] = ("GRATING", None)
+            n = nbrs(cells, k)  # колючка поверху: ванильная цепь вдоль линии забора (своей колючки в моде нет)
+            new[(k[0], g + 3, k[1])] = (WIRE % ("x" if n["east"] or n["west"] else "z"), None)
         notes.append("секций рабицы %d, клеток решётки %d" % (len(used) // 3, len(rest)))
     # снять старую стенку
     edits = []
