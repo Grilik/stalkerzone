@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Атлас Зоны (Э1-13, решение б1)",
+  "description": "Папка атласа: world.json + locations/<id>.json. Координаты - блоки Minecraft, система Minecraft (x на восток, z на юг). Атлас не содержит данных игры GSC. Проверяет AtlasTest.",
+  "$defs": {
+    "xz": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+    "pos": { "description": "[x, z] или [x, y, z]; y необязательна (не снята)", "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 3 },
+    "rect": { "description": "[minX, minZ, maxX, maxZ]", "type": "array", "items": { "type": "integer" }, "minItems": 4, "maxItems": 4 },
+    "polygon": { "description": "Многоугольник [[x, z], ...] без самопересечений, не меньше 3 вершин", "type": "array", "items": { "$ref": "#/$defs/xz" }, "minItems": 3 }
+  },
+  "world.json": {
+    "version": "integer, версия атласа (манифест мира хранит только её)",
+    "base": "строка, карта-основа (thezone)",
+    "bounds": "polygon - граница играбельной части мира; объекты локаций (кроме kind=exit) внутри",
+    "spawn": "pos - точка появления",
+    "locations": "[{ id, file }] - файл локации относительно папки атласа",
+    "links": "[{ from, to, type, line }] - дороги и переходы МЕЖДУ локациями; from/to - id существующих локаций"
+  },
+  "locations/<id>.json": {
+    "id": "строка, равна id в world.json",
+    "name": "строка",
+    "source": "строка - уровень оригинала или съёмка",
+    "bbox": "rect - быстрая отсечка; все объекты (кроме exit) внутри",
+    "area": "polygon - область локации; области разных локаций не пересекаются",
+    "teleport": "pos, необязательно - телепорт автора из places.json; внутри bbox",
+    "transform": "{ kind: identity | similarity, frame, ... } - преобразование оригинал -> TheZone (б2)",
+    "anchors": "необязательно: [{ original: xz, thezone: xz }]; в системе Minecraft (оригинал - уже с зеркалом x-ray)",
+    "residual": "{ rms, max, loo: { max } } в блоках; пороги rms <= 8, loo.max <= 16, иначе все объекты обязаны быть status=observed",
+    "objects": "массив объектов (ниже)",
+    "roads": "[{ from, to, surface, passable, line }] - полилинии; from/to - номера узлов или id объектов",
+    "spawn, exits, closedPassages": "необязательно: служебные точки уровня 1:1"
+  },
+  "object": {
+    "id": "<loc>.<kind>.<имя>, уникален во всём атласе",
+    "kind": ["base", "outpost", "checkpoint", "field", "lair", "cache", "trader", "exit", "landmark", "road_node"],
+    "name": "строка",
+    "node": "целое, номер узла симуляции (необязательно); уникален, никогда не переиспользуется, только дописывается в конец (б3)",
+    "pos": "pos",
+    "points": "{ campfire: pos, beds: [pos], guards: [pos], patrol: [pos], shelter: [pos], flag: pos, trader: pos, gate: rect ... }; kind=base обязан иметь campfire и непустой beds",
+    "site": "необязательно: { builder, mode: keep | adapt | redesign, bbox: rect, clear: [rect] }; bbox любых площадок не пересекаются; clear допустим только при mode=redesign",
+    "status": ["observed", "accepted", "redesign", "new", "built", "verified", "integrated", "removed"],
+    "source": "откуда взято (смарт-террейн, съёмка, ручная правка с картой задачи)",
+    "smart": "необязательно, имя смарт-террейна оригинала"
+  }
+}
