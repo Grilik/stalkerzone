@@ -236,3 +236,55 @@ def set_block(chunk, x, y, z, block):
         et, items = chunk["block_entities"][1]
         items[:] = [b for b in items if (b["x"][1], b["y"][1], b["z"][1]) != (x, y, z)]
     return old
+
+
+# ---------------- блок-сущности (Э2-16) ----------------
+def block_entity(chunk, x, y, z):
+    """Блок-сущность в точке (compound) или None."""
+    if "block_entities" not in chunk:
+        return None
+    for b in chunk["block_entities"][1][1]:
+        if (b["x"][1], b["y"][1], b["z"][1]) == (x, y, z):
+            return b
+    return None
+
+
+def set_block_entity(chunk, x, y, z, be_id, data):
+    """Кладёт блок-сущность be_id с полями data (compound без x/y/z/id) в точку; прежняя снимается.
+    Блок ставить раньше через set_block (она снимает сущность на этом месте)."""
+    if "block_entities" not in chunk or chunk["block_entities"][1][0] not in (COMP, END):
+        chunk["block_entities"] = (LIST, (COMP, []))
+    lst = chunk["block_entities"][1]
+    if lst[0] == END:
+        chunk["block_entities"] = (LIST, (COMP, list(lst[1])))
+    items = chunk["block_entities"][1][1]
+    items[:] = [b for b in items if (b["x"][1], b["y"][1], b["z"][1]) != (x, y, z)]
+    be = {"id": (STR, be_id), "x": (INT, x), "y": (INT, y), "z": (INT, z), "keepPacked": (BYTE, 0)}
+    be.update(data)
+    items.append(be)
+    return be
+
+
+def framed_camo(camo):
+    """Поля блок-сущности FramedBlocks 9.4 (framedblocks:framed_tile) с камуфляжем camo
+    ('minecraft:oak_log[axis=y]'): camo{type:framedblocks:block,state{Name,Properties}}, glowing/intangible/reinforced 0.
+    Тот же формат, что строка Framed.camoNbt в моде."""
+    return {"camo": (COMP, {"type": (STR, "framedblocks:block"), "state": (COMP, _state(camo))}),
+            "glowing": (BYTE, 0), "intangible": (BYTE, 0), "reinforced": (BYTE, 0)}
+
+
+FRAMED_TILE = "framedblocks:framed_tile"
+
+
+def set_framed(chunk, x, y, z, block, camo):
+    """Framed-блок с камуфляжем: состояние + блок-сущность framed_tile. Возвращает прежний блок."""
+    old = set_block(chunk, x, y, z, block)
+    set_block_entity(chunk, x, y, z, FRAMED_TILE, framed_camo(camo))
+    return old
+
+
+def relight(chunk):
+    """Пересчитать свет и карты высот чанка при загрузке: isLightOn=0, Heightmaps убраны (ChunkSerializer
+    строит недостающие заново). После замены полных блоков тонкими старые свет и высоты неверны."""
+    chunk["isLightOn"] = (BYTE, 0)
+    chunk.pop("Heightmaps", None)
