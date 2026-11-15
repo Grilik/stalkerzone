@@ -1,0 +1,1555 @@
+{
+ "level": "l08_yantar",
+ "frame": "original (xr_x, xr_y, -xr_z) — Minecraft-ориентация, до преобразования на TheZone",
+ "source": "Anomaly 1.5.x: all.spawn, level.game, simulation_objects_props.ltx, simulation.ltx (tools/atlas/import_level.py)",
+ "status": "observed",
+ "objects": [
+  {
+   "id": "l08_yantar.yan_smart_terrain_1_6",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_1_6",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    136.0,
+    -1.0,
+    -51.2
+   ],
+   "status": "observed",
+   "allowed": [
+    "freedom",
+    "loners",
+    "scientists",
+    "zombied"
+   ],
+   "points": {
+    "campfire": [
+     [
+      137.0,
+      -1.1,
+      -50.6
+     ],
+     [
+      138.6,
+      -0.0,
+      -39.7
+     ],
+     [
+      132.3,
+      -0.8,
+      -57.3
+     ]
+    ],
+    "guards": [
+     [
+      141.3,
+      -0.9,
+      -45.6
+     ]
+    ],
+    "patrol": [
+     [
+      138.3,
+      0.5,
+      -37.6
+     ],
+     [
+      133.0,
+      0.7,
+      -28.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_2_4",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_2_4",
+   "type": [
+    "territory",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    -9.0,
+    0.0,
+    12.3
+   ],
+   "status": "observed",
+   "faction": "zombied",
+   "startSquads": 2,
+   "points": {
+    "guards": [
+     [
+      -9.8,
+      0.1,
+      29.4
+     ],
+     [
+      -10.0,
+      0.0,
+      10.2
+     ]
+    ],
+    "patrol": [
+     [
+      -18.5,
+      0.4,
+      -2.2
+     ],
+     [
+      -9.2,
+      0.1,
+      19.7
+     ]
+    ],
+    "campfires": [
+     [
+      -10.2,
+      0.2,
+      35.4
+     ],
+     [
+      -2.5,
+      0.4,
+      35.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_2_5",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_2_5",
+   "type": [
+    "territory",
+    "resource",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    89.2,
+    0.0,
+    31.8
+   ],
+   "status": "observed",
+   "faction": "zombied",
+   "allowed": [
+    "freedom",
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 1,
+   "points": {
+    "guards": [
+     [
+      93.8,
+      0.0,
+      37.7
+     ]
+    ],
+    "patrol": [
+     [
+      88.6,
+      0.1,
+      38.4
+     ],
+     [
+      80.4,
+      0.1,
+      35.6
+     ],
+     [
+      79.9,
+      0.0,
+      36.9
+     ],
+     [
+      100.8,
+      -0.1,
+      39.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_3_4",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_3_4",
+   "type": [
+    "territory",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    25.5,
+    0.1,
+    60.7
+   ],
+   "status": "observed",
+   "faction": "zombied",
+   "startSquads": 1,
+   "points": {
+    "patrol": [
+     [
+      25.5,
+      0.1,
+      59.0
+     ],
+     [
+      16.7,
+      0.1,
+      63.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_3_6",
+   "kind": "base",
+   "smart": "yan_smart_terrain_3_6",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    163.6,
+    -7.9,
+    100.3
+   ],
+   "status": "observed",
+   "faction": "scientists",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      166.9,
+      -7.8,
+      98.4
+     ]
+    ],
+    "guards": [
+     [
+      155.9,
+      -7.3,
+      99.7
+     ],
+     [
+      154.6,
+      -7.6,
+      95.6
+     ],
+     [
+      173.7,
+      -8.0,
+      105.3
+     ]
+    ],
+    "patrol": [
+     [
+      158.8,
+      -6.8,
+      83.2
+     ],
+     [
+      152.8,
+      -7.1,
+      89.7
+     ],
+     [
+      164.4,
+      -7.8,
+      99.2
+     ],
+     [
+      160.6,
+      -7.5,
+      117.8
+     ]
+    ],
+    "campfires": [
+     [
+      167.0,
+      -7.7,
+      98.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_4_2",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_4_2",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    -171.2,
+    3.5,
+    160.4
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "freedom",
+    "loners",
+    "scientists"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -172.5,
+      4.0,
+      166.0
+     ]
+    ],
+    "guards": [
+     [
+      -165.3,
+      3.9,
+      161.6
+     ]
+    ],
+    "patrol": [
+     [
+      -171.2,
+      5.9,
+      175.0
+     ],
+     [
+      -172.3,
+      3.7,
+      161.3
+     ],
+     [
+      -167.5,
+      3.3,
+      158.5
+     ],
+     [
+      -173.2,
+      3.5,
+      160.6
+     ]
+    ],
+    "campfires": [
+     [
+      -172.6,
+      4.8,
+      166.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_4_4",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_4_4",
+   "type": [
+    "lair"
+   ],
+   "original": [
+    28.5,
+    1.2,
+    179.3
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "points": {
+    "campfire": [
+     [
+      27.3,
+      1.1,
+      179.7
+     ]
+    ],
+    "guards": [
+     [
+      30.3,
+      1.5,
+      176.6
+     ]
+    ],
+    "patrol": [
+     [
+      43.3,
+      1.7,
+      171.2
+     ],
+     [
+      40.8,
+      -0.3,
+      188.4
+     ],
+     [
+      26.0,
+      -0.8,
+      191.7
+     ],
+     [
+      30.0,
+      1.1,
+      181.7
+     ],
+     [
+      27.3,
+      1.3,
+      176.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_4_5",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_4_5",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    95.6,
+    1.0,
+    129.4
+   ],
+   "status": "observed",
+   "faction": "monsters",
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      95.6,
+      0.8,
+      126.4
+     ]
+    ],
+    "guards": [
+     [
+      99.9,
+      0.7,
+      123.5
+     ],
+     [
+      88.6,
+      1.5,
+      136.9
+     ]
+    ],
+    "patrol": [
+     [
+      105.5,
+      1.2,
+      123.0
+     ],
+     [
+      81.3,
+      1.1,
+      126.8
+     ],
+     [
+      85.7,
+      1.1,
+      126.6
+     ],
+     [
+      94.5,
+      1.2,
+      131.6
+     ]
+    ],
+    "campfires": [
+     [
+      95.5,
+      1.2,
+      126.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_5_3",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_5_3",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    -55.4,
+    -12.0,
+    257.2
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -56.8,
+      -12.2,
+      257.0
+     ],
+     [
+      -54.5,
+      -12.4,
+      251.4
+     ],
+     [
+      -57.4,
+      -12.7,
+      252.3
+     ]
+    ],
+    "patrol": [
+     [
+      -60.5,
+      -12.0,
+      262.2
+     ],
+     [
+      -50.5,
+      -12.7,
+      262.0
+     ],
+     [
+      -54.4,
+      -13.2,
+      267.9
+     ],
+     [
+      -45.2,
+      -13.2,
+      259.1
+     ],
+     [
+      -13.1,
+      -12.3,
+      234.8
+     ],
+     [
+      -22.0,
+      -12.4,
+      265.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_5_5",
+   "kind": "base",
+   "smart": "yan_smart_terrain_5_5",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    102.4,
+    -8.8,
+    217.5
+   ],
+   "status": "observed",
+   "faction": "scientists",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists",
+    "zombied"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      100.3,
+      -8.9,
+      221.6
+     ],
+     [
+      98.7,
+      -8.7,
+      216.4
+     ]
+    ],
+    "patrol": [
+     [
+      108.0,
+      -8.9,
+      210.1
+     ],
+     [
+      85.0,
+      -7.6,
+      212.2
+     ],
+     [
+      94.3,
+      -7.3,
+      210.3
+     ],
+     [
+      101.4,
+      -8.9,
+      218.9
+     ],
+     [
+      97.5,
+      -9.3,
+      234.1
+     ],
+     [
+      97.2,
+      -9.3,
+      232.6
+     ]
+    ],
+    "campfires": [
+     [
+      100.5,
+      -8.6,
+      221.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_6_2",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_6_2",
+   "type": [
+    "lair"
+   ],
+   "original": [
+    -144.0,
+    6.7,
+    295.8
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "zombied"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -141.7,
+      6.2,
+      297.2
+     ],
+     [
+      -147.7,
+      6.7,
+      295.8
+     ]
+    ],
+    "guards": [
+     [
+      -140.1,
+      7.1,
+      292.8
+     ],
+     [
+      -146.5,
+      7.0,
+      293.7
+     ],
+     [
+      -132.5,
+      5.9,
+      293.9
+     ]
+    ],
+    "patrol": [
+     [
+      -132.8,
+      6.0,
+      291.3
+     ],
+     [
+      -146.2,
+      6.5,
+      280.7
+     ],
+     [
+      -139.0,
+      6.8,
+      295.5
+     ]
+    ],
+    "campfires": [
+     [
+      -141.7,
+      6.7,
+      297.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_6_4",
+   "kind": "base",
+   "smart": "yan_smart_terrain_6_4",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    11.7,
+    -11.9,
+    271.6
+   ],
+   "status": "observed",
+   "faction": "scientists",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists",
+    "zombied"
+   ],
+   "startSquads": 7,
+   "points": {
+    "campfire": [
+     [
+      26.2,
+      -11.9,
+      243.3
+     ],
+     [
+      25.4,
+      -11.3,
+      297.5
+     ],
+     [
+      43.6,
+      -11.9,
+      252.0
+     ]
+    ],
+    "guards": [
+     [
+      1.0,
+      -11.9,
+      285.2
+     ],
+     [
+      4.1,
+      -12.0,
+      249.5
+     ],
+     [
+      -2.4,
+      -11.9,
+      288.2
+     ],
+     [
+      58.7,
+      -11.9,
+      271.6
+     ],
+     [
+      0.6,
+      -11.9,
+      250.2
+     ],
+     [
+      -0.0,
+      -11.9,
+      255.4
+     ],
+     [
+      13.1,
+      -11.9,
+      258.7
+     ],
+     [
+      52.8,
+      -11.9,
+      273.0
+     ],
+     [
+      46.1,
+      -11.9,
+      266.0
+     ],
+     [
+      48.0,
+      -11.9,
+      280.1
+     ],
+     [
+      4.5,
+      -11.9,
+      288.6
+     ]
+    ],
+    "patrol": [
+     [
+      -4.2,
+      -12.0,
+      246.1
+     ],
+     [
+      1.6,
+      -11.9,
+      270.6
+     ],
+     [
+      10.9,
+      -11.9,
+      276.4
+     ],
+     [
+      50.4,
+      -11.9,
+      272.4
+     ],
+     [
+      44.5,
+      -11.9,
+      291.5
+     ],
+     [
+      56.1,
+      -11.9,
+      280.9
+     ]
+    ],
+    "camps": [
+     [
+      26.3,
+      -11.6,
+      243.2
+     ],
+     [
+      36.5,
+      -11.7,
+      275.0
+     ],
+     [
+      28.6,
+      -11.9,
+      279.8
+     ]
+    ],
+    "campfires": [
+     [
+      26.3,
+      -11.6,
+      243.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_snork_u",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_snork_u",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -55.4,
+    -19.1,
+    59.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_zombi_spawn",
+   "kind": "lair",
+   "smart": "yan_smart_terrain_zombi_spawn",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    60.8,
+    -0.8,
+    -15.1
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "startSquads": 1,
+   "points": {
+    "patrol": [
+     [
+      57.6,
+      0.1,
+      -41.9
+     ],
+     [
+      56.3,
+      0.1,
+      -39.0
+     ],
+     [
+      43.4,
+      0.0,
+      -44.6
+     ]
+    ],
+    "campfires": [
+     [
+      58.4,
+      -0.7,
+      9.9
+     ],
+     [
+      55.1,
+      0.3,
+      -42.4
+     ],
+     [
+      37.8,
+      0.2,
+      17.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.red_smart_terrain_5_5",
+   "kind": "lair",
+   "smart": "red_smart_terrain_5_5",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -49.7,
+    2.2,
+    333.9
+   ],
+   "status": "observed",
+   "points": {
+    "patrol": [
+     [
+      -60.3,
+      0.5,
+      -32.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_5_4",
+   "kind": "landmark",
+   "smart": "yan_smart_terrain_5_4",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -14.4,
+    -13.2,
+    228.2
+   ],
+   "points": {
+    "campfire": [
+     [
+      -14.4,
+      -13.2,
+      228.2
+     ],
+     [
+      -14.3,
+      -13.2,
+      228.2
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_5_6",
+   "kind": "landmark",
+   "smart": "yan_smart_terrain_5_6",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    172.9,
+    4.3,
+    243.8
+   ],
+   "points": {
+    "campfire": [
+     [
+      179.5,
+      4.7,
+      248.1
+     ],
+     [
+      178.4,
+      5.0,
+      241.0
+     ]
+    ],
+    "guards": [
+     [
+      170.9,
+      4.2,
+      242.3
+     ]
+    ],
+    "patrol": [
+     [
+      162.9,
+      3.4,
+      243.7
+     ]
+    ],
+    "campfires": [
+     [
+      179.6,
+      4.9,
+      248.1
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l08_yantar.yan_2c_01_cd_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    104.2,
+    2.9,
+    -68.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_2_5_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    89.7,
+    0.0,
+    62.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_4_2_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -173.0,
+    2.5,
+    146.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_5_3_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -49.2,
+    -12.7,
+    245.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_smart_terrain_zombi_spawn_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    88.1,
+    -0.0,
+    5.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_level_changer_to_agroprom_1",
+   "kind": "exit",
+   "to": "agroprom",
+   "original": [
+    -75.5,
+    10.3,
+    390.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_level_changer_to_dead_city_1",
+   "kind": "exit",
+   "to": "dead_city",
+   "original": [
+    -59.9,
+    0.4,
+    -22.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_level_changer_to_rostok_1",
+   "kind": "exit",
+   "to": "rostok",
+   "original": [
+    258.7,
+    14.1,
+    284.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.yan_level_changer_to_x16",
+   "kind": "exit",
+   "to": "x16",
+   "original": [
+    -2.3,
+    -7.9,
+    11.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-7_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -195.6,
+    1.4,
+    144.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-6_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_thermal_average": 1,
+    "zone_mine_thermal_average": 10
+   },
+   "original": [
+    -177.1,
+    2.4,
+    147.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-5_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_psychic_weak": 1
+   },
+   "original": [
+    -143.5,
+    1.5,
+    129.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-3_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_zhar": 1
+   },
+   "original": [
+    -84.7,
+    -16.8,
+    96.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-3_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1
+   },
+   "original": [
+    -64.6,
+    -12.9,
+    271.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-2_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_acidic_strong": 1,
+    "zone_mine_acidic_strong": 9,
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -44.2,
+    -12.9,
+    241.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-2_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_strong": 1
+   },
+   "original": [
+    -39.0,
+    -12.9,
+    256.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-1_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_electric_strong": 3
+   },
+   "original": [
+    -3.6,
+    10.7,
+    6.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-1_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -5.1,
+    -2.3,
+    188.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_-1_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_acidic_strong": 1,
+    "zone_mine_acidic_strong": 7
+   },
+   "original": [
+    -23.7,
+    -12.9,
+    233.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_0_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    22.4,
+    0.2,
+    -44.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_0_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 2
+   },
+   "original": [
+    14.4,
+    3.2,
+    -1.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_0_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 4,
+    "zone_mine_electric_strong": 1
+   },
+   "original": [
+    13.3,
+    0.4,
+    26.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_0_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 3,
+    "zone_mine_electric_strong": 1
+   },
+   "original": [
+    22.4,
+    0.7,
+    56.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_0_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    1.7,
+    -0.0,
+    121.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_0_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    13.9,
+    -3.6,
+    200.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_2_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_strong": 1
+   },
+   "original": [
+    72.0,
+    0.6,
+    -40.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_2_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_strong": 1
+   },
+   "original": [
+    93.5,
+    0.2,
+    -27.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_2_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 1,
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_electric_strong": 7
+   },
+   "original": [
+    88.8,
+    0.9,
+    12.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_2_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 2,
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_electric_average": 4,
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    88.3,
+    0.8,
+    53.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_2_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    77.3,
+    0.9,
+    69.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_3_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    110.2,
+    0.7,
+    -74.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_3_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 2
+   },
+   "original": [
+    103.7,
+    0.4,
+    -43.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_3_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    114.7,
+    1.0,
+    164.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l08_yantar.anomalies_4_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_acidic_average": 1
+   },
+   "original": [
+    155.0,
+    -1.0,
+    -82.5
+   ],
+   "status": "observed"
+  }
+ ]
+}

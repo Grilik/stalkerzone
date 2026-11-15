@@ -1,0 +1,2117 @@
+{
+ "level": "k00_marsh",
+ "frame": "original (xr_x, xr_y, -xr_z) — Minecraft-ориентация, до преобразования на TheZone",
+ "source": "Anomaly 1.5.x: all.spawn, level.game, simulation_objects_props.ltx, simulation.ltx (tools/atlas/import_level.py)",
+ "status": "observed",
+ "objects": [
+  {
+   "id": "k00_marsh.mar_smart_terrain_10_10",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_10_10",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    424.2,
+    0.4,
+    46.9
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "points": {
+    "camps": [
+     [
+      429.0,
+      1.2,
+      44.1
+     ]
+    ],
+    "campfires": [
+     [
+      428.9,
+      1.1,
+      43.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_10_5",
+   "kind": "base",
+   "smart": "mar_smart_terrain_10_5",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    417.2,
+    3.0,
+    -255.0
+   ],
+   "status": "observed",
+   "faction": "military",
+   "allowed": [
+    "military"
+   ],
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      410.0,
+      3.4,
+      -237.8
+     ],
+     [
+      435.2,
+      3.3,
+      -263.2
+     ],
+     [
+      401.8,
+      3.8,
+      -265.6
+     ]
+    ],
+    "campfires": [
+     [
+      401.5,
+      4.2,
+      -265.6
+     ],
+     [
+      409.9,
+      3.8,
+      -238.4
+     ],
+     [
+      435.1,
+      3.8,
+      -262.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_10_7",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_10_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    353.4,
+    1.8,
+    -129.7
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      357.1,
+      1.2,
+      -125.6
+     ]
+    ],
+    "campfires": [
+     [
+      357.4,
+      1.6,
+      -125.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_11_11",
+   "kind": "base",
+   "smart": "mar_smart_terrain_11_11",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    510.2,
+    1.9,
+    171.6
+   ],
+   "status": "observed",
+   "faction": "renegades",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "duty",
+    "freedom",
+    "loners",
+    "mercs",
+    "renegades",
+    "scientists"
+   ],
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      507.1,
+      2.5,
+      187.4
+     ],
+     [
+      506.9,
+      2.5,
+      174.4
+     ]
+    ],
+    "campfires": [
+     [
+      506.6,
+      2.9,
+      174.1
+     ],
+     [
+      507.2,
+      2.8,
+      187.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_11_3",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_11_3",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    459.0,
+    1.5,
+    -366.7
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "points": {
+    "camps": [
+     [
+      458.2,
+      1.3,
+      -364.5
+     ]
+    ],
+    "campfires": [
+     [
+      458.1,
+      1.7,
+      -364.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_12_2",
+   "kind": "base",
+   "smart": "mar_smart_terrain_12_2",
+   "type": [
+    "base",
+    "territory",
+    "resource",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    599.9,
+    2.7,
+    -431.3
+   ],
+   "status": "observed",
+   "faction": "clear_sky",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "loners",
+    "renegades",
+    "scientists"
+   ],
+   "startSquads": 3,
+   "points": {
+    "camps": [
+     [
+      594.9,
+      2.9,
+      -431.5
+     ],
+     [
+      581.3,
+      2.9,
+      -411.8
+     ]
+    ],
+    "campfires": [
+     [
+      594.7,
+      3.3,
+      -431.6
+     ],
+     [
+      581.4,
+      3.3,
+      -411.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_3_10",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_3_10",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -66.8,
+    0.9,
+    82.9
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      -61.4,
+      0.6,
+      85.2
+     ],
+     [
+      -69.6,
+      0.6,
+      81.5
+     ]
+    ],
+    "campfires": [
+     [
+      -67.6,
+      1.0,
+      82.3
+     ],
+     [
+      -61.3,
+      0.9,
+      85.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_3_3",
+   "kind": "base",
+   "smart": "mar_smart_terrain_3_3",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -183.0,
+    1.2,
+    -402.9
+   ],
+   "status": "observed",
+   "faction": "renegades",
+   "allowed": [
+    "bandits",
+    "renegades"
+   ],
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      -171.7,
+      1.3,
+      -405.3
+     ],
+     [
+      -200.8,
+      0.8,
+      -406.9
+     ]
+    ],
+    "campfires": [
+     [
+      -171.0,
+      1.6,
+      -405.5
+     ],
+     [
+      -200.6,
+      1.0,
+      -407.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_3_7",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_3_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -152.1,
+    0.9,
+    -86.6
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "points": {
+    "camps": [
+     [
+      -157.3,
+      0.9,
+      -90.7
+     ],
+     [
+      -151.9,
+      0.8,
+      -82.3
+     ]
+    ],
+    "campfires": [
+     [
+      -157.8,
+      1.1,
+      -90.7
+     ],
+     [
+      -152.9,
+      1.0,
+      -83.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_4_5",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_4_5",
+   "type": [
+    "territory",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    -54.8,
+    0.9,
+    -291.9
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "loners",
+    "renegades"
+   ],
+   "points": {
+    "camps": [
+     [
+      -57.6,
+      1.4,
+      -283.7
+     ],
+     [
+      -51.6,
+      0.9,
+      -296.6
+     ],
+     [
+      -61.8,
+      0.9,
+      -293.5
+     ]
+    ],
+    "campfires": [
+     [
+      -51.4,
+      1.3,
+      -296.4
+     ],
+     [
+      -62.0,
+      1.2,
+      -293.6
+     ],
+     [
+      -57.7,
+      1.5,
+      -283.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_4_7",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_4_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -37.1,
+    0.9,
+    -144.3
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "loners",
+    "renegades"
+   ],
+   "points": {
+    "camps": [
+     [
+      -37.9,
+      0.7,
+      -137.0
+     ]
+    ],
+    "campfires": [
+     [
+      -38.2,
+      1.0,
+      -137.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_5_12",
+   "kind": "base",
+   "smart": "mar_smart_terrain_5_12",
+   "type": [
+    "base",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    28.7,
+    3.0,
+    234.3
+   ],
+   "status": "observed",
+   "faction": "clear_sky",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "loners",
+    "renegades"
+   ],
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      30.6,
+      3.1,
+      233.4
+     ]
+    ],
+    "campfires": [
+     [
+      34.1,
+      3.5,
+      231.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_5_8",
+   "kind": "base",
+   "smart": "mar_smart_terrain_5_8",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -3.8,
+    3.1,
+    -6.3
+   ],
+   "status": "observed",
+   "faction": "clear_sky",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "loners",
+    "mercs",
+    "renegades",
+    "scientists"
+   ],
+   "startSquads": 2
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_6_10",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_6_10",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    140.7,
+    -0.1,
+    51.9
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      139.3,
+      0.4,
+      52.5
+     ]
+    ],
+    "campfires": [
+     [
+      138.9,
+      0.6,
+      52.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_6_11",
+   "kind": "base",
+   "smart": "mar_smart_terrain_6_11",
+   "type": [
+    "base",
+    "lair"
+   ],
+   "original": [
+    116.2,
+    1.4,
+    150.0
+   ],
+   "status": "observed",
+   "faction": "clear_sky",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "renegades"
+   ],
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      122.0,
+      1.0,
+      147.4
+     ]
+    ],
+    "campfires": [
+     [
+      122.0,
+      1.3,
+      147.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_6_4",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_6_4",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    103.8,
+    1.2,
+    -330.4
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      107.1,
+      0.9,
+      -337.2
+     ]
+    ],
+    "campfires": [
+     [
+      107.4,
+      1.3,
+      -337.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_6_7",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_6_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    86.3,
+    1.1,
+    -125.2
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      83.8,
+      1.1,
+      -121.4
+     ]
+    ],
+    "campfires": [
+     [
+      83.6,
+      1.3,
+      -121.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_6_8",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_6_8",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    129.8,
+    0.8,
+    -41.7
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      134.7,
+      0.8,
+      -39.6
+     ]
+    ],
+    "campfires": [
+     [
+      134.7,
+      1.0,
+      -39.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_7_3",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_7_3",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    149.3,
+    2.3,
+    -493.8
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "loners",
+    "renegades"
+   ],
+   "points": {
+    "camps": [
+     [
+      146.8,
+      2.0,
+      -492.9
+     ]
+    ],
+    "campfires": [
+     [
+      146.6,
+      2.4,
+      -493.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_7_7",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_7_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    187.3,
+    1.2,
+    -174.8
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      196.3,
+      1.2,
+      -171.7
+     ]
+    ],
+    "campfires": [
+     [
+      196.4,
+      1.5,
+      -171.8
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_8_11",
+   "kind": "base",
+   "smart": "mar_smart_terrain_8_11",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    286.2,
+    -0.7,
+    160.2
+   ],
+   "status": "observed",
+   "faction": "renegades",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "loners",
+    "renegades"
+   ],
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      296.8,
+      0.7,
+      161.5
+     ]
+    ],
+    "campfires": [
+     [
+      296.8,
+      0.9,
+      161.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_8_4",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_8_4",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    258.2,
+    1.4,
+    -306.5
+   ],
+   "status": "observed",
+   "points": {
+    "camps": [
+     [
+      253.0,
+      1.4,
+      -307.2
+     ]
+    ],
+    "campfires": [
+     [
+      253.0,
+      1.6,
+      -307.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_8_8",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_8_8",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    274.6,
+    3.7,
+    -61.4
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "freedom",
+    "loners",
+    "renegades",
+    "scientists"
+   ],
+   "points": {
+    "camps": [
+     [
+      280.7,
+      4.0,
+      -66.1
+     ],
+     [
+      274.3,
+      4.0,
+      -72.5
+     ]
+    ],
+    "campfires": [
+     [
+      274.8,
+      4.1,
+      -71.8
+     ],
+     [
+      279.0,
+      4.2,
+      -66.8
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_8_9",
+   "kind": "lair",
+   "smart": "mar_smart_terrain_8_9",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    285.5,
+    0.3,
+    47.5
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "loners",
+    "renegades"
+   ],
+   "points": {
+    "camps": [
+     [
+      291.9,
+      0.3,
+      43.4
+     ]
+    ],
+    "campfires": [
+     [
+      291.6,
+      0.6,
+      43.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_base",
+   "kind": "base",
+   "smart": "mar_smart_terrain_base",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -160.5,
+    0.5,
+    299.6
+   ],
+   "status": "observed",
+   "faction": "loners",
+   "allowed": [
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 10,
+   "points": {
+    "camps": [
+     [
+      -144.6,
+      0.6,
+      293.3
+     ],
+     [
+      -157.0,
+      0.6,
+      311.2
+     ],
+     [
+      -140.8,
+      1.3,
+      275.1
+     ],
+     [
+      -140.0,
+      0.6,
+      318.6
+     ],
+     [
+      -173.4,
+      0.9,
+      282.6
+     ]
+    ],
+    "campfires": [
+     [
+      -147.9,
+      0.9,
+      292.3
+     ],
+     [
+      -157.1,
+      0.9,
+      311.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_doc",
+   "kind": "base",
+   "smart": "mar_smart_terrain_doc",
+   "type": [
+    "base"
+   ],
+   "original": [
+    -184.1,
+    2.0,
+    -527.7
+   ],
+   "status": "observed",
+   "faction": "monsters",
+   "startSquads": 2,
+   "points": {
+    "camps": [
+     [
+      -183.5,
+      2.1,
+      -534.9
+     ]
+    ],
+    "campfires": [
+     [
+      -182.9,
+      2.4,
+      -533.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_doc_2",
+   "kind": "base",
+   "smart": "mar_smart_terrain_doc_2",
+   "type": [
+    "base"
+   ],
+   "original": [
+    -285.9,
+    1.0,
+    -23.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_10_10_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    466.5,
+    1.3,
+    20.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_11_3_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    405.3,
+    3.2,
+    -291.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_12_2_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    542.4,
+    2.7,
+    -294.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_2c_01_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    333.3,
+    7.7,
+    80.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_2c_02_anomaly_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    70.1,
+    2.7,
+    -506.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_3_3_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -176.8,
+    1.0,
+    -250.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_3_7_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -183.5,
+    0.5,
+    -80.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_8_8_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    240.3,
+    3.7,
+    -62.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_smart_terrain_base_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -267.5,
+    0.2,
+    117.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_level_changer_to_agroprom_1",
+   "kind": "exit",
+   "to": "agroprom",
+   "original": [
+    172.7,
+    9.3,
+    -602.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_level_changer_to_escape_1",
+   "kind": "exit",
+   "to": "escape",
+   "original": [
+    575.5,
+    2.5,
+    182.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_level_changer_to_escape_2",
+   "kind": "exit",
+   "to": "escape",
+   "original": [
+    673.7,
+    7.8,
+    -419.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.mar_base_sc_trader",
+   "kind": "trader",
+   "original": [
+    -179.1,
+    0.9,
+    320.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-10_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -296.5,
+    0.7,
+    76.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-10_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 5
+   },
+   "original": [
+    -298.4,
+    0.4,
+    110.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-10_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    -290.7,
+    1.1,
+    137.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-10_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -317.3,
+    2.2,
+    163.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-9_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -277.2,
+    0.4,
+    73.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-9_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 5
+   },
+   "original": [
+    -269.9,
+    0.5,
+    105.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-9_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 3
+   },
+   "original": [
+    -273.6,
+    0.4,
+    138.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-8_-17",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -230.5,
+    0.6,
+    -523.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-8_-16",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -228.6,
+    1.5,
+    -502.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-8_-15",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -227.4,
+    1.3,
+    -465.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-8_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -251.5,
+    0.4,
+    114.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-8_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -245.0,
+    0.2,
+    134.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-7_-17",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -196.9,
+    12.5,
+    -541.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-7_-16",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    -212.0,
+    3.9,
+    -486.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-7_-15",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -203.8,
+    2.1,
+    -474.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-7_-8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_weak": 1
+   },
+   "original": [
+    -194.2,
+    0.6,
+    -243.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-7_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -197.6,
+    0.5,
+    -87.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-17",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -186.9,
+    10.2,
+    -529.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-16",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -184.4,
+    5.2,
+    -483.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-15",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -191.7,
+    2.6,
+    -466.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_weak": 6
+   },
+   "original": [
+    -177.3,
+    0.9,
+    -261.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_acidic_weak": 13
+   },
+   "original": [
+    -174.7,
+    0.9,
+    -246.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    -177.0,
+    0.5,
+    -100.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-6_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 6
+   },
+   "original": [
+    -179.8,
+    0.6,
+    -80.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-5_-8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_weak": 1
+   },
+   "original": [
+    -158.5,
+    1.0,
+    -241.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-4_-7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -127.3,
+    1.4,
+    -208.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-4_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_acidic_weak": 5
+   },
+   "original": [
+    -100.5,
+    0.6,
+    19.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-3_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_weak": 4
+   },
+   "original": [
+    -90.9,
+    0.5,
+    18.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_-1_-13",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    -23.9,
+    1.0,
+    -400.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_1_-17",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    60.8,
+    7.5,
+    -518.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_1_-16",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    58.2,
+    4.8,
+    -508.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_2_-17",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 3
+   },
+   "original": [
+    75.8,
+    6.8,
+    -517.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_2_-16",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 2,
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    81.2,
+    2.0,
+    -499.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_3_-16",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    96.2,
+    5.2,
+    -507.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_5_-17",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    169.6,
+    10.7,
+    -532.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_7_-15",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    240.3,
+    1.1,
+    -453.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_7_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_thermal_weak": 16
+   },
+   "original": [
+    243.3,
+    3.8,
+    -52.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_8_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    258.6,
+    0.3,
+    132.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_10_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_acidic_weak": 7
+   },
+   "original": [
+    333.1,
+    7.6,
+    79.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_11_-11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_steam_weak": 1
+   },
+   "original": [
+    379.7,
+    1.7,
+    -323.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_11_-10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_steam_weak": 5
+   },
+   "original": [
+    378.5,
+    1.2,
+    -312.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_12_-11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_steam_weak": 4
+   },
+   "original": [
+    391.8,
+    2.9,
+    -324.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_12_-10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_thermal_weak": 1,
+    "zone_mine_steam_weak": 6
+   },
+   "original": [
+    392.8,
+    0.1,
+    -313.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_13_-14",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    428.1,
+    1.5,
+    -428.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_13_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 1
+   },
+   "original": [
+    447.0,
+    2.6,
+    -0.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_14_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 8
+   },
+   "original": [
+    466.0,
+    2.6,
+    -13.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_14_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_electric_weak": 13
+   },
+   "original": [
+    465.4,
+    1.4,
+    10.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_15_-10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 9
+   },
+   "original": [
+    504.3,
+    0.7,
+    -303.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_15_-9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 2
+   },
+   "original": [
+    505.3,
+    1.0,
+    -284.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_15_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 7
+   },
+   "original": [
+    488.0,
+    0.7,
+    -10.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_15_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 6
+   },
+   "original": [
+    489.8,
+    0.6,
+    13.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_16_-11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 4
+   },
+   "original": [
+    529.9,
+    0.9,
+    -326.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_16_-10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_electric_weak": 10
+   },
+   "original": [
+    523.9,
+    1.2,
+    -304.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_16_-9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 5
+   },
+   "original": [
+    524.8,
+    2.8,
+    -279.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "k00_marsh.anomalies_17_-10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 1
+   },
+   "original": [
+    545.7,
+    0.9,
+    -310.8
+   ],
+   "status": "observed"
+  }
+ ]
+}

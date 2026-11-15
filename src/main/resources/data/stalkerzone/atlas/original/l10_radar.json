@@ -1,0 +1,2950 @@
+{
+ "level": "l10_radar",
+ "frame": "original (xr_x, xr_y, -xr_z) — Minecraft-ориентация, до преобразования на TheZone",
+ "source": "Anomaly 1.5.x: all.spawn, level.game, simulation_objects_props.ltx, simulation.ltx (tools/atlas/import_level.py)",
+ "status": "observed",
+ "objects": [
+  {
+   "id": "l10_radar.rad2_loner_0000",
+   "kind": "base",
+   "smart": "rad2_loner_0000",
+   "type": [
+    "base"
+   ],
+   "original": [
+    192.7,
+    -12.4,
+    -83.2
+   ],
+   "status": "observed",
+   "allowed": [
+    "monolith"
+   ],
+   "points": {
+    "patrol": [
+     [
+      187.3,
+      -12.2,
+      -85.3
+     ],
+     [
+      194.5,
+      -12.7,
+      -88.9
+     ]
+    ],
+    "campfires": [
+     [
+      187.3,
+      -12.2,
+      -81.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad2_loner_0001",
+   "kind": "base",
+   "smart": "rad2_loner_0001",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    447.6,
+    -50.0,
+    -8.9
+   ],
+   "status": "observed",
+   "allowed": [
+    "monolith"
+   ],
+   "points": {
+    "beds": [
+     [
+      574.8,
+      -49.0,
+      -19.6
+     ],
+     [
+      573.2,
+      -49.1,
+      -19.7
+     ],
+     [
+      570.3,
+      -49.5,
+      -19.9
+     ]
+    ],
+    "guards": [
+     [
+      448.8,
+      -50.0,
+      -11.6
+     ],
+     [
+      476.3,
+      -50.0,
+      -7.0
+     ],
+     [
+      532.0,
+      -50.1,
+      1.4
+     ],
+     [
+      400.9,
+      -50.0,
+      -13.5
+     ],
+     [
+      363.6,
+      -50.6,
+      9.3
+     ]
+    ],
+    "patrol": [
+     [
+      498.6,
+      -50.0,
+      -7.0
+     ],
+     [
+      454.2,
+      -50.0,
+      -7.5
+     ],
+     [
+      354.2,
+      -50.0,
+      -8.7
+     ],
+     [
+      390.4,
+      -50.0,
+      -11.4
+     ],
+     [
+      511.6,
+      -50.0,
+      -12.6
+     ]
+    ],
+    "campfires": [
+     [
+      442.2,
+      -50.0,
+      2.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad2_loner_0002",
+   "kind": "base",
+   "smart": "rad2_loner_0002",
+   "type": [
+    "base"
+   ],
+   "original": [
+    137.9,
+    -3.7,
+    -30.2
+   ],
+   "status": "observed",
+   "allowed": [
+    "monolith"
+   ],
+   "points": {
+    "patrol": [
+     [
+      138.3,
+      -7.2,
+      -53.5
+     ],
+     [
+      118.6,
+      4.6,
+      -63.3
+     ],
+     [
+      133.4,
+      -2.6,
+      -25.5
+     ]
+    ],
+    "campfires": [
+     [
+      106.8,
+      -0.1,
+      -27.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad2_prip_teleport",
+   "kind": "base",
+   "smart": "rad2_prip_teleport",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    626.2,
+    -43.8,
+    -181.9
+   ],
+   "status": "observed",
+   "faction": "monolith",
+   "allowed": [
+    "loners",
+    "monolith"
+   ],
+   "startSquads": 1,
+   "points": {
+    "beds": [
+     [
+      633.2,
+      -43.8,
+      -178.8
+     ],
+     [
+      633.3,
+      -43.8,
+      -182.6
+     ]
+    ],
+    "guards": [
+     [
+      613.3,
+      -43.8,
+      -188.4
+     ],
+     [
+      618.2,
+      -43.9,
+      -198.3
+     ],
+     [
+      600.0,
+      -44.5,
+      -15.0
+     ]
+    ],
+    "patrol": [
+     [
+      608.4,
+      -43.8,
+      -187.2
+     ]
+    ],
+    "campfires": [
+     [
+      632.0,
+      -43.8,
+      -192.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_after_valley",
+   "kind": "lair",
+   "smart": "rad_after_valley",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    588.2,
+    -57.2,
+    96.3
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "points": {
+    "patrol": [
+     [
+      590.6,
+      -56.6,
+      94.2
+     ],
+     [
+      586.1,
+      -57.6,
+      100.0
+     ],
+     [
+      594.4,
+      -59.0,
+      113.0
+     ],
+     [
+      586.0,
+      -58.4,
+      110.3
+     ],
+     [
+      602.7,
+      -54.4,
+      99.1
+     ],
+     [
+      596.5,
+      -54.2,
+      81.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_antenna_camper",
+   "kind": "base",
+   "smart": "rad_antenna_camper",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    99.4,
+    -6.2,
+    24.3
+   ],
+   "status": "observed",
+   "faction": "monolith",
+   "startSquads": 1,
+   "points": {
+    "patrol": [
+     [
+      104.7,
+      -6.5,
+      25.8
+     ],
+     [
+      134.4,
+      -9.3,
+      25.7
+     ],
+     [
+      147.2,
+      -9.3,
+      28.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_antenna_monolith",
+   "kind": "base",
+   "smart": "rad_antenna_monolith",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    36.8,
+    -1.7,
+    63.9
+   ],
+   "status": "observed",
+   "faction": "monolith",
+   "allowed": [
+    "monolith"
+   ],
+   "startSquads": 2,
+   "points": {
+    "patrol": [
+     [
+      50.8,
+      -4.5,
+      49.6
+     ],
+     [
+      64.3,
+      -4.4,
+      48.2
+     ],
+     [
+      12.3,
+      -0.3,
+      65.5
+     ],
+     [
+      15.8,
+      -0.3,
+      62.7
+     ],
+     [
+      57.6,
+      -4.3,
+      50.7
+     ],
+     [
+      64.9,
+      -4.4,
+      45.6
+     ]
+    ],
+    "campfires": [
+     [
+      19.5,
+      -0.3,
+      56.8
+     ],
+     [
+      59.7,
+      -4.4,
+      47.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_antenna_patrol",
+   "kind": "base",
+   "smart": "rad_antenna_patrol",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    59.7,
+    -5.9,
+    16.5
+   ],
+   "status": "observed",
+   "faction": "monolith",
+   "allowed": [
+    "monolith"
+   ],
+   "startSquads": 1,
+   "points": {
+    "guards": [
+     [
+      -0.5,
+      -0.2,
+      72.2
+     ],
+     [
+      13.4,
+      -0.1,
+      75.3
+     ],
+     [
+      17.7,
+      -0.3,
+      64.4
+     ],
+     [
+      59.5,
+      -0.2,
+      85.3
+     ],
+     [
+      40.3,
+      -0.2,
+      81.5
+     ],
+     [
+      90.2,
+      2.8,
+      -93.3
+     ],
+     [
+      90.4,
+      2.2,
+      -80.7
+     ],
+     [
+      89.5,
+      5.6,
+      71.5
+     ],
+     [
+      89.7,
+      5.4,
+      1.4
+     ],
+     [
+      88.9,
+      5.8,
+      -16.2
+     ]
+    ],
+    "patrol": [
+     [
+      70.0,
+      -6.4,
+      25.6
+     ],
+     [
+      12.8,
+      -0.3,
+      56.5
+     ],
+     [
+      16.8,
+      -0.3,
+      64.6
+     ],
+     [
+      5.2,
+      -0.3,
+      85.9
+     ],
+     [
+      80.3,
+      -0.2,
+      -6.1
+     ],
+     [
+      83.7,
+      -0.3,
+      -6.1
+     ]
+    ],
+    "campfires": [
+     [
+      57.0,
+      0.0,
+      -14.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_bloodsucker",
+   "kind": "lair",
+   "smart": "rad_bloodsucker",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    376.0,
+    -50.3,
+    54.9
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "points": {
+    "patrol": [
+     [
+      372.3,
+      -50.0,
+      55.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_entrance",
+   "kind": "lair",
+   "smart": "rad_entrance",
+   "type": [
+    "territory",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    608.4,
+    -52.9,
+    296.5
+   ],
+   "status": "observed",
+   "faction": "monolith",
+   "allowed": [
+    "zombied"
+   ],
+   "startSquads": 2,
+   "points": {
+    "patrol": [
+     [
+      597.8,
+      -53.2,
+      268.9
+     ],
+     [
+      597.4,
+      -52.1,
+      310.5
+     ],
+     [
+      604.5,
+      -52.3,
+      311.3
+     ],
+     [
+      609.7,
+      -52.3,
+      307.9
+     ],
+     [
+      605.7,
+      -52.8,
+      307.4
+     ]
+    ],
+    "campfires": [
+     [
+      587.6,
+      -54.1,
+      252.5
+     ],
+     [
+      614.1,
+      -52.3,
+      299.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_freedom_vs_duty",
+   "kind": "landmark",
+   "smart": "rad_freedom_vs_duty",
+   "type": [],
+   "original": [
+    385.0,
+    -34.0,
+    -144.2
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      379.3,
+      -33.8,
+      -142.7
+     ],
+     [
+      381.3,
+      -33.8,
+      -142.9
+     ],
+     [
+      383.5,
+      -33.9,
+      -142.8
+     ],
+     [
+      386.2,
+      -34.1,
+      -143.4
+     ],
+     [
+      381.6,
+      -33.9,
+      -141.5
+     ],
+     [
+      386.6,
+      -34.2,
+      -141.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_prip_road",
+   "kind": "landmark",
+   "smart": "rad_prip_road",
+   "type": [],
+   "original": [
+    346.0,
+    -50.0,
+    -8.6
+   ],
+   "status": "observed",
+   "points": {
+    "guards": [
+     [
+      386.6,
+      -35.4,
+      -129.3
+     ],
+     [
+      379.7,
+      -35.0,
+      -129.5
+     ],
+     [
+      384.4,
+      -34.4,
+      -136.9
+     ]
+    ],
+    "patrol": [
+     [
+      385.5,
+      -36.4,
+      -120.5
+     ],
+     [
+      377.7,
+      -36.7,
+      -119.7
+     ],
+     [
+      385.7,
+      -34.4,
+      -138.5
+     ],
+     [
+      382.0,
+      -35.3,
+      -127.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_pseudodogs",
+   "kind": "lair",
+   "smart": "rad_pseudodogs",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    315.2,
+    -47.3,
+    180.5
+   ],
+   "status": "observed",
+   "points": {
+    "patrol": [
+     [
+      318.5,
+      -47.3,
+      177.3
+     ],
+     [
+      311.8,
+      -47.8,
+      185.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_rusty_forest_center",
+   "kind": "landmark",
+   "smart": "rad_rusty_forest_center",
+   "type": [],
+   "original": [
+    338.7,
+    -50.6,
+    300.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.rad_snork1",
+   "kind": "lair",
+   "smart": "rad_snork1",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    460.8,
+    -50.3,
+    297.5
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ]
+  },
+  {
+   "id": "l10_radar.rad_snork2",
+   "kind": "lair",
+   "smart": "rad_snork2",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    450.1,
+    -48.5,
+    136.3
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ]
+  },
+  {
+   "id": "l10_radar.rad_valley",
+   "kind": "lair",
+   "smart": "rad_valley",
+   "type": [
+    "territory",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    586.2,
+    -63.2,
+    181.1
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "points": {
+    "patrol": [
+     [
+      600.7,
+      -63.4,
+      189.4
+     ],
+     [
+      612.3,
+      -64.0,
+      186.9
+     ],
+     [
+      600.5,
+      -63.7,
+      185.1
+     ],
+     [
+      585.8,
+      -63.1,
+      183.3
+     ],
+     [
+      583.1,
+      -62.8,
+      183.9
+     ],
+     [
+      584.3,
+      -63.1,
+      179.6
+     ]
+    ],
+    "campfires": [
+     [
+      581.4,
+      -63.1,
+      179.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_valley_dogs",
+   "kind": "base",
+   "smart": "rad_valley_dogs",
+   "type": [
+    "base"
+   ],
+   "original": [
+    605.1,
+    -63.8,
+    186.7
+   ],
+   "status": "observed",
+   "allowed": [
+    "monolith",
+    "zombied"
+   ],
+   "points": {
+    "patrol": [
+     [
+      600.7,
+      -63.4,
+      189.4
+     ],
+     [
+      612.3,
+      -64.0,
+      186.9
+     ],
+     [
+      600.5,
+      -63.7,
+      185.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_zombied1",
+   "kind": "lair",
+   "smart": "rad_zombied1",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    488.8,
+    -50.2,
+    182.2
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "points": {
+    "patrol": [
+     [
+      314.8,
+      -50.9,
+      242.5
+     ],
+     [
+      569.9,
+      -61.2,
+      213.5
+     ],
+     [
+      577.3,
+      -62.1,
+      204.6
+     ],
+     [
+      586.5,
+      -54.1,
+      253.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.rad_zombied2",
+   "kind": "lair",
+   "smart": "rad_zombied2",
+   "type": [
+    "territory",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    499.5,
+    -48.9,
+    64.6
+   ],
+   "status": "observed",
+   "allowed": [
+    "zombied"
+   ],
+   "points": {
+    "patrol": [
+     [
+      460.5,
+      -50.6,
+      48.6
+     ],
+     [
+      579.8,
+      -59.8,
+      125.4
+     ],
+     [
+      649.6,
+      -51.9,
+      67.4
+     ],
+     [
+      656.8,
+      -49.5,
+      51.5
+     ],
+     [
+      643.2,
+      -50.2,
+      53.9
+     ],
+     [
+      497.7,
+      -49.5,
+      242.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l10_radar.bun2_st_bloodsucker",
+   "kind": "lair",
+   "smart": "bun2_st_bloodsucker",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -30.7,
+    -23.5,
+    7.6
+   ],
+   "status": "observed",
+   "allowed": [
+    "loners",
+    "monolith",
+    "scientists"
+   ]
+  },
+  {
+   "id": "l10_radar.rad_2c_01_bl_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    276.7,
+    -48.5,
+    164.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.rad_2c_02_pp_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    47.4,
+    6.2,
+    -83.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.rad_level_changer_to_military_01",
+   "kind": "exit",
+   "to": "military",
+   "original": [
+    551.7,
+    -51.0,
+    419.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.rad_level_changer_to_pripyat_01",
+   "kind": "exit",
+   "to": "pripyat",
+   "original": [
+    383.2,
+    -33.3,
+    -162.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.rad_level_changer_to_red_forest",
+   "kind": "exit",
+   "to": "red_forest",
+   "original": [
+    -36.3,
+    -1.1,
+    82.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_-2_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    -33.9,
+    0.0,
+    82.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_-1_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    -11.9,
+    -0.4,
+    15.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_-1_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    -1.0,
+    -0.3,
+    53.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_-1_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 2
+   },
+   "original": [
+    -4.9,
+    -0.4,
+    85.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_0_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    23.8,
+    1.8,
+    -65.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_0_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    28.5,
+    2.7,
+    -53.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_1_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 2,
+    "zone_witches_galantine_weak": 1
+   },
+   "original": [
+    43.7,
+    2.9,
+    -70.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_1_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1,
+    "zone_witches_galantine_weak": 1
+   },
+   "original": [
+    41.9,
+    2.0,
+    -52.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_1_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    46.8,
+    0.0,
+    -16.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_1_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    41.4,
+    0.5,
+    79.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_2_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 4
+   },
+   "original": [
+    82.1,
+    1.4,
+    -77.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_2_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 3
+   },
+   "original": [
+    69.8,
+    -0.9,
+    -49.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_2_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    89.7,
+    -0.5,
+    32.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_2_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_weak": 1
+   },
+   "original": [
+    84.9,
+    -3.2,
+    66.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_3_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    105.3,
+    3.0,
+    -66.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_3_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 2,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    118.4,
+    3.6,
+    -45.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_3_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 2
+   },
+   "original": [
+    97.6,
+    3.8,
+    12.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_3_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_weak": 1
+   },
+   "original": [
+    102.9,
+    0.9,
+    47.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_3_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    109.7,
+    1.3,
+    81.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_4_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    150.9,
+    -9.3,
+    -60.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_6_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    219.6,
+    -19.9,
+    -92.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_7_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 2
+   },
+   "original": [
+    235.1,
+    -27.0,
+    -86.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_8_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    275.1,
+    -41.7,
+    -62.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_8_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    277.7,
+    -50.7,
+    149.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_8_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    278.8,
+    -47.5,
+    170.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_radioactive_average": 2
+   },
+   "original": [
+    299.3,
+    -47.0,
+    83.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    316.8,
+    -32.5,
+    123.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 3,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    307.7,
+    -39.8,
+    147.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    299.2,
+    -40.0,
+    167.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    304.8,
+    -46.2,
+    205.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    296.7,
+    -45.9,
+    234.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    311.6,
+    -46.1,
+    265.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    299.1,
+    -40.6,
+    297.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_9_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 2
+   },
+   "original": [
+    312.0,
+    -49.7,
+    326.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 2
+   },
+   "original": [
+    333.6,
+    -47.9,
+    -10.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 2
+   },
+   "original": [
+    328.2,
+    -47.0,
+    84.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 5,
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    336.0,
+    -37.0,
+    141.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    335.9,
+    -43.8,
+    181.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 4
+   },
+   "original": [
+    338.8,
+    -39.5,
+    208.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    347.1,
+    -53.1,
+    282.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 4,
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    334.5,
+    -41.1,
+    305.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 2
+   },
+   "original": [
+    335.1,
+    -50.7,
+    336.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_10_11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    341.6,
+    -55.3,
+    355.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_-4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    381.4,
+    -36.0,
+    -117.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_weak": 1
+   },
+   "original": [
+    383.1,
+    -46.2,
+    -79.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 3,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    372.5,
+    -49.6,
+    -19.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    379.6,
+    -45.2,
+    44.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 7
+   },
+   "original": [
+    368.1,
+    -41.9,
+    82.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2,
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    361.1,
+    -41.9,
+    109.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    355.9,
+    -43.9,
+    189.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 3
+   },
+   "original": [
+    359.8,
+    -37.7,
+    216.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    374.8,
+    -43.5,
+    327.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_11_11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    352.7,
+    -54.5,
+    357.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    400.8,
+    -49.3,
+    -24.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_weak": 1
+   },
+   "original": [
+    391.5,
+    -45.4,
+    20.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    393.4,
+    -41.3,
+    39.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    393.0,
+    -43.2,
+    85.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    389.6,
+    -41.4,
+    110.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    399.5,
+    -49.3,
+    135.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 3,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    407.1,
+    -46.1,
+    208.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    407.7,
+    -40.1,
+    237.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_12_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    392.3,
+    -42.8,
+    329.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 2
+   },
+   "original": [
+    424.0,
+    -47.9,
+    -10.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    435.4,
+    -49.2,
+    57.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    427.1,
+    -46.3,
+    130.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    429.6,
+    -48.7,
+    181.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    416.9,
+    -46.8,
+    196.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    422.7,
+    -45.2,
+    311.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_13_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    428.0,
+    -42.6,
+    322.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    476.8,
+    -47.4,
+    -1.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    459.6,
+    -41.8,
+    43.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    467.5,
+    -52.6,
+    108.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    453.4,
+    -36.9,
+    159.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    462.1,
+    -44.0,
+    220.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    452.5,
+    -40.4,
+    228.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_14_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 2
+   },
+   "original": [
+    460.6,
+    -43.5,
+    295.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_15_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    499.7,
+    -49.7,
+    -10.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_15_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    492.7,
+    -50.0,
+    2.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_15_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1
+   },
+   "original": [
+    504.5,
+    -42.5,
+    63.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_15_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    506.1,
+    -51.8,
+    151.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_15_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1,
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    489.0,
+    -50.1,
+    178.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_15_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1,
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    500.5,
+    -46.7,
+    234.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    534.9,
+    -49.9,
+    -16.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 3
+   },
+   "original": [
+    529.5,
+    -50.6,
+    38.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    532.1,
+    -50.1,
+    78.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    526.4,
+    -49.8,
+    150.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    542.8,
+    -50.6,
+    178.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    522.8,
+    -48.8,
+    204.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 3,
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    519.7,
+    -42.8,
+    251.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_16_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz_strong": 1,
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    526.9,
+    -46.1,
+    267.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    547.5,
+    -44.2,
+    -65.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    550.8,
+    -44.5,
+    -61.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1,
+    "zone_radioactive_strong": 1,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    552.2,
+    -48.5,
+    -17.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    561.7,
+    -50.0,
+    3.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 3,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    553.3,
+    -55.1,
+    88.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    549.5,
+    -54.9,
+    99.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1,
+    "zone_radioactive_strong": 2
+   },
+   "original": [
+    566.6,
+    -56.6,
+    176.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 2
+   },
+   "original": [
+    558.5,
+    -61.6,
+    212.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_17_11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_weak": 1
+   },
+   "original": [
+    567.7,
+    -50.2,
+    379.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1,
+    "zone_witches_galantine_strong": 2
+   },
+   "original": [
+    586.6,
+    -49.5,
+    -12.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 2
+   },
+   "original": [
+    582.8,
+    -50.2,
+    2.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    598.5,
+    -53.2,
+    94.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    586.2,
+    -56.3,
+    113.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 2,
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    592.1,
+    -61.9,
+    140.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    594.6,
+    -54.0,
+    252.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    594.9,
+    -51.2,
+    296.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1,
+    "zone_radioactive_weak": 1
+   },
+   "original": [
+    600.5,
+    -51.7,
+    334.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_18_11",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    600.4,
+    -52.3,
+    377.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    609.1,
+    -50.0,
+    -3.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    615.4,
+    -47.4,
+    28.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1,
+    "zone_radioactive_strong": 1
+   },
+   "original": [
+    618.3,
+    -51.6,
+    50.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    623.0,
+    -52.9,
+    76.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_average": 1
+   },
+   "original": [
+    626.5,
+    -63.2,
+    149.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_radioactive_strong": 1,
+    "zone_witches_galantine_strong": 2
+   },
+   "original": [
+    613.0,
+    -63.4,
+    174.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_gravi_zone": 1
+   },
+   "original": [
+    620.7,
+    -63.3,
+    192.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l10_radar.anomalies_19_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_witches_galantine_strong": 1
+   },
+   "original": [
+    608.0,
+    -52.2,
+    278.2
+   ],
+   "status": "observed"
+  }
+ ]
+}

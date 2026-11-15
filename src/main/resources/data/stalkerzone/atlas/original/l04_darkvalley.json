@@ -1,0 +1,2714 @@
+{
+ "level": "l04_darkvalley",
+ "frame": "original (xr_x, xr_y, -xr_z) — Minecraft-ориентация, до преобразования на TheZone",
+ "source": "Anomaly 1.5.x: all.spawn, level.game, simulation_objects_props.ltx, simulation.ltx (tools/atlas/import_level.py)",
+ "status": "observed",
+ "objects": [
+  {
+   "id": "l04_darkvalley.val_smart_terrain_1_2",
+   "kind": "base",
+   "smart": "val_smart_terrain_1_2",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    175.3,
+    0.2,
+    254.5
+   ],
+   "status": "observed",
+   "faction": "military",
+   "allowed": [
+    "military"
+   ],
+   "startSquads": 3,
+   "points": {
+    "campfire": [
+     [
+      144.0,
+      0.0,
+      259.7
+     ],
+     [
+      143.5,
+      0.2,
+      266.0
+     ],
+     [
+      145.6,
+      0.2,
+      269.5
+     ],
+     [
+      159.1,
+      0.2,
+      272.1
+     ],
+     [
+      158.8,
+      0.2,
+      266.9
+     ]
+    ],
+    "guards": [
+     [
+      116.2,
+      0.2,
+      236.6
+     ],
+     [
+      142.1,
+      0.2,
+      235.9
+     ],
+     [
+      139.8,
+      10.3,
+      274.5
+     ],
+     [
+      140.0,
+      10.3,
+      271.1
+     ],
+     [
+      140.0,
+      10.3,
+      264.6
+     ],
+     [
+      140.1,
+      10.3,
+      259.1
+     ],
+     [
+      140.1,
+      10.3,
+      249.9
+     ]
+    ],
+    "patrol": [
+     [
+      140.2,
+      0.2,
+      232.3
+     ],
+     [
+      150.5,
+      0.0,
+      239.5
+     ],
+     [
+      151.2,
+      0.0,
+      270.9
+     ],
+     [
+      102.8,
+      -0.1,
+      261.5
+     ],
+     [
+      101.0,
+      0.2,
+      262.8
+     ],
+     [
+      102.5,
+      -0.1,
+      257.1
+     ],
+     [
+      112.0,
+      0.2,
+      240.1
+     ],
+     [
+      149.8,
+      0.2,
+      243.6
+     ],
+     [
+      111.2,
+      0.1,
+      249.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_3_0",
+   "kind": "lair",
+   "smart": "val_smart_terrain_3_0",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -58.8,
+    -1.1,
+    363.4
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -64.8,
+      -1.5,
+      366.5
+     ]
+    ],
+    "flag": [
+     -61.7,
+     -2.0,
+     357.5
+    ],
+    "patrol": [
+     [
+      -114.3,
+      0.0,
+      440.2
+     ],
+     [
+      -85.9,
+      -0.8,
+      382.1
+     ],
+     [
+      -76.4,
+      -2.5,
+      347.1
+     ],
+     [
+      -48.9,
+      0.5,
+      383.3
+     ],
+     [
+      -61.4,
+      -3.5,
+      344.4
+     ]
+    ],
+    "campfires": [
+     [
+      -64.7,
+      -0.9,
+      366.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_4_0",
+   "kind": "base",
+   "smart": "val_smart_terrain_4_0",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -118.5,
+    0.7,
+    504.3
+   ],
+   "status": "observed",
+   "faction": "loners",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "duty",
+    "freedom",
+    "loners",
+    "mercs",
+    "renegades",
+    "scientists"
+   ],
+   "startSquads": 2,
+   "points": {
+    "campfire": [
+     [
+      -111.7,
+      0.7,
+      503.6
+     ],
+     [
+      -137.5,
+      0.9,
+      503.8
+     ]
+    ],
+    "guards": [
+     [
+      -137.8,
+      0.9,
+      485.0
+     ],
+     [
+      -110.0,
+      0.8,
+      499.9
+     ],
+     [
+      -124.0,
+      0.5,
+      470.5
+     ],
+     [
+      -87.6,
+      0.0,
+      474.7
+     ],
+     [
+      -122.6,
+      0.8,
+      497.7
+     ],
+     [
+      -108.6,
+      0.8,
+      497.6
+     ],
+     [
+      -96.6,
+      0.3,
+      466.2
+     ],
+     [
+      -158.9,
+      1.4,
+      469.8
+     ],
+     [
+      -90.3,
+      0.8,
+      512.4
+     ],
+     [
+      -101.6,
+      0.8,
+      485.1
+     ]
+    ],
+    "patrol": [
+     [
+      -124.3,
+      -0.2,
+      445.8
+     ],
+     [
+      -125.3,
+      -0.1,
+      443.2
+     ],
+     [
+      -75.6,
+      0.2,
+      470.5
+     ],
+     [
+      -126.7,
+      0.9,
+      506.8
+     ],
+     [
+      -108.4,
+      0.9,
+      506.9
+     ]
+    ],
+    "camps": [
+     [
+      -111.0,
+      -0.5,
+      503.8
+     ]
+    ],
+    "campfires": [
+     [
+      -111.6,
+      1.2,
+      503.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_5_10",
+   "kind": "lair",
+   "smart": "val_smart_terrain_5_10",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -157.0,
+    0.0,
+    383.1
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      -156.3,
+      -0.6,
+      376.9
+     ]
+    ],
+    "guards": [
+     [
+      -150.7,
+      -0.2,
+      385.0
+     ],
+     [
+      -147.7,
+      -0.8,
+      375.8
+     ]
+    ],
+    "flag": [
+     -160.9,
+     0.1,
+     381.0
+    ],
+    "patrol": [
+     [
+      -138.2,
+      0.0,
+      379.8
+     ],
+     [
+      -141.3,
+      0.5,
+      389.7
+     ],
+     [
+      -146.7,
+      -0.8,
+      365.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_5_7",
+   "kind": "lair",
+   "smart": "val_smart_terrain_5_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -162.5,
+    1.9,
+    183.3
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -159.2,
+      1.3,
+      184.5
+     ]
+    ],
+    "guards": [
+     [
+      -168.0,
+      2.5,
+      178.5
+     ],
+     [
+      -168.7,
+      2.1,
+      186.3
+     ]
+    ],
+    "flag": [
+     -157.4,
+     1.9,
+     179.3
+    ],
+    "patrol": [
+     [
+      -153.6,
+      0.9,
+      186.2
+     ],
+     [
+      -154.7,
+      1.0,
+      193.8
+     ],
+     [
+      -153.6,
+      0.9,
+      186.2
+     ],
+     [
+      -154.7,
+      1.0,
+      193.8
+     ],
+     [
+      -157.4,
+      1.5,
+      181.6
+     ],
+     [
+      -157.4,
+      1.4,
+      181.5
+     ],
+     [
+      -135.0,
+      1.1,
+      211.8
+     ],
+     [
+      -131.1,
+      -1.2,
+      190.5
+     ],
+     [
+      -130.7,
+      -0.1,
+      199.1
+     ],
+     [
+      -157.4,
+      2.0,
+      196.9
+     ],
+     [
+      -169.9,
+      3.6,
+      199.2
+     ],
+     [
+      -167.3,
+      2.4,
+      191.7
+     ],
+     [
+      -172.1,
+      4.0,
+      170.9
+     ]
+    ],
+    "campfires": [
+     [
+      -159.1,
+      1.9,
+      184.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_5_8",
+   "kind": "lair",
+   "smart": "val_smart_terrain_5_8",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -138.2,
+    -2.2,
+    321.5
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -140.4,
+      -2.2,
+      324.4
+     ]
+    ],
+    "guards": [
+     [
+      -147.2,
+      -1.7,
+      328.0
+     ],
+     [
+      -156.5,
+      0.0,
+      338.0
+     ]
+    ],
+    "flag": [
+     -138.6,
+     -2.5,
+     326.2
+    ],
+    "patrol": [
+     [
+      -138.5,
+      -2.1,
+      316.1
+     ],
+     [
+      -147.5,
+      -1.2,
+      320.1
+     ],
+     [
+      -138.5,
+      -2.1,
+      316.1
+     ],
+     [
+      -147.5,
+      -1.2,
+      320.1
+     ],
+     [
+      -137.2,
+      -2.3,
+      322.2
+     ],
+     [
+      -123.4,
+      0.3,
+      322.9
+     ],
+     [
+      -145.2,
+      -0.5,
+      342.4
+     ],
+     [
+      -134.9,
+      -1.4,
+      304.3
+     ],
+     [
+      -124.0,
+      -0.5,
+      312.2
+     ],
+     [
+      -152.7,
+      2.0,
+      311.6
+     ],
+     [
+      -157.0,
+      2.4,
+      320.5
+     ],
+     [
+      -137.1,
+      -1.9,
+      331.3
+     ],
+     [
+      -132.3,
+      -1.3,
+      316.4
+     ]
+    ],
+    "campfires": [
+     [
+      -140.1,
+      -1.9,
+      324.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_6_4",
+   "kind": "lair",
+   "smart": "val_smart_terrain_6_4",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -126.5,
+    4.4,
+    24.3
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -130.6,
+      4.0,
+      24.2
+     ]
+    ],
+    "beds": [
+     [
+      -133.0,
+      3.2,
+      21.6
+     ]
+    ],
+    "guards": [
+     [
+      -130.2,
+      5.5,
+      33.3
+     ],
+     [
+      -124.7,
+      4.6,
+      28.5
+     ],
+     [
+      -126.1,
+      4.0,
+      17.6
+     ]
+    ],
+    "flag": [
+     -134.4,
+     3.8,
+     22.4
+    ],
+    "patrol": [
+     [
+      -125.0,
+      6.2,
+      74.9
+     ],
+     [
+      -122.1,
+      5.3,
+      57.0
+     ],
+     [
+      -94.4,
+      -2.7,
+      40.0
+     ]
+    ],
+    "campfires": [
+     [
+      -130.5,
+      4.4,
+      24.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_6_5",
+   "kind": "lair",
+   "smart": "val_smart_terrain_6_5",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -53.4,
+    -2.8,
+    142.7
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      -56.4,
+      -1.8,
+      140.6
+     ]
+    ],
+    "patrol": [
+     [
+      -69.4,
+      0.9,
+      137.9
+     ],
+     [
+      -59.3,
+      -1.0,
+      126.2
+     ],
+     [
+      -56.6,
+      -2.0,
+      133.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_11",
+   "kind": "lair",
+   "smart": "val_smart_terrain_7_11",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -45.3,
+    0.4,
+    517.0
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -39.6,
+      0.3,
+      516.3
+     ]
+    ],
+    "beds": [
+     [
+      -33.7,
+      0.6,
+      513.5
+     ],
+     [
+      -34.0,
+      0.3,
+      520.8
+     ]
+    ],
+    "guards": [
+     [
+      -39.9,
+      0.3,
+      510.2
+     ],
+     [
+      -46.0,
+      0.3,
+      522.2
+     ],
+     [
+      -48.2,
+      0.4,
+      506.7
+     ],
+     [
+      -41.6,
+      0.4,
+      535.5
+     ],
+     [
+      -37.3,
+      -0.1,
+      513.1
+     ],
+     [
+      -40.9,
+      -0.1,
+      518.6
+     ]
+    ],
+    "flag": [
+     -35.8,
+     0.6,
+     515.2
+    ],
+    "patrol": [
+     [
+      -43.4,
+      0.4,
+      494.5
+     ],
+     [
+      -63.7,
+      0.6,
+      505.8
+     ],
+     [
+      -30.2,
+      0.4,
+      496.2
+     ],
+     [
+      -24.8,
+      -0.8,
+      502.1
+     ]
+    ],
+    "campfires": [
+     [
+      -39.5,
+      0.8,
+      516.3
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_3",
+   "kind": "base",
+   "smart": "val_smart_terrain_7_3",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    0.7,
+    0.1,
+    -35.7
+   ],
+   "status": "observed",
+   "faction": "bandits",
+   "startSquads": 3,
+   "points": {
+    "campfire": [
+     [
+      -0.3,
+      0.1,
+      -32.6
+     ],
+     [
+      -8.2,
+      0.0,
+      -38.8
+     ]
+    ],
+    "beds": [
+     [
+      17.5,
+      0.1,
+      -27.0
+     ],
+     [
+      13.3,
+      0.0,
+      -39.7
+     ],
+     [
+      10.4,
+      0.0,
+      -42.1
+     ],
+     [
+      25.9,
+      5.2,
+      -36.3
+     ]
+    ],
+    "guards": [
+     [
+      -55.9,
+      -0.1,
+      8.5
+     ],
+     [
+      -56.0,
+      0.0,
+      2.2
+     ],
+     [
+      4.1,
+      1.1,
+      13.2
+     ],
+     [
+      -49.1,
+      11.2,
+      -4.8
+     ]
+    ],
+    "patrol": [
+     [
+      -61.3,
+      -0.4,
+      3.0
+     ],
+     [
+      -50.4,
+      9.6,
+      9.0
+     ],
+     [
+      -8.5,
+      0.1,
+      9.8
+     ],
+     [
+      -12.0,
+      0.1,
+      -28.6
+     ],
+     [
+      -3.4,
+      0.1,
+      -33.0
+     ]
+    ],
+    "camps": [
+     [
+      0.2,
+      -1.1,
+      -32.1
+     ],
+     [
+      35.3,
+      -1.2,
+      -30.7
+     ]
+    ],
+    "campfires": [
+     [
+      -0.4,
+      0.5,
+      -32.5
+     ],
+     [
+      34.8,
+      0.4,
+      -31.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_4",
+   "kind": "base",
+   "smart": "val_smart_terrain_7_4",
+   "type": [
+    "base",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    6.2,
+    1.2,
+    29.3
+   ],
+   "status": "observed",
+   "faction": "bandits",
+   "allowed": [
+    "bandits"
+   ],
+   "startSquads": 3,
+   "points": {
+    "campfire": [
+     [
+      17.1,
+      1.8,
+      39.5
+     ],
+     [
+      17.8,
+      1.8,
+      22.1
+     ],
+     [
+      8.8,
+      1.2,
+      38.8
+     ]
+    ],
+    "guards": [
+     [
+      18.8,
+      6.1,
+      37.1
+     ],
+     [
+      -1.3,
+      1.2,
+      27.4
+     ]
+    ],
+    "patrol": [
+     [
+      9.8,
+      1.2,
+      20.3
+     ],
+     [
+      21.2,
+      6.2,
+      24.7
+     ],
+     [
+      21.6,
+      6.2,
+      22.1
+     ],
+     [
+      21.6,
+      2.0,
+      44.2
+     ]
+    ],
+    "campfires": [
+     [
+      34.8,
+      1.0,
+      31.5
+     ],
+     [
+      46.5,
+      8.2,
+      31.0
+     ],
+     [
+      44.2,
+      8.0,
+      23.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_5",
+   "kind": "base",
+   "smart": "val_smart_terrain_7_5",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    36.3,
+    0.4,
+    76.6
+   ],
+   "status": "observed",
+   "faction": "bandits",
+   "allowed": [
+    "bandits"
+   ],
+   "startSquads": 5,
+   "points": {
+    "campfire": [
+     [
+      34.6,
+      -0.0,
+      -31.0
+     ],
+     [
+      44.9,
+      0.0,
+      -31.2
+     ]
+    ],
+    "beds": [
+     [
+      33.5,
+      4.6,
+      57.8
+     ],
+     [
+      47.5,
+      4.6,
+      28.4
+     ],
+     [
+      44.9,
+      8.1,
+      26.5
+     ],
+     [
+      46.4,
+      8.1,
+      26.4
+     ],
+     [
+      48.1,
+      8.1,
+      27.4
+     ],
+     [
+      32.4,
+      1.0,
+      31.5
+     ]
+    ],
+    "guards": [
+     [
+      41.2,
+      0.1,
+      -22.4
+     ],
+     [
+      44.0,
+      -0.0,
+      -6.4
+     ],
+     [
+      35.7,
+      11.2,
+      102.3
+     ],
+     [
+      -6.4,
+      3.5,
+      79.1
+     ],
+     [
+      35.9,
+      0.1,
+      95.3
+     ],
+     [
+      52.6,
+      -0.1,
+      -12.4
+     ],
+     [
+      39.0,
+      0.1,
+      88.8
+     ],
+     [
+      39.5,
+      0.1,
+      96.7
+     ],
+     [
+      49.6,
+      11.2,
+      -2.1
+     ],
+     [
+      53.2,
+      11.4,
+      -43.3
+     ],
+     [
+      27.7,
+      6.2,
+      19.6
+     ],
+     [
+      34.3,
+      6.2,
+      19.4
+     ]
+    ],
+    "patrol": [
+     [
+      0.4,
+      0.1,
+      69.7
+     ],
+     [
+      42.0,
+      7.9,
+      21.8
+     ],
+     [
+      57.3,
+      -0.0,
+      -8.2
+     ],
+     [
+      57.8,
+      -0.0,
+      -8.9
+     ],
+     [
+      58.6,
+      -0.0,
+      -9.7
+     ],
+     [
+      29.4,
+      0.0,
+      -29.5
+     ],
+     [
+      -48.1,
+      3.6,
+      13.5
+     ],
+     [
+      2.1,
+      -2.9,
+      9.3
+     ],
+     [
+      12.6,
+      0.5,
+      -13.3
+     ],
+     [
+      30.2,
+      0.0,
+      -39.1
+     ],
+     [
+      18.8,
+      4.6,
+      82.7
+     ],
+     [
+      32.9,
+      4.5,
+      86.1
+     ],
+     [
+      23.4,
+      4.5,
+      86.4
+     ]
+    ],
+    "campfires": [
+     [
+      35.3,
+      -2.3,
+      56.9
+     ],
+     [
+      46.4,
+      4.7,
+      54.4
+     ],
+     [
+      47.6,
+      1.1,
+      42.7
+     ],
+     [
+      46.8,
+      1.2,
+      54.6
+     ],
+     [
+      46.5,
+      11.8,
+      52.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_8",
+   "kind": "outpost",
+   "smart": "val_smart_terrain_7_8",
+   "type": [
+    "territory"
+   ],
+   "original": [
+    -13.1,
+    -4.1,
+    286.5
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      -17.1,
+      -4.2,
+      283.2
+     ]
+    ],
+    "guards": [
+     [
+      -15.3,
+      -4.3,
+      289.6
+     ],
+     [
+      -23.7,
+      -3.9,
+      279.5
+     ],
+     [
+      -13.3,
+      -4.4,
+      274.4
+     ]
+    ],
+    "flag": [
+     -13.3,
+     -4.1,
+     282.1
+    ],
+    "patrol": [
+     [
+      -1.8,
+      -5.1,
+      253.7
+     ],
+     [
+      -0.4,
+      -4.9,
+      251.7
+     ],
+     [
+      0.4,
+      -4.5,
+      248.1
+     ],
+     [
+      -8.3,
+      -4.2,
+      259.8
+     ],
+     [
+      -8.0,
+      -3.9,
+      260.2
+     ],
+     [
+      -1.6,
+      -4.7,
+      310.7
+     ],
+     [
+      -10.5,
+      -4.1,
+      285.0
+     ]
+    ],
+    "campfires": [
+     [
+      -17.0,
+      -3.7,
+      283.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_8_6",
+   "kind": "outpost",
+   "smart": "val_smart_terrain_8_6",
+   "type": [
+    "territory"
+   ],
+   "original": [
+    56.6,
+    0.1,
+    107.7
+   ],
+   "status": "observed",
+   "faction": "bandits",
+   "allowed": [
+    "bandits",
+    "duty",
+    "freedom",
+    "loners",
+    "mercs"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      60.5,
+      -0.1,
+      111.0
+     ]
+    ],
+    "guards": [
+     [
+      68.3,
+      -0.1,
+      105.4
+     ],
+     [
+      60.8,
+      -0.1,
+      116.0
+     ]
+    ],
+    "flag": [
+     65.1,
+     0.0,
+     114.0
+    ],
+    "patrol": [
+     [
+      64.6,
+      0.1,
+      99.2
+     ],
+     [
+      37.8,
+      -1.1,
+      122.4
+     ],
+     [
+      63.5,
+      -0.1,
+      96.6
+     ],
+     [
+      71.6,
+      0.0,
+      106.9
+     ],
+     [
+      76.0,
+      -0.2,
+      106.4
+     ],
+     [
+      61.7,
+      -0.1,
+      102.9
+     ]
+    ],
+    "campfires": [
+     [
+      60.5,
+      0.3,
+      111.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_8_7",
+   "kind": "lair",
+   "smart": "val_smart_terrain_8_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    27.1,
+    0.0,
+    226.1
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      29.0,
+      0.1,
+      217.3
+     ]
+    ],
+    "beds": [
+     [
+      37.6,
+      0.1,
+      219.7
+     ]
+    ],
+    "guards": [
+     [
+      33.5,
+      0.0,
+      238.1
+     ],
+     [
+      20.6,
+      0.5,
+      236.7
+     ]
+    ],
+    "flag": [
+     35.2,
+     0.0,
+     215.7
+    ],
+    "patrol": [
+     [
+      38.8,
+      0.1,
+      240.4
+     ],
+     [
+      38.4,
+      0.1,
+      195.6
+     ],
+     [
+      14.1,
+      1.0,
+      236.8
+     ],
+     [
+      53.7,
+      -0.1,
+      206.5
+     ],
+     [
+      24.5,
+      0.1,
+      214.3
+     ]
+    ],
+    "campfires": [
+     [
+      29.2,
+      0.5,
+      217.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_8_9",
+   "kind": "lair",
+   "smart": "val_smart_terrain_8_9",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    43.9,
+    -4.9,
+    368.9
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      46.6,
+      -4.8,
+      372.8
+     ]
+    ],
+    "flag": [
+     48.4,
+     -4.7,
+     375.1
+    ],
+    "patrol": [
+     [
+      68.6,
+      -4.0,
+      361.0
+     ],
+     [
+      70.0,
+      -4.2,
+      361.1
+     ],
+     [
+      79.0,
+      -4.4,
+      361.2
+     ],
+     [
+      50.2,
+      -5.3,
+      370.5
+     ],
+     [
+      49.8,
+      -4.8,
+      385.5
+     ],
+     [
+      40.6,
+      -4.6,
+      352.2
+     ]
+    ],
+    "campfires": [
+     [
+      46.5,
+      -4.5,
+      372.8
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_10",
+   "kind": "lair",
+   "smart": "val_smart_terrain_9_10",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    116.7,
+    4.3,
+    425.0
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners"
+   ],
+   "points": {
+    "campfire": [
+     [
+      113.0,
+      3.6,
+      423.2
+     ]
+    ],
+    "guards": [
+     [
+      113.6,
+      3.5,
+      434.5
+     ],
+     [
+      110.7,
+      3.4,
+      408.3
+     ]
+    ],
+    "flag": [
+     109.2,
+     3.3,
+     423.6
+    ],
+    "patrol": [
+     [
+      88.8,
+      1.2,
+      441.9
+     ],
+     [
+      106.4,
+      3.3,
+      386.5
+     ],
+     [
+      122.7,
+      4.6,
+      433.1
+     ],
+     [
+      130.7,
+      5.9,
+      426.3
+     ]
+    ],
+    "campfires": [
+     [
+      113.0,
+      4.2,
+      423.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_2",
+   "kind": "lair",
+   "smart": "val_smart_terrain_9_2",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    140.0,
+    -1.0,
+    -49.0
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      139.1,
+      -1.6,
+      -54.4
+     ]
+    ],
+    "flag": [
+     133.9,
+     -0.9,
+     -45.5
+    ],
+    "patrol": [
+     [
+      123.9,
+      -0.5,
+      -24.5
+     ],
+     [
+      117.6,
+      -0.7,
+      -30.3
+     ],
+     [
+      150.5,
+      1.2,
+      -22.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_4",
+   "kind": "outpost",
+   "smart": "val_smart_terrain_9_4",
+   "type": [
+    "territory",
+    "surge"
+   ],
+   "original": [
+    95.7,
+    0.6,
+    5.5
+   ],
+   "status": "observed",
+   "faction": "bandits",
+   "allowed": [
+    "bandits",
+    "duty",
+    "freedom",
+    "loners",
+    "mercs"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      95.5,
+      4.2,
+      4.5
+     ]
+    ],
+    "flag": [
+     98.1,
+     0.7,
+     2.8
+    ],
+    "patrol": [
+     [
+      98.0,
+      4.2,
+      2.8
+     ],
+     [
+      87.5,
+      0.0,
+      7.1
+     ],
+     [
+      92.8,
+      0.0,
+      33.6
+     ],
+     [
+      85.1,
+      -0.1,
+      5.3
+     ],
+     [
+      94.0,
+      4.2,
+      8.2
+     ],
+     [
+      107.2,
+      4.2,
+      8.3
+     ],
+     [
+      104.5,
+      4.2,
+      2.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_6",
+   "kind": "outpost",
+   "smart": "val_smart_terrain_9_6",
+   "type": [
+    "territory",
+    "surge"
+   ],
+   "original": [
+    136.3,
+    0.2,
+    185.5
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "duty",
+    "freedom",
+    "loners",
+    "mercs"
+   ],
+   "points": {
+    "campfire": [
+     [
+      144.5,
+      0.3,
+      195.0
+     ]
+    ],
+    "guards": [
+     [
+      128.6,
+      0.1,
+      181.5
+     ],
+     [
+      146.3,
+      0.8,
+      186.9
+     ],
+     [
+      136.7,
+      0.1,
+      175.0
+     ]
+    ],
+    "flag": [
+     135.1,
+     0.3,
+     198.9
+    ],
+    "patrol": [
+     [
+      108.4,
+      0.1,
+      245.6
+     ],
+     [
+      113.2,
+      0.2,
+      263.3
+     ],
+     [
+      112.6,
+      0.2,
+      265.3
+     ],
+     [
+      111.3,
+      0.2,
+      266.8
+     ],
+     [
+      111.9,
+      0.1,
+      246.9
+     ],
+     [
+      109.3,
+      0.2,
+      268.3
+     ],
+     [
+      111.9,
+      0.2,
+      278.9
+     ],
+     [
+      119.4,
+      0.2,
+      263.5
+     ],
+     [
+      113.2,
+      0.1,
+      250.0
+     ],
+     [
+      86.9,
+      2.0,
+      254.3
+     ],
+     [
+      114.6,
+      -0.5,
+      170.8
+     ],
+     [
+      112.5,
+      -1.8,
+      181.5
+     ],
+     [
+      153.7,
+      -3.4,
+      162.6
+     ],
+     [
+      129.3,
+      0.1,
+      172.8
+     ],
+     [
+      163.9,
+      2.8,
+      191.2
+     ]
+    ],
+    "campfires": [
+     [
+      144.6,
+      1.2,
+      195.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_10_10",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_10_10",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    117.6,
+    0.0,
+    4.8
+   ],
+   "points": {
+    "campfire": [
+     [
+      117.6,
+      0.0,
+      4.8
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_10_9",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_10_9",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    156.2,
+    10.3,
+    265.3
+   ],
+   "points": {
+    "campfire": [
+     [
+      156.2,
+      10.3,
+      265.3
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_6_6",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_6_6",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -95.9,
+    0.3,
+    143.6
+   ],
+   "points": {
+    "campfire": [
+     [
+      -94.7,
+      -0.9,
+      141.5
+     ]
+    ],
+    "guards": [
+     [
+      -96.7,
+      0.8,
+      153.3
+     ],
+     [
+      -102.9,
+      0.0,
+      140.4
+     ],
+     [
+      -98.0,
+      -0.0,
+      133.3
+     ]
+    ],
+    "flag": [
+     -87.4,
+     1.4,
+     149.6
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_0",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_7_0",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    162.3,
+    2.9,
+    -56.1
+   ],
+   "points": {
+    "campfire": [
+     [
+      162.3,
+      2.9,
+      -56.1
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_6",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_7_6",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -7.6,
+    1.0,
+    166.5
+   ],
+   "points": {
+    "campfire": [
+     [
+      -5.9,
+      0.7,
+      164.8
+     ]
+    ],
+    "beds": [
+     [
+      -5.8,
+      0.5,
+      160.9
+     ],
+     [
+      -7.0,
+      0.7,
+      167.3
+     ]
+    ],
+    "guards": [
+     [
+      -3.5,
+      1.2,
+      173.6
+     ],
+     [
+      -12.6,
+      2.0,
+      169.9
+     ]
+    ],
+    "flag": [
+     -10.6,
+     1.0,
+     162.2
+    ],
+    "campfires": [
+     [
+      -5.8,
+      1.2,
+      164.9
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_11",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_9_11",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    112.8,
+    3.2,
+    502.7
+   ],
+   "points": {
+    "campfire": [
+     [
+      114.3,
+      3.3,
+      502.3
+     ]
+    ],
+    "guards": [
+     [
+      103.4,
+      2.8,
+      507.9
+     ]
+    ],
+    "flag": [
+     114.8,
+     3.5,
+     507.5
+    ],
+    "patrol": [
+     [
+      118.6,
+      3.3,
+      498.5
+     ],
+     [
+      112.9,
+      3.0,
+      497.4
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_5",
+   "kind": "landmark",
+   "smart": "val_smart_terrain_9_5",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    156.6,
+    -3.5,
+    107.6
+   ],
+   "points": {
+    "campfire": [
+     [
+      159.2,
+      -3.6,
+      107.5
+     ]
+    ],
+    "flag": [
+     154.1,
+     -3.4,
+     107.7
+    ],
+    "campfires": [
+     [
+      159.3,
+      -3.1,
+      107.5
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_6_4_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -47.6,
+    -0.2,
+    -69.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_8_6_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -13.4,
+    0.2,
+    84.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_8_9_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    174.8,
+    2.7,
+    308.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_10_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    130.5,
+    5.5,
+    487.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_9_4_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    121.1,
+    10.9,
+    49.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_level_changer_to_darkscape",
+   "kind": "exit",
+   "to": "darkscape",
+   "original": [
+    -42.9,
+    2.7,
+    562.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_level_changer_to_garbage_1",
+   "kind": "exit",
+   "to": "garbage",
+   "original": [
+    -183.5,
+    9.9,
+    301.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_level_changer_to_garbage_2",
+   "kind": "exit",
+   "to": "garbage",
+   "original": [
+    -196.8,
+    3.3,
+    187.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_level_changer_to_labx18",
+   "kind": "exit",
+   "to": "labx18",
+   "original": [
+    118.7,
+    -2.6,
+    255.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_level_changer_to_pole_1",
+   "kind": "exit",
+   "to": "pole",
+   "original": [
+    -167.0,
+    0.5,
+    420.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_level_changer_to_tc",
+   "kind": "exit",
+   "to": "tc",
+   "original": [
+    75.9,
+    6.4,
+    -135.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.val_smart_terrain_7_4_bandit_trader_smart_cover",
+   "kind": "trader",
+   "original": [
+    35.0,
+    3.6,
+    2.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-5_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    -151.9,
+    6.6,
+    143.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-3_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_psychic_average": 1
+   },
+   "original": [
+    -87.4,
+    5.1,
+    92.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-3_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    -94.4,
+    0.5,
+    237.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-2_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_gravitational_average": 3,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -46.0,
+    0.2,
+    -73.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-2_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -46.1,
+    0.3,
+    -61.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-2_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    -35.3,
+    -2.6,
+    318.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-1_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_average": 4
+   },
+   "original": [
+    -11.7,
+    0.1,
+    84.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_-1_3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 1,
+    "zone_mine_electric_average": 1
+   },
+   "original": [
+    -9.3,
+    3.1,
+    112.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_0_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 3
+   },
+   "original": [
+    13.5,
+    0.2,
+    48.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_0_10",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 3,
+    "zone_field_radioactive_average": 2
+   },
+   "original": [
+    16.8,
+    -1.9,
+    331.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_1_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    62.8,
+    -0.1,
+    -47.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_1_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 1
+   },
+   "original": [
+    54.9,
+    8.6,
+    20.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_2_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 1
+   },
+   "original": [
+    91.8,
+    6.0,
+    61.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_3_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_acidic_strong": 5
+   },
+   "original": [
+    121.7,
+    8.0,
+    51.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_3_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_burning_fuzz1": 1
+   },
+   "original": [
+    121.3,
+    24.0,
+    259.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_3_14",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 2,
+    "zone_mine_gravitational_weak": 1,
+    "zone_mine_thermal_average": 2
+   },
+   "original": [
+    124.2,
+    1.1,
+    475.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_3_15",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_weak": 2,
+    "zone_mine_thermal_average": 4
+   },
+   "original": [
+    121.7,
+    1.4,
+    485.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_4_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    156.1,
+    0.6,
+    303.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_4_14",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 2,
+    "zone_mine_thermal_average": 1
+   },
+   "original": [
+    139.4,
+    3.5,
+    472.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_4_15",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_thermal_average": 1,
+    "zone_mine_gravitational_strong": 2,
+    "zone_mine_thermal_average": 2
+   },
+   "original": [
+    133.6,
+    3.7,
+    487.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l04_darkvalley.anomalies_5_9",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_gravitational_strong": 4
+   },
+   "original": [
+    169.6,
+    1.4,
+    302.6
+   ],
+   "status": "observed"
+  }
+ ]
+}

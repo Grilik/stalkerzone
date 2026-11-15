@@ -1,0 +1,165 @@
+{
+ "level": "l11_hospital",
+ "frame": "original (xr_x, xr_y, -xr_z) — Minecraft-ориентация, до преобразования на TheZone",
+ "source": "Anomaly 1.5.x: all.spawn, level.game, simulation_objects_props.ltx, simulation.ltx (tools/atlas/import_level.py)",
+ "status": "observed",
+ "objects": [
+  {
+   "id": "l11_hospital.katacomb_smart_terrain",
+   "kind": "base",
+   "smart": "katacomb_smart_terrain",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -91.2,
+    25.0,
+    -666.0
+   ],
+   "status": "observed",
+   "faction": "monolith",
+   "allowed": [
+    "monolith"
+   ],
+   "startSquads": 3,
+   "points": {
+    "beds": [
+     [
+      -92.7,
+      24.7,
+      -754.8
+     ],
+     [
+      -100.1,
+      25.1,
+      -732.8
+     ],
+     [
+      -93.5,
+      32.0,
+      -697.8
+     ]
+    ],
+    "guards": [
+     [
+      -93.3,
+      32.8,
+      -789.0
+     ],
+     [
+      -92.5,
+      32.0,
+      -733.6
+     ],
+     [
+      -79.9,
+      32.0,
+      -684.0
+     ],
+     [
+      -88.5,
+      37.0,
+      -698.1
+     ],
+     [
+      -92.6,
+      32.0,
+      -710.0
+     ],
+     [
+      -83.6,
+      33.9,
+      -583.8
+     ]
+    ],
+    "patrol": [
+     [
+      -76.1,
+      32.0,
+      -675.9
+     ],
+     [
+      -87.1,
+      21.1,
+      -572.7
+     ],
+     [
+      -88.6,
+      32.0,
+      -681.9
+     ],
+     [
+      -75.7,
+      32.0,
+      -728.7
+     ],
+     [
+      -78.9,
+      32.0,
+      -734.9
+     ],
+     [
+      -75.5,
+      32.0,
+      -726.1
+     ],
+     [
+      -80.5,
+      32.0,
+      -732.2
+     ],
+     [
+      -72.1,
+      32.0,
+      -658.0
+     ],
+     [
+      -71.9,
+      32.0,
+      -644.8
+     ],
+     [
+      -84.4,
+      21.5,
+      -585.4
+     ]
+    ],
+    "campfires": [
+     [
+      -99.8,
+      25.3,
+      -616.8
+     ],
+     [
+      -75.3,
+      32.2,
+      -691.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l11_hospital.katacomb_level_changer_to_aes_1",
+   "kind": "exit",
+   "to": "aes",
+   "original": [
+    -68.6,
+    19.5,
+    -567.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l11_hospital.katacomb_level_changer_to_limansk",
+   "kind": "exit",
+   "to": "limansk",
+   "original": [
+    -72.8,
+    35.0,
+    -861.2
+   ],
+   "status": "observed"
+  }
+ ]
+}
