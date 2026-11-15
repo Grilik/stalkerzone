@@ -12,6 +12,7 @@
 Имена текстур в паке — эпохи Java 1.7 (пак когда-то перевели с Java на Bedrock конвертером),
 поэтому таблица ниже переводит 1.7-имена в имена 1.20.1.
 """
+import io
 import json
 import re
 import sys
@@ -155,6 +156,35 @@ OTHER = {
 }
 
 
+# Bedrock рисует полные блоки непрозрачными и не смотрит на альфу; Java рисует часть из них с вырезом
+# (у grass_block — cutout_mipped из-за наложения травы), и тогда прозрачные пиксели просвечивают
+# (нижняя половина grass_block_side у BDcraft — альфа 20–30: на гранях рельефа видно небо).
+# Поэтому у всех текстур блоков, кроме заведомо прозрачных/с вырезом, альфа = 255 (цвет пикселей сохраняется).
+CUTOUT = re.compile(r"(glass|leaves|_overlay$|door|trapdoor|rail|ladder|iron_bars|torch|_stage\d|^fire_|^water_|^lava_|"
+                    r"lily_pad|vine|sugar_cane|fern|^grass$|tall_grass|lilac|peony|rose_bush|sunflower|dead_bush|lever|"
+                    r"brewing_stand|cauldron|hopper|allium|azure_bluet|blue_orchid|dandelion|tulip|oxeye_daisy|poppy|"
+                    r"sapling|mushroom|cobweb|flower|destroy_stage|redstone_dust|repeater|comparator|tripwire|"
+                    r"spawner|beacon|portal|chain|lantern|scaffolding|campfire|bamboo|kelp|seagrass|chorus|berry)")
+
+
+def opaque(target, data):
+    """target — путь текстуры Java (block/…); у полного блока альфа → 255. Возвращает (данные, изменено ли)."""
+    if not target.startswith("block/") or CUTOUT.search(target[len("block/"):]):
+        return data, False
+    from PIL import Image
+    im = Image.open(io.BytesIO(data))
+    if im.mode not in ("RGBA", "LA", "P") or (im.mode == "P" and "transparency" not in im.info):
+        return data, False
+    im = im.convert("RGBA")
+    a = im.getchannel("A")
+    if a.getextrema()[0] == 255:
+        return data, False
+    im.putalpha(255)
+    b = io.BytesIO()
+    im.save(b, "PNG")
+    return b.getvalue(), True
+
+
 def block_target(name):
     if name in BLOCKS:
         return BLOCKS[name]
@@ -214,7 +244,7 @@ def main():
     z = zipfile.ZipFile(src)
     files = {n[len(PACK_ROOT):]: n for n in z.namelist()
              if n.startswith(PACK_ROOT + "textures/") and not n.endswith("/")}
-    ok, skipped, unknown = [], [], []
+    ok, skipped, unknown, opaqued = [], [], [], []
     import os
     def write(rel_target, data):
         dst = os.path.join(str(out), "assets", "minecraft", "textures", *rel_target.split("/"))
@@ -231,7 +261,10 @@ def main():
             unknown.append(base); continue
         if t is None:
             skipped.append(base); continue
-        write(t + ".png", z.read(full))
+        data, fixed = opaque(t, z.read(full))
+        if fixed:
+            opaqued.append(t)
+        write(t + ".png", data)
         ok.append((base, t))
         meta = PACK_ROOT + "textures/" + rel + ".mcmeta"   # анимация рядом с текстурой
         if meta in z.namelist():
@@ -253,6 +286,7 @@ def main():
         with open(os.path.join(str(out), "pack.png"), "wb") as f:
             f.write(z.read(PACK_ROOT + "pack_icon.png"))
     print(f"перенесено {len(ok)}, пропущено (нет аналога в Java) {len(skipped)}, не сопоставлено {len(unknown)}")
+    print(f"альфа → 255 у полных блоков ({len(opaqued)}): " + ", ".join(sorted(t[len('block/'):] for t in opaqued)))
     if report:
         with open(report, "w", encoding="utf-8") as f:
             f.write("# Перенос пака TheZone: результат port_pack.py\n\n")
