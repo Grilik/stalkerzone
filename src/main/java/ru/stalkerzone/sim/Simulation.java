@@ -28,8 +28,16 @@ public final class Simulation {
         Good.PROTO.ordinal(), Good.AMMO_PRO.ordinal(), Good.GEAR_PRO.ordinal()
     };
 
+    /** Версия формата сохранения. Менять только вместе с чтением старых версий в {@link #load}. */
+    public static final int SAVE_VERSION = 22;
+
     public final long seed;
     public int day;
+    /**
+     * Версия сохранения, из-за несовместимости с которой симуляция была пересоздана в {@link #load}.
+     * Не сохраняется; −1 — обычная загрузка совместимой версии.
+     */
+    public int resetFromVersion = -1;
     /** Идентификатор сценария, из которого создан мир; сохраняется вместе с состоянием. */
     public String scenario = "zone";
     public final List<Node> nodes;
@@ -2606,7 +2614,7 @@ public final class Simulation {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeInt(22); // v22 (карточка 054): военные Кордона — гарнизон, мост ничей; отдельный сценарий kordon_war
+            out.writeInt(SAVE_VERSION); // v22 (карточка 054): военные Кордона — гарнизон, мост ничей; отдельный сценарий kordon_war
             out.writeLong(seed);
             out.writeUTF(scenario);
             out.writeInt(day);
@@ -2763,27 +2771,34 @@ public final class Simulation {
         for (int i = Good.readCount; i < G; i++) initialGoods[i] = 0;
     }
 
+    /** Пересоздать мир из-за несовместимой версии сохранения, запомнив её номер для внешних сообщений. */
+    private static Simulation reset(String scenario, long seed, int version) {
+        Simulation sim = Scenarios.create(scenario, seed);
+        sim.resetFromVersion = version;
+        return sim;
+    }
+
     /** Загрузить состояние поверх свежесозданного сценария (статические параметры берутся из кода). */
     public static Simulation load(String data) {
         try {
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(Base64.getDecoder().decode(data)));
             int version = in.readInt();
-            if (version < 3 || version > 22) throw new IOException("unknown save version " + version);
+            if (version < 3 || version > SAVE_VERSION) throw new IOException("unknown save version " + version);
             long seed = in.readLong();
             // v13: сохранение помнит id сценария; старые сохранения (без id) — это Зона
             String scenario = version >= 13 ? in.readUTF() : "zone";
             // v9–10: полевые базы армии, склады точек, стройматериалы, глобальный рынок; старые сохранения не переносятся
             // v12 (v1.14): новые локации и группировки — старая Зона не переносится, начинается заново
             // v14: новые узлы Кордона — старые сохранения несовместимы
-            if (version < 12) return Scenarios.create(scenario, seed);
-            if (version < 14 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
+            if (version < 12) return reset(scenario, seed, version);
+            if (version < 14 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v19 (карточка 044): новые узлы Кордона — старый мир начинается заново с тем же сидом
             // v20 (карточка 059): заставы у входов туннеля (узлы 22–23) — старый Кордон начинается заново с тем же сидом
-            if (version < 20 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
+            if (version < 20 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v21 (карточка 060): перенос логов «Собачий лес»/«Лысый холм» — старый Кордон начинается заново с тем же сидом
-            if (version < 21 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
+            if (version < 21 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v22 (карточка 054): военные Кордона — только гарнизон, мост ничей; старый Кордон начинается заново с тем же сидом
-            if (version < 22 && Scenarios.isKordon(scenario)) return Scenarios.create(scenario, seed);
+            if (version < 22 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
