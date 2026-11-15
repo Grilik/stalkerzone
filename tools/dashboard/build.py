@@ -51,13 +51,16 @@ def parse_roadmap(text):
     for line in text.splitlines():
         m = re.match(r"^##\s+(Э\d+)\s*·\s*(.+)$", line)
         if m:
-            cur = {"id": m.group(1), "title": m.group(2).strip(), "goal": "", "tasks": []}
+            cur = {"id": m.group(1), "title": m.group(2).strip(), "goal": "", "done_when": "", "tasks": []}
             stages.append(cur)
             continue
         if cur is None:
             continue
         if line.startswith("Цель:"):
             cur["goal"] = line[len("Цель:"):].strip()
+            continue
+        if line.startswith("Готово, когда:"):
+            cur["done_when"] = line[len("Готово, когда:"):].strip()
             continue
         if line.startswith("|") and not re.match(r"^\|\s*[-№]", line):
             c = [x.strip() for x in line.strip().strip("|").split("|")]
@@ -111,6 +114,74 @@ def esc(s):
 def md_inline(s):
     s = esc(s)
     return re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
+
+
+PROMPTS = "docs/prompts"
+
+
+def md_block(text):
+    """Простой markdown → HTML: заголовки, списки, код, абзацы."""
+    out, code, para, lst = [], False, [], None
+
+    def flush():
+        nonlocal para, lst
+        if para:
+            out.append("<p>" + md_bold(" ".join(para)) + "</p>")
+            para = []
+        if lst:
+            out.append("</" + lst + ">")
+            lst = None
+
+    for line in text.splitlines():
+        if line.startswith("```"):
+            flush()
+            out.append("</code></pre>" if code else "<pre><code>")
+            code = not code
+            continue
+        if code:
+            out.append(esc(line) + "\n")
+            continue
+        st = line.strip()
+        if not st:
+            flush()
+            continue
+        h = re.match(r"^(#{1,4})\s+(.*)", st)
+        if h:
+            flush()
+            out.append(f"<h4>{md_bold(h.group(2))}</h4>")
+            continue
+        b = re.match(r"^([-*]|\d+[.)])\s+(.*)", st)
+        if b:
+            if para:
+                out.append("<p>" + md_bold(" ".join(para)) + "</p>")
+                para = []
+            kind = "ol" if b.group(1)[0].isdigit() else "ul"
+            if lst != kind:
+                if lst:
+                    out.append("</" + lst + ">")
+                out.append("<" + kind + ">")
+                lst = kind
+            out.append("<li>" + md_bold(b.group(2)) + "</li>")
+            continue
+        if st.startswith("|"):
+            flush()
+            out.append("<div class='mono'>" + md_bold(st) + "</div>")
+            continue
+        if lst:
+            out.append("</" + lst + ">")
+            lst = None
+        para.append(st)
+    flush()
+    if code:
+        out.append("</code></pre>")
+    return "".join(out)
+
+
+def prompt_of(task_id):
+    path = os.path.join(PROMPTS, task_id + ".md")
+    if os.path.isfile(path):
+        return path, open(path, encoding="utf-8").read()
+    return None, None
 
 
 def ago(iso):
@@ -199,20 +270,40 @@ def build(out_dir):
               f"<td class='{cls} nowrap'>проверки {esc(ck)}</td></tr>")
         a("</table></section>")
 
-    # задачи по этапам
+    # задачи по этапам — раскрывающиеся
+    a("<section><h2>Этапы подробно</h2><p class='muted'>Нажмите на этап, чтобы раскрыть: цель, когда этап считается готовым, все задачи. Нажмите на задачу — её описание из промпта и PR.</p>")
+    order = {"work": 0, "todo": 1, "done": 2, "later": 3, "dropped": 4}
     for s in stages:
-        a(f"<section id='{esc(s['id'])}'><h2>{esc(s['id'])} · {esc(s['title'])}</h2>")
+        pct = round(100 * s["done"] / s["total"]) if s["total"] else 0
+        op = " open" if s is current else ""
+        a(f"<details class='stg' id='{esc(s['id'])}'{op}><summary><b>{esc(s['id'])}</b> · {esc(s['title'])}"
+          f"<span class='sum-r'><span class='bar sm'><i style='width:{pct}%'></i></span> {s['done']}/{s['total']}"
+          + (f" · в работе {s['work']}" if s["work"] else "") + "</span></summary><div class='stg-body'>")
         if s["goal"]:
-            a(f"<p class='goal'>{md_inline(s['goal'])}</p>")
-        a("<table>")
-        order = {"work": 0, "todo": 1, "done": 2, "later": 3, "dropped": 4}
+            a(f"<p><b>Цель.</b> {md_inline(s['goal'])}</p>")
+        if s["done_when"]:
+            a(f"<p><b>Готово, когда:</b> {md_inline(s['done_when'])}</p>")
+        counts = {}
+        for t in s["tasks"]:
+            counts[t["status"]] = counts.get(t["status"], 0) + 1
+        a("<p class='muted'>" + " · ".join(f"{LABEL[k]}: {v}" for k, v in sorted(counts.items(), key=lambda kv: order[kv[0]])) + "</p>")
         for t in sorted(s["tasks"], key=lambda t: (order[t["status"]], s["tasks"].index(t))):
             link = f" <a href='{esc(t['pr']['html_url'])}'>#{t['pr']['number']}</a>" if t["pr"] else ""
             when = f" <span class='muted'>{ago(t['pr']['merged_at'])}</span>" if t["pr"] and t["pr"].get("merged_at") else ""
-            a(f"<tr class='{t['status']}'><td class='nowrap'><b>{esc(t['id'])}</b></td><td>{md_inline(t['title'])}</td>"
-              f"<td class='muted nowrap'>{esc(t['who'])}</td>"
-              f"<td class='nowrap'><span class='st {t['status']}'>{LABEL[t['status']]}</span>{link}{when}</td></tr>")
-        a("</table></section>")
+            ppath, ptext = prompt_of(t["id"])
+            a(f"<details class='task {t['status']}'><summary><b class='tid'>{esc(t['id'])}</b> {md_inline(t['title'])}"
+              f"<span class='sum-r'><span class='muted'>{esc(t['who'])}</span> <span class='st {t['status']}'>{LABEL[t['status']]}</span></span></summary><div class='task-body'>")
+            a(f"<p><b>Исполнитель:</b> {esc(t['who'])} · <b>Статус:</b> {LABEL[t['status']]}{link}{when}</p>")
+            if t["pr"]:
+                a(f"<p><b>PR:</b> <a href='{esc(t['pr']['html_url'])}'>#{t['pr']['number']} {md_inline(t['pr']['title'])}</a></p>")
+            if ptext:
+                a(f"<p class='muted'>Промпт: <a href='https://github.com/{REPO}/blob/main/{esc(ppath)}'>{esc(ppath)}</a></p><div class='prompt'>{md_block(ptext)}</div>")
+            else:
+                a("<p class='muted'>Промпта ещё нет — появится в пакете промптов (Э0-21) или его даст штаб.</p>")
+            a("</div></details>")
+        a("</div></details>")
+    a("</section>")
+    a("<script>function o(){var h=decodeURIComponent(location.hash.slice(1));var e=h&&document.getElementById(h);if(e&&e.tagName=='DETAILS'){e.open=true;e.scrollIntoView();}}window.addEventListener('hashchange',o);o();</script>")
 
     # последние слияния
     a("<section><h2>Последние слияния</h2><table>")
@@ -247,7 +338,21 @@ tr.done td{opacity:.6}tr.later td,tr.dropped td{opacity:.4}
 .st{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;border:1px solid var(--line)}
 .st.done{color:var(--ok);border-color:#2f5a35}.st.work{color:var(--work);border-color:#2b4a72}.st.todo{color:var(--mut)}.st.later,.st.dropped{color:var(--mut);font-style:italic}
 .chip{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:0 6px}
-.goal{color:var(--mut);margin:-4px 0 10px}.about ul{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0;padding:12px 14px 12px 30px}.about li{margin:4px 0}footer{margin-top:30px}
+.goal{color:var(--mut);margin:-4px 0 10px}
+details.stg{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:8px 0}
+details.stg>summary{cursor:pointer;padding:12px;list-style:none;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+details.stg[open]>summary{border-bottom:1px solid var(--line)}
+details summary::-webkit-details-marker{display:none}
+details.stg>summary:before,details.task>summary:before{content:'▸';color:var(--mut)}details[open]>summary:before{content:'▾'}
+.sum-r{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mut)}
+.bar.sm{width:90px;margin:0}
+.stg-body{padding:6px 14px 12px}
+details.task{border-top:1px solid var(--line)}details.task>summary{cursor:pointer;padding:8px 2px;list-style:none;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+details.task.done>summary,details.task.later>summary,details.task.dropped>summary{opacity:.6}
+.tid{white-space:nowrap}.task-body{padding:4px 4px 12px 22px;font-size:14px}
+.prompt{background:#121612;border:1px solid var(--line);border-radius:8px;padding:8px 12px;max-height:420px;overflow:auto}
+.prompt h4{margin:10px 0 4px;font-size:14px;color:var(--acc)}.prompt pre{white-space:pre-wrap;font-size:12px;background:#0b0e0b;padding:8px;border-radius:6px}
+.mono{font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap}.about ul{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0;padding:12px 14px 12px 30px}.about li{margin:4px 0}footer{margin-top:30px}
 @media(max-width:600px){td{padding:7px 6px;font-size:14px}.nowrap{white-space:normal}}
 """
 
