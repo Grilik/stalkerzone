@@ -70,6 +70,7 @@ public final class BridgePost {
 
     /** Вызывать раз в секунду (тик сервера). */
     public static void tick(MinecraftServer server) {
+        if (!ZoneWorld.legacyWritesAllowed("BridgePost.tick")) return; // Э1-09: в TheZone не пишет
         ServerLevel level = server.overworld();
         if (level.players().isEmpty()) return;
         ZoneData d = ZoneData.get(server);

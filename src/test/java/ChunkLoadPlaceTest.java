@@ -57,6 +57,14 @@ public class ChunkLoadPlaceTest {
         return lines;
     }
 
+    /** Первый оператор тела метода (до первой ';' или '{' внутри), без комментариев. */
+    static String firstStmt(String body) {
+        if (body.isEmpty()) return "";
+        String code = String.join("\n", codeLines(body.substring(1))).trim();
+        int e = code.indexOf(';');
+        return e < 0 ? code : code.substring(0, e + 1);
+    }
+
     public static void main(String[] a) throws Exception {
         String src = Files.readString(Path.of("src/main/java/ru/stalkerzone/block/ObjPropBlock.java")).replace("\r\n", "\n");
         String safe = body(src, "public static boolean safeSet(");
@@ -100,6 +108,34 @@ public class ChunkLoadPlaceTest {
         }
         ck(files >= 10, "просмотрено исходников world/** и block/**: " + files);
         ck(direct == 0, "прямых записей блока вне " + DIRECT_ALLOWED + ": " + direct);
+
+        // Э1-09: в режиме THEZONE точки входа загрузки чанка и тиковые писатели начинаются с проверки режима
+        String M = "src/main/java/ru/stalkerzone/";
+        String zw = Files.readString(Path.of(M + "world/ZoneWorld.java")).replace("\r\n", "\n");
+        ck(firstStmt(body(zw, "public void onChunkLoad(")).contains("WorldMode.theZone()"),
+                "ZoneWorld.onChunkLoad: первым делом выход в режиме THEZONE");
+        ck(body(zw, "public void onChunkLoad(").contains("IN_CHUNK_LOAD.set(true)"), "onChunkLoad ставит флаг IN_CHUNK_LOAD");
+        ck(body(zw, "public void onAboutToStart(").contains("WorldMode.detect("), "режим мира определяется на ServerAboutToStartEvent");
+        ck(firstStmt(body(zw, "public static boolean legacyWritesAllowed(")).contains("WorldMode.theZone()"),
+                "legacyWritesAllowed проверяет режим");
+        String[][] writers = {
+                {"world/StructureManager.java", "public static void tick("},
+                {"world/ZoneMapPlacer.java", "public static void tick("},
+                {"world/LandmarkManager.java", "public static void tick("},
+                {"world/BridgePost.java", "public static void tick("},
+                {"lab/LabManager.java", "public static void tick("},
+                {"block/ObjPropBlock.java", "public static void worldgen("}};
+        for (String[] w : writers) {
+            String b = body(Files.readString(Path.of(M + w[0])).replace("\r\n", "\n"), w[1]);
+            ck(firstStmt(b).contains("ZoneWorld.legacyWritesAllowed("), w[0] + " " + w[1] + "…): первым делом проверка режима TheZone");
+        }
+        // других обработчиков ChunkEvent.Load в моде быть не должно — иначе их тоже нужно закрыть режимом
+        int loads = 0;
+        try (Stream<Path> all = Files.walk(Path.of(M))) {
+            for (Path pth : (Iterable<Path>) all.filter(x -> x.toString().endsWith(".java"))::iterator)
+                for (String l : codeLines(Files.readString(pth))) if (l.contains("ChunkEvent.Load e")) loads++;
+        }
+        ck(loads == 1, "обработчик ChunkEvent.Load в моде один (ZoneWorld): " + loads);
         System.out.println(f == 0 ? "ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ" : "ПРОВАЛОВ: " + f);
         if (f > 0) System.exit(1);
     }

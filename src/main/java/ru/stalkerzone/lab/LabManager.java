@@ -76,6 +76,7 @@ public final class LabManager {
 
     /** Вызывать раз в секунду. */
     public static void tick(MinecraftServer server) {
+        if (!ru.stalkerzone.world.ZoneWorld.legacyWritesAllowed("LabManager.tick")) return; // Э1-09: лаборатории TheZone — по атласу
         ServerLevel level = server.overworld();
         List<ServerPlayer> players = level.players();
         if (players.isEmpty()) return;
