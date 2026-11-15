@@ -14,6 +14,10 @@ public final class PdaModel {
     public record Passage(int x, int z, String name, long price, int risk, int owner) {}
     /** Репутация игрока у группировки. */
     public record Rep(int faction, int value) {}
+    /** Отряд в пути: владелец, что делают, людей, x, z, узел цели, маршрут (id через ;), шаг. */
+    public record SquadInfo(int owner, String what, int people, int x, int z, int target, String route, int step) {}
+    /** Население занятого узла: id узла и людей. */
+    public record Population(int node, int people) {}
 
     public int day, tick;
     public int px, pz;
@@ -37,6 +41,8 @@ public final class PdaModel {
     public final List<Mark> traders = new ArrayList<>();
     public final List<Passage> passages = new ArrayList<>();
     public final List<Rep> rep = new ArrayList<>();
+    public final List<SquadInfo> squads = new ArrayList<>();
+    public final List<Population> population = new ArrayList<>();
     public int research, psiTech, cycle;
     public boolean scorcherOff, monolith;
 
@@ -80,6 +86,8 @@ public final class PdaModel {
                     case "S" -> m.traders.add(new Mark(i(f[1]), i(f[2]), f[3], 0));
                     case "X" -> m.passages.add(new Passage(i(f[1]), i(f[2]), f[3], l(f[4]), i(f[5]), i(f[6])));
                     case "Y" -> m.rep.add(new Rep(i(f[1]), i(f[2])));
+                    case "Q" -> m.squads.add(new SquadInfo(i(f[1]), f[2], i(f[3]), i(f[4]), i(f[5]), i(f[6]), f[7], i(f[8])));
+                    case "U" -> m.population.add(new Population(i(f[1]), i(f[2])));
                     default -> { }
                 }
             } catch (ArrayIndexOutOfBoundsException ignored) {
