@@ -37,6 +37,7 @@ public final class MeetingManager {
     private MeetingManager() {}
 
     public static void tick(MinecraftServer server) {
+        if (!ru.stalkerzone.sim.TheZoneRules.simNpcSpawn()) return; // Э2-20: в TheZone NPC симуляции до Э2-05 не ставятся
         ServerLevel level = server.overworld();
         ZoneData data = ZoneData.get(server);
         Simulation sim = data.sim;

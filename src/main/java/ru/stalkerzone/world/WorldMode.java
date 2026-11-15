@@ -34,6 +34,10 @@ public enum WorldMode {
 
     /** Определить режим до загрузки уровней ({@code ServerAboutToStartEvent}). */
     public static void detect(MinecraftServer server) {
+        try { detect0(server); } finally { ru.stalkerzone.sim.TheZoneRules.set(current == THEZONE); }
+    }
+
+    private static void detect0(MinecraftServer server) {
         Path root = server.getWorldPath(LevelResource.ROOT);
         WorldMode m = LEGACY;
         String why = "нет манифеста stalkerzone/world.json";
@@ -84,5 +88,5 @@ public enum WorldMode {
     }
 
     /** Для тестов и команд: принудительно задать режим. */
-    public static void force(WorldMode m, String why) { current = m; reason = why; }
+    public static void force(WorldMode m, String why) { current = m; reason = why; ru.stalkerzone.sim.TheZoneRules.set(m == THEZONE); }
 }

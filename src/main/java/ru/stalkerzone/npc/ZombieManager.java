@@ -33,6 +33,7 @@ public final class ZombieManager {
     private ZombieManager() {}
 
     public static void tick(MinecraftServer server) {
+        if (!ru.stalkerzone.sim.TheZoneRules.simNpcSpawn()) return; // Э2-20: в TheZone NPC симуляции до Э2-05 не ставятся
         ServerLevel level = server.overworld();
         List<ServerPlayer> players = level.players();
         if (players.isEmpty()) return;
