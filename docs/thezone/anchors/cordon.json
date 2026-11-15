@@ -12,7 +12,10 @@
    3813
   ],
   "source": "esc_smart_terrain_2_12 — костёр (ближайший из трёх)",
-  "ru": "Деревня новичков, костёр"
+  "ru": "Деревня новичков, костёр",
+  "obj": [
+   "cordon.base.village"
+  ]
  },
  {
   "id": "sidorovich",
@@ -27,7 +30,10 @@
    3807
   ],
   "source": "esc_m_trader",
-  "ru": "Бункер Сидоровича"
+  "ru": "Бункер Сидоровича",
+  "obj": [
+   "cordon.trader.sidorovich"
+  ]
  },
  {
   "id": "south_post",
@@ -42,7 +48,10 @@
    3980
   ],
   "source": "esc_smart_terrain_3_16",
-  "ru": "Южный блокпост, шлагбаум"
+  "ru": "Южный блокпост, шлагбаум",
+  "obj": [
+   "cordon.base.south_post"
+  ]
  },
  {
   "id": "atp",
@@ -57,7 +66,10 @@
    3672
   ],
   "source": "esc_smart_terrain_7_11",
-  "ru": "АТП, центр двора"
+  "ru": "АТП, центр двора",
+  "obj": [
+   "cordon.outpost.atp"
+  ]
  },
  {
   "id": "elevator",
@@ -72,7 +84,10 @@
    3517
   ],
   "source": "esc_smart_terrain_5_9",
-  "ru": "Элеватор"
+  "ru": "Элеватор",
+  "obj": [
+   "cordon.outpost.elevator"
+  ]
  },
  {
   "id": "bridge",
@@ -87,7 +102,10 @@
    3464
   ],
   "source": "esc_smart_terrain_6_8",
-  "ru": "Блокпост под мостом, середина моста"
+  "ru": "Блокпост под мостом, середина моста",
+  "obj": [
+   "cordon.outpost.bridge"
+  ]
  },
  {
   "id": "farm",
@@ -102,7 +120,10 @@
    3326
   ],
   "source": "esc_smart_terrain_5_7 — костёр (ближайший из трёх)",
-  "ru": "Старая ферма, костёр"
+  "ru": "Старая ферма, костёр",
+  "obj": [
+   "cordon.outpost.farm"
+  ]
  },
  {
   "id": "far_post",
@@ -117,7 +138,10 @@
    2901
   ],
   "source": "esc_smart_terrain_5_2",
-  "ru": "Дальний блокпост, вход"
+  "ru": "Дальний блокпост, вход",
+  "obj": [
+   "cordon.base.far_post"
+  ]
  },
  {
   "id": "ruins",
@@ -132,7 +156,14 @@
    3291
   ],
   "source": "esc_smart_terrain_6_6 «Развалины хутора»",
-  "ru": "Развалины хутора (два кирпичных дома без крыш)"
+  "ru": "Развалины хутора (два кирпичных дома без крыш)",
+  "obj": [],
+  "new": {
+   "id": "cordon.landmark.ruins",
+   "kind": "landmark",
+   "name": "Развалины хутора",
+   "source": "F3 пользователя (заход 1, 15.11): два кирпичных дома без крыш; в оригинале esc_smart_terrain_6_6 «Развалины хутора»"
+  }
  },
  {
   "id": "tunnel_s",
@@ -147,6 +178,11 @@
    3468
   ],
   "source": "южный вход туннеля с «электрами» из прежней разметки Кордона 1:1 (cordon.outpost.tunnel_south: (130, −230) − сдвиг (209, −142))",
-  "ru": "Туннель под насыпью, южный вход"
+  "ru": "Туннель под насыпью, южный вход",
+  "obj": [
+   "cordon.outpost.tunnel_south",
+   "cordon.outpost.tunnel_north",
+   "cordon.field.tunnel"
+  ]
  }
 ]
