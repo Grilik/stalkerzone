@@ -1,0 +1,46 @@
+# Страница прогресса (GitHub Pages): docs/roadmap.md + PR, CI и nightly → tools/dashboard/build.py.
+# Один раз включить: Settings → Pages → Source: GitHub Actions.
+name: dashboard
+
+on:
+  push:
+    branches: [main]
+  # pull_request_target: работает в контексте main (код PR не выполняется) — страница видит новый или слитый PR сразу
+  pull_request_target:
+    types: [opened, reopened, closed, ready_for_review]
+  schedule:
+    - cron: '7,37 * * * *'   # проверки PR и сборка main меняются без событий выше
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+  actions: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: dashboard
+  cancel-in-progress: true
+
+jobs:
+  page:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Собрать страницу
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -I tools/dashboard/build.py _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
