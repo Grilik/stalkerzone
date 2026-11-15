@@ -1779,6 +1779,10 @@ public final class Simulation {
             for (Node n : nodes) {
                 if (n.owner != f.id || n.id == f.baseNode) continue;
                 if (f.military && n.type == NodeType.OUTPOST) continue;
+                // Э0-17 (D6): на Кордоне выброс не отнимает у одиночек заставы и аномальные поля —
+                // они теряются только набегом, захватом или войной (в «kordon_war» правило не действует)
+                if (Scenarios.KORDON.equals(scenario) && f.id == ZoneScenario.LONERS
+                        && (n.type == NodeType.OUTPOST || n.type == NodeType.ANOMALY)) continue;
                 if (rng.nextDouble() < p) {
                     n.owner = -1;
                     f.nodesLost++;
