@@ -41,7 +41,7 @@ public final class Prefabs {
     }
 
     /** Узлы сценария «Кордон» ({@code KordonScenario}), у которых есть площадки. */
-    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_ELEVATOR = 4, NODE_ATP = 5, NODE_TUNNEL = 7, NODE_WAGON = 19;
+    public static final int NODE_VILLAGE = 0, NODE_BUNKER = 1, NODE_SOUTH_POST = 2, NODE_ELEVATOR = 4, NODE_ATP = 5, NODE_TUNNEL = 7, NODE_WAGON = 19, NODE_DUMP = 20;
 
     /** Плато деревни новичков (П-02): ровная часть и ширина откоса; высота — медиана уровня (AUTO). */
     public static final int[] VILLAGE_PLATEAU = {-40, -24, 56, 34};
@@ -72,7 +72,7 @@ public final class Prefabs {
             new Site("wagon", NODE_WAGON).plateau(104, -88, 130, -60, Site.AUTO, 6).shaper(KordonRoadBridge.RAVINE)
                     .build(of(KordonWagon.CLEAR, KordonWagon::build)).build(of(KordonRoadBridge.CLEAR, KordonRoadBridge::build)),
             // А6 — свалка техники и застава О12 на дне чаши (узел 20, П-23)
-            new Site("dump", 20).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)),
+            new Site("dump", NODE_DUMP).plateau(-54, -134, -22, -108, Site.AUTO, 6).build(of(KordonDump.CLEAR, KordonDump::build)),
             // П-23: туннель с «электрами» под насыпью (смарт-террейн 4_9) — выемка у порталов, две заставы одиночек
             new Site("tunnel", NODE_TUNNEL).shaper(KordonTunnel.cut()).build(of(KordonTunnel.CLEAR, KordonTunnel::build)),
             // П-21: АТП (смарт-террейн 7_11) — брошенная база по вокселям оригинала, плато AUTO
