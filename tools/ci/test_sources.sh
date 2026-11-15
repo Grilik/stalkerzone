@@ -7,4 +7,5 @@ echo src/main/java/ru/stalkerzone/world/ZoneBounds.java
 echo src/main/java/ru/stalkerzone/artifact/ArtifactDef.java
 echo src/main/java/ru/stalkerzone/gear/TaczWeight.java
 echo src/main/java/ru/stalkerzone/mutant/MutantType.java
+echo src/main/java/ru/stalkerzone/client/PdaModel.java
 ls src/test/java/*.java
