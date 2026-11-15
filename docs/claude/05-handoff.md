@@ -1,4 +1,6 @@
-# 05. Передача проекта другому Claude (штаб, 06.11.2026)
+# 05. Передача проекта другому Claude (штаб, 06.11.2026; обновлено 16.11.2026, Э0-06)
+
+> **С 13.11 (D1):** Git — единственный источник правды; документы ведутся прямо в репозитории, Project — только зеркало. Копировать из Project ничего не нужно: новый Claude Code со свежим клоном читает `CLAUDE.md` → `docs/claude/00-start-here.md` → `docs/roadmap.md`. Таблица и порядок ниже — история П-12 (06.11).
 
 Зачем: когда у этого аккаунта кончаются лимиты, работу должен продолжить другой Claude (другой аккаунт или другой ИИ-агент) **без потери контекста**.
 
@@ -14,19 +16,19 @@
 | Файлы игры (`.szl`, Anomaly) | ПК пользователя `C:\MineStalker` | только на ПК; в репозиторий не класть (данные GSC) |
 
 ## Порядок (задача П-12, «Программист»)
-1. Скопировать актуальные документы проекта в `docs/claude/` (как есть, Markdown): `00-start-here`, `01-malyi-kordon`, `02-prompts`, `04-interfaces`, `05-handoff`, `10-log-programmer`, `11-log-builder`, `stalker-mod-kordon-1.0`, `stalker-mod-kordon-factions-logic`, `stalker-mod-look-and-bases`, `stalker-mod-lore-bible`, `stalker-mod-design-details`, `stalker-mod-kordon-1to1`, `stalker-mod-whole-map`, `stalker-mod-v116-combat-player`, `stalker-mod-appearance`, `stalker-mod-logistics`. Архивные — не копировать.
+1. Скопировать актуальные документы проекта в `docs/claude/` (как есть, Markdown): `00-start-here`, `01-malyi-kordon`, `02-prompts`, `04-interfaces`, `05-handoff`, `10-log-programmer`, `11-log-builder`, `stalker-mod-kordon-1.0`, `stalker-mod-kordon-factions-logic`, `stalker-mod-look-and-bases`, `stalker-mod-lore-bible`, `stalker-mod-design-details`, `stalker-mod-kordon-1to1`, `stalker-mod-whole-map`, `stalker-mod-v116-combat-player`, `stalker-mod-appearance`, `stalker-mod-logistics`. Архивные — не копировать. С 16.11 в репозитории также: `06-conveyor-v2`, `07-plan-to-bridge`, `team`, `decisions/`, `agent-team-audit/`, `lair-territories.svg`, а главный план — `docs/roadmap.md`.
 2. Скопировать навык в `.claude/skills/stalkerzone-dev/SKILL.md`.
 3. Добавить в корень репозитория `CLAUDE.md` (Claude Code читает его сам в начале каждой сессии): «Точка входа — `docs/claude/00-start-here.md`; роли и задачи — `docs/claude/02-prompts.md`; если Project недоступен — документы в `docs/claude/` главные».
 4. Скрипт `tools/sync_docs.sh` не нужен: синхронизацию делает «Программист» в начале каждой своей сессии — сверяет `docs/claude/` с документами проекта и коммитит разницу вместе со своей задачей (одна строка в ролевом промпте).
 5. Проверка: в свежем клоне без доступа к Project новый Claude Code по одному `CLAUDE.md` находит состояние, очередь задач и навык.
 
 ## Как начать на новом аккаунте
-1. claude.ai → новый Project, загрузить туда папку `docs/claude/` из репозитория (или работать без Project — Claude Code прочитает их из репозитория).
+1. Project не обязателен: Claude Code прочитает документы из репозитория. Если нужен Project — загрузить туда `docs/claude/` и `docs/roadmap.md` как зеркало (D1).
 2. Первое сообщение новому штабу:
 ```
-Ты — штаб проекта Stalker Zone (мод S.T.A.L.K.E.R. для Minecraft Forge 1.20.1, репозиторий Grilik/stalkerzone). Прочитай docs/claude/00-start-here.md, затем 02-prompts.md и журналы 10/11. Твоя роль описана в 00-start-here («Как устроена работа»): записывать мои идеи, вносить коррективы и свои идеи, держать структуру документов, сверять работу рабочих чатов с репозиторием и составлять для них промпты. Код не пишешь. Скажи, на чём остановились и что делаем дальше.
+Ты — штаб проекта Stalker Zone (мод S.T.A.L.K.E.R. для Minecraft Forge 1.20.1, репозиторий Grilik/stalkerzone). Прочитай docs/claude/00-start-here.md, затем docs/roadmap.md и docs/claude/team.md. Твоя роль: записывать мои идеи и решения в roadmap.md, держать структуру документов, сверять работу с репозиторием и готовить промпты задач в docs/prompts/. Код не пишешь. Скажи, на чём остановились и что делаем дальше.
 ```
-3. Рабочие чаты (Claude Code) открываются ролевыми промптами «Строитель» / «Программист» из `02-prompts.md`.
+3. Работа в Claude Code — по `docs/claude/team.md` (ведущий + агенты `@scout`, `@sim-worker`, `@builder`, `@reviewer`, `@architect`) и промптам задач `docs/prompts/<номер>.md`; роли «Строитель»/«Программист» из `02-prompts.md` — история.
 4. Если конвейер должен звать нового Claude — заменить секрет `CLAUDE_CODE_OAUTH_TOKEN`.
 
 ## Важно
