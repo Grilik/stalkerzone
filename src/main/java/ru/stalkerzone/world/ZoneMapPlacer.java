@@ -222,6 +222,7 @@ public final class ZoneMapPlacer {
 
     /** Раз в секунду: бригады кладут следующую порцию блоков. */
     public static void tick(net.minecraft.server.MinecraftServer server) {
+        if (!ZoneWorld.legacyWritesAllowed("ZoneMapPlacer.tick")) return; // Э1-09: в TheZone не пишет
         for (Iterator<Site> it = SITES.iterator(); it.hasNext(); ) {
             Site s = it.next();
             int end = Math.min(s.todo.size(), s.next + PER_SECOND);

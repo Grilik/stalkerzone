@@ -29,6 +29,25 @@ public final class ZoneWorld {
 
     private ZoneWorld() {}
 
+    /** Э1-09: идёт обработка ChunkEvent.Load мода. Любая запись мода в этот момент в режиме THEZONE — ошибка. */
+    public static final ThreadLocal<Boolean> IN_CHUNK_LOAD = ThreadLocal.withInitial(() -> false);
+    /** Э1-09: сколько записей мода отклонено в режиме THEZONE (CI и опытная копия ждут 0). */
+    public static final java.util.concurrent.atomic.AtomicLong CHUNK_WRITES = new java.util.concurrent.atomic.AtomicLong();
+
+    /**
+     * Можно ли старым писателям мода (декор при загрузке, лагеря, площадки, ориентиры, мост) ставить блоки.
+     * В THEZONE — нет: всё уже стоит в чанках мира. Запись при загрузке чанка в THEZONE считается и пишется в лог.
+     */
+    public static boolean legacyWritesAllowed(String who) {
+        if (!WorldMode.theZone()) return true;
+        if (IN_CHUNK_LOAD.get()) {
+            long n = CHUNK_WRITES.incrementAndGet();
+            if (n <= 20 || n % 1000 == 0)
+                LOGGER.error("[stalkerzone] запись блоков при загрузке чанка в мире TheZone отклонена: {} (всего {})", who, n);
+        }
+        return false;
+    }
+
     private static void init() {
         if (bounds != null) return;
         // координаты локаций статичны и не зависят от seed
@@ -74,19 +93,35 @@ public final class ZoneWorld {
     public static final class Events {
         @SubscribeEvent
         public void onChunkLoad(ChunkEvent.Load e) {
+            if (WorldMode.theZone()) return; // Э1-09: в мире TheZone при загрузке чанка мод ничего не делает
             if (!(e.getLevel() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD) return;
             ChunkAccess chunk = e.getChunk();
             ZoneBounds b = bounds();
-            ru.stalkerzone.block.ObjPropBlock.worldgen(() -> {
-                WorldDecorator.decorate(chunk, b, level);
-                if (b.touchesChunk(chunk.getPos().x, chunk.getPos().z)) WallBuilder.build(chunk, b);
-            });
+            IN_CHUNK_LOAD.set(true);
+            try {
+                ru.stalkerzone.block.ObjPropBlock.worldgen(() -> {
+                    WorldDecorator.decorate(chunk, b, level);
+                    if (b.touchesChunk(chunk.getPos().x, chunk.getPos().z)) WallBuilder.build(chunk, b);
+                });
+            } finally {
+                IN_CHUNK_LOAD.set(false);
+            }
+        }
+
+        /** Э1-09: режим мира — до загрузки уровней и первого ChunkEvent.Load. */
+        @SubscribeEvent
+        public void onAboutToStart(net.minecraftforge.event.server.ServerAboutToStartEvent e) {
+            CHUNK_WRITES.set(0);
+            WorldMode.detect(e.getServer());
         }
 
         @SubscribeEvent
         public void onServerStarted(ServerStartedEvent e) {
             MinecraftServer server = e.getServer();
             ServerLevel level = server.overworld();
+            // Э1-09: в TheZone граница — многоугольник атласа (Э2-10), точка появления — из level.dat
+            // (до Э1-11; затем world.spawn атласа). Старый прямоугольник Кордона и SpawnFinder не применяются.
+            if (WorldMode.theZone()) return;
             ZoneBounds b = bounds();
             // запасная граница: квадрат вокруг прямоугольника, на случай если стена в каком-то чанке не построилась
             WorldBorder wb = level.getWorldBorder();
@@ -101,6 +136,7 @@ public final class ZoneWorld {
         @SubscribeEvent
         public void onServerStopping(ServerStoppingEvent e) {
             LOGGER.info("[stalkerzone] {}", ZoneMapPlacer.substitutionReport());
+            LOGGER.info("[stalkerzone] mode={} chunkWrites={}", WorldMode.current(), CHUNK_WRITES.get());
         }
 
         @SubscribeEvent
@@ -113,8 +149,13 @@ public final class ZoneWorld {
             root.put(Player.PERSISTED_NBT_TAG, persisted);
 
             ServerLevel level = sp.getServer().overworld();
-            int[] s = spawnXZ();
-            BlockPos pos = SpawnFinder.safeNear(level, bounds(), s[0], s[1]);
+            BlockPos pos;
+            if (WorldMode.theZone()) {
+                pos = level.getSharedSpawnPos(); // Э1-09: точка появления мира (атлас — Э1-11)
+            } else {
+                int[] s = spawnXZ();
+                pos = SpawnFinder.safeNear(level, bounds(), s[0], s[1]);
+            }
             sp.teleportTo(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0f, 0f);
             sp.setRespawnPosition(Level.OVERWORLD, pos, 0f, true, false);
             // стартовый набор новичка (карточка 010) — список в ru.stalkerzone.sim.PlayerStart
@@ -130,6 +171,7 @@ public final class ZoneWorld {
         public void onPlayerTick(TickEvent.PlayerTickEvent e) {
             if (e.phase != TickEvent.Phase.END || !(e.player instanceof ServerPlayer sp)) return;
             if (sp.tickCount % 20 != 0 || sp.level().dimension() != Level.OVERWORLD) return;
+            if (WorldMode.theZone()) return; // Э1-09: возврат с края в TheZone — по многоугольнику атласа (Э2-10)
             ZoneBounds b = bounds();
             int x = sp.getBlockX(), z = sp.getBlockZ();
             if (b.inside(x, z)) return;

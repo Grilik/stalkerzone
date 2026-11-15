@@ -33,6 +33,7 @@ public final class LandmarkManager {
     private LandmarkManager() {}
 
     public static void tick(MinecraftServer server) {
+        if (!ZoneWorld.legacyWritesAllowed("LandmarkManager.tick")) return; // Э1-09: в TheZone не пишет
         ServerLevel level = server.overworld();
         List<ServerPlayer> players = level.players();
         if (players.isEmpty()) return;

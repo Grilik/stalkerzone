@@ -126,6 +126,7 @@ public class ObjPropBlock extends HorizontalDirectionalBlock {
 
     /** Выполнить декор чанка при загрузке: onPlace/onRemove пропсов не лезут в соседние чанки (иначе зависание). */
     public static void worldgen(Runnable r) {
+        if (!ru.stalkerzone.world.ZoneWorld.legacyWritesAllowed("ObjPropBlock.worldgen")) return; // Э1-09
         boolean was = PLACING.get();
         PLACING.set(true);
         try { r.run(); } finally { PLACING.set(was); }
