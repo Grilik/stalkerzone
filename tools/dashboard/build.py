@@ -19,6 +19,7 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "Grilik/stalkerzone")
 ROADMAP = "docs/roadmap.md"
 REQS = "docs/requirements.json"
 PROMPTS = "docs/prompts"
+SPEC = "docs/spec/master-project.md"
 MSK = datetime.timezone(datetime.timedelta(hours=3))
 MANUAL = {"готово": "done", "в работе": "work", "отложено": "later", "снято": "dropped", "ждёт": "todo"}
 LABEL = {"done": "готово", "work": "в работе", "todo": "ждёт", "later": "отложено", "dropped": "снято"}
@@ -75,6 +76,19 @@ def md_block(text):
         if not st:
             flush()
             continue
+        if st.startswith("|"):
+            cells = [c.strip() for c in st.strip("|").split("|")]
+            if all(re.fullmatch(r":?-{2,}:?", c) for c in cells if c):
+                continue
+            if not (out and out[-1].endswith("</tr>")):
+                flush()
+                out.append("<table class='md'>")
+            elif out[-1] == "</table>":
+                out.pop()
+            out.append("<tr>" + "".join(f"<td>{md_bold(c)}</td>" for c in cells) + "</tr>")
+            continue
+        if out and out[-1].endswith("</tr>"):
+            out.append("</table>")
         h = re.match(r"^(#{1,4})\s+(.*)", st)
         if h:
             flush()
@@ -98,6 +112,8 @@ def md_block(text):
             lst = None
         para.append(st)
     flush()
+    if out and out[-1].endswith("</tr>"):
+        out.append("</table>")
     if code:
         out.append("</code></pre>")
     return "".join(out)
@@ -119,7 +135,7 @@ def parse_roadmap(text):
     for line in text.splitlines():
         m = re.match(r"^##\s+(Э\d+)\s*·\s*(.+)$", line)
         if m:
-            cur = {"id": m.group(1), "title": m.group(2).strip(), "goal": "", "done_when": "", "tasks": []}
+            cur = {"id": m.group(1), "title": m.group(2).strip(), "goal": "", "done_when": "", "spec": [], "tasks": []}
             stages.append(cur)
             continue
         if cur is None:
@@ -130,11 +146,40 @@ def parse_roadmap(text):
         if line.startswith("Готово, когда:"):
             cur["done_when"] = line[len("Готово, когда:"):].strip()
             continue
+        if line.startswith("Мастер-проект:"):
+            cur["spec"] = [x.strip() for x in line[len("Мастер-проект:"):].split(",") if x.strip()]
+            continue
         if line.startswith("|") and not re.match(r"^\|\s*[-№]", line):
             c = [x.strip() for x in line.strip().strip("|").split("|")]
             if len(c) >= 3 and c[0]:
                 cur["tasks"].append({"id": c[0], "title": c[1], "who": c[2], "manual": (c[3] if len(c) > 3 else "").lower()})
     return stages
+
+
+def parse_spec(path):
+    """Разделы мастер-проекта: «М<n>» — основная часть, «I.<n>», «II.<n>», «III.<n>» — приложения. Значение — (заголовок, текст)."""
+    if not os.path.isfile(path):
+        return {}
+    out, part, key = {}, "М", None
+    for line in open(path, encoding="utf-8").read().splitlines():
+        a = re.match(r"^# Приложение (I{1,3})\.", line)
+        if a:
+            part, key = a.group(1), None
+            continue
+        if line.startswith("# "):
+            key = None
+            continue
+        h = re.match(r"^## (\d+)\.\s+(.*)", line)
+        if h:
+            key = ("М" + h.group(1)) if part == "М" else (part + "." + h.group(1))
+            out[key] = [h.group(2).strip(), []]
+            continue
+        if line.startswith("## "):
+            key = None
+            continue
+        if key:
+            out[key][1].append(line)
+    return {k: (t, "\n".join(b).strip()) for k, (t, b) in out.items()}
 
 
 def pr_matches(task_id, title):
@@ -202,6 +247,7 @@ def req_badges(reqs):
 def build(out_dir):
     text = open(ROADMAP, encoding="utf-8").read()
     stages, about = parse_roadmap(text), parse_about(text)
+    spec = parse_spec(SPEC)
     reqs = json.load(open(REQS, encoding="utf-8"))["requirements"] if os.path.isfile(REQS) else []
     by_task = {}
     for r in reqs:
@@ -317,6 +363,15 @@ def build(out_dir):
             a(f"<p><b>Цель.</b> {md_inline(s['goal'])}</p>")
         if s["done_when"]:
             a(f"<p><b>Готово, когда:</b> {md_inline(s['done_when'])}</p>")
+        secs = [(k, spec[k]) for k in s["spec"] if k in spec]
+        if secs:
+            a(f"<details class='spec'><summary>Из мастер-проекта — {len(secs)} разд.: {esc(', '.join(k for k, _ in secs))}</summary>"
+              "<p class='muted small'>Исходный документ пользователя (10.11). Где он расходится с решениями 15.11 в начале карты, действуют решения 15.11.</p>")
+            for k, (title, body) in secs:
+                part = "основная часть" if k.startswith("М") else "приложение " + k.split(".")[0]
+                a(f"<details class='pr-text'><summary><b>{esc(k)}</b> {md_inline(title)} <span class='muted small'>· {part}</span></summary>"
+                  f"<div class='prompt'>{md_block(body)}</div></details>")
+            a("</details>")
         for t in sorted(s["tasks"], key=lambda t: (ORDER[t["status"]], s["tasks"].index(t))):
             link = f" <a href='{esc(t['pr']['html_url'])}'>#{t['pr']['number']}</a>" if t["pr"] else ""
             when = f" <span class='muted'>{ago(t['pr']['merged_at'])}</span>" if t["pr"] and t["pr"].get("merged_at") else ""
@@ -382,7 +437,7 @@ def build(out_dir):
         a(f"<tr><td class='muted nowrap'>{ago(p['merged_at'])}</td><td><a href='{esc(p['html_url'])}'>#{p['number']}</a> {md_inline(p['title'])}</td></tr>")
     a("</table></section>")
     a(f"<footer class='muted'>Этапы и задачи — <a href='https://github.com/{REPO}/blob/main/{ROADMAP}'>{ROADMAP}</a>, требования — "
-      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>. "
+      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>. "
       "Статус задачи ставится сам: PR с номером задачи в начале заголовка.</footer></main><script>" + JS + "</script></body></html>")
 
     os.makedirs(out_dir, exist_ok=True)
@@ -456,6 +511,10 @@ table{width:100%;border-collapse:collapse}table.rt td,#merged td{padding:6px 8px
 #merged table{background:var(--card);border:1px solid var(--line);border-radius:8px}
 .nowrap{white-space:nowrap}.chip{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:0 6px}
 details.pr-text>summary{cursor:pointer;color:var(--acc);list-style:none;margin:6px 0}
+details.spec{background:#121612;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:8px 0 12px}
+details.spec>summary{cursor:pointer;list-style:none;font-weight:600}details.spec>summary:before{content:'▸ ';color:var(--mut)}
+details.spec[open]>summary:before{content:'▾ '}details.spec .prompt{max-height:none}
+table.md{width:auto;margin:6px 0;font-size:12px}table.md td{border:1px solid var(--line);padding:3px 6px;vertical-align:top}table.md tr:first-child td{font-weight:600}
 .prompt{background:#121612;border:1px solid var(--line);border-radius:8px;padding:8px 12px;max-height:480px;overflow:auto}
 .prompt h4{margin:10px 0 4px;font-size:14px;color:var(--acc)}.prompt pre{white-space:pre-wrap;font-size:12px;background:#0b0e0b;padding:8px;border-radius:6px}
 footer{margin-top:30px;font-size:13px}
