@@ -1,0 +1,3619 @@
+[
+ {
+  "location": "cordon",
+  "ru": "Кордон",
+  "point": [
+   -4118,
+   78,
+   3486
+  ],
+  "buildings": 31,
+  "fits": [
+   {
+    "level": "l01_escape",
+    "score": 16.37,
+    "objects": 18,
+    "matched": 9,
+    "guess": {
+     "scale": 1.14,
+     "angle": 0,
+     "dx": -4182.5,
+     "dz": 3649.1
+    },
+    "anchors": [
+     {
+      "original_id": "l01_escape.esc_smart_terrain_3_16",
+      "kind": "base",
+      "faction": "military",
+      "original": [
+       -134.2,
+       -30.1,
+       377.2
+      ],
+      "thezone_guess": [
+       -4335,
+       70,
+       4079
+      ],
+      "building_bbox": [
+       -4384,
+       3852,
+       -4313,
+       4387
+      ],
+      "building_area": 37985,
+      "building_top_y": 90,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l01_escape.esc_smart_terrain_5_2",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       10.0,
+       16.2,
+       -673.3
+      ],
+      "thezone_guess": [
+       -4171,
+       75,
+       2882
+      ],
+      "building_bbox": [
+       -4156,
+       2880,
+       -4129,
+       2947
+      ],
+      "building_area": 1809,
+      "building_top_y": 86,
+      "dist": 15.1
+     },
+     {
+      "original_id": "l01_escape.esc_smart_terrain_6_8",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       54.9,
+       1.3,
+       -157.1
+      ],
+      "thezone_guess": [
+       -4120,
+       71,
+       3470
+      ],
+      "building_bbox": [
+       -4144,
+       3436,
+       -4093,
+       3591
+      ],
+      "building_area": 7905,
+      "building_top_y": 91,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l01_escape.esc_smart_terrain_2_12",
+      "kind": "base",
+      "faction": "loners",
+      "original": [
+       -193.9,
+       -20.1,
+       146.8
+      ],
+      "thezone_guess": [
+       -4404,
+       69,
+       3816
+      ],
+      "building_bbox": [
+       -4396,
+       3796,
+       -4361,
+       3811
+      ],
+      "building_area": 525,
+      "building_top_y": 77,
+      "dist": 9.3
+     },
+     {
+      "original_id": "l01_escape.esc_smart_terrain_7_11",
+      "kind": "base",
+      "faction": "bandits",
+      "original": [
+       116.0,
+       -7.6,
+       16.6
+      ],
+      "thezone_guess": [
+       -4050,
+       71,
+       3668
+      ],
+      "building_bbox": [
+       -4052,
+       3672,
+       -4017,
+       3699
+      ],
+      "building_area": 945,
+      "building_top_y": 83,
+      "dist": 4.0
+     },
+     {
+      "original_id": "l01_escape.esc_main_base_trader_mlr_plase",
+      "kind": "trader",
+      "faction": null,
+      "original": [
+       -12.2,
+       0.9,
+       -292.4
+      ],
+      "thezone_guess": [
+       -4196,
+       78,
+       3316
+      ],
+      "building_bbox": [
+       -4204,
+       3308,
+       -4169,
+       3319
+      ],
+      "building_area": 385,
+      "building_top_y": 84,
+      "dist": 0.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "garbage",
+  "ru": "Свалка",
+  "point": [
+   -4176,
+   76,
+   2224
+  ],
+  "buildings": 14,
+  "fits": [
+   {
+    "level": "l02_garbage",
+    "score": 9.37,
+    "objects": 15,
+    "matched": 5,
+    "guess": {
+     "scale": 0.88,
+     "angle": 0,
+     "dx": -4169.9,
+     "dz": 2130.3
+    },
+    "anchors": [
+     {
+      "original_id": "l02_garbage.gar_smart_terrain_4_7",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -11.6,
+       2.0,
+       149.4
+      ],
+      "thezone_guess": [
+       -4180,
+       70,
+       2262
+      ],
+      "building_bbox": [
+       -4176,
+       2240,
+       -4085,
+       2459
+      ],
+      "building_area": 19929,
+      "building_top_y": 88,
+      "dist": 4.1
+     },
+     {
+      "original_id": "l02_garbage.gar_smart_terrain_5_2",
+      "kind": "base",
+      "faction": "duty",
+      "original": [
+       39.8,
+       0.5,
+       -218.0
+      ],
+      "thezone_guess": [
+       -4135,
+       67,
+       1938
+      ],
+      "building_bbox": [
+       -4172,
+       1944,
+       -4117,
+       2187
+      ],
+      "building_area": 13365,
+      "building_top_y": 72,
+      "dist": 5.6
+     },
+     {
+      "original_id": "l02_garbage.gar_smart_terrain_6_4",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       98.0,
+       0.7,
+       -81.0
+      ],
+      "thezone_guess": [
+       -4084,
+       72,
+       2059
+      ],
+      "building_bbox": [
+       -4088,
+       2044,
+       -4069,
+       2047
+      ],
+      "building_area": 57,
+      "building_top_y": 81,
+      "dist": 12.0
+     },
+     {
+      "original_id": "l02_garbage.gar_smart_terrain_3_6",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -111.5,
+       4.8,
+       101.3
+      ],
+      "thezone_guess": [
+       -4268,
+       73,
+       2219
+      ],
+      "building_bbox": [
+       -4372,
+       2192,
+       -4241,
+       2223
+      ],
+      "building_area": 4061,
+      "building_top_y": 89,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l02_garbage.gar_smart_terrain_7_3",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       156.3,
+       -4.0,
+       -129.3
+      ],
+      "thezone_guess": [
+       -4032,
+       69,
+       2016
+      ],
+      "building_bbox": [
+       -4064,
+       1980,
+       -4033,
+       2015
+      ],
+      "building_area": 1085,
+      "building_top_y": 85,
+      "dist": 1.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "agroprom",
+  "ru": "Агропром",
+  "point": [
+   -4896,
+   74,
+   2390
+  ],
+  "buildings": 17,
+  "fits": [
+   {
+    "level": "l03_agroprom",
+    "score": 11.69,
+    "objects": 16,
+    "matched": 5,
+    "guess": {
+     "scale": 1.42,
+     "angle": 0,
+     "dx": -5138.4,
+     "dz": 2455.4
+    },
+    "anchors": [
+     {
+      "original_id": "l03_agroprom.agr_smart_terrain_6_4",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       251.6,
+       -0.0,
+       -66.1
+      ],
+      "thezone_guess": [
+       -4781,
+       67,
+       2362
+      ],
+      "building_bbox": [
+       -4980,
+       2252,
+       -4381,
+       2439
+      ],
+      "building_area": 112013,
+      "building_top_y": 84,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l03_agroprom.agr_smart_terrain_1_6",
+      "kind": "base",
+      "faction": "military",
+      "original": [
+       -162.5,
+       -0.2,
+       187.9
+      ],
+      "thezone_guess": [
+       -5369,
+       70,
+       2722
+      ],
+      "building_bbox": [
+       -5420,
+       2652,
+       -5301,
+       2771
+      ],
+      "building_area": 14161,
+      "building_top_y": 88,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l03_agroprom.agr_smart_terrain_4_2",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -10.5,
+       4.0,
+       -112.6
+      ],
+      "thezone_guess": [
+       -5153,
+       72,
+       2296
+      ],
+      "building_bbox": [
+       -5160,
+       2316,
+       -5137,
+       2367
+      ],
+      "building_area": 1173,
+      "building_top_y": 83,
+      "dist": 20.5
+     },
+     {
+      "original_id": "l03_agroprom.agr_smart_terrain_4_4_near_2",
+      "kind": "base",
+      "faction": "clear_sky",
+      "original": [
+       -40.8,
+       -0.2,
+       -1.7
+      ],
+      "thezone_guess": [
+       -5196,
+       67,
+       2453
+      ],
+      "building_bbox": [
+       -5344,
+       2440,
+       -4997,
+       2587
+      ],
+      "building_area": 51009,
+      "building_top_y": 75,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l03_agroprom.agr_smart_terrain_4_4_near_3",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       63.7,
+       -0.2,
+       -35.0
+      ],
+      "thezone_guess": [
+       -5048,
+       71,
+       2406
+      ],
+      "building_bbox": [
+       -5148,
+       2332,
+       -5045,
+       2407
+      ],
+      "building_area": 7725,
+      "building_top_y": 103,
+      "dist": 0.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "dark_valley",
+  "ru": "Тёмная долина",
+  "point": [
+   -3236,
+   76,
+   2438
+  ],
+  "buildings": 18,
+  "fits": [
+   {
+    "level": "l04_darkvalley",
+    "score": 12.93,
+    "objects": 17,
+    "matched": 8,
+    "guess": {
+     "scale": 0.88,
+     "angle": 0,
+     "dx": -3269.6,
+     "dz": 2177.0
+    },
+    "anchors": [
+     {
+      "original_id": "l04_darkvalley.val_smart_terrain_7_4",
+      "kind": "base",
+      "faction": "bandits",
+      "original": [
+       6.2,
+       1.2,
+       29.3
+      ],
+      "thezone_guess": [
+       -3264,
+       73,
+       2203
+      ],
+      "building_bbox": [
+       -3328,
+       2160,
+       -3249,
+       2243
+      ],
+      "building_area": 6557,
+      "building_top_y": 102,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l04_darkvalley.val_smart_terrain_4_0",
+      "kind": "base",
+      "faction": "loners",
+      "original": [
+       -118.5,
+       0.7,
+       504.3
+      ],
+      "thezone_guess": [
+       -3374,
+       74,
+       2621
+      ],
+      "building_bbox": [
+       -3404,
+       2608,
+       -3337,
+       2679
+      ],
+      "building_area": 4757,
+      "building_top_y": 86,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l04_darkvalley.val_smart_terrain_10_9",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       156.2,
+       10.3,
+       265.3
+      ],
+      "thezone_guess": [
+       -3132,
+       71,
+       2410
+      ],
+      "building_bbox": [
+       -3188,
+       2412,
+       -3125,
+       2463
+      ],
+      "building_area": 3213,
+      "building_top_y": 103,
+      "dist": 1.6
+     },
+     {
+      "original_id": "l04_darkvalley.val_smart_terrain_10_10",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       117.6,
+       0.0,
+       4.8
+      ],
+      "thezone_guess": [
+       -3166,
+       75,
+       2181
+      ],
+      "building_bbox": [
+       -3188,
+       2192,
+       -3173,
+       2239
+      ],
+      "building_area": 705,
+      "building_top_y": 82,
+      "dist": 12.8
+     },
+     {
+      "original_id": "l04_darkvalley.val_smart_terrain_8_6",
+      "kind": "outpost",
+      "faction": "bandits",
+      "original": [
+       56.6,
+       0.1,
+       107.7
+      ],
+      "thezone_guess": [
+       -3220,
+       69,
+       2272
+      ],
+      "building_bbox": [
+       -3248,
+       2248,
+       -3213,
+       2387
+      ],
+      "building_area": 4865,
+      "building_top_y": 73,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l04_darkvalley.val_smart_terrain_7_3",
+      "kind": "base",
+      "faction": "bandits",
+      "original": [
+       0.7,
+       0.1,
+       -35.7
+      ],
+      "thezone_guess": [
+       -3269,
+       73,
+       2146
+      ],
+      "building_bbox": [
+       -3332,
+       2104,
+       -3241,
+       2147
+      ],
+      "building_area": 3913,
+      "building_top_y": 86,
+      "dist": 0.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "swamps",
+  "ru": "Болота, лагерь Чистого Неба",
+  "point": [
+   -5583,
+   68,
+   4417
+  ],
+  "buildings": 15,
+  "fits": [
+   {
+    "level": "k00_marsh",
+    "score": 11.51,
+    "objects": 12,
+    "matched": 7,
+    "guess": {
+     "scale": 1.16,
+     "angle": 0,
+     "dx": -5378.2,
+     "dz": 4071.8
+    },
+    "anchors": [
+     {
+      "original_id": "k00_marsh.mar_smart_terrain_8_11",
+      "kind": "base",
+      "faction": "renegades",
+      "original": [
+       286.2,
+       -0.7,
+       160.2
+      ],
+      "thezone_guess": [
+       -5046,
+       62,
+       4258
+      ],
+      "building_bbox": [
+       -5068,
+       4236,
+       -5001,
+       4295
+      ],
+      "building_area": 3953,
+      "building_top_y": 87,
+      "dist": 0.0
+     },
+     {
+      "original_id": "k00_marsh.mar_smart_terrain_doc_2",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       -285.9,
+       1.0,
+       -23.9
+      ],
+      "thezone_guess": [
+       -5710,
+       64,
+       4044
+      ],
+      "building_bbox": [
+       -5716,
+       4044,
+       -5697,
+       4055
+      ],
+      "building_area": 209,
+      "building_top_y": 84,
+      "dist": 0.0
+     },
+     {
+      "original_id": "k00_marsh.mar_base_sc_trader",
+      "kind": "trader",
+      "faction": null,
+      "original": [
+       -179.1,
+       0.9,
+       320.4
+      ],
+      "thezone_guess": [
+       -5586,
+       65,
+       4443
+      ],
+      "building_bbox": [
+       -5600,
+       4424,
+       -5581,
+       4443
+      ],
+      "building_area": 361,
+      "building_top_y": 75,
+      "dist": 0.5
+     },
+     {
+      "original_id": "k00_marsh.mar_smart_terrain_5_8",
+      "kind": "base",
+      "faction": "clear_sky",
+      "original": [
+       -3.8,
+       3.1,
+       -6.3
+      ],
+      "thezone_guess": [
+       -5383,
+       60,
+       4064
+      ],
+      "building_bbox": [
+       -5388,
+       4052,
+       -5381,
+       4067
+      ],
+      "building_area": 105,
+      "building_top_y": 74,
+      "dist": 0.0
+     },
+     {
+      "original_id": "k00_marsh.mar_smart_terrain_5_12",
+      "kind": "base",
+      "faction": "clear_sky",
+      "original": [
+       28.7,
+       3.0,
+       234.3
+      ],
+      "thezone_guess": [
+       -5345,
+       64,
+       4344
+      ],
+      "building_bbox": [
+       -5348,
+       4328,
+       -5321,
+       4347
+      ],
+      "building_area": 513,
+      "building_top_y": 71,
+      "dist": 0.0
+     },
+     {
+      "original_id": "k00_marsh.mar_smart_terrain_6_11",
+      "kind": "base",
+      "faction": "clear_sky",
+      "original": [
+       116.2,
+       1.4,
+       150.0
+      ],
+      "thezone_guess": [
+       -5243,
+       64,
+       4246
+      ],
+      "building_bbox": [
+       -5236,
+       4248,
+       -5229,
+       4255
+      ],
+      "building_area": 49,
+      "building_top_y": 82,
+      "dist": 7.7
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "bar",
+  "ru": "Бар «100 рентген»",
+  "point": [
+   -4379,
+   76,
+   1277
+  ],
+  "buildings": 43,
+  "fits": [
+   {
+    "level": "l05_bar",
+    "score": 11.74,
+    "objects": 5,
+    "matched": 4,
+    "guess": {
+     "scale": 0.87,
+     "angle": 0,
+     "dx": -4866.6,
+     "dz": 1261.4
+    },
+    "anchors": [
+     {
+      "original_id": "l05_bar.bar_dolg_bunker",
+      "kind": "base",
+      "faction": "duty",
+      "original": [
+       224.3,
+       -5.4,
+       -127.0
+      ],
+      "thezone_guess": [
+       -4671,
+       74,
+       1151
+      ],
+      "building_bbox": [
+       -4660,
+       1132,
+       -4349,
+       1303
+      ],
+      "building_area": 53181,
+      "building_top_y": 96,
+      "dist": 11.4
+     },
+     {
+      "original_id": "l05_bar.bar_zastava",
+      "kind": "base",
+      "faction": "duty",
+      "original": [
+       225.4,
+       -0.0,
+       -6.1
+      ],
+      "thezone_guess": [
+       -4670,
+       74,
+       1256
+      ],
+      "building_bbox": [
+       -4800,
+       1256,
+       -4677,
+       1343
+      ],
+      "building_area": 10701,
+      "building_top_y": 103,
+      "dist": 6.5
+     },
+     {
+      "original_id": "l05_bar.bar_visitors",
+      "kind": "base",
+      "faction": "loners",
+      "original": [
+       145.5,
+       -0.0,
+       -59.3
+      ],
+      "thezone_guess": [
+       -4740,
+       74,
+       1210
+      ],
+      "building_bbox": [
+       -4844,
+       1076,
+       -4701,
+       1255
+      ],
+      "building_area": 25597,
+      "building_top_y": 96,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l05_bar.bar_dolg_general",
+      "kind": "base",
+      "faction": "duty",
+      "original": [
+       202.4,
+       -0.0,
+       -98.5
+      ],
+      "thezone_guess": [
+       -4690,
+       74,
+       1176
+      ],
+      "building_bbox": [
+       -4684,
+       1164,
+       -4673,
+       1175
+      ],
+      "building_area": 121,
+      "building_top_y": 76,
+      "dist": 6.5
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "army_warehouses",
+  "ru": "Армейские склады",
+  "point": [
+   -3960,
+   76,
+   490
+  ],
+  "buildings": 77,
+  "fits": [
+   {
+    "level": "l07_military",
+    "score": 38.58,
+    "objects": 25,
+    "matched": 13,
+    "guess": {
+     "scale": 0.95,
+     "angle": 0,
+     "dx": -3915.9,
+     "dz": 643.4
+    },
+    "anchors": [
+     {
+      "original_id": "l07_military.mil_smart_terrain_7_10",
+      "kind": "base",
+      "faction": "freedom",
+      "original": [
+       -80.7,
+       -13.1,
+       -48.4
+      ],
+      "thezone_guess": [
+       -3993,
+       77,
+       597
+      ],
+      "building_bbox": [
+       -4044,
+       560,
+       -3841,
+       699
+      ],
+      "building_area": 28217,
+      "building_top_y": 103,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l07_military.mil_smart_terrain_2_2",
+      "kind": "base",
+      "faction": "mercs",
+      "original": [
+       -359.4,
+       -14.1,
+       -391.4
+      ],
+      "thezone_guess": [
+       -4257,
+       69,
+       272
+      ],
+      "building_bbox": [
+       -4312,
+       240,
+       -4257,
+       287
+      ],
+      "building_area": 2585,
+      "building_top_y": 74,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l07_military.mil_smart_terrain_3_8",
+      "kind": "base",
+      "faction": "freedom",
+      "original": [
+       52.5,
+       -18.6,
+       -358.4
+      ],
+      "thezone_guess": [
+       -3866,
+       68,
+       303
+      ],
+      "building_bbox": [
+       -3868,
+       300,
+       -3861,
+       307
+      ],
+      "building_area": 49,
+      "building_top_y": 72,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l07_military.mil_smart_terrain_7_2",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -292.7,
+       -25.2,
+       -75.6
+      ],
+      "thezone_guess": [
+       -4194,
+       69,
+       572
+      ],
+      "building_bbox": [
+       -4220,
+       568,
+       -4189,
+       591
+      ],
+      "building_area": 713,
+      "building_top_y": 72,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l07_military.mil_smart_terrain_3_5",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -140.8,
+       -18.4,
+       -307.3
+      ],
+      "thezone_guess": [
+       -4050,
+       68,
+       351
+      ],
+      "building_bbox": [
+       -4052,
+       352,
+       -4045,
+       355
+      ],
+      "building_area": 21,
+      "building_top_y": 71,
+      "dist": 0.5
+     },
+     {
+      "original_id": "l07_military.mil_smart_terrain_2_10",
+      "kind": "base",
+      "faction": "freedom",
+      "original": [
+       -212.1,
+       -21.9,
+       -199.2
+      ],
+      "thezone_guess": [
+       -4117,
+       62,
+       454
+      ],
+      "building_bbox": [
+       -4140,
+       436,
+       -4105,
+       467
+      ],
+      "building_area": 1085,
+      "building_top_y": 69,
+      "dist": 0.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "yantar",
+  "ru": "Янтарь",
+  "point": [
+   -5200,
+   70,
+   1705
+  ],
+  "buildings": 9,
+  "fits": [
+   {
+    "level": "l08_yantar",
+    "score": 5.32,
+    "objects": 5,
+    "matched": 2,
+    "guess": {
+     "scale": 1.3,
+     "angle": 0,
+     "dx": -5443.8,
+     "dz": 1377.4
+    },
+    "anchors": [
+     {
+      "original_id": "l08_yantar.yan_smart_terrain_3_6",
+      "kind": "base",
+      "faction": "scientists",
+      "original": [
+       163.6,
+       -7.9,
+       100.3
+      ],
+      "thezone_guess": [
+       -5231,
+       71,
+       1508
+      ],
+      "building_bbox": [
+       -5360,
+       1392,
+       -5149,
+       1667
+      ],
+      "building_area": 58025,
+      "building_top_y": 103,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l08_yantar.yan_smart_terrain_5_6",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       172.9,
+       4.3,
+       243.8
+      ],
+      "thezone_guess": [
+       -5219,
+       67,
+       1694
+      ],
+      "building_bbox": [
+       -5236,
+       1692,
+       -5209,
+       1719
+      ],
+      "building_area": 729,
+      "building_top_y": 73,
+      "dist": 0.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "dead_city",
+  "ru": "Мёртвый город",
+  "point": [
+   -5532,
+   68,
+   772
+  ],
+  "buildings": 104,
+  "fits": [
+   {
+    "level": "l09_deadcity",
+    "score": 13.24,
+    "objects": 3,
+    "matched": 3,
+    "guess": {
+     "scale": 1.14,
+     "angle": 0,
+     "dx": -5337.5,
+     "dz": 781.0
+    },
+    "anchors": [
+     {
+      "original_id": "l09_deadcity.cit_killers",
+      "kind": "base",
+      "faction": "mercs",
+      "original": [
+       -44.5,
+       1.3,
+       -57.3
+      ],
+      "thezone_guess": [
+       -5388,
+       65,
+       716
+      ],
+      "building_bbox": [
+       -5468,
+       640,
+       -5385,
+       735
+      ],
+      "building_area": 7885,
+      "building_top_y": 91,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l09_deadcity.cit_killers_vs_bandits",
+      "kind": "base",
+      "faction": "mercs",
+      "original": [
+       -61.8,
+       1.6,
+       70.1
+      ],
+      "thezone_guess": [
+       -5408,
+       61,
+       861
+      ],
+      "building_bbox": [
+       -5412,
+       848,
+       -5393,
+       875
+      ],
+      "building_area": 513,
+      "building_top_y": 69,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l09_deadcity.cit_killers_merc_trader_smart_cover",
+      "kind": "trader",
+      "faction": null,
+      "original": [
+       -41.2,
+       1.7,
+       -36.4
+      ],
+      "thezone_guess": [
+       -5384,
+       60,
+       740
+      ],
+      "building_bbox": [
+       -5400,
+       732,
+       -5389,
+       771
+      ],
+      "building_area": 429,
+      "building_top_y": 65,
+      "dist": 4.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "limansk",
+  "ru": "Лиманск",
+  "point": [
+   -5533,
+   72,
+   -396
+  ],
+  "buildings": 69,
+  "fits": [
+   {
+    "level": "l10_limansk",
+    "score": 14.36,
+    "objects": 7,
+    "matched": 6,
+    "guess": {
+     "scale": 1.35,
+     "angle": 0,
+     "dx": -5528.1,
+     "dz": -772.6
+    },
+    "anchors": [
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_4",
+      "kind": "base",
+      "faction": "mercs",
+      "original": [
+       -23.7,
+       -5.1,
+       106.8
+      ],
+      "thezone_guess": [
+       -5560,
+       64,
+       -628
+      ],
+      "building_bbox": [
+       -5560,
+       -644,
+       -5493,
+       -569
+      ],
+      "building_area": 5025,
+      "building_top_y": 97,
+      "dist": 0.1
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_9",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       36.1,
+       13.7,
+       -185.1
+      ],
+      "thezone_guess": [
+       -5479,
+       75,
+       -1022
+      ],
+      "building_bbox": [
+       -5480,
+       -1016,
+       -5345,
+       -1001
+      ],
+      "building_area": 2025,
+      "building_top_y": 177,
+      "dist": 6.5
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_2",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -37.3,
+       -2.8,
+       246.3
+      ],
+      "thezone_guess": [
+       -5578,
+       70,
+       -440
+      ],
+      "building_bbox": [
+       -5576,
+       -432,
+       -5565,
+       -425
+      ],
+      "building_area": 77,
+      "building_top_y": 83,
+      "dist": 8.4
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       23.8,
+       1.0,
+       -46.2
+      ],
+      "thezone_guess": [
+       -5496,
+       65,
+       -835
+      ],
+      "building_bbox": [
+       -5512,
+       -852,
+       -5489,
+       -837
+      ],
+      "building_area": 345,
+      "building_top_y": 72,
+      "dist": 2.1
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_3",
+      "kind": "base",
+      "faction": "mercs",
+      "original": [
+       -39.7,
+       -5.2,
+       178.5
+      ],
+      "thezone_guess": [
+       -5582,
+       65,
+       -532
+      ],
+      "building_bbox": [
+       -5580,
+       -548,
+       -5573,
+       -541
+      ],
+      "building_area": 49,
+      "building_top_y": 75,
+      "dist": 9.5
+     },
+     {
+      "original_id": "l10_limansk.lim_smart_terrain_5",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       6.1,
+       -5.0,
+       53.2
+      ],
+      "thezone_guess": [
+       -5520,
+       68,
+       -701
+      ],
+      "building_bbox": [
+       -5516,
+       -692,
+       -5493,
+       -685
+      ],
+      "building_area": 161,
+      "building_top_y": 82,
+      "dist": 9.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "radar",
+  "ru": "Радар (Выжигатель)",
+  "point": [
+   -2960,
+   66,
+   92
+  ],
+  "buildings": 114,
+  "fits": [
+   {
+    "level": "l10_radar",
+    "score": 20.15,
+    "objects": 11,
+    "matched": 8,
+    "guess": {
+     "scale": 0.99,
+     "angle": 0,
+     "dx": -3257.7,
+     "dz": 3.8
+    },
+    "anchors": [
+     {
+      "original_id": "l10_radar.rad_valley_dogs",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       605.1,
+       -63.8,
+       186.7
+      ],
+      "thezone_guess": [
+       -2659,
+       20,
+       189
+      ],
+      "building_bbox": [
+       -2660,
+       36,
+       -2553,
+       435
+      ],
+      "building_area": 42693,
+      "building_top_y": 79,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l10_radar.rad_antenna_camper",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       99.4,
+       -6.2,
+       24.3
+      ],
+      "thezone_guess": [
+       -3159,
+       77,
+       28
+      ],
+      "building_bbox": [
+       -3328,
+       -88,
+       -3145,
+       99
+      ],
+      "building_area": 34221,
+      "building_top_y": 137,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l10_radar.rad2_prip_teleport",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       626.2,
+       -43.8,
+       -181.9
+      ],
+      "thezone_guess": [
+       -2638,
+       43,
+       -176
+      ],
+      "building_bbox": [
+       -2636,
+       -204,
+       -2589,
+       -173
+      ],
+      "building_area": 1457,
+      "building_top_y": 65,
+      "dist": 1.8
+     },
+     {
+      "original_id": "l10_radar.rad_prip_road",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       346.0,
+       -50.0,
+       -8.6
+      ],
+      "thezone_guess": [
+       -2915,
+       42,
+       -5
+      ],
+      "building_bbox": [
+       -2936,
+       -12,
+       -2917,
+       -1
+      ],
+      "building_area": 209,
+      "building_top_y": 47,
+      "dist": 1.8
+     },
+     {
+      "original_id": "l10_radar.rad2_loner_0000",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       192.7,
+       -12.4,
+       -83.2
+      ],
+      "thezone_guess": [
+       -3067,
+       57,
+       -79
+      ],
+      "building_bbox": [
+       -3064,
+       -92,
+       -2945,
+       -17
+      ],
+      "building_area": 8925,
+      "building_top_y": 128,
+      "dist": 3.0
+     },
+     {
+      "original_id": "l10_radar.rad_freedom_vs_duty",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       385.0,
+       -34.0,
+       -144.2
+      ],
+      "thezone_guess": [
+       -2877,
+       44,
+       -139
+      ],
+      "building_bbox": [
+       -2860,
+       -140,
+       -2849,
+       -69
+      ],
+      "building_area": 781,
+      "building_top_y": 52,
+      "dist": 16.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "hospital",
+  "ru": "Госпиталь",
+  "point": [
+   -5188,
+   78,
+   -2008
+  ],
+  "buildings": 4,
+  "fits": []
+ },
+ {
+  "location": "chnpp",
+  "ru": "ЧАЭС",
+  "point": [
+   -622,
+   71,
+   912
+  ],
+  "buildings": 69,
+  "fits": [
+   {
+    "level": "l12_stancia_2",
+    "score": 6.56,
+    "objects": 4,
+    "matched": 2,
+    "guess": {
+     "scale": 1.16,
+     "angle": 0,
+     "dx": -1019.5,
+     "dz": 1000.3
+    },
+    "anchors": [
+     {
+      "original_id": "l12_stancia_2.aes2_monolith_camp3",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       566.9,
+       18.2,
+       -286.2
+      ],
+      "thezone_guess": [
+       -362,
+       68,
+       668
+      ],
+      "building_bbox": [
+       -620,
+       596,
+       431,
+       1119
+      ],
+      "building_area": 549673,
+      "building_top_y": 180,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l12_stancia_2.aes2_monolith_camp1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       20.3,
+       4.7,
+       -154.4
+      ],
+      "thezone_guess": [
+       -996,
+       69,
+       821
+      ],
+      "building_bbox": [
+       -996,
+       824,
+       -813,
+       1115
+      ],
+      "building_area": 53253,
+      "building_top_y": 212,
+      "dist": 2.8
+     }
+    ]
+   },
+   {
+    "level": "l12_stancia",
+    "score": 6.67,
+    "objects": 3,
+    "matched": 1,
+    "guess": {
+     "scale": 0.64,
+     "angle": 0,
+     "dx": -542.0,
+     "dz": 736.4
+    },
+    "anchors": [
+     {
+      "original_id": "l12_stancia.aes_smart_terrain_monolit_blockpost",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       883.8,
+       -0.1,
+       42.6
+      ],
+      "thezone_guess": [
+       24,
+       68,
+       764
+      ],
+      "building_bbox": [
+       -620,
+       596,
+       431,
+       1119
+      ],
+      "building_area": 549673,
+      "building_top_y": 180,
+      "dist": 0.0
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "generators",
+  "ru": "Генераторы — база О-Сознания",
+  "point": [
+   0,
+   66,
+   0
+  ],
+  "buildings": 6,
+  "fits": [
+   {
+    "level": "l13_generators",
+    "score": 2.85,
+    "objects": 4,
+    "matched": 3,
+    "guess": {
+     "scale": 0.66,
+     "angle": 0,
+     "dx": 113.7,
+     "dz": -149.5
+    },
+    "anchors": [
+     {
+      "original_id": "l13_generators.gen_undeground_smart_mlr_controller",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -320.6,
+       5.6,
+       252.7
+      ],
+      "thezone_guess": [
+       -98,
+       60,
+       17
+      ],
+      "building_bbox": [
+       -92,
+       -16,
+       -65,
+       11
+      ],
+      "building_area": 729,
+      "building_top_y": 92,
+      "dist": 8.6
+     },
+     {
+      "original_id": "l13_generators.gen_undeground_smart_mlr_giant",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -101.6,
+       5.6,
+       276.6
+      ],
+      "thezone_guess": [
+       47,
+       61,
+       33
+      ],
+      "building_bbox": [
+       24,
+       56,
+       51,
+       83
+      ],
+      "building_area": 729,
+      "building_top_y": 93,
+      "dist": 23.0
+     },
+     {
+      "original_id": "l13_generators.gen_undeground_smart_mlr_burers",
+      "kind": "landmark",
+      "faction": null,
+      "original": [
+       -194.6,
+       5.6,
+       294.2
+      ],
+      "thezone_guess": [
+       -15,
+       60,
+       45
+      ],
+      "building_bbox": [
+       -48,
+       52,
+       -25,
+       75
+      ],
+      "building_area": 529,
+      "building_top_y": 92,
+      "dist": 12.6
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "dark_hollow",
+  "ru": "Тёмная лощина",
+  "point": [
+   -3092,
+   67,
+   3508
+  ],
+  "buildings": 3,
+  "fits": [
+   {
+    "level": "k01_darkscape",
+    "score": 1.96,
+    "objects": 3,
+    "matched": 1,
+    "guess": {
+     "scale": 1.42,
+     "angle": 0,
+     "dx": -3141.0,
+     "dz": 3145.2
+    },
+    "anchors": [
+     {
+      "original_id": "k01_darkscape.ds2_domik_st",
+      "kind": "base",
+      "faction": "loners",
+      "original": [
+       290.5,
+       -0.5,
+       189.2
+      ],
+      "thezone_guess": [
+       -2728,
+       56,
+       3414
+      ],
+      "building_bbox": [
+       -2724,
+       3412,
+       -2705,
+       3423
+      ],
+      "building_area": 209,
+      "building_top_y": 90,
+      "dist": 4.5
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "zaton",
+  "ru": "Затон",
+  "point": [
+   -3426,
+   93,
+   -3999
+  ],
+  "buildings": 36,
+  "fits": [
+   {
+    "level": "zaton",
+    "score": 17.3,
+    "objects": 25,
+    "matched": 6,
+    "guess": {
+     "scale": 0.65,
+     "angle": 0,
+     "dx": -3686.8,
+     "dz": -3698.5
+    },
+    "anchors": [
+     {
+      "original_id": "zaton.zat_b38",
+      "kind": "outpost",
+      "faction": "monsters",
+      "original": [
+       -400.3,
+       6.4,
+       9.3
+      ],
+      "thezone_guess": [
+       -3947,
+       88,
+       -3692
+      ],
+      "building_bbox": [
+       -4020,
+       -3740,
+       -3917,
+       -3669
+      ],
+      "building_area": 7313,
+      "building_top_y": 118,
+      "dist": 0.0
+     },
+     {
+      "original_id": "zaton.zat_sim_29",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       270.3,
+       21.7,
+       -582.6
+      ],
+      "thezone_guess": [
+       -3511,
+       64,
+       -4077
+      ],
+      "building_bbox": [
+       -3560,
+       -4096,
+       -3529,
+       -4081
+      ],
+      "building_area": 465,
+      "building_top_y": 70,
+      "dist": 18.3
+     },
+     {
+      "original_id": "zaton.zat_b5_smart_terrain",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       420.1,
+       36.3,
+       17.6
+      ],
+      "thezone_guess": [
+       -3414,
+       86,
+       -3687
+      ],
+      "building_bbox": [
+       -3508,
+       -3720,
+       -3405,
+       -3673
+      ],
+      "building_area": 4841,
+      "building_top_y": 106,
+      "dist": 0.0
+     },
+     {
+      "original_id": "zaton.zat_sim_19",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       -218.0,
+       10.8,
+       -510.7
+      ],
+      "thezone_guess": [
+       -3828,
+       68,
+       -4030
+      ],
+      "building_bbox": [
+       -3828,
+       -4028,
+       -3817,
+       -4009
+      ],
+      "building_area": 209,
+      "building_top_y": 73,
+      "dist": 2.5
+     },
+     {
+      "original_id": "zaton.zat_sim_13",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       -189.0,
+       3.9,
+       47.6
+      ],
+      "thezone_guess": [
+       -3810,
+       81,
+       -3668
+      ],
+      "building_bbox": [
+       -3808,
+       -3696,
+       -3765,
+       -3617
+      ],
+      "building_area": 3397,
+      "building_top_y": 88,
+      "dist": 1.6
+     },
+     {
+      "original_id": "zaton.zat_a1",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       243.8,
+       14.5,
+       -474.6
+      ],
+      "thezone_guess": [
+       -3528,
+       62,
+       -4007
+      ],
+      "building_bbox": [
+       -3552,
+       -3992,
+       -3537,
+       -3929
+      ],
+      "building_area": 945,
+      "building_top_y": 98,
+      "dist": 17.4
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "yanov",
+  "ru": "Станция Янов",
+  "point": [
+   -4249,
+   72,
+   -3083
+  ],
+  "buildings": 61,
+  "fits": [
+   {
+    "level": "jupiter",
+    "score": 26.47,
+    "objects": 22,
+    "matched": 11,
+    "guess": {
+     "scale": 0.71,
+     "angle": 0,
+     "dx": -4199.4,
+     "dz": -2935.3
+    },
+    "anchors": [
+     {
+      "original_id": "jupiter.jup_b208",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       399.8,
+       4.5,
+       103.8
+      ],
+      "thezone_guess": [
+       -3916,
+       57,
+       -2862
+      ],
+      "building_bbox": [
+       -4116,
+       -2900,
+       -3801,
+       -2793
+      ],
+      "building_area": 33705,
+      "building_top_y": 74,
+      "dist": 0.0
+     },
+     {
+      "original_id": "jupiter.jup_a12",
+      "kind": "outpost",
+      "faction": "bandits",
+      "original": [
+       -413.0,
+       -0.0,
+       343.7
+      ],
+      "thezone_guess": [
+       -4493,
+       76,
+       -2691
+      ],
+      "building_bbox": [
+       -4508,
+       -2680,
+       -4477,
+       -2661
+      ],
+      "building_area": 589,
+      "building_top_y": 87,
+      "dist": 11.2
+     },
+     {
+      "original_id": "jupiter.jup_b46",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       -161.1,
+       3.6,
+       -390.6
+      ],
+      "thezone_guess": [
+       -4314,
+       63,
+       -3213
+      ],
+      "building_bbox": [
+       -4340,
+       -3228,
+       -4281,
+       -3189
+      ],
+      "building_area": 2301,
+      "building_top_y": 83,
+      "dist": 0.0
+     },
+     {
+      "original_id": "jupiter.jup_b200",
+      "kind": "base",
+      "faction": null,
+      "original": [
+       356.4,
+       33.4,
+       -335.6
+      ],
+      "thezone_guess": [
+       -3946,
+       75,
+       -3174
+      ],
+      "building_bbox": [
+       -3968,
+       -3200,
+       -3933,
+       -3177
+      ],
+      "building_area": 805,
+      "building_top_y": 94,
+      "dist": 3.4
+     },
+     {
+      "original_id": "jupiter.jup_a10_smart_terrain",
+      "kind": "base",
+      "faction": "monsters",
+      "original": [
+       43.5,
+       24.0,
+       190.7
+      ],
+      "thezone_guess": [
+       -4169,
+       80,
+       -2800
+      ],
+      "building_bbox": [
+       -4212,
+       -2828,
+       -4173,
+       -2777
+      ],
+      "building_area": 1989,
+      "building_top_y": 88,
+      "dist": 4.5
+     },
+     {
+      "original_id": "jupiter.jup_b205_smart_terrain_tushkano",
+      "kind": "outpost",
+      "faction": "monsters",
+      "original": [
+       -367.6,
+       2.6,
+       7.0
+      ],
+      "thezone_guess": [
+       -4460,
+       73,
+       -2930
+      ],
+      "building_bbox": [
+       -4456,
+       -2948,
+       -4425,
+       -2933
+      ],
+      "building_area": 465,
+      "building_top_y": 80,
+      "dist": 5.1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "pripyat_north",
+  "ru": "Припять, север",
+  "point": [
+   -3040,
+   66,
+   -3252
+  ],
+  "buildings": 45,
+  "fits": [
+   {
+    "level": "pripyat",
+    "score": 14.46,
+    "objects": 18,
+    "matched": 12,
+    "guess": {
+     "scale": 0.82,
+     "angle": 0,
+     "dx": -3026.9,
+     "dz": -3172.9
+    },
+    "anchors": [
+     {
+      "original_id": "pripyat.pri_a15",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       185.6,
+       -0.3,
+       280.1
+      ],
+      "thezone_guess": [
+       -2875,
+       63,
+       -2943
+      ],
+      "building_bbox": [
+       -2940,
+       -2996,
+       -2789,
+       -2949
+      ],
+      "building_area": 7097,
+      "building_top_y": 97,
+      "dist": 5.8
+     },
+     {
+      "original_id": "pripyat.pri_a21_smart_terrain",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       -198.7,
+       -0.2,
+       199.5
+      ],
+      "thezone_guess": [
+       -3190,
+       64,
+       -3009
+      ],
+      "building_bbox": [
+       -3268,
+       -3024,
+       -3193,
+       -2985
+      ],
+      "building_area": 2925,
+      "building_top_y": 70,
+      "dist": 3.1
+     },
+     {
+      "original_id": "pripyat.pri_a17",
+      "kind": "outpost",
+      "faction": "isg",
+      "original": [
+       222.2,
+       -0.2,
+       -32.2
+      ],
+      "thezone_guess": [
+       -2845,
+       95,
+       -3199
+      ],
+      "building_bbox": [
+       -2844,
+       -3208,
+       -2693,
+       -3165
+      ],
+      "building_area": 6493,
+      "building_top_y": 97,
+      "dist": 0.7
+     },
+     {
+      "original_id": "pripyat.pri_b35_military",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       46.9,
+       16.5,
+       140.0
+      ],
+      "thezone_guess": [
+       -2988,
+       95,
+       -3058
+      ],
+      "building_bbox": [
+       -3020,
+       -3184,
+       -3001,
+       -3053
+      ],
+      "building_area": 2489,
+      "building_top_y": 97,
+      "dist": 12.5
+     },
+     {
+      "original_id": "pripyat.pri_a18_smart_terrain",
+      "kind": "base",
+      "faction": "mercs",
+      "original": [
+       -181.1,
+       0.5,
+       347.7
+      ],
+      "thezone_guess": [
+       -3175,
+       63,
+       -2888
+      ],
+      "building_bbox": [
+       -3200,
+       -2880,
+       -3165,
+       -2833
+      ],
+      "building_area": 1645,
+      "building_top_y": 105,
+      "dist": 7.8
+     },
+     {
+      "original_id": "pripyat.pri_b305_dogs",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       26.0,
+       -0.5,
+       285.9
+      ],
+      "thezone_guess": [
+       -3006,
+       63,
+       -2938
+      ],
+      "building_bbox": [
+       -3012,
+       -2916,
+       -2965,
+       -2881
+      ],
+      "building_area": 1645,
+      "building_top_y": 105,
+      "dist": 22.5
+     }
+    ]
+   },
+   {
+    "level": "l11_pripyat",
+    "score": 6.6,
+    "objects": 4,
+    "matched": 4,
+    "guess": {
+     "scale": 0.78,
+     "angle": 0,
+     "dx": -3365.5,
+     "dz": -3087.2
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_monolith",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       2.7,
+       -0.4,
+       -185.1
+      ],
+      "thezone_guess": [
+       -3363,
+       63,
+       -3232
+      ],
+      "building_bbox": [
+       -3524,
+       -3220,
+       -3365,
+       -3193
+      ],
+      "building_area": 4293,
+      "building_top_y": 97,
+      "dist": 11.7
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -3355,
+       63,
+       -2908
+      ],
+      "building_bbox": [
+       -3400,
+       -2904,
+       -3353,
+       -2833
+      ],
+      "building_area": 3337,
+      "building_top_y": 105,
+      "dist": 3.6
+     },
+     {
+      "original_id": "l11_pripyat.pri_depot",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       -100.6,
+       -2.2,
+       7.5
+      ],
+      "thezone_guess": [
+       -3444,
+       64,
+       -3081
+      ],
+      "building_bbox": [
+       -3516,
+       -3108,
+       -3441,
+       -3065
+      ],
+      "building_area": 3225,
+      "building_top_y": 70,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       31.3,
+       -0.6,
+       -256.8
+      ],
+      "thezone_guess": [
+       -3341,
+       79,
+       -3287
+      ],
+      "building_bbox": [
+       -3360,
+       -3300,
+       -3349,
+       -3297
+      ],
+      "building_area": 33,
+      "building_top_y": 97,
+      "dist": 12.4
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "pripyat_south",
+  "ru": "Припять, юг",
+  "point": [
+   -2860,
+   66,
+   -1614
+  ],
+  "buildings": 50,
+  "fits": [
+   {
+    "level": "pripyat",
+    "score": 18.01,
+    "objects": 18,
+    "matched": 11,
+    "guess": {
+     "scale": 0.94,
+     "angle": 0,
+     "dx": -3030.5,
+     "dz": -1835.9
+    },
+    "anchors": [
+     {
+      "original_id": "pripyat.pri_b35_military",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       46.9,
+       16.5,
+       140.0
+      ],
+      "thezone_guess": [
+       -2986,
+       62,
+       -1704
+      ],
+      "building_bbox": [
+       -2992,
+       -1716,
+       -2961,
+       -1649
+      ],
+      "building_area": 2077,
+      "building_top_y": 69,
+      "dist": 0.0
+     },
+     {
+      "original_id": "pripyat.pri_a21_smart_terrain",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       -198.7,
+       -0.2,
+       199.5
+      ],
+      "thezone_guess": [
+       -3217,
+       63,
+       -1648
+      ],
+      "building_bbox": [
+       -3220,
+       -1656,
+       -3205,
+       -1645
+      ],
+      "building_area": 165,
+      "building_top_y": 77,
+      "dist": 0.0
+     },
+     {
+      "original_id": "pripyat.pri_a28_school",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       88.9,
+       -0.5,
+       -104.1
+      ],
+      "thezone_guess": [
+       -2947,
+       63,
+       -1934
+      ],
+      "building_bbox": [
+       -2988,
+       -1956,
+       -2937,
+       -1945
+      ],
+      "building_area": 561,
+      "building_top_y": 80,
+      "dist": 11.2
+     },
+     {
+      "original_id": "pripyat.pri_a15",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       185.6,
+       -0.3,
+       280.1
+      ],
+      "thezone_guess": [
+       -2856,
+       63,
+       -1573
+      ],
+      "building_bbox": [
+       -2864,
+       -1588,
+       -2853,
+       -1577
+      ],
+      "building_area": 121,
+      "building_top_y": 66,
+      "dist": 4.4
+     },
+     {
+      "original_id": "pripyat.pri_a17",
+      "kind": "outpost",
+      "faction": "isg",
+      "original": [
+       222.2,
+       -0.2,
+       -32.2
+      ],
+      "thezone_guess": [
+       -2822,
+       63,
+       -1866
+      ],
+      "building_bbox": [
+       -2820,
+       -1884,
+       -2805,
+       -1777
+      ],
+      "building_area": 1605,
+      "building_top_y": 83,
+      "dist": 1.6
+     },
+     {
+      "original_id": "pripyat.pri_b305_dogs",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       26.0,
+       -0.5,
+       285.9
+      ],
+      "thezone_guess": [
+       -3006,
+       63,
+       -1567
+      ],
+      "building_bbox": [
+       -3088,
+       -1596,
+       -3009,
+       -1585
+      ],
+      "building_area": 869,
+      "building_top_y": 80,
+      "dist": 18.1
+     }
+    ]
+   },
+   {
+    "level": "l11_pripyat",
+    "score": 7.24,
+    "objects": 4,
+    "matched": 4,
+    "guess": {
+     "scale": 0.62,
+     "angle": 0,
+     "dx": -2944.1,
+     "dz": -1775.4
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_depot",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       -100.6,
+       -2.2,
+       7.5
+      ],
+      "thezone_guess": [
+       -3006,
+       63,
+       -1771
+      ],
+      "building_bbox": [
+       -3068,
+       -1792,
+       -3013,
+       -1705
+      ],
+      "building_area": 4785,
+      "building_top_y": 80,
+      "dist": 6.5
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       31.3,
+       -0.6,
+       -256.8
+      ],
+      "thezone_guess": [
+       -2925,
+       63,
+       -1935
+      ],
+      "building_bbox": [
+       -2924,
+       -1924,
+       -2889,
+       -1897
+      ],
+      "building_area": 945,
+      "building_top_y": 97,
+      "dist": 10.6
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -2935,
+       63,
+       -1633
+      ],
+      "building_bbox": [
+       -2936,
+       -1732,
+       -2921,
+       -1629
+      ],
+      "building_area": 1545,
+      "building_top_y": 83,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_monolith",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       2.7,
+       -0.4,
+       -185.1
+      ],
+      "thezone_guess": [
+       -2942,
+       63,
+       -1890
+      ],
+      "building_bbox": [
+       -2988,
+       -1908,
+       -2937,
+       -1893
+      ],
+      "building_area": 765,
+      "building_top_y": 80,
+      "dist": 2.9
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "pripyat_center",
+  "ru": "Припять, центр",
+  "point": [
+   -2862,
+   66,
+   -2312
+  ],
+  "buildings": 39,
+  "fits": [
+   {
+    "level": "pripyat",
+    "score": 17.09,
+    "objects": 18,
+    "matched": 11,
+    "guess": {
+     "scale": 0.96,
+     "angle": 0,
+     "dx": -2976.5,
+     "dz": -2275.9
+    },
+    "anchors": [
+     {
+      "original_id": "pripyat.pri_a28_evac",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       89.5,
+       -0.4,
+       -258.7
+      ],
+      "thezone_guess": [
+       -2891,
+       64,
+       -2524
+      ],
+      "building_bbox": [
+       -2916,
+       -2544,
+       -2797,
+       -2461
+      ],
+      "building_area": 9877,
+      "building_top_y": 92,
+      "dist": 0.0
+     },
+     {
+      "original_id": "pripyat.pri_b304_monsters_smart_terrain",
+      "kind": "outpost",
+      "faction": "monsters",
+      "original": [
+       -101.7,
+       0.5,
+       257.2
+      ],
+      "thezone_guess": [
+       -3074,
+       63,
+       -2029
+      ],
+      "building_bbox": [
+       -3064,
+       -2108,
+       -3009,
+       -2021
+      ],
+      "building_area": 4785,
+      "building_top_y": 80,
+      "dist": 10.1
+     },
+     {
+      "original_id": "pripyat.pri_a15",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       185.6,
+       -0.3,
+       280.1
+      ],
+      "thezone_guess": [
+       -2798,
+       63,
+       -2007
+      ],
+      "building_bbox": [
+       -2820,
+       -2048,
+       -2805,
+       -1941
+      ],
+      "building_area": 1605,
+      "building_top_y": 83,
+      "dist": 6.7
+     },
+     {
+      "original_id": "pripyat.pri_a22_smart_terrain",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       71.6,
+       -0.5,
+       13.6
+      ],
+      "thezone_guess": [
+       -2908,
+       63,
+       -2263
+      ],
+      "building_bbox": [
+       -2928,
+       -2276,
+       -2909,
+       -2261
+      ],
+      "building_area": 285,
+      "building_top_y": 68,
+      "dist": 1.2
+     },
+     {
+      "original_id": "pripyat.pri_b36_smart_terrain",
+      "kind": "outpost",
+      "faction": "monolith",
+      "original": [
+       293.8,
+       0.7,
+       -231.0
+      ],
+      "thezone_guess": [
+       -2694,
+       62,
+       -2498
+      ],
+      "building_bbox": [
+       -2772,
+       -2476,
+       -2649,
+       -2405
+      ],
+      "building_area": 8733,
+      "building_top_y": 91,
+      "dist": 21.7
+     },
+     {
+      "original_id": "pripyat.pri_a17",
+      "kind": "outpost",
+      "faction": "isg",
+      "original": [
+       222.2,
+       -0.2,
+       -32.2
+      ],
+      "thezone_guess": [
+       -2763,
+       63,
+       -2307
+      ],
+      "building_bbox": [
+       -2820,
+       -2308,
+       -2757,
+       -2237
+      ],
+      "building_area": 4473,
+      "building_top_y": 95,
+      "dist": 0.0
+     }
+    ]
+   },
+   {
+    "level": "l11_pripyat",
+    "score": 8.11,
+    "objects": 4,
+    "matched": 4,
+    "guess": {
+     "scale": 0.87,
+     "angle": 0,
+     "dx": -2942.8,
+     "dz": -2254.6
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       31.3,
+       -0.6,
+       -256.8
+      ],
+      "thezone_guess": [
+       -2916,
+       64,
+       -2478
+      ],
+      "building_bbox": [
+       -2916,
+       -2544,
+       -2797,
+       -2461
+      ],
+      "building_area": 9877,
+      "building_top_y": 92,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -2931,
+       63,
+       -2054
+      ],
+      "building_bbox": [
+       -2928,
+       -2048,
+       -2913,
+       -1945
+      ],
+      "building_area": 1545,
+      "building_top_y": 83,
+      "dist": 6.9
+     },
+     {
+      "original_id": "l11_pripyat.pri_depot",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       -100.6,
+       -2.2,
+       7.5
+      ],
+      "thezone_guess": [
+       -3030,
+       63,
+       -2248
+      ],
+      "building_bbox": [
+       -3040,
+       -2268,
+       -2933,
+       -2253
+      ],
+      "building_area": 1605,
+      "building_top_y": 83,
+      "dist": 4.9
+     },
+     {
+      "original_id": "l11_pripyat.pri_monolith",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       2.7,
+       -0.4,
+       -185.1
+      ],
+      "thezone_guess": [
+       -2940,
+       64,
+       -2416
+      ],
+      "building_bbox": [
+       -2984,
+       -2408,
+       -2941,
+       -2357
+      ],
+      "building_area": 2193,
+      "building_top_y": 78,
+      "dist": 7.7
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "pripyat_east",
+  "ru": "Припять, восток",
+  "point": [
+   -2382,
+   66,
+   -2344
+  ],
+  "buildings": 24,
+  "fits": [
+   {
+    "level": "pripyat",
+    "score": 10.74,
+    "objects": 18,
+    "matched": 9,
+    "guess": {
+     "scale": 1.1,
+     "angle": 0,
+     "dx": -2570.1,
+     "dz": -2311.0
+    },
+    "anchors": [
+     {
+      "original_id": "pripyat.pri_a15",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       185.6,
+       -0.3,
+       280.1
+      ],
+      "thezone_guess": [
+       -2366,
+       62,
+       -2003
+      ],
+      "building_bbox": [
+       -2364,
+       -2160,
+       -2301,
+       -1997
+      ],
+      "building_area": 10269,
+      "building_top_y": 81,
+      "dist": 1.9
+     },
+     {
+      "original_id": "pripyat.pri_a28_evac",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       89.5,
+       -0.4,
+       -258.7
+      ],
+      "thezone_guess": [
+       -2472,
+       63,
+       -2596
+      ],
+      "building_bbox": [
+       -2536,
+       -2644,
+       -2469,
+       -2597
+      ],
+      "building_area": 3149,
+      "building_top_y": 100,
+      "dist": 1.5
+     },
+     {
+      "original_id": "pripyat.pri_a22_smart_terrain",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       71.6,
+       -0.5,
+       13.6
+      ],
+      "thezone_guess": [
+       -2491,
+       63,
+       -2296
+      ],
+      "building_bbox": [
+       -2532,
+       -2312,
+       -2509,
+       -2289
+      ],
+      "building_area": 529,
+      "building_top_y": 105,
+      "dist": 17.7
+     },
+     {
+      "original_id": "pripyat.pri_b305_dogs",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       26.0,
+       -0.5,
+       285.9
+      ],
+      "thezone_guess": [
+       -2541,
+       63,
+       -1996
+      ],
+      "building_bbox": [
+       -2568,
+       -1992,
+       -2509,
+       -1889
+      ],
+      "building_area": 6077,
+      "building_top_y": 80,
+      "dist": 4.5
+     },
+     {
+      "original_id": "pripyat.pri_a17",
+      "kind": "outpost",
+      "faction": "isg",
+      "original": [
+       222.2,
+       -0.2,
+       -32.2
+      ],
+      "thezone_guess": [
+       -2326,
+       66,
+       -2346
+      ],
+      "building_bbox": [
+       -2328,
+       -2344,
+       -2297,
+       -2313
+      ],
+      "building_area": 961,
+      "building_top_y": 73,
+      "dist": 2.4
+     },
+     {
+      "original_id": "pripyat.pri_b35_military",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       46.9,
+       16.5,
+       140.0
+      ],
+      "thezone_guess": [
+       -2518,
+       62,
+       -2157
+      ],
+      "building_bbox": [
+       -2564,
+       -2196,
+       -2493,
+       -2145
+      ],
+      "building_area": 3621,
+      "building_top_y": 76,
+      "dist": 0.0
+     }
+    ]
+   },
+   {
+    "level": "l11_pripyat",
+    "score": 5.44,
+    "objects": 4,
+    "matched": 4,
+    "guess": {
+     "scale": 0.69,
+     "angle": 0,
+     "dx": -2506.8,
+     "dz": -2186.3
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       31.3,
+       -0.6,
+       -256.8
+      ],
+      "thezone_guess": [
+       -2485,
+       62,
+       -2363
+      ],
+      "building_bbox": [
+       -2556,
+       -2428,
+       -2469,
+       -2369
+      ],
+      "building_area": 5133,
+      "building_top_y": 72,
+      "dist": 5.5
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -2497,
+       63,
+       -2027
+      ],
+      "building_bbox": [
+       -2564,
+       -2024,
+       -2489,
+       -2009
+      ],
+      "building_area": 1125,
+      "building_top_y": 80,
+      "dist": 3.4
+     },
+     {
+      "original_id": "l11_pripyat.pri_depot",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       -100.6,
+       -2.2,
+       7.5
+      ],
+      "thezone_guess": [
+       -2576,
+       62,
+       -2181
+      ],
+      "building_bbox": [
+       -2564,
+       -2196,
+       -2493,
+       -2145
+      ],
+      "building_area": 3621,
+      "building_top_y": 76,
+      "dist": 12.2
+     },
+     {
+      "original_id": "l11_pripyat.pri_monolith",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       2.7,
+       -0.4,
+       -185.1
+      ],
+      "thezone_guess": [
+       -2505,
+       63,
+       -2314
+      ],
+      "building_bbox": [
+       -2532,
+       -2312,
+       -2509,
+       -2289
+      ],
+      "building_area": 529,
+      "building_top_y": 105,
+      "dist": 4.5
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "location": "pripyat_west",
+  "ru": "Припять, запад",
+  "point": [
+   -3418,
+   66,
+   -2296
+  ],
+  "buildings": 40,
+  "fits": [
+   {
+    "level": "pripyat",
+    "score": 17.66,
+    "objects": 18,
+    "matched": 11,
+    "guess": {
+     "scale": 1.12,
+     "angle": 0,
+     "dx": -3466.1,
+     "dz": -2365.0
+    },
+    "anchors": [
+     {
+      "original_id": "pripyat.pri_a16",
+      "kind": "base",
+      "faction": "traders",
+      "original": [
+       154.8,
+       -0.1,
+       185.4
+      ],
+      "thezone_guess": [
+       -3293,
+       63,
+       -2157
+      ],
+      "building_bbox": [
+       -3312,
+       -2180,
+       -3233,
+       -2101
+      ],
+      "building_area": 6241,
+      "building_top_y": 80,
+      "dist": 0.0
+     },
+     {
+      "original_id": "pripyat.pri_a28_heli",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       165.3,
+       -0.7,
+       -348.2
+      ],
+      "thezone_guess": [
+       -3281,
+       63,
+       -2755
+      ],
+      "building_bbox": [
+       -3340,
+       -2784,
+       -3293,
+       -2749
+      ],
+      "building_area": 1645,
+      "building_top_y": 105,
+      "dist": 12.1
+     },
+     {
+      "original_id": "pripyat.pri_a28_school",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       88.9,
+       -0.5,
+       -104.1
+      ],
+      "thezone_guess": [
+       -3366,
+       63,
+       -2482
+      ],
+      "building_bbox": [
+       -3368,
+       -2484,
+       -3345,
+       -2461
+      ],
+      "building_area": 529,
+      "building_top_y": 105,
+      "dist": 0.0
+     },
+     {
+      "original_id": "pripyat.pri_a17",
+      "kind": "outpost",
+      "faction": "isg",
+      "original": [
+       222.2,
+       -0.2,
+       -32.2
+      ],
+      "thezone_guess": [
+       -3217,
+       62,
+       -2401
+      ],
+      "building_bbox": [
+       -3224,
+       -2392,
+       -3193,
+       -2369
+      ],
+      "building_area": 713,
+      "building_top_y": 69,
+      "dist": 9.0
+     },
+     {
+      "original_id": "pripyat.pri_a22_smart_terrain",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       71.6,
+       -0.5,
+       13.6
+      ],
+      "thezone_guess": [
+       -3386,
+       63,
+       -2350
+      ],
+      "building_bbox": [
+       -3380,
+       -2356,
+       -3329,
+       -2341
+      ],
+      "building_area": 765,
+      "building_top_y": 82,
+      "dist": 5.9
+     },
+     {
+      "original_id": "pripyat.pri_b35_military",
+      "kind": "outpost",
+      "faction": null,
+      "original": [
+       46.9,
+       16.5,
+       140.0
+      ],
+      "thezone_guess": [
+       -3414,
+       63,
+       -2208
+      ],
+      "building_bbox": [
+       -3412,
+       -2220,
+       -3401,
+       -2197
+      ],
+      "building_area": 253,
+      "building_top_y": 67,
+      "dist": 1.5
+     }
+    ]
+   },
+   {
+    "level": "l11_pripyat",
+    "score": 8.07,
+    "objects": 4,
+    "matched": 4,
+    "guess": {
+     "scale": 0.7,
+     "angle": 0,
+     "dx": -3218.8,
+     "dz": -2214.3
+    },
+    "anchors": [
+     {
+      "original_id": "l11_pripyat.pri_depot",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       -100.6,
+       -2.2,
+       7.5
+      ],
+      "thezone_guess": [
+       -3289,
+       63,
+       -2209
+      ],
+      "building_bbox": [
+       -3332,
+       -2224,
+       -3253,
+       -2145
+      ],
+      "building_area": 6241,
+      "building_top_y": 80,
+      "dist": 0.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_monolith_stalker6",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       31.3,
+       -0.6,
+       -256.8
+      ],
+      "thezone_guess": [
+       -3197,
+       62,
+       -2394
+      ],
+      "building_bbox": [
+       -3224,
+       -2392,
+       -3193,
+       -2369
+      ],
+      "building_area": 713,
+      "building_top_y": 69,
+      "dist": 2.0
+     },
+     {
+      "original_id": "l11_pripyat.pri_smart_neutral_stalker1",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       14.0,
+       -2.5,
+       230.2
+      ],
+      "thezone_guess": [
+       -3209,
+       63,
+       -2053
+      ],
+      "building_bbox": [
+       -3288,
+       -2136,
+       -3209,
+       -2057
+      ],
+      "building_area": 6241,
+      "building_top_y": 80,
+      "dist": 3.9
+     },
+     {
+      "original_id": "l11_pripyat.pri_monolith",
+      "kind": "base",
+      "faction": "monolith",
+      "original": [
+       2.7,
+       -0.4,
+       -185.1
+      ],
+      "thezone_guess": [
+       -3217,
+       62,
+       -2344
+      ],
+      "building_bbox": [
+       -3224,
+       -2328,
+       -3121,
+       -2317
+      ],
+      "building_area": 1133,
+      "building_top_y": 80,
+      "dist": 15.8
+     }
+    ]
+   }
+  ]
+ }
+]
