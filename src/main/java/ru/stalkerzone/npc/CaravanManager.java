@@ -163,21 +163,41 @@ public final class CaravanManager {
             }
         }
     }
-/** Гибель NPC каравана: ослабить караван, для курьера — потеря груза через Ledger. */
-    public static void caravanNpcKilled(StalkerEntity e, Simulation sim) {
+    /**
+     * Гибель NPC каравана: ослабить караван. Для курьера (Э0-09, «все деньги физичны») груз и деньги уходят из
+     * симуляции через {@link Simulation#courierLost} и возвращаются предметами: рубли, товары, КПК курьера —
+     * их кладут в рюкзак на месте гибели. Для остальных — пустой список.
+     */
+    public static List<ItemStack> caravanNpcKilled(StalkerEntity e, Simulation sim) {
+        List<ItemStack> out = new ArrayList<>();
         Caravan cv = caravanOf(e);
-        if (cv == null) return;
+        if (cv == null) return out;
         cv.guards = Math.max(0, cv.guards - 1);
         if (cv.courierFor >= 0 && e.getPersistentData().getBoolean("sz_courier")) {
-            for (int j = 0; j < cv.cargo.qty.length; j++) {
-                if (j < sim.ledger.destroyed.length) sim.ledger.destroyed[j] += cv.cargo.qty[j];
-                cv.cargo.qty[j] = 0;
-            }
-            cv.cargo.money = 0;
+            long[] lost = sim.courierLost(cv);
+            out.addAll(ru.stalkerzone.item.ModItems.rubleStacks(lost[Simulation.G]));
+            for (ru.stalkerzone.sim.Good g : ru.stalkerzone.sim.Good.ALL) addGood(out, g, lost[g.ordinal()]);
+            ItemStack pda = new ItemStack(ru.stalkerzone.item.ModItems.PDA.get());
+            pda.setHoverName(Component.literal("КПК: " + e.getName().getString()));
+            out.add(pda);
             sim.factions.get(cv.courierFor).resent(cv.owner, 0.3);
         }
         List<StalkerEntity> list = spawned.get(cv);
         if (list != null) { list.remove(e); if (list.isEmpty()) spawned.remove(cv); }
+        return out;
+    }
+
+    /** Товар предметами: штука = units() единиц; стопки по размеру предмета. */
+    static void addGood(List<ItemStack> out, ru.stalkerzone.sim.Good g, long qty) {
+        net.minecraft.world.item.Item it = ru.stalkerzone.item.ModItems.of(g);
+        int per = it instanceof ru.stalkerzone.item.GoodItem gi ? Math.max(1, gi.units()) : 1;
+        long n = qty / per;
+        int stack = Math.max(1, new ItemStack(it).getMaxStackSize());
+        while (n > 0) {
+            int c = (int) Math.min(stack, n);
+            out.add(new ItemStack(it, c));
+            n -= c;
+        }
     }
 
     /** Караван, к отряду которого приписан NPC, или null. */

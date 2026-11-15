@@ -2575,6 +2575,24 @@ public final class Simulation {
     }
 
     /** Проверка закона сохранения. Возвращает пустую строку, если всё сходится, иначе описание расхождения. */
+    /**
+     * Э0-09: курьер Торговцев убит в мире — груз и деньги уходят из симуляции в мир предметами (рюкзак на месте
+     * гибели): товары — {@code ledger.destroyed}, деньги — {@code ledger.moneyBurned}, как выплаты игроку.
+     * Возвращает снимок ушедшего: [0..G) — товары по {@link Good}, [G] — деньги. Повторный вызов — пустой снимок.
+     */
+    public long[] courierLost(Caravan c) {
+        long[] out = new long[G + 1];
+        for (Good g : Good.ALL) {
+            int q = c.cargo.take(g, c.cargo.get(g));
+            ledger.destroyed[g.ordinal()] += q;
+            out[g.ordinal()] = q;
+        }
+        out[G] = c.cargo.money;
+        ledger.moneyBurned += c.cargo.money;
+        c.cargo.money = 0;
+        return out;
+    }
+
     public String audit() {
         long[] now = new long[G];
         long money = totals(now);

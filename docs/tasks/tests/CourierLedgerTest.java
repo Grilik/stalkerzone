@@ -3,7 +3,8 @@ import ru.stalkerzone.sim.*;
 /**
  * Э0-09: гибель курьера Торговцев не нарушает закон сохранения: всё, что вёз курьер, уходит из симуляции в мир предметами (рюкзак на месте смерти).
  * Груз курьера уходит в ledger.destroyed, деньги — в ledger.moneyBurned; запись делает
- * Simulation.courierLost(Caravan), а не игровой код (CaravanManager).
+ * Simulation.courierLost(Caravan), а не игровой код (CaravanManager); метод возвращает снимок ушедшего —
+ * мир кладёт ровно это предметами в рюкзак на месте гибели («все деньги физичны»).
  */
 public class CourierLedgerTest {
     static int f = 0;
@@ -28,7 +29,7 @@ public class CourierLedgerTest {
 
             long burned0 = s.ledger.moneyBurned;
             long[] destroyed0 = s.ledger.destroyed.clone();
-            s.courierLost(c);
+            long[] snap = s.courierLost(c);
 
             ck(s.audit().isEmpty(), "сид " + seed + ": после гибели курьера аудит пуст: " + s.audit());
             ck(s.ledger.moneyBurned - burned0 == money, "сид " + seed + ": moneyBurned вырос ровно на " + money
@@ -37,8 +38,14 @@ public class CourierLedgerTest {
             for (Good g : Good.ALL) if (s.ledger.destroyed[g.ordinal()] - destroyed0[g.ordinal()] != goods[g.ordinal()]) goodsOk = false;
             ck(goodsOk, "сид " + seed + ": груз курьера записан в destroyed");
             ck(c.cargo.money == 0 && c.cargo.get(Good.ALL[0]) == 0, "сид " + seed + ": груз курьера пуст");
+            boolean snapOk = snap.length == Simulation.G + 1 && snap[Simulation.G] == money;
+            for (Good g : Good.ALL) if (snap[g.ordinal()] != goods[g.ordinal()]) snapOk = false;
+            ck(snapOk, "сид " + seed + ": снимок ушедшего = деньги и товары курьера (их мир выдаёт предметами)");
 
-            s.courierLost(c);
+            long[] again = s.courierLost(c);
+            boolean empty = true;
+            for (long v : again) if (v != 0) empty = false;
+            ck(empty, "сид " + seed + ": повторный вызов — пустой снимок");
             ck(s.ledger.moneyBurned - burned0 == money && s.audit().isEmpty(), "сид " + seed + ": повторный вызов ничего не списывает");
             for (int d = 0; d < 3; d++) s.step();
             ck(s.audit().isEmpty(), "сид " + seed + ": аудит пуст через 3 дня");
