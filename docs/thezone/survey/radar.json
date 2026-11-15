@@ -1,0 +1,2563 @@
+{
+ "id": "radar",
+ "name": "radar",
+ "ru": "Радар (Выжигатель)",
+ "point": [
+  -2960,
+  66,
+  92
+ ],
+ "mark_bbox": [
+  -3584,
+  -464,
+  -2336,
+  648
+ ],
+ "source": "border.json, метка 2 пользователя",
+ "bbox": [
+  -3584,
+  -464,
+  -2336,
+  648
+ ],
+ "area_draft": [
+  [
+   -3528,
+   12
+  ],
+  [
+   -2856,
+   -408
+  ],
+  [
+   -2849,
+   -408
+  ],
+  [
+   -2589,
+   -204
+  ],
+  [
+   -2313,
+   324
+  ],
+  [
+   -2313,
+   355
+  ],
+  [
+   -2561,
+   603
+  ],
+  [
+   -2833,
+   607
+  ],
+  [
+   -3024,
+   607
+  ],
+  [
+   -3416,
+   347
+  ],
+  [
+   -3444,
+   291
+  ],
+  [
+   -3528,
+   23
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.472,
+  "лес": 0.3693,
+  "вода": 0.0201,
+  "постройки": 0.0299,
+  "асфальт": 0.0296,
+  "гравий/грунтовка": 0.0599,
+  "рельсы": 0.0015,
+  "искусственное низкое": 0.013,
+  "песок": 0.0046
+ },
+ "buildings_count": 109,
+ "linear_count": 5,
+ "buildings": [
+  {
+   "bbox": [
+    -2660,
+    36,
+    -2553,
+    435
+   ],
+   "footprint": 16294,
+   "kind": "building",
+   "ground_y": 19,
+   "top_y": 79,
+   "height": 60,
+   "roof": [
+    "chiseled_stone_bricks",
+    "cobblestone",
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2740,
+    272,
+    -2609,
+    463
+   ],
+   "footprint": 7484,
+   "kind": "building",
+   "ground_y": 20,
+   "top_y": 66,
+   "height": 46,
+   "roof": [
+    "chiseled_stone_bricks",
+    "cobblestone",
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3024,
+    4,
+    -2737,
+    175
+   ],
+   "footprint": 5183,
+   "kind": "building",
+   "ground_y": 35,
+   "top_y": 118,
+   "height": 83,
+   "roof": [
+    "chiseled_stone_bricks",
+    "quartz_block",
+    "quartz_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3328,
+    -88,
+    -3145,
+    99
+   ],
+   "footprint": 4112,
+   "kind": "building",
+   "ground_y": 76,
+   "top_y": 137,
+   "height": 61,
+   "roof": [
+    "cobblestone",
+    "bricks",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3296,
+    36,
+    -3237,
+    103
+   ],
+   "footprint": 1207,
+   "kind": "building",
+   "ground_y": 77,
+   "top_y": 137,
+   "height": 60,
+   "roof": [
+    "smooth_stone_slab",
+    "cobblestone",
+    "stone_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3024,
+    580,
+    -2833,
+    607
+   ],
+   "footprint": 959,
+   "kind": "linear",
+   "ground_y": 51,
+   "top_y": 82,
+   "height": 31,
+   "roof": [
+    "cobblestone",
+    "smooth_stone_slab",
+    "iron_trapdoor"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3064,
+    -92,
+    -2945,
+    -17
+   ],
+   "footprint": 810,
+   "kind": "building",
+   "ground_y": 56,
+   "top_y": 128,
+   "height": 72,
+   "roof": [
+    "cobblestone",
+    "smooth_stone_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3304,
+    20,
+    -3281,
+    75
+   ],
+   "footprint": 761,
+   "kind": "building",
+   "ground_y": 77,
+   "top_y": 100,
+   "height": 23,
+   "roof": [
+    "smooth_stone_slab",
+    "stone_brick_slab",
+    "iron_block"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2984,
+    236,
+    -2957,
+    271
+   ],
+   "footprint": 698,
+   "kind": "building",
+   "ground_y": 35,
+   "top_y": 76,
+   "height": 41,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2636,
+    -204,
+    -2589,
+    -173
+   ],
+   "footprint": 395,
+   "kind": "building",
+   "ground_y": 42,
+   "top_y": 65,
+   "height": 23,
+   "roof": [
+    "cobblestone",
+    "iron_bars",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2716,
+    -36,
+    -2685,
+    -13
+   ],
+   "footprint": 352,
+   "kind": "building",
+   "ground_y": 26,
+   "top_y": 34,
+   "height": 8,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2996,
+    188,
+    -2973,
+    211
+   ],
+   "footprint": 351,
+   "kind": "building",
+   "ground_y": 27,
+   "top_y": 51,
+   "height": 24,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2812,
+    164,
+    -2789,
+    187
+   ],
+   "footprint": 327,
+   "kind": "building",
+   "ground_y": 11,
+   "top_y": 32,
+   "height": 21,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2740,
+    532,
+    -2657,
+    567
+   ],
+   "footprint": 315,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2696,
+    172,
+    -2669,
+    187
+   ],
+   "footprint": 292,
+   "kind": "building",
+   "ground_y": 13,
+   "top_y": 21,
+   "height": 8,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3416,
+    312,
+    -3357,
+    347
+   ],
+   "footprint": 287,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3120,
+    -56,
+    -3081,
+    11
+   ],
+   "footprint": 285,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 79,
+   "height": 13,
+   "roof": [
+    "cobblestone",
+    "smooth_stone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -140,
+    -2849,
+    -69
+   ],
+   "footprint": 222,
+   "kind": "linear",
+   "ground_y": 43,
+   "top_y": 52,
+   "height": 9,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3456,
+    16,
+    -3437,
+    67
+   ],
+   "footprint": 211,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 58,
+   "height": 8,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2816,
+    592,
+    -2741,
+    603
+   ],
+   "footprint": 209,
+   "kind": "linear",
+   "ground_y": 69,
+   "top_y": 82,
+   "height": 13,
+   "roof": [
+    "cobblestone",
+    "tripwire",
+    "cobblestone_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3464,
+    136,
+    -3449,
+    183
+   ],
+   "footprint": 208,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3172,
+    400,
+    -3141,
+    443
+   ],
+   "footprint": 207,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 66,
+   "height": 16,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "oak_leaves"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3140,
+    16,
+    -3105,
+    59
+   ],
+   "footprint": 197,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 83,
+   "height": 16,
+   "roof": [
+    "cobblestone",
+    "smooth_stone_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3460,
+    68,
+    -3445,
+    119
+   ],
+   "footprint": 188,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3240,
+    344,
+    -3197,
+    371
+   ],
+   "footprint": 181,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3300,
+    340,
+    -3245,
+    351
+   ],
+   "footprint": 180,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2732,
+    -8,
+    -2685,
+    3
+   ],
+   "footprint": 177,
+   "kind": "building",
+   "ground_y": 22,
+   "top_y": 26,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2368,
+    324,
+    -2313,
+    355
+   ],
+   "footprint": 176,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 66,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2808,
+    220,
+    -2797,
+    247
+   ],
+   "footprint": 171,
+   "kind": "building",
+   "ground_y": 23,
+   "top_y": 30,
+   "height": 7,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3460,
+    188,
+    -3441,
+    235
+   ],
+   "footprint": 166,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2804,
+    564,
+    -2757,
+    583
+   ],
+   "footprint": 162,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3108,
+    492,
+    -3081,
+    527
+   ],
+   "footprint": 159,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 54,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2424,
+    296,
+    -2373,
+    319
+   ],
+   "footprint": 148,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 70,
+   "height": 9,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "oak_leaves"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2652,
+    180,
+    -2637,
+    195
+   ],
+   "footprint": 141,
+   "kind": "building",
+   "ground_y": 10,
+   "top_y": 22,
+   "height": 12,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2608,
+    432,
+    -2589,
+    487
+   ],
+   "footprint": 140,
+   "kind": "building",
+   "ground_y": 34,
+   "top_y": 51,
+   "height": 17,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3528,
+    12,
+    -3493,
+    23
+   ],
+   "footprint": 131,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 70,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2812,
+    120,
+    -2801,
+    131
+   ],
+   "footprint": 121,
+   "kind": "building",
+   "ground_y": 19,
+   "top_y": 27,
+   "height": 8,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3444,
+    264,
+    -3425,
+    291
+   ],
+   "footprint": 117,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3224,
+    40,
+    -3209,
+    71
+   ],
+   "footprint": 109,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 82,
+   "height": 9,
+   "roof": [
+    "nether_brick_slab",
+    "smooth_stone_slab",
+    "jungle_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2680,
+    216,
+    -2665,
+    247
+   ],
+   "footprint": 102,
+   "kind": "building",
+   "ground_y": 15,
+   "top_y": 20,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2772,
+    176,
+    -2761,
+    191
+   ],
+   "footprint": 101,
+   "kind": "building",
+   "ground_y": 14,
+   "top_y": 32,
+   "height": 18,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3448,
+    240,
+    -3433,
+    263
+   ],
+   "footprint": 101,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3084,
+    532,
+    -3057,
+    551
+   ],
+   "footprint": 100,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -28,
+    -2845,
+    3
+   ],
+   "footprint": 96,
+   "kind": "building",
+   "ground_y": 23,
+   "top_y": 30,
+   "height": 7,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "oak_fence"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2836,
+    176,
+    -2821,
+    187
+   ],
+   "footprint": 96,
+   "kind": "building",
+   "ground_y": 30,
+   "top_y": 39,
+   "height": 9,
+   "roof": [
+    "chiseled_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3336,
+    336,
+    -3305,
+    351
+   ],
+   "footprint": 96,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3144,
+    444,
+    -3125,
+    467
+   ],
+   "footprint": 95,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2664,
+    -12,
+    -2649,
+    3
+   ],
+   "footprint": 87,
+   "kind": "building",
+   "ground_y": 21,
+   "top_y": 26,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2896,
+    -8,
+    -2865,
+    3
+   ],
+   "footprint": 82,
+   "kind": "building",
+   "ground_y": 28,
+   "top_y": 37,
+   "height": 9,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3488,
+    12,
+    -3461,
+    19
+   ],
+   "footprint": 74,
+   "kind": "building",
+   "ground_y": 64,
+   "top_y": 70,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3196,
+    372,
+    -3177,
+    387
+   ],
+   "footprint": 73,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2680,
+    -192,
+    -2657,
+    -181
+   ],
+   "footprint": 71,
+   "kind": "building",
+   "ground_y": 40,
+   "top_y": 45,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -160,
+    -2849,
+    -145
+   ],
+   "footprint": 70,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 55,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2756,
+    -4,
+    -2737,
+    3
+   ],
+   "footprint": 68,
+   "kind": "building",
+   "ground_y": 22,
+   "top_y": 26,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3056,
+    556,
+    -3037,
+    567
+   ],
+   "footprint": 66,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2856,
+    -284,
+    -2849,
+    -257
+   ],
+   "footprint": 64,
+   "kind": "building",
+   "ground_y": 52,
+   "top_y": 55,
+   "height": 3,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3424,
+    292,
+    -3413,
+    307
+   ],
+   "footprint": 64,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 54,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2468,
+    256,
+    -2449,
+    279
+   ],
+   "footprint": 63,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 66,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2936,
+    -12,
+    -2917,
+    -1
+   ],
+   "footprint": 62,
+   "kind": "building",
+   "ground_y": 41,
+   "top_y": 47,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2696,
+    -84,
+    -2681,
+    -69
+   ],
+   "footprint": 59,
+   "kind": "building",
+   "ground_y": 33,
+   "top_y": 40,
+   "height": 7,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3220,
+    -76,
+    -3217,
+    -29
+   ],
+   "footprint": 59,
+   "kind": "linear",
+   "ground_y": 76,
+   "top_y": 90,
+   "height": 14,
+   "roof": [
+    "cobblestone_slab",
+    "jungle_stairs",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2852,
+    248,
+    -2837,
+    259
+   ],
+   "footprint": 59,
+   "kind": "building",
+   "ground_y": 24,
+   "top_y": 55,
+   "height": 31,
+   "roof": [
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2772,
+    128,
+    -2757,
+    139
+   ],
+   "footprint": 58,
+   "kind": "building",
+   "ground_y": 14,
+   "top_y": 52,
+   "height": 38,
+   "roof": [
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3204,
+    -76,
+    -3197,
+    -29
+   ],
+   "footprint": 57,
+   "kind": "linear",
+   "ground_y": 76,
+   "top_y": 90,
+   "height": 14,
+   "roof": [
+    "cobblestone_slab",
+    "iron_bars",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2816,
+    -8,
+    -2797,
+    3
+   ],
+   "footprint": 57,
+   "kind": "building",
+   "ground_y": 23,
+   "top_y": 26,
+   "height": 3,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3124,
+    472,
+    -3109,
+    491
+   ],
+   "footprint": 56,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 54,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3464,
+    124,
+    -3453,
+    135
+   ],
+   "footprint": 54,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -212,
+    -2849,
+    -197
+   ],
+   "footprint": 52,
+   "kind": "building",
+   "ground_y": 51,
+   "top_y": 55,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2864,
+    88,
+    -2849,
+    99
+   ],
+   "footprint": 50,
+   "kind": "building",
+   "ground_y": 16,
+   "top_y": 53,
+   "height": 37,
+   "roof": [
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2688,
+    -176,
+    -2677,
+    -161
+   ],
+   "footprint": 45,
+   "kind": "building",
+   "ground_y": 40,
+   "top_y": 45,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2856,
+    -360,
+    -2849,
+    -341
+   ],
+   "footprint": 44,
+   "kind": "building",
+   "ground_y": 53,
+   "top_y": 59,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2856,
+    -316,
+    -2849,
+    -293
+   ],
+   "footprint": 42,
+   "kind": "building",
+   "ground_y": 52,
+   "top_y": 56,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2676,
+    -52,
+    -2665,
+    -33
+   ],
+   "footprint": 42,
+   "kind": "building",
+   "ground_y": 25,
+   "top_y": 31,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2640,
+    156,
+    -2629,
+    163
+   ],
+   "footprint": 40,
+   "kind": "building",
+   "ground_y": 9,
+   "top_y": 26,
+   "height": 17,
+   "roof": [
+    "cobblestone",
+    "oak_log",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -192,
+    -2849,
+    -181
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 55,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3076,
+    -68,
+    -3065,
+    -57
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 74,
+   "height": 12,
+   "roof": [
+    "cobblestone",
+    "smooth_stone_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2620,
+    176,
+    -2613,
+    187
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 11,
+   "top_y": 16,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2776,
+    228,
+    -2765,
+    239
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 17,
+   "top_y": 56,
+   "height": 39,
+   "roof": [
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2696,
+    592,
+    -2681,
+    603
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 82,
+   "height": 19,
+   "roof": [
+    "cobblestone",
+    "tripwire_hook",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2856,
+    -408,
+    -2849,
+    -397
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 56,
+   "top_y": 61,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2856,
+    -252,
+    -2849,
+    -241
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 51,
+   "top_y": 55,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2832,
+    -4,
+    -2821,
+    3
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 22,
+   "top_y": 26,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2624,
+    308,
+    -2613,
+    315
+   ],
+   "footprint": 36,
+   "kind": "building",
+   "ground_y": 18,
+   "top_y": 24,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2608,
+    380,
+    -2601,
+    391
+   ],
+   "footprint": 36,
+   "kind": "building",
+   "ground_y": 23,
+   "top_y": 27,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2612,
+    396,
+    -2601,
+    407
+   ],
+   "footprint": 35,
+   "kind": "building",
+   "ground_y": 24,
+   "top_y": 29,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -44,
+    -2849,
+    -33
+   ],
+   "footprint": 34,
+   "kind": "building",
+   "ground_y": 29,
+   "top_y": 36,
+   "height": 7,
+   "roof": [
+    "cobblestone_slab",
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2992,
+    -40,
+    -2981,
+    -29
+   ],
+   "footprint": 33,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 109,
+   "height": 43,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3052,
+    -36,
+    -3041,
+    -25
+   ],
+   "footprint": 33,
+   "kind": "building",
+   "ground_y": 85,
+   "top_y": 128,
+   "height": 43,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3004,
+    0,
+    -2993,
+    11
+   ],
+   "footprint": 33,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 118,
+   "height": 46,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2672,
+    248,
+    -2665,
+    259
+   ],
+   "footprint": 33,
+   "kind": "building",
+   "ground_y": 16,
+   "top_y": 20,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2708,
+    -136,
+    -2701,
+    -117
+   ],
+   "footprint": 32,
+   "kind": "building",
+   "ground_y": 37,
+   "top_y": 41,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2860,
+    -64,
+    -2853,
+    -53
+   ],
+   "footprint": 32,
+   "kind": "building",
+   "ground_y": 35,
+   "top_y": 40,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2640,
+    520,
+    -2633,
+    531
+   ],
+   "footprint": 31,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2652,
+    524,
+    -2645,
+    531
+   ],
+   "footprint": 31,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2568,
+    -12,
+    -2557,
+    -1
+   ],
+   "footprint": 30,
+   "kind": "building",
+   "ground_y": 35,
+   "top_y": 79,
+   "height": 44,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2632,
+    12,
+    -2625,
+    19
+   ],
+   "footprint": 29,
+   "kind": "building",
+   "ground_y": 21,
+   "top_y": 26,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2784,
+    248,
+    -2777,
+    263
+   ],
+   "footprint": 29,
+   "kind": "building",
+   "ground_y": 21,
+   "top_y": 53,
+   "height": 32,
+   "roof": [
+    "oak_log"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2616,
+    340,
+    -2609,
+    351
+   ],
+   "footprint": 29,
+   "kind": "building",
+   "ground_y": 21,
+   "top_y": 25,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2596,
+    492,
+    -2589,
+    499
+   ],
+   "footprint": 29,
+   "kind": "building",
+   "ground_y": 47,
+   "top_y": 52,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2752,
+    564,
+    -2741,
+    571
+   ],
+   "footprint": 29,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 54,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2856,
+    -332,
+    -2849,
+    -321
+   ],
+   "footprint": 28,
+   "kind": "building",
+   "ground_y": 53,
+   "top_y": 58,
+   "height": 5,
+   "roof": [
+    "cobblestone_slab",
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2684,
+    -64,
+    -2677,
+    -53
+   ],
+   "footprint": 28,
+   "kind": "building",
+   "ground_y": 27,
+   "top_y": 34,
+   "height": 7,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2444,
+    276,
+    -2437,
+    287
+   ],
+   "footprint": 28,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 66,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3348,
+    340,
+    -3341,
+    351
+   ],
+   "footprint": 28,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 54,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2668,
+    -28,
+    -2657,
+    -17
+   ],
+   "footprint": 27,
+   "kind": "building",
+   "ground_y": 23,
+   "top_y": 27,
+   "height": 4,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3036,
+    572,
+    -3029,
+    579
+   ],
+   "footprint": 27,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 54,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2824,
+    580,
+    -2817,
+    587
+   ],
+   "footprint": 27,
+   "kind": "building",
+   "ground_y": 50,
+   "top_y": 54,
+   "height": 4,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2652,
+    -192,
+    -2641,
+    -185
+   ],
+   "footprint": 26,
+   "kind": "building",
+   "ground_y": 40,
+   "top_y": 45,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3252,
+    92,
+    -3237,
+    99
+   ],
+   "footprint": 26,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 77,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2636,
+    4,
+    -2629,
+    11
+   ],
+   "footprint": 25,
+   "kind": "building",
+   "ground_y": 21,
+   "top_y": 26,
+   "height": 5,
+   "roof": [
+    "cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2612,
+    512,
+    -2601,
+    519
+   ],
+   "footprint": 25,
+   "kind": "building",
+   "ground_y": 48,
+   "top_y": 54,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2708,
+    256,
+    -2701,
+    263
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 23,
+   "top_y": 27,
+   "height": 4,
+   "roof": [
+    "nether_brick_stairs",
+    "nether_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2612,
+    420,
+    -2605,
+    427
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 25,
+   "top_y": 32,
+   "height": 7,
+   "roof": [
+    "cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2568,
+    592,
+    -2561,
+    603
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 82,
+   "height": 15,
+   "roof": [
+    "cobblestone",
+    "tripwire_hook",
+    "iron_bars"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -2972,
+    36,
+    -2781,
+    235
+   ],
+   "columns": 10522,
+   "blocks_below_ground": 63137
+  },
+  {
+   "bbox": [
+    -3504,
+    592,
+    -3025,
+    603
+   ],
+   "columns": 4800,
+   "blocks_below_ground": 115964
+  },
+  {
+   "bbox": [
+    -2972,
+    4,
+    -2873,
+    59
+   ],
+   "columns": 3805,
+   "blocks_below_ground": 51956
+  },
+  {
+   "bbox": [
+    -2612,
+    260,
+    -2565,
+    359
+   ],
+   "columns": 812,
+   "blocks_below_ground": 13160
+  },
+  {
+   "bbox": [
+    -2808,
+    164,
+    -2765,
+    195
+   ],
+   "columns": 753,
+   "blocks_below_ground": 13613
+  },
+  {
+   "bbox": [
+    -2572,
+    364,
+    -2553,
+    403
+   ],
+   "columns": 407,
+   "blocks_below_ground": 8066
+  },
+  {
+   "bbox": [
+    -2664,
+    316,
+    -2653,
+    363
+   ],
+   "columns": 261,
+   "blocks_below_ground": 4281
+  },
+  {
+   "bbox": [
+    -3004,
+    188,
+    -2985,
+    211
+   ],
+   "columns": 232,
+   "blocks_below_ground": 4079
+  },
+  {
+   "bbox": [
+    -2652,
+    436,
+    -2629,
+    467
+   ],
+   "columns": 204,
+   "blocks_below_ground": 2536
+  },
+  {
+   "bbox": [
+    -2596,
+    124,
+    -2589,
+    155
+   ],
+   "columns": 198,
+   "blocks_below_ground": 2869
+  },
+  {
+   "bbox": [
+    -2716,
+    248,
+    -2697,
+    275
+   ],
+   "columns": 122,
+   "blocks_below_ground": 400
+  },
+  {
+   "bbox": [
+    -2652,
+    368,
+    -2645,
+    391
+   ],
+   "columns": 121,
+   "blocks_below_ground": 1272
+  },
+  {
+   "bbox": [
+    -2656,
+    408,
+    -2645,
+    431
+   ],
+   "columns": 109,
+   "blocks_below_ground": 1438
+  },
+  {
+   "bbox": [
+    -2992,
+    240,
+    -2977,
+    259
+   ],
+   "columns": 99,
+   "blocks_below_ground": 1917
+  },
+  {
+   "bbox": [
+    -2632,
+    240,
+    -2613,
+    255
+   ],
+   "columns": 88,
+   "blocks_below_ground": 1216
+  },
+  {
+   "bbox": [
+    -2812,
+    220,
+    -2805,
+    235
+   ],
+   "columns": 70,
+   "blocks_below_ground": 284
+  },
+  {
+   "bbox": [
+    -3132,
+    44,
+    -3101,
+    59
+   ],
+   "columns": 61,
+   "blocks_below_ground": 245
+  },
+  {
+   "bbox": [
+    -2724,
+    168,
+    -2713,
+    175
+   ],
+   "columns": 50,
+   "blocks_below_ground": 150
+  },
+  {
+   "bbox": [
+    -2664,
+    392,
+    -2657,
+    407
+   ],
+   "columns": 48,
+   "blocks_below_ground": 526
+  },
+  {
+   "bbox": [
+    -2852,
+    116,
+    -2841,
+    131
+   ],
+   "columns": 41,
+   "blocks_below_ground": 123
+  },
+  {
+   "bbox": [
+    -2604,
+    212,
+    -2593,
+    235
+   ],
+   "columns": 40,
+   "blocks_below_ground": 393
+  },
+  {
+   "bbox": [
+    -3024,
+    132,
+    -3017,
+    155
+   ],
+   "columns": 38,
+   "blocks_below_ground": 287
+  },
+  {
+   "bbox": [
+    -3212,
+    84,
+    -3177,
+    87
+   ],
+   "columns": 36,
+   "blocks_below_ground": 162
+  },
+  {
+   "bbox": [
+    -3184,
+    36,
+    -3173,
+    47
+   ],
+   "columns": 31,
+   "blocks_below_ground": 170
+  },
+  {
+   "bbox": [
+    -2688,
+    300,
+    -2673,
+    303
+   ],
+   "columns": 28,
+   "blocks_below_ground": 201
+  },
+  {
+   "bbox": [
+    -2836,
+    184,
+    -2829,
+    191
+   ],
+   "columns": 24,
+   "blocks_below_ground": 111
+  },
+  {
+   "bbox": [
+    -2720,
+    312,
+    -2709,
+    323
+   ],
+   "columns": 24,
+   "blocks_below_ground": 147
+  },
+  {
+   "bbox": [
+    -2692,
+    164,
+    -2681,
+    171
+   ],
+   "columns": 21,
+   "blocks_below_ground": 63
+  },
+  {
+   "bbox": [
+    -2892,
+    132,
+    -2885,
+    139
+   ],
+   "columns": 19,
+   "blocks_below_ground": 57
+  },
+  {
+   "bbox": [
+    -2984,
+    68,
+    -2977,
+    71
+   ],
+   "columns": 16,
+   "blocks_below_ground": 178
+  },
+  {
+   "bbox": [
+    -2756,
+    184,
+    -2749,
+    187
+   ],
+   "columns": 15,
+   "blocks_below_ground": 45
+  },
+  {
+   "bbox": [
+    -3120,
+    28,
+    -3113,
+    35
+   ],
+   "columns": 14,
+   "blocks_below_ground": 47
+  },
+  {
+   "bbox": [
+    -2856,
+    -292,
+    -2849,
+    -289
+   ],
+   "columns": 13,
+   "blocks_below_ground": 39
+  },
+  {
+   "bbox": [
+    -2744,
+    228,
+    -2737,
+    235
+   ],
+   "columns": 13,
+   "blocks_below_ground": 39
+  },
+  {
+   "bbox": [
+    -2584,
+    180,
+    -2581,
+    187
+   ],
+   "columns": 12,
+   "blocks_below_ground": 123
+  },
+  {
+   "bbox": [
+    -2652,
+    52,
+    -2649,
+    59
+   ],
+   "columns": 11,
+   "blocks_below_ground": 33
+  },
+  {
+   "bbox": [
+    -2652,
+    216,
+    -2649,
+    223
+   ],
+   "columns": 11,
+   "blocks_below_ground": 33
+  },
+  {
+   "bbox": [
+    -3176,
+    388,
+    -3169,
+    391
+   ],
+   "columns": 11,
+   "blocks_below_ground": 36
+  },
+  {
+   "bbox": [
+    -3168,
+    36,
+    -3161,
+    39
+   ],
+   "columns": 8,
+   "blocks_below_ground": 28
+  },
+  {
+   "bbox": [
+    -3132,
+    36,
+    -3125,
+    39
+   ],
+   "columns": 8,
+   "blocks_below_ground": 40
+  },
+  {
+   "bbox": [
+    -2584,
+    116,
+    -2577,
+    119
+   ],
+   "columns": 8,
+   "blocks_below_ground": 53
+  }
+ ],
+ "block_entities": {
+  "trapped_chest": 47,
+  "chest": 25
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 2863
+ },
+ "flat_free_share": 0.713,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 5,
+  "4_building": 4,
+  "5_quality": 3,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/radar.png"
+}

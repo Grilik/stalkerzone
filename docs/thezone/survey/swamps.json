@@ -1,0 +1,442 @@
+{
+ "id": "swamps",
+ "name": "Clear Sky CAMP (Great Swamp)",
+ "ru": "Болота, лагерь Чистого Неба",
+ "point": [
+  -5583,
+  68,
+  4417
+ ],
+ "source": "places.json (телепорт автора)",
+ "bbox": [
+  -5748,
+  3700,
+  -4969,
+  4475
+ ],
+ "area_draft": [
+  [
+   -5716,
+   4044
+  ],
+  [
+   -5448,
+   3732
+  ],
+  [
+   -5421,
+   3732
+  ],
+  [
+   -5001,
+   4236
+  ],
+  [
+   -5001,
+   4295
+  ],
+  [
+   -5545,
+   4439
+  ],
+  [
+   -5581,
+   4443
+  ],
+  [
+   -5600,
+   4443
+  ],
+  [
+   -5716,
+   4055
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.3209,
+  "лес": 0.0091,
+  "вода": 0.4614,
+  "постройки": 0.0083,
+  "асфальт": 0.0,
+  "гравий/грунтовка": 0.0691,
+  "рельсы": 0.0,
+  "искусственное низкое": 0.0082,
+  "песок": 0.1231
+ },
+ "buildings_count": 15,
+ "linear_count": 0,
+ "buildings": [
+  {
+   "bbox": [
+    -5068,
+    4236,
+    -5001,
+    4295
+   ],
+   "footprint": 583,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 87,
+   "height": 26,
+   "roof": [
+    "oak_stairs",
+    "bricks",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5048,
+    4248,
+    -5013,
+    4267
+   ],
+   "footprint": 362,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 87,
+   "height": 26,
+   "roof": [
+    "oak_stairs",
+    "birch_slab",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5600,
+    4384,
+    -5565,
+    4407
+   ],
+   "footprint": 356,
+   "kind": "building",
+   "ground_y": 64,
+   "top_y": 77,
+   "height": 13,
+   "roof": [
+    "nether_brick_stairs",
+    "jungle_slab",
+    "spruce_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5600,
+    4424,
+    -5581,
+    4443
+   ],
+   "footprint": 158,
+   "kind": "building",
+   "ground_y": 64,
+   "top_y": 75,
+   "height": 11,
+   "roof": [
+    "jungle_slab",
+    "nether_bricks",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5376,
+    4044,
+    -5361,
+    4071
+   ],
+   "footprint": 134,
+   "kind": "building",
+   "ground_y": 59,
+   "top_y": 81,
+   "height": 22,
+   "roof": [
+    "nether_brick_stairs",
+    "birch_stairs",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5568,
+    4420,
+    -5545,
+    4439
+   ],
+   "footprint": 98,
+   "kind": "building",
+   "ground_y": 64,
+   "top_y": 70,
+   "height": 6,
+   "roof": [
+    "jungle_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5348,
+    4328,
+    -5321,
+    4347
+   ],
+   "footprint": 81,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 71,
+   "height": 8,
+   "roof": [
+    "oak_slab",
+    "oak_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5440,
+    3756,
+    -5417,
+    3763
+   ],
+   "footprint": 80,
+   "kind": "building",
+   "ground_y": 60,
+   "top_y": 79,
+   "height": 19,
+   "roof": [
+    "quartz_block",
+    "birch_planks",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5348,
+    4352,
+    -5329,
+    4363
+   ],
+   "footprint": 64,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 71,
+   "height": 8,
+   "roof": [
+    "nether_brick_stairs",
+    "oak_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5428,
+    3732,
+    -5421,
+    3743
+   ],
+   "footprint": 62,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 70,
+   "height": 8,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5716,
+    4044,
+    -5697,
+    4055
+   ],
+   "footprint": 61,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 84,
+   "height": 21,
+   "roof": [
+    "nether_brick_stairs",
+    "jungle_stairs",
+    "jungle_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5236,
+    4248,
+    -5229,
+    4255
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 82,
+   "height": 19,
+   "roof": [
+    "nether_brick_stairs",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5448,
+    3732,
+    -5437,
+    3743
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 66,
+   "height": 3,
+   "roof": [
+    "cracked_stone_bricks",
+    "quartz_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5360,
+    4332,
+    -5357,
+    4351
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 67,
+   "height": 5,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5388,
+    4052,
+    -5381,
+    4067
+   ],
+   "footprint": 36,
+   "kind": "building",
+   "ground_y": 59,
+   "top_y": 74,
+   "height": 15,
+   "roof": [
+    "netherrack",
+    "jungle_stairs",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -6232,
+    4324,
+    -6221,
+    4335
+   ],
+   "columns": 27,
+   "blocks_below_ground": 135
+  },
+  {
+   "bbox": [
+    -6216,
+    4528,
+    -6209,
+    4539
+   ],
+   "columns": 26,
+   "blocks_below_ground": 128
+  },
+  {
+   "bbox": [
+    -5804,
+    5008,
+    -5793,
+    5015
+   ],
+   "columns": 22,
+   "blocks_below_ground": 108
+  },
+  {
+   "bbox": [
+    -5888,
+    4180,
+    -5881,
+    4187
+   ],
+   "columns": 14,
+   "blocks_below_ground": 42
+  },
+  {
+   "bbox": [
+    -5776,
+    5020,
+    -5769,
+    5027
+   ],
+   "columns": 13,
+   "blocks_below_ground": 62
+  },
+  {
+   "bbox": [
+    -6252,
+    4376,
+    -6249,
+    4383
+   ],
+   "columns": 11,
+   "blocks_below_ground": 39
+  },
+  {
+   "bbox": [
+    -5760,
+    5012,
+    -5757,
+    5019
+   ],
+   "columns": 9,
+   "blocks_below_ground": 45
+  }
+ ],
+ "block_entities": {
+  "trapped_chest": 22,
+  "chest": 34,
+  "furnace": 2,
+  "sign": 1,
+  "hopper": 1,
+  "mob_spawner": 7
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 1162
+ },
+ "flat_free_share": 0.458,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 5,
+  "4_building": 2,
+  "5_quality": 3,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/swamps.png"
+}

@@ -1,0 +1,160 @@
+{
+ "id": "dark_hollow",
+ "name": "dark_hollow",
+ "ru": "Тёмная лощина",
+ "point": [
+  -3092,
+  67,
+  3508
+ ],
+ "mark_bbox": [
+  -3824,
+  2912,
+  -2360,
+  4104
+ ],
+ "source": "border.json, метка 1 пользователя",
+ "bbox": [
+  -3824,
+  2912,
+  -2360,
+  4104
+ ],
+ "area_draft": [
+  [
+   -3092,
+   3508
+  ],
+  [
+   -2756,
+   3412
+  ],
+  [
+   -2705,
+   3412
+  ],
+  [
+   -2705,
+   3423
+  ],
+  [
+   -2845,
+   3647
+  ],
+  [
+   -2880,
+   3647
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.5402,
+  "лес": 0.3797,
+  "вода": 0.0061,
+  "постройки": 0.0002,
+  "асфальт": 0.0,
+  "гравий/грунтовка": 0.0593,
+  "рельсы": 0.0003,
+  "искусственное низкое": 0.0046,
+  "песок": 0.0095
+ },
+ "buildings_count": 3,
+ "linear_count": 0,
+ "buildings": [
+  {
+   "bbox": [
+    -2880,
+    3632,
+    -2845,
+    3647
+   ],
+   "footprint": 124,
+   "kind": "building",
+   "ground_y": 58,
+   "top_y": 64,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs",
+    "chiseled_quartz_block",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2756,
+    3412,
+    -2733,
+    3423
+   ],
+   "footprint": 75,
+   "kind": "building",
+   "ground_y": 55,
+   "top_y": 90,
+   "height": 35,
+   "roof": [
+    "iron_bars",
+    "stone_brick_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2724,
+    3412,
+    -2705,
+    3423
+   ],
+   "footprint": 69,
+   "kind": "building",
+   "ground_y": 55,
+   "top_y": 90,
+   "height": 35,
+   "roof": [
+    "iron_bars",
+    "stone_brick_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -2712,
+    3416,
+    -2701,
+    3423
+   ],
+   "columns": 79,
+   "blocks_below_ground": 2124
+  },
+  {
+   "bbox": [
+    -2760,
+    3416,
+    -2745,
+    3423
+   ],
+   "columns": 71,
+   "blocks_below_ground": 1781
+  }
+ ],
+ "block_entities": {},
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 168
+ },
+ "flat_free_share": 0.888,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 5,
+  "4_building": 5,
+  "5_quality": 5,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/dark_hollow.png"
+}

@@ -1,0 +1,590 @@
+{
+ "id": "pripyat_east",
+ "name": "Pripyat East",
+ "ru": "Припять, восток",
+ "point": [
+  -2382,
+  66,
+  -2344
+ ],
+ "source": "places.json (телепорт автора)",
+ "bbox": [
+  -2640,
+  -2932,
+  -1981,
+  -1729
+ ],
+ "area_draft": [
+  [
+   -2608,
+   -2700
+  ],
+  [
+   -2484,
+   -2900
+  ],
+  [
+   -2453,
+   -2900
+  ],
+  [
+   -2013,
+   -1868
+  ],
+  [
+   -2013,
+   -1805
+  ],
+  [
+   -2161,
+   -1761
+  ],
+  [
+   -2252,
+   -1761
+  ],
+  [
+   -2568,
+   -1889
+  ],
+  [
+   -2592,
+   -2229
+  ],
+  [
+   -2608,
+   -2653
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.4745,
+  "лес": 0.1433,
+  "вода": 0.0932,
+  "постройки": 0.0389,
+  "асфальт": 0.0004,
+  "гравий/грунтовка": 0.0383,
+  "рельсы": 0.0,
+  "искусственное низкое": 0.0494,
+  "песок": 0.1621
+ },
+ "buildings_count": 24,
+ "linear_count": 0,
+ "buildings": [
+  {
+   "bbox": [
+    -2364,
+    -2160,
+    -2301,
+    -1997
+   ],
+   "footprint": 3065,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 81,
+   "height": 20,
+   "roof": [
+    "stone_brick_slab",
+    "cut_sandstone",
+    "quartz_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2432,
+    -1920,
+    -2393,
+    -1853
+   ],
+   "footprint": 1970,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 79,
+   "height": 17,
+   "roof": [
+    "quartz_block",
+    "cobblestone_slab",
+    "stone_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2492,
+    -2136,
+    -2433,
+    -2033
+   ],
+   "footprint": 1640,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 80,
+   "height": 18,
+   "roof": [
+    "smooth_stone_slab",
+    "red_terracotta"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2252,
+    -2088,
+    -2149,
+    -2025
+   ],
+   "footprint": 1640,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 80,
+   "height": 18,
+   "roof": [
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2568,
+    -1992,
+    -2509,
+    -1889
+   ],
+   "footprint": 1640,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 80,
+   "height": 18,
+   "roof": [
+    "smooth_stone_slab",
+    "red_terracotta",
+    "oak_planks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2556,
+    -2428,
+    -2469,
+    -2369
+   ],
+   "footprint": 1573,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 72,
+   "height": 11,
+   "roof": [
+    "stone_brick_slab",
+    "cut_sandstone",
+    "white_terracotta"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2564,
+    -2196,
+    -2493,
+    -2145
+   ],
+   "footprint": 1498,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 76,
+   "height": 15,
+   "roof": [
+    "oak_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2036,
+    -1868,
+    -2013,
+    -1805
+   ],
+   "footprint": 1240,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 80,
+   "height": 18,
+   "roof": [
+    "stone_brick_slab",
+    "white_terracotta"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2188,
+    -1832,
+    -2161,
+    -1761
+   ],
+   "footprint": 1081,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 83,
+   "height": 21,
+   "roof": [
+    "stone_brick_slab",
+    "white_terracotta"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2564,
+    -2024,
+    -2489,
+    -2009
+   ],
+   "footprint": 868,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 80,
+   "height": 18,
+   "roof": [
+    "stone_brick_slab",
+    "brown_terracotta",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2592,
+    -2284,
+    -2577,
+    -2229
+   ],
+   "footprint": 697,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 95,
+   "height": 33,
+   "roof": [
+    "stone_brick_slab",
+    "white_terracotta",
+    "gray_carpet"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2252,
+    -1776,
+    -2201,
+    -1761
+   ],
+   "footprint": 656,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 83,
+   "height": 21,
+   "roof": [
+    "stone_brick_slab",
+    "white_terracotta",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2276,
+    -2132,
+    -2257,
+    -2085
+   ],
+   "footprint": 572,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 76,
+   "height": 14,
+   "roof": [
+    "stone_brick_slab",
+    "cut_sandstone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2308,
+    -2164,
+    -2257,
+    -2145
+   ],
+   "footprint": 570,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 76,
+   "height": 14,
+   "roof": [
+    "stone_brick_slab",
+    "cut_sandstone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2536,
+    -2644,
+    -2469,
+    -2597
+   ],
+   "footprint": 551,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 100,
+   "height": 38,
+   "roof": [
+    "stone_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2608,
+    -2700,
+    -2545,
+    -2653
+   ],
+   "footprint": 548,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 100,
+   "height": 38,
+   "roof": [
+    "stone_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2532,
+    -2312,
+    -2509,
+    -2289
+   ],
+   "footprint": 393,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 105,
+   "height": 43,
+   "roof": [
+    "stone_brick_slab",
+    "iron_bars",
+    "light_gray_stained_glass_pane"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2472,
+    -2284,
+    -2445,
+    -2261
+   ],
+   "footprint": 393,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 105,
+   "height": 43,
+   "roof": [
+    "stone_brick_slab",
+    "iron_bars",
+    "light_gray_stained_glass_pane"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2444,
+    -2244,
+    -2417,
+    -2221
+   ],
+   "footprint": 393,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 105,
+   "height": 43,
+   "roof": [
+    "stone_brick_slab",
+    "iron_bars",
+    "light_gray_stained_glass_pane"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2420,
+    -2184,
+    -2393,
+    -2161
+   ],
+   "footprint": 393,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 105,
+   "height": 43,
+   "roof": [
+    "stone_brick_slab",
+    "iron_bars",
+    "light_gray_stained_glass_pane"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2484,
+    -2900,
+    -2453,
+    -2885
+   ],
+   "footprint": 365,
+   "kind": "building",
+   "ground_y": 62,
+   "top_y": 97,
+   "height": 35,
+   "roof": [
+    "oak_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2328,
+    -2344,
+    -2297,
+    -2313
+   ],
+   "footprint": 225,
+   "kind": "building",
+   "ground_y": 65,
+   "top_y": 73,
+   "height": 8,
+   "roof": [
+    "stone_brick_slab",
+    "quartz_block",
+    "quartz_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2316,
+    -2400,
+    -2297,
+    -2377
+   ],
+   "footprint": 148,
+   "kind": "building",
+   "ground_y": 65,
+   "top_y": 84,
+   "height": 19,
+   "roof": [
+    "stone_brick_slab",
+    "nether_brick_slab",
+    "white_terracotta"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -2552,
+    -2320,
+    -2537,
+    -2309
+   ],
+   "footprint": 67,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 70,
+   "height": 9,
+   "roof": [
+    "stone_brick_slab",
+    "quartz_block"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -2828,
+    -2320,
+    -2221,
+    -2317
+   ],
+   "columns": 610,
+   "blocks_below_ground": 1847
+  },
+  {
+   "bbox": [
+    -2824,
+    -2340,
+    -2225,
+    -2337
+   ],
+   "columns": 600,
+   "blocks_below_ground": 1800
+  },
+  {
+   "bbox": [
+    -2084,
+    -2320,
+    -2033,
+    -2317
+   ],
+   "columns": 52,
+   "blocks_below_ground": 156
+  },
+  {
+   "bbox": [
+    -2080,
+    -2340,
+    -2033,
+    -2337
+   ],
+   "columns": 48,
+   "blocks_below_ground": 144
+  },
+  {
+   "bbox": [
+    -2484,
+    -2396,
+    -2481,
+    -2385
+   ],
+   "columns": 13,
+   "blocks_below_ground": 55
+  }
+ ],
+ "block_entities": {
+  "chest": 483,
+  "dispenser": 13,
+  "furnace": 160,
+  "trapped_chest": 76,
+  "sign": 12,
+  "command_block": 16
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 157
+ },
+ "flat_free_share": 0.843,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 5,
+  "4_building": 5,
+  "5_quality": 5,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/pripyat_east.png"
+}
