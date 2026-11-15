@@ -6,4 +6,5 @@ find src/main/java/ru/stalkerzone/sim src/main/java/ru/stalkerzone/zonemap -name
 echo src/main/java/ru/stalkerzone/world/ZoneBounds.java
 echo src/main/java/ru/stalkerzone/artifact/ArtifactDef.java
 echo src/main/java/ru/stalkerzone/gear/TaczWeight.java
+echo src/main/java/ru/stalkerzone/mutant/MutantType.java
 ls src/test/java/*.java
