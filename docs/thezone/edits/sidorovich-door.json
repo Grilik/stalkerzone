@@ -1,0 +1,15 @@
+{
+ "what": "бункер Сидоровича: убран мёртвый механизм автоматической двери (2 воронки, 2 компаратора, командный блок testfor, 4 провода); дверь — без изменений",
+ "why": "решение пользователя 16.11: механизм из Bedrock (testfor @p[r=3]) в Java не работает; в заходе 1 дверь пропала рядом с ним",
+ "blocks": [
+  {"pos": [-4448, 59, 3804], "from": "minecraft:hopper", "to": "minecraft:stone"},
+  {"pos": [-4447, 59, 3804], "from": "minecraft:hopper", "to": "minecraft:stone"},
+  {"pos": [-4448, 59, 3805], "from": "minecraft:comparator", "to": "minecraft:stone"},
+  {"pos": [-4448, 59, 3806], "from": "minecraft:command_block", "to": "minecraft:stone"},
+  {"pos": [-4448, 59, 3807], "from": "minecraft:comparator", "to": "minecraft:stone"},
+  {"pos": [-4447, 57, 3805], "from": "minecraft:redstone_wire", "to": "minecraft:air"},
+  {"pos": [-4446, 58, 3805], "from": "minecraft:redstone_wire", "to": "minecraft:air"},
+  {"pos": [-4445, 59, 3805], "from": "minecraft:redstone_wire", "to": "minecraft:air"},
+  {"pos": [-4444, 60, 3805], "from": "minecraft:redstone_wire", "to": "minecraft:air"}
+ ]
+}
