@@ -29,6 +29,22 @@ def gh(path):
         return None
 
 
+def parse_about(text):
+    """Пункты раздела «## О моде» (строки «- …»)."""
+    out, on = [], False
+    for line in text.splitlines():
+        if line.startswith("## "):
+            on = line.strip() == "## О моде"
+            continue
+        if on and line.startswith("- "):
+            out.append(line[2:].strip())
+    return out
+
+
+def md_bold(s):
+    return re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", md_inline(s))
+
+
 def parse_roadmap(text):
     """[{id, title, goal, tasks:[{id, title, who, manual}]}]."""
     stages, cur = [], None
@@ -105,7 +121,8 @@ def ago(iso):
 
 
 def build(out_dir):
-    stages = parse_roadmap(open(ROADMAP, encoding="utf-8").read())
+    text = open(ROADMAP, encoding="utf-8").read()
+    stages, about = parse_roadmap(text), parse_about(text)
     prs = load_prs()
     for st in stages:
         for t in st["tasks"]:
@@ -150,9 +167,17 @@ def build(out_dir):
         asset = next((x["browser_download_url"] for x in rel.get("assets", []) if x["name"].endswith(".jar")), rel.get("html_url"))
         a(f"<div class='tile'><div class='k'>Сборка для игры (nightly)</div><div class='v'><a href='{esc(asset)}'>скачать .jar</a></div>"
           f"<div class='muted'>{esc(str(rel.get('target_commitish', ''))[:7])} · {ago(rel.get('published_at'))} · новый мир</div></div>")
+    all_t = sum(s["total"] for s in stages)
+    all_d = sum(s["done"] for s in stages)
+    allp = round(100 * all_d / all_t) if all_t else 0
+    a(f"<div class='tile'><div class='k'>Весь мод</div><div class='v'>{allp}%</div>"
+      f"<div class='bar'><i style='width:{allp}%'></i></div><div class='muted'>{all_d} из {all_t} задач · этапов {len(stages)}</div></div>")
     a(f"<div class='tile'><div class='k'>Открытые PR</div><div class='v'>{len(open_prs)}</div>"
       "<div class='muted'>ждут проверки и слияния</div></div>")
     a("</section>")
+
+    if about:
+        a("<section class='about'><h2>О моде</h2><ul>" + "".join(f"<li>{md_bold(x)}</li>" for x in about) + "</ul></section>")
 
     # этапы — полосы
     a("<section><h2>Этапы</h2><div class='stages'>")
@@ -222,7 +247,7 @@ tr.done td{opacity:.6}tr.later td,tr.dropped td{opacity:.4}
 .st{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;border:1px solid var(--line)}
 .st.done{color:var(--ok);border-color:#2f5a35}.st.work{color:var(--work);border-color:#2b4a72}.st.todo{color:var(--mut)}.st.later,.st.dropped{color:var(--mut);font-style:italic}
 .chip{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:0 6px}
-.goal{color:var(--mut);margin:-4px 0 10px}footer{margin-top:30px}
+.goal{color:var(--mut);margin:-4px 0 10px}.about ul{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0;padding:12px 14px 12px 30px}.about li{margin:4px 0}footer{margin-top:30px}
 @media(max-width:600px){td{padding:7px 6px;font-size:14px}.nowrap{white-space:normal}}
 """
 
