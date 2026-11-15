@@ -72,6 +72,31 @@ public class ConveyorTest {
         }
         ck(cards >= 2, "карточек конвейера v2: " + cards);
 
+        // Э0-16: у карточки конвейера есть поле «Видно в игре» (где вызывается или «только данные для …»);
+        // карточки, сделанные до 16.11, — без поля (список не дополняется)
+        java.util.Set<String> legacy = java.util.Set.of("042", "043", "044", "045", "046", "047", "048", "050", "051", "052",
+                "053", "054", "055", "056", "057", "058", "059", "060", "061", "062", "063", "064", "066",
+                "Э0-12", "Э0-13", "Э0-14a", "Э0-17");
+        int seen = 0;
+        try (Stream<Path> s = Files.list(Path.of("docs/tasks"))) {
+            for (Path p : s.filter(x -> x.getFileName().toString().matches("(\\d{3}|Э\\d+-\\d+[a-z]?)-.*\\.md")).sorted().toList()) {
+                String t = Files.readString(p).replace("\r\n", "\n");
+                if (!field(t, "Конвейер").startsWith("да")) continue;
+                String n = p.getFileName().toString();
+                String id = n.matches("\\d{3}-.*") ? n.substring(0, 3) : n.replaceFirst("^(Э\\d+-\\d+[a-z]?)-.*", "$1");
+                seen++;
+                if (legacy.contains(id)) continue;
+                ck(!field(t, "Видно в игре").isEmpty(), n + ": поле «**Видно в игре:**» заполнено");
+            }
+        }
+        ck(seen >= legacy.size(), "карточки с полем «Видно в игре» проверены (" + seen + ")");
+        ck(field("**Видно в игре:**", "Видно в игре").isEmpty() && !field("**Видно в игре:** только данные для КПК", "Видно в игре").isEmpty(),
+                "проба: пустое поле «Видно в игре» не засчитывается");
+        ck(read("docs/tasks/README.md").contains("**Видно в игре:**"), "шаблон карточки в docs/tasks/README.md — с полем «Видно в игре»");
+        String d4 = read("docs/claude/06-conveyor-v2.md") + read(".clinerules") + read("tools/conveyor/rules.txt");
+        ck(d4.contains("zonemap/build") && d4.contains("world/*") && d4.contains("tools/conveyor/*") && d4.contains("10 строк"),
+                "границы конвейера D4 записаны в 06-conveyor-v2.md, .clinerules, rules.txt");
+
         // Э0-13: копия теста карточки в docs/tasks/tests/ совпадает с src/test/java/ (конвейер копирует её поверх)
         try (Stream<Path> s = Files.list(Path.of("docs/tasks/tests"))) {
             for (Path p : s.filter(x -> x.getFileName().toString().endsWith(".java")).sorted().toList()) {
