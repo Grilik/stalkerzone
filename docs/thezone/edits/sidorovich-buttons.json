@@ -1,0 +1,8 @@
+{
+ "what": "бункер Сидоровича: каменные кнопки с обеих сторон железной двери (на кварцевом блоке рядом с дверью, высота 61)",
+ "why": "решение пользователя 16.11: дверь остаётся железной, открывается кнопками (механизм Bedrock убран правкой e0006)",
+ "blocks": [
+  {"pos": [-4449, 61, 3809], "from": "minecraft:air", "to": "minecraft:stone_button[face=wall,facing=west,powered=false]"},
+  {"pos": [-4447, 61, 3809], "from": "minecraft:air", "to": "minecraft:stone_button[face=wall,facing=east,powered=false]"}
+ ]
+}
