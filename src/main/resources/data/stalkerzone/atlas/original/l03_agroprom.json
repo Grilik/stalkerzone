@@ -1,0 +1,3407 @@
+{
+ "level": "l03_agroprom",
+ "frame": "original (xr_x, xr_y, -xr_z) — Minecraft-ориентация, до преобразования на TheZone",
+ "source": "Anomaly 1.5.x: all.spawn, level.game, simulation_objects_props.ltx, simulation.ltx (tools/atlas/import_level.py)",
+ "status": "observed",
+ "objects": [
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_2",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_1_2",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -197.5,
+    1.9,
+    -122.8
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      -194.7,
+      1.8,
+      -122.6
+     ]
+    ],
+    "guards": [
+     [
+      -192.6,
+      1.9,
+      -125.3
+     ],
+     [
+      -194.0,
+      1.8,
+      -117.0
+     ],
+     [
+      -199.4,
+      1.7,
+      -120.2
+     ]
+    ],
+    "flag": [
+     -191.6,
+     1.9,
+     -123.3
+    ],
+    "patrol": [
+     [
+      -197.2,
+      1.9,
+      -121.8
+     ],
+     [
+      -197.2,
+      1.8,
+      -127.7
+     ],
+     [
+      -197.9,
+      1.8,
+      -125.5
+     ],
+     [
+      -191.2,
+      1.8,
+      -119.8
+     ]
+    ],
+    "campfires": [
+     [
+      -194.8,
+      2.1,
+      -122.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_3",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_1_3",
+   "type": [
+    "territory",
+    "resource",
+    "lair"
+   ],
+   "original": [
+    -211.3,
+    2.8,
+    7.6
+   ],
+   "status": "observed",
+   "faction": "scientists",
+   "allowed": [
+    "clear_sky",
+    "freedom",
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      -208.4,
+      2.6,
+      9.1
+     ]
+    ],
+    "beds": [
+     [
+      -201.1,
+      3.8,
+      2.7
+     ]
+    ],
+    "guards": [
+     [
+      -205.6,
+      4.2,
+      0.4
+     ],
+     [
+      -198.4,
+      3.8,
+      2.8
+     ]
+    ],
+    "flag": [
+     -201.0,
+     2.7,
+     7.8
+    ],
+    "patrol": [
+     [
+      -210.6,
+      5.8,
+      -8.6
+     ],
+     [
+      -189.1,
+      4.3,
+      -0.2
+     ],
+     [
+      -209.1,
+      2.4,
+      11.2
+     ],
+     [
+      -210.0,
+      2.2,
+      12.7
+     ],
+     [
+      -206.2,
+      3.2,
+      5.9
+     ]
+    ],
+    "campfires": [
+     [
+      -208.4,
+      2.9,
+      9.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_6",
+   "kind": "base",
+   "smart": "agr_smart_terrain_1_6",
+   "type": [
+    "base",
+    "lair",
+    "surge"
+   ],
+   "original": [
+    -162.5,
+    -0.2,
+    187.9
+   ],
+   "status": "observed",
+   "faction": "military",
+   "allowed": [
+    "military"
+   ],
+   "startSquads": 8,
+   "points": {
+    "campfire": [
+     [
+      -132.8,
+      -0.0,
+      154.3
+     ],
+     [
+      -133.4,
+      -0.0,
+      165.0
+     ],
+     [
+      -161.3,
+      -0.0,
+      160.6
+     ],
+     [
+      -152.3,
+      1.1,
+      151.5
+     ],
+     [
+      -179.5,
+      0.5,
+      174.6
+     ],
+     [
+      -187.3,
+      -0.2,
+      139.5
+     ],
+     [
+      -192.9,
+      -0.2,
+      136.9
+     ],
+     [
+      -139.1,
+      0.1,
+      201.1
+     ],
+     [
+      -146.6,
+      5.0,
+      199.9
+     ]
+    ],
+    "beds": [
+     [
+      -180.7,
+      0.1,
+      171.7
+     ]
+    ],
+    "guards": [
+     [
+      -98.5,
+      0.0,
+      185.4
+     ],
+     [
+      -107.5,
+      7.4,
+      206.2
+     ],
+     [
+      -103.7,
+      4.4,
+      154.0
+     ],
+     [
+      -196.1,
+      7.4,
+      224.1
+     ],
+     [
+      -98.9,
+      -0.1,
+      179.9
+     ],
+     [
+      -167.1,
+      -0.2,
+      188.9
+     ],
+     [
+      -138.3,
+      -0.1,
+      189.8
+     ],
+     [
+      -193.9,
+      0.0,
+      124.7
+     ],
+     [
+      -188.3,
+      -0.1,
+      124.5
+     ],
+     [
+      -156.8,
+      10.0,
+      193.1
+     ],
+     [
+      -129.1,
+      10.0,
+      195.5
+     ],
+     [
+      -136.5,
+      10.0,
+      195.5
+     ],
+     [
+      -156.8,
+      5.0,
+      192.4
+     ],
+     [
+      -156.5,
+      -0.0,
+      193.8
+     ],
+     [
+      -153.4,
+      5.0,
+      198.1
+     ],
+     [
+      -149.4,
+      -0.0,
+      193.1
+     ],
+     [
+      -133.6,
+      5.0,
+      196.7
+     ],
+     [
+      -170.2,
+      5.3,
+      185.2
+     ]
+    ],
+    "patrol": [
+     [
+      -114.9,
+      0.0,
+      146.3
+     ],
+     [
+      -190.7,
+      -0.2,
+      143.3
+     ],
+     [
+      -189.2,
+      -0.2,
+      134.4
+     ],
+     [
+      -184.0,
+      -0.2,
+      139.1
+     ],
+     [
+      -165.3,
+      -0.2,
+      140.7
+     ],
+     [
+      -138.9,
+      -0.0,
+      194.3
+     ],
+     [
+      -162.8,
+      -0.2,
+      192.2
+     ],
+     [
+      -165.9,
+      -0.2,
+      195.4
+     ],
+     [
+      -136.6,
+      0.0,
+      195.6
+     ],
+     [
+      -142.8,
+      -0.2,
+      150.4
+     ],
+     [
+      -192.8,
+      -0.2,
+      199.2
+     ],
+     [
+      -181.2,
+      -0.2,
+      201.6
+     ],
+     [
+      -114.1,
+      -0.2,
+      189.7
+     ],
+     [
+      -116.3,
+      -0.2,
+      205.0
+     ],
+     [
+      -115.9,
+      -0.2,
+      179.7
+     ],
+     [
+      -161.1,
+      -0.2,
+      183.7
+     ],
+     [
+      -109.5,
+      -0.2,
+      183.0
+     ],
+     [
+      -135.0,
+      -0.1,
+      175.4
+     ],
+     [
+      -181.7,
+      0.0,
+      176.7
+     ],
+     [
+      -128.6,
+      0.0,
+      167.7
+     ],
+     [
+      -107.4,
+      0.6,
+      197.8
+     ]
+    ],
+    "camps": [
+     [
+      -160.8,
+      -1.2,
+      160.7
+     ]
+    ],
+    "campfires": [
+     [
+      -132.7,
+      0.4,
+      154.3
+     ],
+     [
+      -161.4,
+      0.3,
+      160.7
+     ],
+     [
+      -152.2,
+      1.5,
+      151.6
+     ],
+     [
+      -179.5,
+      0.4,
+      174.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_6_near_1",
+   "kind": "base",
+   "smart": "agr_smart_terrain_1_6_near_1",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -190.8,
+    -0.2,
+    140.1
+   ],
+   "status": "observed",
+   "faction": "military",
+   "allowed": [
+    "military"
+   ],
+   "startSquads": 4,
+   "points": {
+    "campfire": [
+     [
+      -187.3,
+      -0.2,
+      139.5
+     ],
+     [
+      -192.9,
+      -0.2,
+      136.9
+     ]
+    ],
+    "guards": [
+     [
+      -193.9,
+      0.0,
+      124.7
+     ],
+     [
+      -188.3,
+      -0.1,
+      124.5
+     ]
+    ],
+    "patrol": [
+     [
+      -114.9,
+      0.0,
+      146.3
+     ],
+     [
+      -190.7,
+      -0.2,
+      143.3
+     ],
+     [
+      -189.2,
+      -0.2,
+      134.4
+     ],
+     [
+      -184.0,
+      -0.2,
+      139.1
+     ],
+     [
+      -165.3,
+      -0.2,
+      140.7
+     ]
+    ],
+    "camps": [
+     [
+      -186.7,
+      -1.4,
+      139.7
+     ]
+    ],
+    "campfires": [
+     [
+      -187.2,
+      0.2,
+      139.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_6_near_2",
+   "kind": "base",
+   "smart": "agr_smart_terrain_1_6_near_2",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -133.0,
+    10.0,
+    200.0
+   ],
+   "status": "observed",
+   "faction": "military",
+   "allowed": [
+    "military"
+   ],
+   "startSquads": 5,
+   "points": {
+    "campfire": [
+     [
+      -139.1,
+      0.1,
+      201.1
+     ],
+     [
+      -146.6,
+      5.0,
+      199.9
+     ]
+    ],
+    "guards": [
+     [
+      -156.8,
+      10.0,
+      193.1
+     ],
+     [
+      -129.1,
+      10.0,
+      195.5
+     ],
+     [
+      -136.5,
+      10.0,
+      195.5
+     ],
+     [
+      -156.8,
+      5.0,
+      192.4
+     ],
+     [
+      -156.5,
+      -0.0,
+      193.8
+     ],
+     [
+      -153.4,
+      5.0,
+      198.1
+     ],
+     [
+      -149.4,
+      -0.0,
+      193.1
+     ],
+     [
+      -133.6,
+      5.0,
+      196.7
+     ]
+    ],
+    "patrol": [
+     [
+      -138.9,
+      -0.0,
+      194.3
+     ],
+     [
+      -162.8,
+      -0.2,
+      192.2
+     ],
+     [
+      -165.9,
+      -0.2,
+      195.4
+     ],
+     [
+      -136.6,
+      0.0,
+      195.6
+     ]
+    ],
+    "camps": [
+     [
+      -131.9,
+      -0.0,
+      166.0
+     ],
+     [
+      -119.1,
+      -0.0,
+      158.5
+     ]
+    ],
+    "campfires": [
+     [
+      -133.4,
+      0.4,
+      165.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_2_2",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_2_2",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    -93.8,
+    10.0,
+    -138.4
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "duty",
+    "loners",
+    "mercs"
+   ],
+   "points": {
+    "campfire": [
+     [
+      -93.8,
+      10.1,
+      -141.3
+     ]
+    ],
+    "beds": [
+     [
+      -102.2,
+      10.1,
+      -143.0
+     ]
+    ],
+    "guards": [
+     [
+      -89.7,
+      10.3,
+      -128.6
+     ],
+     [
+      -76.3,
+      10.3,
+      -138.4
+     ],
+     [
+      -103.7,
+      11.1,
+      -151.9
+     ]
+    ],
+    "flag": [
+     -96.0,
+     9.9,
+     -138.6
+    ],
+    "patrol": [
+     [
+      -111.0,
+      9.7,
+      -153.0
+     ],
+     [
+      -89.8,
+      10.3,
+      -134.9
+     ],
+     [
+      -94.6,
+      10.2,
+      -144.2
+     ],
+     [
+      -88.4,
+      10.3,
+      -146.4
+     ]
+    ],
+    "campfires": [
+     [
+      -93.8,
+      10.4,
+      -141.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_4",
+   "kind": "base",
+   "smart": "agr_smart_terrain_4_4",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -1.4,
+    7.5,
+    -15.3
+   ],
+   "status": "observed",
+   "faction": "scientists",
+   "allowed": [
+    "clear_sky",
+    "scientists"
+   ],
+   "startSquads": 2,
+   "points": {
+    "campfire": [
+     [
+      13.5,
+      0.3,
+      -10.1
+     ],
+     [
+      28.9,
+      0.1,
+      2.6
+     ],
+     [
+      13.2,
+      -0.2,
+      13.4
+     ],
+     [
+      6.0,
+      1.0,
+      -38.8
+     ],
+     [
+      -43.1,
+      -0.2,
+      -6.6
+     ],
+     [
+      61.9,
+      -0.2,
+      -20.6
+     ]
+    ],
+    "beds": [
+     [
+      14.7,
+      0.2,
+      -22.7
+     ],
+     [
+      14.4,
+      0.2,
+      -24.5
+     ],
+     [
+      19.6,
+      0.2,
+      -24.1
+     ],
+     [
+      20.2,
+      0.2,
+      -14.3
+     ],
+     [
+      20.3,
+      0.2,
+      -11.5
+     ]
+    ],
+    "guards": [
+     [
+      19.6,
+      0.0,
+      0.7
+     ],
+     [
+      -13.7,
+      -0.2,
+      4.5
+     ],
+     [
+      18.2,
+      9.3,
+      -14.0
+     ],
+     [
+      -2.1,
+      7.5,
+      -2.1
+     ],
+     [
+      13.4,
+      4.8,
+      -1.4
+     ],
+     [
+      -8.3,
+      -0.2,
+      23.8
+     ],
+     [
+      30.6,
+      -0.1,
+      22.4
+     ],
+     [
+      9.9,
+      1.3,
+      -42.9
+     ],
+     [
+      23.6,
+      1.2,
+      -47.4
+     ],
+     [
+      -2.8,
+      1.3,
+      -47.3
+     ],
+     [
+      4.9,
+      1.3,
+      -47.9
+     ],
+     [
+      -45.5,
+      -0.2,
+      5.6
+     ],
+     [
+      75.9,
+      -0.1,
+      -32.9
+     ],
+     [
+      -25.9,
+      5.0,
+      -9.6
+     ],
+     [
+      -2.7,
+      11.8,
+      -18.2
+     ]
+    ],
+    "flag": [
+     7.7,
+     0.0,
+     -14.7
+    ],
+    "patrol": [
+     [
+      20.5,
+      -0.2,
+      -33.2
+     ],
+     [
+      7.3,
+      -0.1,
+      -19.2
+     ],
+     [
+      9.5,
+      -0.2,
+      -31.9
+     ],
+     [
+      4.9,
+      0.0,
+      -33.6
+     ],
+     [
+      17.7,
+      0.0,
+      -31.9
+     ],
+     [
+      21.4,
+      0.0,
+      -32.9
+     ],
+     [
+      -32.7,
+      -0.2,
+      -19.5
+     ],
+     [
+      -42.0,
+      -0.2,
+      -17.4
+     ],
+     [
+      -43.8,
+      -0.2,
+      7.5
+     ],
+     [
+      -40.7,
+      0.0,
+      -2.2
+     ],
+     [
+      -45.5,
+      0.0,
+      9.7
+     ],
+     [
+      53.9,
+      0.0,
+      -35.9
+     ],
+     [
+      58.1,
+      0.0,
+      -27.7
+     ],
+     [
+      61.2,
+      0.0,
+      -9.5
+     ],
+     [
+      62.1,
+      0.0,
+      -27.7
+     ],
+     [
+      61.7,
+      0.0,
+      -4.2
+     ],
+     [
+      75.3,
+      -0.2,
+      -35.7
+     ],
+     [
+      75.9,
+      -0.1,
+      -32.8
+     ],
+     [
+      76.3,
+      -0.1,
+      -37.2
+     ],
+     [
+      -5.6,
+      -0.2,
+      23.6
+     ],
+     [
+      17.9,
+      0.0,
+      10.5
+     ],
+     [
+      2.8,
+      0.0,
+      6.2
+     ],
+     [
+      24.0,
+      0.0,
+      15.0
+     ],
+     [
+      11.0,
+      -0.2,
+      9.8
+     ],
+     [
+      7.8,
+      0.0,
+      -12.5
+     ]
+    ],
+    "camps": [
+     [
+      13.5,
+      -1.2,
+      -9.4
+     ]
+    ],
+    "campfires": [
+     [
+      13.5,
+      0.4,
+      -10.1
+     ],
+     [
+      13.2,
+      0.1,
+      13.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_4_near_1",
+   "kind": "base",
+   "smart": "agr_smart_terrain_4_4_near_1",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    9.1,
+    -0.2,
+    -32.7
+   ],
+   "status": "observed",
+   "faction": "loners",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "freedom",
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 2,
+   "points": {
+    "campfire": [
+     [
+      6.0,
+      1.0,
+      -38.8
+     ]
+    ],
+    "guards": [
+     [
+      9.9,
+      1.3,
+      -42.9
+     ],
+     [
+      23.6,
+      1.2,
+      -47.4
+     ],
+     [
+      -2.8,
+      1.3,
+      -47.3
+     ],
+     [
+      4.9,
+      1.3,
+      -47.9
+     ]
+    ],
+    "patrol": [
+     [
+      20.5,
+      -0.2,
+      -33.2
+     ],
+     [
+      7.3,
+      -0.1,
+      -19.2
+     ],
+     [
+      9.5,
+      -0.2,
+      -31.9
+     ],
+     [
+      4.9,
+      0.0,
+      -33.6
+     ],
+     [
+      17.7,
+      0.0,
+      -31.9
+     ],
+     [
+      21.4,
+      0.0,
+      -32.9
+     ]
+    ],
+    "camps": [
+     [
+      6.1,
+      -0.3,
+      -38.2
+     ]
+    ],
+    "campfires": [
+     [
+      5.9,
+      1.2,
+      -38.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_4_near_2",
+   "kind": "base",
+   "smart": "agr_smart_terrain_4_4_near_2",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    -40.8,
+    -0.2,
+    -1.7
+   ],
+   "status": "observed",
+   "faction": "clear_sky",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists"
+   ],
+   "startSquads": 1,
+   "points": {
+    "campfire": [
+     [
+      -43.1,
+      -0.2,
+      -6.6
+     ]
+    ],
+    "guards": [
+     [
+      -45.5,
+      -0.2,
+      5.6
+     ]
+    ],
+    "patrol": [
+     [
+      -32.7,
+      -0.2,
+      -19.5
+     ],
+     [
+      -42.0,
+      -0.2,
+      -17.4
+     ],
+     [
+      -43.8,
+      -0.2,
+      7.5
+     ],
+     [
+      -40.7,
+      0.0,
+      -2.2
+     ],
+     [
+      -45.5,
+      0.0,
+      9.7
+     ]
+    ],
+    "camps": [
+     [
+      -42.6,
+      -1.4,
+      -6.1
+     ]
+    ],
+    "campfires": [
+     [
+      -43.1,
+      0.2,
+      -6.6
+     ],
+     [
+      -38.5,
+      -3.9,
+      -22.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_4_near_3",
+   "kind": "base",
+   "smart": "agr_smart_terrain_4_4_near_3",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    63.7,
+    -0.2,
+    -35.0
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "freedom",
+    "loners",
+    "scientists"
+   ],
+   "points": {
+    "campfire": [
+     [
+      61.9,
+      -0.2,
+      -20.6
+     ]
+    ],
+    "guards": [
+     [
+      75.9,
+      -0.1,
+      -32.9
+     ]
+    ],
+    "patrol": [
+     [
+      53.9,
+      0.0,
+      -35.9
+     ],
+     [
+      58.1,
+      0.0,
+      -27.7
+     ],
+     [
+      61.2,
+      0.0,
+      -9.5
+     ],
+     [
+      62.1,
+      0.0,
+      -27.7
+     ],
+     [
+      61.7,
+      0.0,
+      -4.2
+     ],
+     [
+      75.3,
+      -0.2,
+      -35.7
+     ],
+     [
+      75.9,
+      -0.1,
+      -32.8
+     ],
+     [
+      76.3,
+      -0.1,
+      -37.2
+     ]
+    ],
+    "camps": [
+     [
+      62.4,
+      -1.5,
+      -20.2
+     ]
+    ],
+    "campfires": [
+     [
+      61.9,
+      0.2,
+      -20.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_6",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_4_6",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    20.9,
+    0.4,
+    146.5
+   ],
+   "status": "observed",
+   "allowed": [
+    "military"
+   ],
+   "points": {
+    "campfire": [
+     [
+      19.4,
+      0.4,
+      146.1
+     ]
+    ],
+    "guards": [
+     [
+      15.8,
+      0.3,
+      150.9
+     ],
+     [
+      27.5,
+      0.5,
+      140.4
+     ]
+    ],
+    "flag": [
+     21.0,
+     0.5,
+     142.1
+    ],
+    "patrol": [
+     [
+      15.0,
+      0.4,
+      146.6
+     ],
+     [
+      26.6,
+      0.3,
+      145.2
+     ],
+     [
+      21.2,
+      0.4,
+      147.2
+     ],
+     [
+      19.4,
+      0.4,
+      148.2
+     ]
+    ],
+    "campfires": [
+     [
+      19.4,
+      0.6,
+      145.9
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_2",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_5_2",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    69.8,
+    15.0,
+    -146.7
+   ],
+   "status": "observed",
+   "allowed": [
+    "duty",
+    "loners"
+   ],
+   "points": {
+    "campfire": [
+     [
+      68.3,
+      15.3,
+      -149.5
+     ]
+    ],
+    "beds": [
+     [
+      68.7,
+      15.3,
+      -154.4
+     ]
+    ],
+    "guards": [
+     [
+      67.8,
+      15.2,
+      -144.1
+     ],
+     [
+      57.6,
+      15.3,
+      -146.7
+     ]
+    ],
+    "flag": [
+     71.4,
+     14.9,
+     -151.2
+    ],
+    "patrol": [
+     [
+      63.6,
+      15.3,
+      -145.4
+     ],
+     [
+      66.0,
+      15.3,
+      -147.0
+     ],
+     [
+      72.2,
+      14.8,
+      -149.4
+     ]
+    ],
+    "campfires": [
+     [
+      68.2,
+      15.4,
+      -149.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_3",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_5_3",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    147.1,
+    0.2,
+    -53.6
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      146.7,
+      0.4,
+      -55.6
+     ]
+    ],
+    "guards": [
+     [
+      152.9,
+      -0.1,
+      -50.2
+     ],
+     [
+      140.1,
+      0.1,
+      -53.6
+     ],
+     [
+      147.2,
+      1.3,
+      -46.9
+     ]
+    ],
+    "flag": [
+     150.5,
+     0.0,
+     -51.1
+    ],
+    "patrol": [
+     [
+      144.0,
+      0.2,
+      -53.9
+     ],
+     [
+      144.9,
+      0.5,
+      -56.1
+     ],
+     [
+      152.1,
+      0.1,
+      -53.3
+     ],
+     [
+      147.0,
+      0.0,
+      -51.8
+     ]
+    ],
+    "campfires": [
+     [
+      146.7,
+      0.7,
+      -55.6
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_4",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_5_4",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    102.0,
+    0.4,
+    47.5
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      102.6,
+      0.4,
+      45.9
+     ]
+    ],
+    "beds": [
+     [
+      108.8,
+      0.8,
+      52.2
+     ],
+     [
+      111.5,
+      0.9,
+      47.8
+     ],
+     [
+      105.3,
+      0.5,
+      49.0
+     ]
+    ],
+    "guards": [
+     [
+      101.7,
+      0.4,
+      51.6
+     ],
+     [
+      104.2,
+      0.4,
+      40.7
+     ],
+     [
+      94.6,
+      0.5,
+      45.5
+     ]
+    ],
+    "flag": [
+     96.4,
+     0.5,
+     40.7
+    ],
+    "patrol": [
+     [
+      95.0,
+      0.5,
+      42.6
+     ],
+     [
+      101.9,
+      0.4,
+      43.7
+     ],
+     [
+      99.4,
+      0.5,
+      42.9
+     ],
+     [
+      100.4,
+      0.4,
+      40.2
+     ],
+     [
+      104.5,
+      0.4,
+      44.1
+     ],
+     [
+      107.0,
+      0.4,
+      47.5
+     ]
+    ],
+    "campfires": [
+     [
+      102.5,
+      0.7,
+      45.8
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_7",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_5_7",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    80.7,
+    -0.8,
+    237.7
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "duty",
+    "loners"
+   ],
+   "points": {
+    "campfire": [
+     [
+      78.0,
+      -0.5,
+      234.2
+     ]
+    ],
+    "flag": [
+     73.4,
+     -0.5,
+     231.7
+    ],
+    "patrol": [
+     [
+      82.0,
+      -0.7,
+      236.8
+     ],
+     [
+      81.3,
+      -0.6,
+      235.6
+     ]
+    ],
+    "campfires": [
+     [
+      78.1,
+      -0.2,
+      234.2
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_6_4",
+   "kind": "base",
+   "smart": "agr_smart_terrain_6_4",
+   "type": [
+    "base",
+    "surge"
+   ],
+   "original": [
+    251.6,
+    -0.0,
+    -66.1
+   ],
+   "status": "observed",
+   "allowed": [
+    "clear_sky",
+    "loners",
+    "scientists",
+    "zombied"
+   ],
+   "points": {
+    "campfire": [
+     [
+      253.7,
+      -0.0,
+      -67.4
+     ],
+     [
+      253.8,
+      -0.0,
+      -73.8
+     ]
+    ],
+    "beds": [
+     [
+      257.1,
+      -0.1,
+      -73.1
+     ],
+     [
+      256.0,
+      -0.1,
+      -65.7
+     ]
+    ],
+    "guards": [
+     [
+      236.0,
+      -0.0,
+      -61.5
+     ]
+    ],
+    "patrol": [
+     [
+      238.4,
+      -0.2,
+      -59.1
+     ],
+     [
+      240.2,
+      -0.2,
+      -60.3
+     ],
+     [
+      259.5,
+      -0.0,
+      -72.2
+     ]
+    ],
+    "camps": [
+     [
+      254.3,
+      -1.3,
+      -67.4
+     ]
+    ],
+    "campfires": [
+     [
+      253.9,
+      0.3,
+      -67.5
+     ],
+     [
+      253.9,
+      0.3,
+      -73.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_6_6",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_6_6",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    232.1,
+    0.6,
+    253.0
+   ],
+   "status": "observed",
+   "points": {
+    "campfire": [
+     [
+      233.4,
+      0.8,
+      255.1
+     ]
+    ],
+    "beds": [
+     [
+      228.2,
+      0.8,
+      259.0
+     ]
+    ],
+    "guards": [
+     [
+      229.3,
+      0.5,
+      251.1
+     ],
+     [
+      232.7,
+      1.6,
+      248.1
+     ],
+     [
+      238.8,
+      2.1,
+      251.2
+     ],
+     [
+      239.3,
+      1.5,
+      254.8
+     ]
+    ],
+    "flag": [
+     233.1,
+     0.8,
+     259.2
+    ],
+    "patrol": [
+     [
+      230.0,
+      0.5,
+      253.7
+     ],
+     [
+      233.5,
+      0.8,
+      252.5
+     ]
+    ],
+    "campfires": [
+     [
+      233.5,
+      1.0,
+      255.1
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_7_4",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_7_4",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    234.7,
+    0.3,
+    4.9
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "loners",
+    "military"
+   ],
+   "points": {
+    "campfire": [
+     [
+      238.3,
+      0.3,
+      6.7
+     ],
+     [
+      241.2,
+      0.6,
+      1.1
+     ]
+    ],
+    "beds": [
+     [
+      237.1,
+      0.5,
+      10.0
+     ]
+    ],
+    "guards": [
+     [
+      244.3,
+      0.3,
+      12.0
+     ],
+     [
+      229.5,
+      0.3,
+      1.8
+     ],
+     [
+      229.4,
+      0.3,
+      9.4
+     ],
+     [
+      233.6,
+      0.3,
+      9.0
+     ],
+     [
+      251.3,
+      0.3,
+      9.9
+     ],
+     [
+      251.3,
+      0.4,
+      1.9
+     ]
+    ],
+    "flag": [
+     241.4,
+     0.3,
+     9.1
+    ],
+    "patrol": [
+     [
+      231.3,
+      0.3,
+      6.2
+     ],
+     [
+      232.1,
+      0.3,
+      5.6
+     ],
+     [
+      241.5,
+      0.3,
+      5.5
+     ],
+     [
+      239.3,
+      0.3,
+      10.5
+     ]
+    ],
+    "campfires": [
+     [
+      238.4,
+      0.6,
+      6.7
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_7_5",
+   "kind": "lair",
+   "smart": "agr_smart_terrain_7_5",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    233.5,
+    22.9,
+    109.4
+   ],
+   "status": "observed",
+   "allowed": [
+    "bandits",
+    "clear_sky",
+    "duty",
+    "loners",
+    "military"
+   ],
+   "points": {
+    "campfire": [
+     [
+      236.9,
+      23.3,
+      114.5
+     ]
+    ],
+    "guards": [
+     [
+      229.1,
+      23.2,
+      119.3
+     ],
+     [
+      222.1,
+      21.9,
+      103.1
+     ],
+     [
+      234.0,
+      22.0,
+      100.3
+     ]
+    ],
+    "flag": [
+     238.7,
+     23.2,
+     116.9
+    ],
+    "patrol": [
+     [
+      230.9,
+      22.6,
+      110.5
+     ],
+     [
+      233.6,
+      22.7,
+      110.7
+     ],
+     [
+      232.9,
+      22.5,
+      107.9
+     ],
+     [
+      236.2,
+      23.3,
+      118.1
+     ]
+    ],
+    "campfires": [
+     [
+      237.0,
+      23.3,
+      114.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_u_bandits",
+   "kind": "lair",
+   "smart": "agr_u_bandits",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    62.3,
+    1.6,
+    -158.2
+   ],
+   "status": "observed",
+   "faction": "bandits",
+   "allowed": [
+    "bandits",
+    "loners"
+   ],
+   "startSquads": 2
+  },
+  {
+   "id": "l03_agroprom.agr_u_bloodsucker",
+   "kind": "lair",
+   "smart": "agr_u_bloodsucker",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    4.4,
+    -8.2,
+    -108.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_u_bloodsucker_2",
+   "kind": "lair",
+   "smart": "agr_u_bloodsucker_2",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    30.3,
+    -8.2,
+    -86.9
+   ],
+   "status": "observed",
+   "allowed": [
+    "loners"
+   ]
+  },
+  {
+   "id": "l03_agroprom.agr_u_monsters",
+   "kind": "lair",
+   "smart": "agr_u_monsters",
+   "type": [
+    "territory",
+    "lair"
+   ],
+   "original": [
+    124.5,
+    -7.1,
+    24.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_u_soldiers",
+   "kind": "outpost",
+   "smart": "agr_u_soldiers",
+   "type": [
+    "territory"
+   ],
+   "original": [
+    45.5,
+    4.2,
+    -10.8
+   ],
+   "status": "observed",
+   "points": {
+    "campfires": [
+     [
+      29.0,
+      0.1,
+      2.4
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_2_3",
+   "kind": "landmark",
+   "smart": "agr_smart_terrain_2_3",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -133.3,
+    11.0,
+    -45.6
+   ],
+   "points": {
+    "campfire": [
+     [
+      -136.1,
+      11.1,
+      -43.0
+     ],
+     [
+      -131.2,
+      10.9,
+      -46.5
+     ]
+    ],
+    "beds": [
+     [
+      -135.4,
+      11.2,
+      -39.2
+     ]
+    ],
+    "guards": [
+     [
+      -139.3,
+      11.2,
+      -46.9
+     ],
+     [
+      -123.4,
+      10.4,
+      -45.1
+     ]
+    ],
+    "flag": [
+     -132.4,
+     10.9,
+     -49.1
+    ],
+    "patrol": [
+     [
+      -135.1,
+      11.1,
+      -49.6
+     ]
+    ],
+    "campfires": [
+     [
+      -131.2,
+      11.2,
+      -46.5
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_2_5",
+   "kind": "landmark",
+   "smart": "agr_smart_terrain_2_5",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -146.3,
+    6.4,
+    92.3
+   ],
+   "points": {
+    "campfire": [
+     [
+      -147.2,
+      7.2,
+      92.7
+     ]
+    ],
+    "beds": [
+     [
+      -151.5,
+      6.5,
+      93.4
+     ]
+    ],
+    "guards": [
+     [
+      -142.5,
+      5.1,
+      86.2
+     ],
+     [
+      -137.1,
+      6.3,
+      94.4
+     ],
+     [
+      -151.3,
+      5.8,
+      87.3
+     ]
+    ],
+    "flag": [
+     -148.4,
+     7.0,
+     95.9
+    ],
+    "patrol": [
+     [
+      -145.9,
+      7.1,
+      96.2
+     ]
+    ],
+    "camps": [
+     [
+      -137.1,
+      -0.2,
+      142.8
+     ]
+    ],
+    "campfires": [
+     [
+      -147.2,
+      7.1,
+      92.7
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_3_5",
+   "kind": "landmark",
+   "smart": "agr_smart_terrain_3_5",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -11.4,
+    7.2,
+    77.0
+   ],
+   "points": {
+    "campfire": [
+     [
+      -10.2,
+      7.2,
+      78.8
+     ]
+    ],
+    "guards": [
+     [
+      -17.0,
+      7.2,
+      74.4
+     ],
+     [
+      -11.0,
+      7.1,
+      75.1
+     ],
+     [
+      -11.3,
+      7.1,
+      73.4
+     ],
+     [
+      -5.6,
+      7.1,
+      77.5
+     ]
+    ],
+    "flag": [
+     -13.3,
+     7.6,
+     82.5
+    ],
+    "campfires": [
+     [
+      -10.3,
+      7.5,
+      78.8
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_2",
+   "kind": "landmark",
+   "smart": "agr_smart_terrain_4_2",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    -10.5,
+    4.0,
+    -112.6
+   ],
+   "points": {
+    "campfire": [
+     [
+      -5.3,
+      4.4,
+      -115.8
+     ],
+     [
+      -13.7,
+      4.5,
+      -115.2
+     ]
+    ],
+    "guards": [
+     [
+      -9.9,
+      2.0,
+      -101.3
+     ],
+     [
+      -13.3,
+      5.2,
+      -120.3
+     ]
+    ],
+    "flag": [
+     -2.9,
+     4.0,
+     -111.3
+    ],
+    "patrol": [
+     [
+      -17.6,
+      4.0,
+      -111.7
+     ]
+    ],
+    "campfires": [
+     [
+      -5.2,
+      4.3,
+      -115.8
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_6",
+   "kind": "landmark",
+   "smart": "agr_smart_terrain_5_6",
+   "type": [
+    "paths_only"
+   ],
+   "original": [
+    27.0,
+    0.5,
+    151.4
+   ],
+   "points": {
+    "guards": [
+     [
+      27.0,
+      0.5,
+      151.4
+     ]
+    ]
+   },
+   "status": "observed",
+   "note": "нет в all.spawn — только пути level.game; центр — среднее точек"
+  },
+  {
+   "id": "l03_agroprom.agr_2c_01_hg_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    206.1,
+    22.5,
+    157.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_2_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -218.5,
+    3.5,
+    -69.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_3_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    -202.9,
+    -0.0,
+    24.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_4_4_near_3_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    38.5,
+    7.5,
+    11.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_2_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    142.7,
+    13.6,
+    -108.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_5_7_anomal_zone",
+   "kind": "field",
+   "type": [
+    "anomal_zone"
+   ],
+   "original": [
+    24.6,
+    7.6,
+    280.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_duty_trader_secret_1",
+   "kind": "trader",
+   "original": [
+    -27.3,
+    -2.4,
+    313.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_garbage_1",
+   "kind": "exit",
+   "to": "garbage",
+   "original": [
+    261.5,
+    2.6,
+    249.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_garbage_2",
+   "kind": "exit",
+   "to": "garbage",
+   "original": [
+    287.0,
+    0.0,
+    -10.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_marsh_1",
+   "kind": "exit",
+   "to": "marsh",
+   "original": [
+    7.4,
+    -1.2,
+    336.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_underground_1",
+   "kind": "exit",
+   "to": "underground",
+   "original": [
+    57.9,
+    -5.1,
+    280.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_underground_2",
+   "kind": "exit",
+   "to": "underground",
+   "original": [
+    -79.5,
+    4.2,
+    113.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_underground_3",
+   "kind": "exit",
+   "to": "underground",
+   "original": [
+    -47.2,
+    -2.6,
+    29.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_underground_4",
+   "kind": "exit",
+   "to": "underground",
+   "original": [
+    -40.0,
+    -3.5,
+    -24.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_underground_5",
+   "kind": "exit",
+   "to": "underground",
+   "original": [
+    -122.9,
+    -3.1,
+    141.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_underground_6",
+   "kind": "exit",
+   "to": "underground",
+   "original": [
+    -76.2,
+    -1.5,
+    -5.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_level_changer_to_yantar_1",
+   "kind": "exit",
+   "to": "yantar",
+   "original": [
+    -234.9,
+    16.1,
+    -217.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.agr_smart_terrain_1_6_smart_cover_trader",
+   "kind": "trader",
+   "original": [
+    -151.9,
+    1.1,
+    170.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_-7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 2
+   },
+   "original": [
+    -206.6,
+    22.1,
+    -208.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_acidic_average": 1,
+    "zone_mine_acidic_average": 8
+   },
+   "original": [
+    -204.2,
+    1.7,
+    -74.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_average": 5
+   },
+   "original": [
+    -201.5,
+    1.6,
+    -52.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_gravitational_average": 2
+   },
+   "original": [
+    -200.9,
+    0.1,
+    26.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -200.3,
+    -0.3,
+    33.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 2
+   },
+   "original": [
+    -214.5,
+    4.7,
+    81.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-7_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1
+   },
+   "original": [
+    -192.2,
+    -0.1,
+    212.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-6_-7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -183.8,
+    24.8,
+    -200.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-6_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_average": 2
+   },
+   "original": [
+    -190.0,
+    1.6,
+    -67.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-6_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_acidic_average": 1
+   },
+   "original": [
+    -185.1,
+    1.6,
+    -34.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-6_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_acidic_average": 1,
+    "zone_mine_acidic_average": 1
+   },
+   "original": [
+    -178.5,
+    3.0,
+    -26.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-6_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_electric_average": 1,
+    "zone_mine_gravitational_average": 1,
+    "zone_witches_galantine_average": 1
+   },
+   "original": [
+    -174.1,
+    1.1,
+    213.8
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-5_-6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1
+   },
+   "original": [
+    -149.0,
+    19.6,
+    -176.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-5_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -128.0,
+    0.3,
+    29.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-4_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_electric_weak": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    -108.4,
+    0.9,
+    29.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-4_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_average": 2
+   },
+   "original": [
+    -98.8,
+    12.7,
+    220.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-4_7",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_average": 1
+   },
+   "original": [
+    -97.0,
+    14.7,
+    224.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-3_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -66.0,
+    7.6,
+    128.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-2_-6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -43.9,
+    9.2,
+    -161.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-2_-5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -32.5,
+    9.9,
+    -158.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-2_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 2
+   },
+   "original": [
+    -53.3,
+    7.7,
+    135.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-1_-6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    -31.5,
+    11.2,
+    -170.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-1_-5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 1
+   },
+   "original": [
+    -13.4,
+    6.7,
+    -134.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_-1_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_weak": 1
+   },
+   "original": [
+    -13.2,
+    0.4,
+    -74.3
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_0_-6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    10.8,
+    19.6,
+    -171.0
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_0_-5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    10.6,
+    17.9,
+    -159.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_0_6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_electric_average": 1
+   },
+   "original": [
+    21.7,
+    -2.1,
+    222.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_0_8",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_gravitational_average": 7,
+    "zone_mine_gravitational_strong": 1,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    19.2,
+    4.6,
+    275.9
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_1_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_psychic_average": 1,
+    "zone_mine_electric_average": 9
+   },
+   "original": [
+    37.3,
+    5.0,
+    12.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_3_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    124.8,
+    14.4,
+    -68.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_3_-1",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    111.9,
+    0.3,
+    -2.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_3_0",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1
+   },
+   "original": [
+    103.9,
+    0.2,
+    0.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_4_-6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    146.6,
+    18.1,
+    -164.4
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_4_-4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_weak": 1,
+    "zone_mine_gravitational_average": 4,
+    "zone_mine_gravitational_weak": 1
+   },
+   "original": [
+    146.8,
+    11.9,
+    -106.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_4_-2",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    131.1,
+    15.0,
+    -62.5
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_4_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 2
+   },
+   "original": [
+    152.2,
+    11.8,
+    144.2
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_5_-6",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    164.5,
+    19.5,
+    -163.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_5_-5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    171.4,
+    19.5,
+    -146.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_5_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1,
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    173.8,
+    17.9,
+    151.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_5_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1,
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    171.5,
+    15.8,
+    169.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_6_-3",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_field_radioactive_average": 1
+   },
+   "original": [
+    206.9,
+    20.8,
+    -81.6
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_6_4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_average": 1
+   },
+   "original": [
+    192.2,
+    20.4,
+    136.1
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_6_5",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_weak": 2
+   },
+   "original": [
+    192.0,
+    18.3,
+    170.7
+   ],
+   "status": "observed"
+  },
+  {
+   "id": "l03_agroprom.anomalies_7_-4",
+   "kind": "field",
+   "type": [
+    "static_anomalies"
+   ],
+   "anomalies": {
+    "zone_mine_gravitational_strong": 1
+   },
+   "original": [
+    231.2,
+    22.7,
+    -98.6
+   ],
+   "status": "observed"
+  }
+ ]
+}
