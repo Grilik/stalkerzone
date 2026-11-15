@@ -1,0 +1,899 @@
+{
+ "id": "zaton",
+ "name": "ZATON",
+ "ru": "Затон",
+ "point": [
+  -3426,
+  93,
+  -3999
+ ],
+ "source": "places.json (телепорт автора)",
+ "bbox": [
+  -4052,
+  -4300,
+  -3281,
+  -3585
+ ],
+ "area_draft": [
+  [
+   -4020,
+   -3740
+  ],
+  [
+   -3964,
+   -4252
+  ],
+  [
+   -3920,
+   -4268
+  ],
+  [
+   -3909,
+   -4268
+  ],
+  [
+   -3389,
+   -4128
+  ],
+  [
+   -3321,
+   -4016
+  ],
+  [
+   -3313,
+   -3984
+  ],
+  [
+   -3313,
+   -3909
+  ],
+  [
+   -3365,
+   -3701
+  ],
+  [
+   -3405,
+   -3629
+  ],
+  [
+   -3765,
+   -3617
+  ],
+  [
+   -3808,
+   -3617
+  ],
+  [
+   -4020,
+   -3669
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.6341,
+  "лес": 0.1249,
+  "вода": 0.1175,
+  "постройки": 0.0169,
+  "асфальт": 0.0,
+  "гравий/грунтовка": 0.0026,
+  "рельсы": 0.0002,
+  "искусственное низкое": 0.032,
+  "песок": 0.0718
+ },
+ "buildings_count": 33,
+ "linear_count": 3,
+ "buildings": [
+  {
+   "bbox": [
+    -3508,
+    -3720,
+    -3405,
+    -3673
+   ],
+   "footprint": 940,
+   "kind": "building",
+   "ground_y": 85,
+   "top_y": 106,
+   "height": 21,
+   "roof": [
+    "quartz_block",
+    "stone_brick_slab",
+    "bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4020,
+    -3740,
+    -3917,
+    -3669
+   ],
+   "footprint": 893,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars",
+    "smooth_stone_slab",
+    "bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3396,
+    -3872,
+    -3365,
+    -3701
+   ],
+   "footprint": 831,
+   "kind": "linear",
+   "ground_y": 66,
+   "top_y": 99,
+   "height": 33,
+   "roof": [
+    "quartz_slab",
+    "smooth_stone_slab",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3808,
+    -3696,
+    -3765,
+    -3617
+   ],
+   "footprint": 425,
+   "kind": "building",
+   "ground_y": 80,
+   "top_y": 88,
+   "height": 8,
+   "roof": [
+    "smooth_stone_slab",
+    "cracked_stone_bricks",
+    "netherrack"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3612,
+    -4100,
+    -3565,
+    -4081
+   ],
+   "footprint": 392,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 73,
+   "height": 10,
+   "roof": [
+    "nether_bricks",
+    "iron_bars",
+    "jungle_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3420,
+    -3980,
+    -3377,
+    -3909
+   ],
+   "footprint": 355,
+   "kind": "building",
+   "ground_y": 92,
+   "top_y": 105,
+   "height": 13,
+   "roof": [
+    "nether_brick_stairs",
+    "smooth_stone_slab",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3368,
+    -3984,
+    -3313,
+    -3909
+   ],
+   "footprint": 337,
+   "kind": "building",
+   "ground_y": 92,
+   "top_y": 105,
+   "height": 13,
+   "roof": [
+    "stone_brick_slab",
+    "nether_brick_slab",
+    "bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3412,
+    -4016,
+    -3321,
+    -3993
+   ],
+   "footprint": 255,
+   "kind": "building",
+   "ground_y": 92,
+   "top_y": 103,
+   "height": 11,
+   "roof": [
+    "nether_brick_slab",
+    "stone_brick_slab",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3484,
+    -3660,
+    -3405,
+    -3629
+   ],
+   "footprint": 229,
+   "kind": "building",
+   "ground_y": 91,
+   "top_y": 110,
+   "height": 19,
+   "roof": [
+    "smooth_stone_slab",
+    "nether_brick_slab",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3828,
+    -4072,
+    -3805,
+    -4057
+   ],
+   "footprint": 224,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 82,
+   "height": 15,
+   "roof": [
+    "jungle_stairs",
+    "quartz_slab",
+    "jungle_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3400,
+    -3964,
+    -3373,
+    -3917
+   ],
+   "footprint": 186,
+   "kind": "building",
+   "ground_y": 92,
+   "top_y": 105,
+   "height": 13,
+   "roof": [
+    "jungle_stairs",
+    "jungle_slab",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3552,
+    -3992,
+    -3537,
+    -3929
+   ],
+   "footprint": 167,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 98,
+   "height": 37,
+   "roof": [
+    "smooth_stone_slab",
+    "light_blue_terracotta",
+    "light_blue_wool"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3400,
+    -4128,
+    -3389,
+    -4109
+   ],
+   "footprint": 155,
+   "kind": "building",
+   "ground_y": 59,
+   "top_y": 72,
+   "height": 13,
+   "roof": [
+    "jungle_slab",
+    "oak_fence",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3816,
+    -3864,
+    -3797,
+    -3837
+   ],
+   "footprint": 122,
+   "kind": "building",
+   "ground_y": 76,
+   "top_y": 84,
+   "height": 8,
+   "roof": [
+    "cut_sandstone",
+    "stone_brick_slab",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3964,
+    -4220,
+    -3933,
+    -4201
+   ],
+   "footprint": 115,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 82,
+   "height": 10,
+   "roof": [
+    "nether_brick_slab",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3560,
+    -4096,
+    -3529,
+    -4081
+   ],
+   "footprint": 71,
+   "kind": "building",
+   "ground_y": 63,
+   "top_y": 70,
+   "height": 7,
+   "roof": [
+    "nether_bricks",
+    "iron_bars",
+    "nether_brick_fence"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3828,
+    -4028,
+    -3817,
+    -4009
+   ],
+   "footprint": 60,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 73,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3580,
+    -3840,
+    -3553,
+    -3837
+   ],
+   "footprint": 56,
+   "kind": "building",
+   "ground_y": 61,
+   "top_y": 68,
+   "height": 7,
+   "roof": [
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3964,
+    -4252,
+    -3957,
+    -4241
+   ],
+   "footprint": 50,
+   "kind": "building",
+   "ground_y": 68,
+   "top_y": 90,
+   "height": 22,
+   "roof": [
+    "bricks",
+    "jungle_slab",
+    "ladder"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3920,
+    -4268,
+    -3909,
+    -4249
+   ],
+   "footprint": 48,
+   "kind": "building",
+   "ground_y": 65,
+   "top_y": 68,
+   "height": 3,
+   "roof": [
+    "bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3424,
+    -3776,
+    -3421,
+    -3729
+   ],
+   "footprint": 48,
+   "kind": "linear",
+   "ground_y": 73,
+   "top_y": 92,
+   "height": 19,
+   "roof": [
+    "quartz_block",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3996,
+    -3720,
+    -3989,
+    -3709
+   ],
+   "footprint": 43,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3976,
+    -3720,
+    -3969,
+    -3709
+   ],
+   "footprint": 43,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3996,
+    -3732,
+    -3989,
+    -3725
+   ],
+   "footprint": 41,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3976,
+    -3732,
+    -3969,
+    -3725
+   ],
+   "footprint": 41,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3976,
+    -3696,
+    -3969,
+    -3689
+   ],
+   "footprint": 41,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3436,
+    -3768,
+    -3433,
+    -3729
+   ],
+   "footprint": 40,
+   "kind": "linear",
+   "ground_y": 75,
+   "top_y": 92,
+   "height": 17,
+   "roof": [
+    "quartz_block",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3964,
+    -3740,
+    -3941,
+    -3733
+   ],
+   "footprint": 40,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 91,
+   "height": 4,
+   "roof": [
+    "bricks",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3948,
+    -3732,
+    -3941,
+    -3725
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3948,
+    -3696,
+    -3941,
+    -3689
+   ],
+   "footprint": 37,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3800,
+    -3688,
+    -3793,
+    -3681
+   ],
+   "footprint": 34,
+   "kind": "building",
+   "ground_y": 80,
+   "top_y": 88,
+   "height": 8,
+   "roof": [
+    "netherrack"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3948,
+    -3716,
+    -3941,
+    -3709
+   ],
+   "footprint": 33,
+   "kind": "building",
+   "ground_y": 87,
+   "top_y": 118,
+   "height": 31,
+   "roof": [
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3828,
+    -4040,
+    -3817,
+    -4033
+   ],
+   "footprint": 30,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 73,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3808,
+    -4040,
+    -3797,
+    -4033
+   ],
+   "footprint": 30,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 73,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3812,
+    -4028,
+    -3801,
+    -4021
+   ],
+   "footprint": 30,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 73,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3808,
+    -4016,
+    -3797,
+    -4009
+   ],
+   "footprint": 30,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 73,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -3384,
+    -3776,
+    -3369,
+    -3713
+   ],
+   "columns": 584,
+   "blocks_below_ground": 1975
+  },
+  {
+   "bbox": [
+    -3384,
+    -3868,
+    -3369,
+    -3809
+   ],
+   "columns": 511,
+   "blocks_below_ground": 2152
+  },
+  {
+   "bbox": [
+    -3096,
+    -4516,
+    -3077,
+    -4493
+   ],
+   "columns": 100,
+   "blocks_below_ground": 408
+  },
+  {
+   "bbox": [
+    -3120,
+    -4504,
+    -3109,
+    -4493
+   ],
+   "columns": 40,
+   "blocks_below_ground": 162
+  },
+  {
+   "bbox": [
+    -2980,
+    -4492,
+    -2969,
+    -4481
+   ],
+   "columns": 27,
+   "blocks_below_ground": 103
+  },
+  {
+   "bbox": [
+    -3408,
+    -3704,
+    -3401,
+    -3697
+   ],
+   "columns": 26,
+   "blocks_below_ground": 78
+  },
+  {
+   "bbox": [
+    -3072,
+    -4512,
+    -3065,
+    -4501
+   ],
+   "columns": 21,
+   "blocks_below_ground": 83
+  },
+  {
+   "bbox": [
+    -3068,
+    -4484,
+    -3061,
+    -4477
+   ],
+   "columns": 16,
+   "blocks_below_ground": 52
+  },
+  {
+   "bbox": [
+    -3076,
+    -4484,
+    -3073,
+    -4477
+   ],
+   "columns": 10,
+   "blocks_below_ground": 31
+  },
+  {
+   "bbox": [
+    -3068,
+    -4532,
+    -3065,
+    -4525
+   ],
+   "columns": 9,
+   "blocks_below_ground": 33
+  },
+  {
+   "bbox": [
+    -2988,
+    -4520,
+    -2981,
+    -4517
+   ],
+   "columns": 9,
+   "blocks_below_ground": 47
+  },
+  {
+   "bbox": [
+    -2992,
+    -4544,
+    -2985,
+    -4541
+   ],
+   "columns": 8,
+   "blocks_below_ground": 32
+  },
+  {
+   "bbox": [
+    -3040,
+    -4516,
+    -3037,
+    -4509
+   ],
+   "columns": 8,
+   "blocks_below_ground": 54
+  },
+  {
+   "bbox": [
+    -2952,
+    -4484,
+    -2945,
+    -4481
+   ],
+   "columns": 8,
+   "blocks_below_ground": 31
+  }
+ ],
+ "block_entities": {
+  "mob_spawner": 8,
+  "trapped_chest": 23,
+  "chest": 6,
+  "hopper": 1,
+  "sign": 2
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 5919
+ },
+ "flat_free_share": 0.708,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 1,
+  "4_building": 4,
+  "5_quality": 3,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/zaton.png"
+}

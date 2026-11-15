@@ -1,0 +1,423 @@
+{
+ "id": "garbage",
+ "name": "Garbage",
+ "ru": "Свалка",
+ "point": [
+  -4176,
+  76,
+  2224
+ ],
+ "source": "places.json (телепорт автора)",
+ "bbox": [
+  -4408,
+  1680,
+  -4001,
+  2863
+ ],
+ "area_draft": [
+  [
+   -4376,
+   2228
+  ],
+  [
+   -4372,
+   2192
+  ],
+  [
+   -4204,
+   1712
+  ],
+  [
+   -4117,
+   1712
+  ],
+  [
+   -4033,
+   1980
+  ],
+  [
+   -4033,
+   2015
+  ],
+  [
+   -4105,
+   2727
+  ],
+  [
+   -4137,
+   2831
+  ],
+  [
+   -4160,
+   2831
+  ],
+  [
+   -4252,
+   2727
+  ],
+  [
+   -4376,
+   2275
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.6961,
+  "лес": 0.1181,
+  "вода": 0.0002,
+  "постройки": 0.0189,
+  "асфальт": 0.1028,
+  "гравий/грунтовка": 0.0369,
+  "рельсы": 0.0003,
+  "искусственное низкое": 0.0266,
+  "песок": 0.0
+ },
+ "buildings_count": 14,
+ "linear_count": 0,
+ "buildings": [
+  {
+   "bbox": [
+    -4340,
+    2208,
+    -4269,
+    2243
+   ],
+   "footprint": 1552,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 89,
+   "height": 17,
+   "roof": [
+    "nether_bricks",
+    "nether_brick_stairs",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4176,
+    2240,
+    -4085,
+    2459
+   ],
+   "footprint": 1273,
+   "kind": "building",
+   "ground_y": 69,
+   "top_y": 88,
+   "height": 19,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4376,
+    2228,
+    -4253,
+    2275
+   ],
+   "footprint": 1119,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 90,
+   "height": 18,
+   "roof": [
+    "nether_bricks",
+    "nether_brick_stairs",
+    "bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4204,
+    1712,
+    -4117,
+    1919
+   ],
+   "footprint": 1084,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 80,
+   "height": 14,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4372,
+    2192,
+    -4241,
+    2223
+   ],
+   "footprint": 1015,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 89,
+   "height": 17,
+   "roof": [
+    "nether_bricks",
+    "nether_brick_stairs",
+    "bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4172,
+    1944,
+    -4117,
+    2187
+   ],
+   "footprint": 1013,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 72,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4212,
+    2476,
+    -4121,
+    2611
+   ],
+   "footprint": 965,
+   "kind": "building",
+   "ground_y": 71,
+   "top_y": 90,
+   "height": 19,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4252,
+    2624,
+    -4105,
+    2727
+   ],
+   "footprint": 591,
+   "kind": "building",
+   "ground_y": 70,
+   "top_y": 84,
+   "height": 14,
+   "roof": [
+    "cobblestone",
+    "smooth_stone_slab",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4108,
+    2072,
+    -4085,
+    2095
+   ],
+   "footprint": 349,
+   "kind": "building",
+   "ground_y": 74,
+   "top_y": 89,
+   "height": 15,
+   "roof": [
+    "smooth_stone_slab",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4080,
+    2072,
+    -4057,
+    2095
+   ],
+   "footprint": 349,
+   "kind": "building",
+   "ground_y": 74,
+   "top_y": 89,
+   "height": 15,
+   "roof": [
+    "smooth_stone_slab",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4160,
+    2748,
+    -4137,
+    2831
+   ],
+   "footprint": 333,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 79,
+   "height": 7,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4228,
+    2220,
+    -4181,
+    2231
+   ],
+   "footprint": 247,
+   "kind": "building",
+   "ground_y": 67,
+   "top_y": 72,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4064,
+    1980,
+    -4033,
+    2015
+   ],
+   "footprint": 184,
+   "kind": "building",
+   "ground_y": 68,
+   "top_y": 85,
+   "height": 17,
+   "roof": [
+    "quartz_block",
+    "cobblestone_slab",
+    "cobblestone_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -4088,
+    2044,
+    -4069,
+    2047
+   ],
+   "footprint": 38,
+   "kind": "building",
+   "ground_y": 71,
+   "top_y": 81,
+   "height": 10,
+   "roof": [
+    "cobblestone_stairs",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -4144,
+    2748,
+    -4137,
+    2767
+   ],
+   "columns": 60,
+   "blocks_below_ground": 180
+  },
+  {
+   "bbox": [
+    -4188,
+    1876,
+    -4177,
+    1887
+   ],
+   "columns": 56,
+   "blocks_below_ground": 168
+  },
+  {
+   "bbox": [
+    -4452,
+    2272,
+    -4441,
+    2279
+   ],
+   "columns": 33,
+   "blocks_below_ground": 99
+  },
+  {
+   "bbox": [
+    -4140,
+    1976,
+    -4133,
+    1983
+   ],
+   "columns": 23,
+   "blocks_below_ground": 69
+  },
+  {
+   "bbox": [
+    -4124,
+    2072,
+    -4121,
+    2079
+   ],
+   "columns": 12,
+   "blocks_below_ground": 36
+  },
+  {
+   "bbox": [
+    -4180,
+    1752,
+    -4177,
+    1759
+   ],
+   "columns": 11,
+   "blocks_below_ground": 33
+  }
+ ],
+ "block_entities": {
+  "trapped_chest": 13,
+  "chest": 7,
+  "hopper": 6
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 732
+ },
+ "flat_free_share": 0.93,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 5,
+  "4_building": 5,
+  "5_quality": 3,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/garbage.png"
+}

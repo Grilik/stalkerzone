@@ -1,0 +1,859 @@
+{
+ "origin": [
+  -6656,
+  -5120
+ ],
+ "size": [
+  9728,
+  10240
+ ],
+ "classes_inside_border_columns": {
+  "земля": 28320273,
+  "лес": 13825326,
+  "вода": 5457758,
+  "постройки": 781733,
+  "асфальт": 297647,
+  "гравий/грунтовка": 833308,
+  "рельсы": 23500,
+  "искусственное низкое": 881963,
+  "песок": 1824241
+ },
+ "holes_inside_border": 13836,
+ "buildings_total": 1301,
+ "buildings_inside_border": 1288,
+ "outside_locations": 300,
+ "holes": [
+  {
+   "bbox": [
+    -2688,
+    -4528,
+    -2161,
+    -4481
+   ],
+   "chunks": 73
+  }
+ ],
+ "cordon_f3_points": [
+  {
+   "x": -4118,
+   "z": 3486,
+   "ground_y": 75,
+   "f3_feet_y": 76,
+   "surface": "grass_block"
+  },
+  {
+   "x": -3958,
+   "z": 3486,
+   "ground_y": 79,
+   "f3_feet_y": 80,
+   "surface": "grass_block"
+  },
+  {
+   "x": -4280,
+   "z": 3488,
+   "ground_y": 71,
+   "f3_feet_y": 72,
+   "surface": "grass_block"
+  },
+  {
+   "x": -4118,
+   "z": 3646,
+   "ground_y": 76,
+   "f3_feet_y": 77,
+   "surface": "gravel"
+  },
+  {
+   "x": -4118,
+   "z": 3326,
+   "ground_y": 75,
+   "f3_feet_y": 76,
+   "surface": "grass_block"
+  }
+ ],
+ "contour_vertices_near_data_edge_lt192": [
+  {
+   "x": -1656,
+   "z": -4432,
+   "to_data_edge": {
+    "N": 49,
+    "S": 2000,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -1824,
+   "z": -4480,
+   "to_data_edge": {
+    "N": 1,
+    "S": 2000,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -1960,
+   "z": -4480,
+   "to_data_edge": {
+    "N": 1,
+    "S": 2000,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -2088,
+   "z": -4456,
+   "to_data_edge": {
+    "N": 25,
+    "S": 2000,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -2208,
+   "z": -4496,
+   "to_data_edge": {
+    "N": 0,
+    "S": 0,
+    "W": 0,
+    "E": 0
+   }
+  },
+  {
+   "x": -2400,
+   "z": -4520,
+   "to_data_edge": {
+    "N": 0,
+    "S": 0,
+    "W": 0,
+    "E": 0
+   }
+  },
+  {
+   "x": -2736,
+   "z": -4496,
+   "to_data_edge": {
+    "N": 33,
+    "S": 2000,
+    "W": 1905,
+    "E": 64
+   }
+  },
+  {
+   "x": -3560,
+   "z": 4496,
+   "to_data_edge": {
+    "N": 2000,
+    "S": 112,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -2648,
+   "z": 4488,
+   "to_data_edge": {
+    "N": 2000,
+    "S": 120,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -2448,
+   "z": 4456,
+   "to_data_edge": {
+    "N": 2000,
+    "S": 152,
+    "W": 2000,
+    "E": 2000
+   }
+  },
+  {
+   "x": -1544,
+   "z": -4360,
+   "to_data_edge": {
+    "N": 121,
+    "S": 2000,
+    "W": 2000,
+    "E": 2000
+   }
+  }
+ ],
+ "locations": [
+  {
+   "id": "cordon",
+   "ru": "Кордон",
+   "point": [
+    -4118,
+    78,
+    3486
+   ],
+   "bbox": [
+    -4736,
+    2848,
+    -3977,
+    4419
+   ],
+   "buildings": 30,
+   "linear": 1,
+   "big_buildings": 4,
+   "underground": 26,
+   "command_blocks": 2,
+   "chests": 67,
+   "holes": 0,
+   "floating": 718,
+   "score_auto_3_4_5": [
+    3,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "garbage",
+   "ru": "Свалка",
+   "point": [
+    -4176,
+    76,
+    2224
+   ],
+   "bbox": [
+    -4408,
+    1680,
+    -4001,
+    2863
+   ],
+   "buildings": 14,
+   "linear": 0,
+   "big_buildings": 8,
+   "underground": 6,
+   "command_blocks": 0,
+   "chests": 20,
+   "holes": 0,
+   "floating": 732,
+   "score_auto_3_4_5": [
+    5,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "agroprom",
+   "ru": "Агропром",
+   "point": [
+    -4896,
+    74,
+    2390
+   ],
+   "bbox": [
+    -5452,
+    2220,
+    -4349,
+    2803
+   ],
+   "buildings": 16,
+   "linear": 1,
+   "big_buildings": 7,
+   "underground": 11,
+   "command_blocks": 1,
+   "chests": 115,
+   "holes": 0,
+   "floating": 80,
+   "score_auto_3_4_5": [
+    4,
+    5,
+    5
+   ]
+  },
+  {
+   "id": "dark_valley",
+   "ru": "Тёмная долина",
+   "point": [
+    -3236,
+    76,
+    2438
+   ],
+   "bbox": [
+    -3436,
+    2072,
+    -3093,
+    2791
+   ],
+   "buildings": 16,
+   "linear": 2,
+   "big_buildings": 5,
+   "underground": 7,
+   "command_blocks": 0,
+   "chests": 308,
+   "holes": 0,
+   "floating": 1207,
+   "score_auto_3_4_5": [
+    1,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "swamps",
+   "ru": "Болота, лагерь Чистого Неба",
+   "point": [
+    -5583,
+    68,
+    4417
+   ],
+   "bbox": [
+    -5748,
+    3700,
+    -4969,
+    4475
+   ],
+   "buildings": 15,
+   "linear": 0,
+   "big_buildings": 1,
+   "underground": 7,
+   "command_blocks": 0,
+   "chests": 56,
+   "holes": 0,
+   "floating": 1162,
+   "score_auto_3_4_5": [
+    5,
+    2,
+    3
+   ]
+  },
+  {
+   "id": "bar",
+   "ru": "Бар «100 рентген»",
+   "point": [
+    -4379,
+    76,
+    1277
+   ],
+   "bbox": [
+    -4980,
+    700,
+    -4189,
+    1483
+   ],
+   "buildings": 38,
+   "linear": 5,
+   "big_buildings": 12,
+   "underground": 9,
+   "command_blocks": 1,
+   "chests": 60,
+   "holes": 0,
+   "floating": 19215,
+   "score_auto_3_4_5": [
+    1,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "yantar",
+   "ru": "Янтарь",
+   "point": [
+    -5200,
+    70,
+    1705
+   ],
+   "bbox": [
+    -5392,
+    1360,
+    -4597,
+    1795
+   ],
+   "buildings": 9,
+   "linear": 0,
+   "big_buildings": 2,
+   "underground": 9,
+   "command_blocks": 1,
+   "chests": 71,
+   "holes": 0,
+   "floating": 2182,
+   "score_auto_3_4_5": [
+    5,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "army_warehouses",
+   "ru": "Армейские склады",
+   "point": [
+    -3960,
+    76,
+    490
+   ],
+   "bbox": [
+    -4372,
+    0,
+    -3537,
+    751
+   ],
+   "buildings": 73,
+   "linear": 4,
+   "big_buildings": 4,
+   "underground": 23,
+   "command_blocks": 0,
+   "chests": 148,
+   "holes": 0,
+   "floating": 1972,
+   "score_auto_3_4_5": [
+    2,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "dead_city",
+   "ru": "Мёртвый город",
+   "point": [
+    -5532,
+    68,
+    772
+   ],
+   "bbox": [
+    -6236,
+    224,
+    -4833,
+    1103
+   ],
+   "buildings": 107,
+   "linear": 1,
+   "big_buildings": 14,
+   "underground": 7,
+   "command_blocks": 0,
+   "chests": 213,
+   "holes": 0,
+   "floating": 332,
+   "score_auto_3_4_5": [
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "id": "limansk",
+   "ru": "Лиманск",
+   "point": [
+    -5533,
+    72,
+    -396
+   ],
+   "bbox": [
+    -5804,
+    -1132,
+    -4797,
+    -53
+   ],
+   "buildings": 68,
+   "linear": 1,
+   "big_buildings": 12,
+   "underground": 14,
+   "command_blocks": 0,
+   "chests": 6,
+   "holes": 0,
+   "floating": 15766,
+   "score_auto_3_4_5": [
+    3,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "zaton",
+   "ru": "Затон",
+   "point": [
+    -3426,
+    93,
+    -3999
+   ],
+   "bbox": [
+    -4052,
+    -4300,
+    -3281,
+    -3585
+   ],
+   "buildings": 33,
+   "linear": 3,
+   "big_buildings": 3,
+   "underground": 14,
+   "command_blocks": 0,
+   "chests": 29,
+   "holes": 0,
+   "floating": 5919,
+   "score_auto_3_4_5": [
+    1,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "yanov",
+   "ru": "Станция Янов",
+   "point": [
+    -4249,
+    72,
+    -3083
+   ],
+   "bbox": [
+    -4592,
+    -3776,
+    -3601,
+    -2525
+   ],
+   "buildings": 44,
+   "linear": 17,
+   "big_buildings": 14,
+   "underground": 12,
+   "command_blocks": 872,
+   "chests": 197,
+   "holes": 0,
+   "floating": 14664,
+   "score_auto_3_4_5": [
+    3,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "chnpp",
+   "ru": "ЧАЭС",
+   "point": [
+    -622,
+    71,
+    912
+   ],
+   "bbox": [
+    -1076,
+    564,
+    463,
+    1619
+   ],
+   "buildings": 69,
+   "linear": 0,
+   "big_buildings": 15,
+   "underground": 4,
+   "command_blocks": 126,
+   "chests": 0,
+   "holes": 0,
+   "floating": 19845,
+   "score_auto_3_4_5": [
+    5,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "duga",
+   "ru": "Дуга (Радар)",
+   "point": [
+    -1504,
+    68,
+    3428
+   ],
+   "bbox": [
+    -1820,
+    3368,
+    -937,
+    3460
+   ],
+   "buildings": 2,
+   "linear": 1,
+   "big_buildings": 1,
+   "underground": 4,
+   "command_blocks": 0,
+   "chests": 0,
+   "holes": 0,
+   "floating": 294,
+   "score_auto_3_4_5": [
+    5,
+    4,
+    4
+   ]
+  },
+  {
+   "id": "pripyat_north",
+   "ru": "Припять, север",
+   "point": [
+    -3040,
+    66,
+    -3252
+   ],
+   "bbox": [
+    -3668,
+    -3516,
+    -2341,
+    -2721
+   ],
+   "buildings": 45,
+   "linear": 0,
+   "big_buildings": 37,
+   "underground": 14,
+   "command_blocks": 4636,
+   "chests": 2720,
+   "holes": 0,
+   "floating": 89,
+   "score_auto_3_4_5": [
+    3,
+    5,
+    5
+   ]
+  },
+  {
+   "id": "pripyat_south",
+   "ru": "Припять, юг",
+   "point": [
+    -2860,
+    66,
+    -1614
+   ],
+   "bbox": [
+    -3272,
+    -1988,
+    -2269,
+    -1353
+   ],
+   "buildings": 50,
+   "linear": 0,
+   "big_buildings": 31,
+   "underground": 9,
+   "command_blocks": 52,
+   "chests": 1065,
+   "holes": 0,
+   "floating": 2023,
+   "score_auto_3_4_5": [
+    1,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "pripyat_center",
+   "ru": "Припять, центр",
+   "point": [
+    -2862,
+    66,
+    -2312
+   ],
+   "bbox": [
+    -3176,
+    -2792,
+    -2545,
+    -1901
+   ],
+   "buildings": 37,
+   "linear": 2,
+   "big_buildings": 31,
+   "underground": 10,
+   "command_blocks": 357,
+   "chests": 2,
+   "holes": 0,
+   "floating": 197,
+   "score_auto_3_4_5": [
+    0,
+    4,
+    5
+   ]
+  },
+  {
+   "id": "pripyat_east",
+   "ru": "Припять, восток",
+   "point": [
+    -2382,
+    66,
+    -2344
+   ],
+   "bbox": [
+    -2640,
+    -2932,
+    -1981,
+    -1729
+   ],
+   "buildings": 24,
+   "linear": 0,
+   "big_buildings": 16,
+   "underground": 5,
+   "command_blocks": 16,
+   "chests": 559,
+   "holes": 0,
+   "floating": 157,
+   "score_auto_3_4_5": [
+    5,
+    5,
+    5
+   ]
+  },
+  {
+   "id": "pripyat_west",
+   "ru": "Припять, запад",
+   "point": [
+    -3418,
+    66,
+    -2296
+   ],
+   "bbox": [
+    -3628,
+    -2912,
+    -3033,
+    -1905
+   ],
+   "buildings": 39,
+   "linear": 1,
+   "big_buildings": 24,
+   "underground": 9,
+   "command_blocks": 8408,
+   "chests": 5645,
+   "holes": 0,
+   "floating": 366,
+   "score_auto_3_4_5": [
+    0,
+    5,
+    4
+   ]
+  },
+  {
+   "id": "dark_hollow",
+   "ru": "Тёмная лощина",
+   "point": [
+    -3092,
+    67,
+    3508
+   ],
+   "bbox": [
+    -3824,
+    2912,
+    -2360,
+    4104
+   ],
+   "buildings": 3,
+   "linear": 0,
+   "big_buildings": 0,
+   "underground": 2,
+   "command_blocks": 0,
+   "chests": 0,
+   "holes": 0,
+   "floating": 168,
+   "score_auto_3_4_5": [
+    5,
+    5,
+    5
+   ]
+  },
+  {
+   "id": "radar",
+   "ru": "Радар (Выжигатель)",
+   "point": [
+    -2960,
+    66,
+    92
+   ],
+   "bbox": [
+    -3584,
+    -464,
+    -2336,
+    648
+   ],
+   "buildings": 109,
+   "linear": 5,
+   "big_buildings": 8,
+   "underground": 41,
+   "command_blocks": 0,
+   "chests": 72,
+   "holes": 0,
+   "floating": 2863,
+   "score_auto_3_4_5": [
+    5,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "hospital",
+   "ru": "Госпиталь",
+   "point": [
+    -5188,
+    78,
+    -2008
+   ],
+   "bbox": [
+    -5400,
+    -2304,
+    -4976,
+    -1712
+   ],
+   "buildings": 4,
+   "linear": 0,
+   "big_buildings": 0,
+   "underground": 1,
+   "command_blocks": 0,
+   "chests": 0,
+   "holes": 0,
+   "floating": 4,
+   "score_auto_3_4_5": [
+    3,
+    5,
+    5
+   ]
+  },
+  {
+   "id": "mark4_ring",
+   "ru": "не определено",
+   "point": [
+    -3596,
+    65,
+    1208
+   ],
+   "bbox": [
+    -4104,
+    720,
+    -3088,
+    1696
+   ],
+   "buildings": 102,
+   "linear": 4,
+   "big_buildings": 7,
+   "underground": 6,
+   "command_blocks": 0,
+   "chests": 5,
+   "holes": 0,
+   "floating": 669,
+   "score_auto_3_4_5": [
+    5,
+    5,
+    3
+   ]
+  },
+  {
+   "id": "generators",
+   "ru": "Генераторы — база О-Сознания",
+   "point": [
+    0,
+    66,
+    0
+   ],
+   "bbox": [
+    -400,
+    -400,
+    400,
+    400
+   ],
+   "buildings": 6,
+   "linear": 0,
+   "big_buildings": 6,
+   "underground": 1,
+   "command_blocks": 510,
+   "chests": 1,
+   "holes": 0,
+   "floating": 5,
+   "score_auto_3_4_5": [
+    0,
+    4,
+    5
+   ]
+  }
+ ]
+}

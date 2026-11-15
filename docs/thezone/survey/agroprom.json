@@ -1,0 +1,514 @@
+{
+ "id": "agroprom",
+ "name": "Agroprom",
+ "ru": "Агропром",
+ "point": [
+  -4896,
+  74,
+  2390
+ ],
+ "source": "places.json (телепорт автора)",
+ "bbox": [
+  -5452,
+  2220,
+  -4349,
+  2803
+ ],
+ "area_draft": [
+  [
+   -5420,
+   2652
+  ],
+  [
+   -5372,
+   2444
+  ],
+  [
+   -5160,
+   2316
+  ],
+  [
+   -4980,
+   2252
+  ],
+  [
+   -4381,
+   2252
+  ],
+  [
+   -4381,
+   2439
+  ],
+  [
+   -5301,
+   2771
+  ],
+  [
+   -5420,
+   2771
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.7598,
+  "лес": 0.1894,
+  "вода": 0.0,
+  "постройки": 0.0183,
+  "асфальт": 0.0002,
+  "гравий/грунтовка": 0.0155,
+  "рельсы": 0.0011,
+  "искусственное низкое": 0.0156,
+  "песок": 0.0
+ },
+ "buildings_count": 16,
+ "linear_count": 1,
+ "buildings": [
+  {
+   "bbox": [
+    -4980,
+    2252,
+    -4381,
+    2439
+   ],
+   "footprint": 3537,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 84,
+   "height": 18,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5344,
+    2440,
+    -4997,
+    2587
+   ],
+   "footprint": 2533,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 75,
+   "height": 9,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5420,
+    2652,
+    -5301,
+    2771
+   ],
+   "footprint": 2403,
+   "kind": "building",
+   "ground_y": 69,
+   "top_y": 88,
+   "height": 19,
+   "roof": [
+    "stone_brick_slab",
+    "smooth_stone_slab",
+    "netherrack"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5148,
+    2332,
+    -5045,
+    2407
+   ],
+   "footprint": 2181,
+   "kind": "building",
+   "ground_y": 70,
+   "top_y": 103,
+   "height": 33,
+   "roof": [
+    "stone_brick_slab",
+    "smooth_stone_slab",
+    "chiseled_quartz_block"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5372,
+    2712,
+    -5333,
+    2735
+   ],
+   "footprint": 838,
+   "kind": "building",
+   "ground_y": 69,
+   "top_y": 88,
+   "height": 19,
+   "roof": [
+    "stone_brick_slab",
+    "iron_bars",
+    "quartz_block"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5044,
+    2332,
+    -4901,
+    2403
+   ],
+   "footprint": 786,
+   "kind": "building",
+   "ground_y": 66,
+   "top_y": 80,
+   "height": 14,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5160,
+    2316,
+    -5137,
+    2367
+   ],
+   "footprint": 437,
+   "kind": "building",
+   "ground_y": 71,
+   "top_y": 83,
+   "height": 12,
+   "roof": [
+    "netherrack",
+    "smooth_stone_slab",
+    "stone_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5348,
+    2668,
+    -5313,
+    2707
+   ],
+   "footprint": 369,
+   "kind": "building",
+   "ground_y": 69,
+   "top_y": 76,
+   "height": 7,
+   "roof": [
+    "jungle_planks",
+    "cobblestone",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5412,
+    2744,
+    -5385,
+    2759
+   ],
+   "footprint": 306,
+   "kind": "building",
+   "ground_y": 70,
+   "top_y": 77,
+   "height": 7,
+   "roof": [
+    "netherrack"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5372,
+    2680,
+    -5361,
+    2703
+   ],
+   "footprint": 173,
+   "kind": "building",
+   "ground_y": 70,
+   "top_y": 77,
+   "height": 7,
+   "roof": [
+    "nether_bricks",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5160,
+    2376,
+    -5097,
+    2395
+   ],
+   "footprint": 130,
+   "kind": "building",
+   "ground_y": 70,
+   "top_y": 75,
+   "height": 5,
+   "roof": [
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5404,
+    2688,
+    -5381,
+    2719
+   ],
+   "footprint": 94,
+   "kind": "building",
+   "ground_y": 69,
+   "top_y": 77,
+   "height": 8,
+   "roof": [
+    "nether_brick_fence",
+    "stone_brick_slab",
+    "cracked_stone_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5224,
+    2604,
+    -5213,
+    2615
+   ],
+   "footprint": 68,
+   "kind": "building",
+   "ground_y": 49,
+   "top_y": 87,
+   "height": 38,
+   "roof": [
+    "stone_brick_slab",
+    "nether_brick_fence"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5308,
+    2656,
+    -5301,
+    2703
+   ],
+   "footprint": 53,
+   "kind": "linear",
+   "ground_y": 70,
+   "top_y": 79,
+   "height": 9,
+   "roof": [
+    "smooth_stone_slab",
+    "oak_slab",
+    "ladder"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5400,
+    2648,
+    -5389,
+    2655
+   ],
+   "footprint": 29,
+   "kind": "building",
+   "ground_y": 69,
+   "top_y": 75,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5372,
+    2444,
+    -5361,
+    2451
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 64,
+   "top_y": 70,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -5060,
+    2600,
+    -5049,
+    2611
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 65,
+   "top_y": 71,
+   "height": 6,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -5256,
+    2332,
+    -5189,
+    2403
+   ],
+   "columns": 3590,
+   "blocks_below_ground": 10796
+  },
+  {
+   "bbox": [
+    -5160,
+    2452,
+    -5153,
+    2463
+   ],
+   "columns": 59,
+   "blocks_below_ground": 198
+  },
+  {
+   "bbox": [
+    -5308,
+    2448,
+    -5301,
+    2455
+   ],
+   "columns": 28,
+   "blocks_below_ground": 85
+  },
+  {
+   "bbox": [
+    -5236,
+    2520,
+    -5225,
+    2523
+   ],
+   "columns": 22,
+   "blocks_below_ground": 121
+  },
+  {
+   "bbox": [
+    -5152,
+    2384,
+    -5149,
+    2403
+   ],
+   "columns": 20,
+   "blocks_below_ground": 60
+  },
+  {
+   "bbox": [
+    -4680,
+    2340,
+    -4673,
+    2343
+   ],
+   "columns": 19,
+   "blocks_below_ground": 57
+  },
+  {
+   "bbox": [
+    -5296,
+    2452,
+    -5285,
+    2455
+   ],
+   "columns": 16,
+   "blocks_below_ground": 50
+  },
+  {
+   "bbox": [
+    -5044,
+    2580,
+    -5041,
+    2587
+   ],
+   "columns": 16,
+   "blocks_below_ground": 48
+  },
+  {
+   "bbox": [
+    -5292,
+    2432,
+    -5285,
+    2435
+   ],
+   "columns": 11,
+   "blocks_below_ground": 33
+  },
+  {
+   "bbox": [
+    -5280,
+    2396,
+    -5277,
+    2403
+   ],
+   "columns": 10,
+   "blocks_below_ground": 34
+  },
+  {
+   "bbox": [
+    -4868,
+    2392,
+    -4861,
+    2395
+   ],
+   "columns": 9,
+   "blocks_below_ground": 27
+  }
+ ],
+ "block_entities": {
+  "trapped_chest": 75,
+  "chest": 40,
+  "command_block": 1,
+  "hopper": 8
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 80
+ },
+ "flat_free_share": 0.94,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 4,
+  "4_building": 5,
+  "5_quality": 5,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/agroprom.png"
+}

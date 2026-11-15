@@ -1,0 +1,507 @@
+{
+ "id": "dark_valley",
+ "name": "Dark Valley",
+ "ru": "Тёмная долина",
+ "point": [
+  -3236,
+  76,
+  2438
+ ],
+ "source": "places.json (телепорт автора)",
+ "bbox": [
+  -3436,
+  2072,
+  -3093,
+  2791
+ ],
+ "area_draft": [
+  [
+   -3404,
+   2608
+  ],
+  [
+   -3348,
+   2144
+  ],
+  [
+   -3332,
+   2104
+  ],
+  [
+   -3241,
+   2104
+  ],
+  [
+   -3189,
+   2160
+  ],
+  [
+   -3173,
+   2192
+  ],
+  [
+   -3125,
+   2412
+  ],
+  [
+   -3125,
+   2463
+  ],
+  [
+   -3309,
+   2759
+  ],
+  [
+   -3336,
+   2759
+  ],
+  [
+   -3404,
+   2679
+  ]
+ ],
+ "status": "observed",
+ "surface_share": {
+  "земля": 0.8696,
+  "лес": 0.014,
+  "вода": 0.0342,
+  "постройки": 0.0337,
+  "асфальт": 0.0006,
+  "гравий/грунтовка": 0.0015,
+  "рельсы": 0.0,
+  "искусственное низкое": 0.0464,
+  "песок": 0.0
+ },
+ "buildings_count": 16,
+ "linear_count": 2,
+ "buildings": [
+  {
+   "bbox": [
+    -3328,
+    2160,
+    -3249,
+    2243
+   ],
+   "footprint": 2060,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 102,
+   "height": 30,
+   "roof": [
+    "cobblestone_slab",
+    "red_terracotta",
+    "stone_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3188,
+    2412,
+    -3125,
+    2463
+   ],
+   "footprint": 1674,
+   "kind": "building",
+   "ground_y": 70,
+   "top_y": 103,
+   "height": 33,
+   "roof": [
+    "red_terracotta",
+    "stone_brick_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3336,
+    2588,
+    -3309,
+    2759
+   ],
+   "footprint": 1328,
+   "kind": "linear",
+   "ground_y": 68,
+   "top_y": 73,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3248,
+    2248,
+    -3213,
+    2387
+   ],
+   "footprint": 982,
+   "kind": "building",
+   "ground_y": 68,
+   "top_y": 73,
+   "height": 5,
+   "roof": [
+    "cobblestone",
+    "mossy_cobblestone"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3404,
+    2608,
+    -3337,
+    2679
+   ],
+   "footprint": 514,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 86,
+   "height": 13,
+   "roof": [
+    "iron_block",
+    "nether_brick_stairs",
+    "chiseled_quartz_block"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3332,
+    2104,
+    -3241,
+    2147
+   ],
+   "footprint": 469,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 86,
+   "height": 14,
+   "roof": [
+    "nether_bricks",
+    "cobblestone_slab",
+    "cobblestone_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3188,
+    2192,
+    -3173,
+    2239
+   ],
+   "footprint": 356,
+   "kind": "building",
+   "ground_y": 74,
+   "top_y": 82,
+   "height": 8,
+   "roof": [
+    "netherrack",
+    "cobblestone_slab",
+    "iron_bars"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3208,
+    2160,
+    -3189,
+    2175
+   ],
+   "footprint": 165,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 82,
+   "height": 10,
+   "roof": [
+    "cobblestone_slab",
+    "iron_bars",
+    "birch_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3348,
+    2144,
+    -3337,
+    2171
+   ],
+   "footprint": 156,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 85,
+   "height": 13,
+   "roof": [
+    "cobblestone_slab",
+    "nether_brick_stairs",
+    "cobblestone_wall"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3268,
+    2144,
+    -3257,
+    2163
+   ],
+   "footprint": 126,
+   "kind": "building",
+   "ground_y": 72,
+   "top_y": 79,
+   "height": 7,
+   "roof": [
+    "stone_brick_slab",
+    "end_stone",
+    "nether_brick_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3392,
+    2628,
+    -3377,
+    2663
+   ],
+   "footprint": 119,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 79,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs",
+    "chiseled_quartz_block",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3364,
+    2628,
+    -3353,
+    2663
+   ],
+   "footprint": 111,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 79,
+   "height": 6,
+   "roof": [
+    "nether_brick_stairs",
+    "chiseled_quartz_block",
+    "nether_brick_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3188,
+    2468,
+    -3149,
+    2487
+   ],
+   "footprint": 102,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 81,
+   "height": 8,
+   "roof": [
+    "stone_brick_slab",
+    "bricks",
+    "jungle_stairs"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3260,
+    2248,
+    -3253,
+    2255
+   ],
+   "footprint": 31,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 85,
+   "height": 12,
+   "roof": [
+    "nether_brick_stairs",
+    "iron_bars",
+    "nether_bricks"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3368,
+    2608,
+    -3341,
+    2611
+   ],
+   "footprint": 28,
+   "kind": "linear",
+   "ground_y": 73,
+   "top_y": 76,
+   "height": 3,
+   "roof": [
+    "iron_block",
+    "smooth_stone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3236,
+    2168,
+    -3233,
+    2179
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 73,
+   "top_y": 76,
+   "height": 3,
+   "roof": [
+    "jungle_stairs",
+    "jungle_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3304,
+    2260,
+    -3297,
+    2271
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 74,
+   "top_y": 86,
+   "height": 12,
+   "roof": [
+    "stone_brick_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  },
+  {
+   "bbox": [
+    -3304,
+    2296,
+    -3297,
+    2307
+   ],
+   "footprint": 24,
+   "kind": "building",
+   "ground_y": 74,
+   "top_y": 86,
+   "height": 12,
+   "roof": [
+    "stone_brick_slab",
+    "cobblestone_slab"
+   ],
+   "inside_border": true
+  }
+ ],
+ "underground": [
+  {
+   "bbox": [
+    -3232,
+    2396,
+    -3157,
+    2495
+   ],
+   "columns": 1466,
+   "blocks_below_ground": 7471
+  },
+  {
+   "bbox": [
+    -3328,
+    2152,
+    -3317,
+    2171
+   ],
+   "columns": 42,
+   "blocks_below_ground": 132
+  },
+  {
+   "bbox": [
+    -3356,
+    2172,
+    -3345,
+    2179
+   ],
+   "columns": 35,
+   "blocks_below_ground": 119
+  },
+  {
+   "bbox": [
+    -3328,
+    2684,
+    -3325,
+    2691
+   ],
+   "columns": 11,
+   "blocks_below_ground": 33
+  },
+  {
+   "bbox": [
+    -3320,
+    2636,
+    -3313,
+    2639
+   ],
+   "columns": 10,
+   "blocks_below_ground": 30
+  },
+  {
+   "bbox": [
+    -3156,
+    2412,
+    -3149,
+    2415
+   ],
+   "columns": 8,
+   "blocks_below_ground": 24
+  },
+  {
+   "bbox": [
+    -3220,
+    2416,
+    -3213,
+    2419
+   ],
+   "columns": 8,
+   "blocks_below_ground": 25
+  }
+ ],
+ "block_entities": {
+  "trapped_chest": 210,
+  "chest": 98,
+  "sign": 9
+ },
+ "signs": [],
+ "defects": {
+  "holes_inside_border_columns": 0,
+  "floating_candidates": 1207
+ },
+ "flat_free_share": 0.868,
+ "score": {
+  "1_geography": null,
+  "2_canon": null,
+  "3_roads": 1,
+  "4_building": 5,
+  "5_quality": 3,
+  "note": "3–5 — автоматическая прикидка по растру; 1–2 и итог 0–25 — по скриншотам (штаб/пользователь)"
+ },
+ "preview": "img/survey/dark_valley.png"
+}
