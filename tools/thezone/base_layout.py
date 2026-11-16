@@ -40,6 +40,7 @@ ROLES = {
     "military": ["штаб", "казарма", "оборона", "склад", "медпункт", "гараж", "связь"],
     "bandits": ["штаб", "жильё", "склад", "мастерская", "оборона", "кухня"],
     "default": ["жильё", "склад", "оборона", "кухня"],
+    "local": ["склад", "жильё", "оборона", "кухня"],  # малая база (склад/перевалка)
 }
 COL = {"штаб": (220, 60, 60), "казарма": (230, 140, 50), "жильё": (230, 140, 50), "кухня": (240, 210, 60), "склад": (120, 160, 230),
        "гараж": (90, 120, 200), "мастерская": (160, 110, 220), "медпункт": (240, 240, 240), "оборона": (80, 200, 90),
@@ -166,7 +167,8 @@ def outline(mask):
     return hull(list(zip(x.tolist(), z.tolist())))
 
 
-def layout(work, obj, owner, R=90):
+def layout(work, obj, owner, R=90, opt=None):
+    opt = opt or {}
     cx, cz = obj["pos"][0], obj["pos"][-1]
     ground, vol = raster(work, cx, cz, R)
     N = 2 * R + 1
@@ -209,7 +211,7 @@ def layout(work, obj, owner, R=90):
         ok = (m[PZ, PX] or m[R, R] or inside_b > 0) and 300 <= m.sum() <= 0.6 * N * N
         if ok and (best is None or (inside_b, -m.sum()) > (best[2], -best[0].sum())):
             # постройки, наполовину внутри ограды или вплотную к ней, — в границу базы
-            near = dilate(m, 8)
+            near = dilate(m, opt.get("extend", 8))  # АТП: постройки к северу от ограды — тоже база
             pts = list(fc)
             for c in blds:
                 if sum(1 for a_, b_ in c if near[a_, b_]) >= 0.5 * len(c):
@@ -236,8 +238,10 @@ def layout(work, obj, owner, R=90):
     gates = []
     if ring is not None:
         gap = ring & joined & ~dilate(fence, 1) & ~dilate(tall, 1)  # разрыв между кусками ограды (сшито через ≤ 6 блоков)
+        if opt.get("open_gates"):  # свиноферма: проходы между коровниками и оградой — тоже ворота
+            gap = ring & ~dilate(fence, 1) & ~tall
         for c in components(gap, 2):
-            if len(c) > 8:  # длинный участок без ограды — открытая сторона, не ворота
+            if len(c) > opt.get("gate_max", 8):  # длинный участок без ограды — открытая сторона, не ворота
                 continue
             a_, b_ = c[len(c) // 2]
             gates.append({"pos": [int(b_ + cx - R), int(ground[a_, b_] + Y0 + 1), int(a_ + cz - R)], "width": len(c)})
@@ -265,7 +269,7 @@ def layout(work, obj, owner, R=90):
                       "center": [int(np.mean(xs)) + cx - R, g + Y0 + 1, int(np.mean(zs)) + cz - R],
                       "entrances": [[x + cx - R, g + Y0 + 1, z + cz - R] for x, z in doors[:6]],
                       "dist": math.hypot(np.mean(xs) - R, np.mean(zs) - R), "_cells": c})
-    sectors = assign(out_b, ROLES.get(owner, ROLES["default"]), gates)
+    sectors = [] if opt.get("zone") else assign(out_b, ROLES.get(owner, ROLES["default"]), gates)
     return {"id": obj["id"], "name": obj.get("name"), "owner": owner, "method": how, "R": R, "center": [cx, cz],
             "area": [[x + cx - R, z + cz - R] for x, z in outline(area)], "area_cells": int(area.sum()), "gates": gates,
             "buildings": [{k: v for k, v in b.items() if not k.startswith("_") and k != "dist"} for b in out_b],
@@ -371,7 +375,10 @@ def preview(res, dbg, dst):
 
 
 OWNER = {"cordon.base.village": "loners", "cordon.base.south_post": "military", "cordon.outpost.atp": "bandits",
-         "cordon.base.far_post": "bandits", "cordon.outpost.farm": "loners", "cordon.outpost.elevator": "loners"}
+         "cordon.base.far_post": "bandits", "cordon.outpost.farm": "local", "cordon.outpost.elevator": "default"}
+# роли мест Кордона (Э1-07, утверждено 16.11): АТП и свиноферма — базы, элеватор — зона потенциала без секторов
+OPT = {"cordon.outpost.atp": {"extend": 26}, "cordon.outpost.farm": {"open_gates": True, "gate_max": 12},
+       "cordon.outpost.elevator": {"zone": True}}
 
 
 def main():
@@ -384,7 +391,7 @@ def main():
     for i in ids:
         o = objs[i]
         owner = o.get("owner") if isinstance(o.get("owner"), str) and o.get("owner") in ROLES else OWNER.get(i, "default")
-        res, dbg = layout(work, o, owner)
+        res, dbg = layout(work, o, owner, opt=OPT.get(i))
         json.dump(res, open(os.path.join(out, i + ".json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1, default=int)
         preview(res, dbg, os.path.join(out, i + ".png"))
         allres.append(res)
