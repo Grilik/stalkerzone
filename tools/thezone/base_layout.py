@@ -36,7 +36,8 @@ SOFT = ("air", "leaves", "grass", "fern", "flower", "sapling", "vine", "snow", "
         "rail", "button", "lever", "pressure_plate", "tripwire", "string", "log", "wood")
 # роли баз по группировке: (роль, вес)
 ROLES = {
-    "loners": ["жильё", "кухня", "склад", "мастерская", "медпункт", "оборона", "штаб", "торговля"],
+    "loners": ["штаб", "жильё", "кухня", "медпункт", "склад", "мастерская", "оборона"],  # основная база одиночек (Свиноферма, 17.11)
+    "hub": ["торговля", "жильё", "кухня", "медпункт"],  # нейтральный хаб вольных сталкеров (Деревня новичков, 17.11): Сидорович, ночлег, костёр
     "military": ["штаб", "казарма", "оборона", "склад", "медпункт", "гараж", "связь"],
     "bandits": ["штаб", "жильё", "склад", "мастерская", "оборона", "кухня"],
     "default": ["жильё", "склад", "оборона", "кухня"],
@@ -374,9 +375,9 @@ def preview(res, dbg, dst):
     canvas.save(dst)
 
 
-OWNER = {"cordon.base.village": "loners", "cordon.base.south_post": "military", "cordon.outpost.atp": "bandits",
-         "cordon.base.far_post": "bandits", "cordon.outpost.farm": "local", "cordon.outpost.elevator": "default"}
-# роли мест Кордона (Э1-07, утверждено 16.11): АТП и свиноферма — базы, элеватор — зона потенциала без секторов
+OWNER = {"cordon.base.village": "hub", "cordon.base.south_post": "military", "cordon.outpost.atp": "bandits",
+         "cordon.base.far_post": "bandits", "cordon.outpost.farm": "loners", "cordon.outpost.elevator": "default"}
+# роли мест Кордона (Э1-07, 16–17.11): Свиноферма — основная база одиночек, Деревня — нейтральный хаб, АТП — база банды, элеватор — зона без секторов
 OPT = {"cordon.outpost.atp": {"extend": 26}, "cordon.outpost.farm": {"open_gates": True, "gate_max": 12},
        "cordon.outpost.elevator": {"zone": True}}
 
