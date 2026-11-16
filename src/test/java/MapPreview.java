@@ -85,7 +85,11 @@ public class MapPreview {
                 {"cobblestone_slab", 0x7a7a7a}, {"hay_block", 0xb89a2a}, {"campfire", 0xd06020}, {"bone_block", 0xe0dcc8},
                 {"cracked_stone_bricks", 0x767676}, {"mossy_cobblestone", 0x6a7a5a}, {"lightning_rod", 0xb07050}, {"lantern", 0xe0a040},
                 {"sea_lantern", 0xc8e0d8}, {"deepslate", 0x505058}, {"polished_deepslate", 0x484850}, {"red_leaves", 0xa04a2a},
-                {"dead_bush", 0x7a5a2a}, {"cobweb", 0xdddddd}, {"air", -1}};
+                {"dead_bush", 0x7a5a2a}, {"cobweb", 0xdddddd},
+                // Э2-13: блоки словаря Materials в цветах пака TheZone (мешки, бетон, полосы, профлист, старые доски)
+                {"sponge", 0xa89a70}, {"zm_sandbags", 0xa89a70}, {"zm_sandbags_slab", 0xa89a70}, {"quartz_block", 0x9a9a96},
+                {"gold_block", 0xc8a020}, {"nether_bricks", 0xd8d8d4}, {"nether_brick_slab", 0xd8d8d4}, {"oak_planks", 0x8a8680},
+                {"oak_slab", 0x8a8680}, {"oak_fence", 0x8a8680}, {"air", -1}};
         for (Object[] o : t) COLORS.put((String) o[0], (Integer) o[1]);
     }
 

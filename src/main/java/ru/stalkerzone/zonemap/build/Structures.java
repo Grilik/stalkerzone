@@ -16,7 +16,7 @@ public final class Structures {
             BRICKS = "minecraft:bricks", CONCRETE = "minecraft:light_gray_concrete", GCONCRETE = "minecraft:gray_concrete",
             SMOOTH = "minecraft:smooth_stone", SLAB = "minecraft:smooth_stone_slab[type=bottom]", STONEB = "minecraft:stone_bricks",
             CRACKED = "minecraft:cracked_stone_bricks", COBBLE = "minecraft:cobblestone", MOSSY = "minecraft:mossy_cobblestone",
-            BARS = "minecraft:iron_bars", PANE = "minecraft:glass_pane", SAND = "minecraft:smooth_sandstone", FENCE = "minecraft:spruce_fence",
+            BARS = "minecraft:iron_bars", PANE = "minecraft:glass_pane", FENCE = "minecraft:spruce_fence",
             BARREL = "stalkerzone:rusty_barrel", TIRES = "stalkerzone:tires", IRON = "minecraft:iron_block", RAWIRON = "minecraft:raw_iron_block",
             LANTERN = "minecraft:lantern[hanging=false]", CAMPFIRE = "minecraft:campfire[lit=true,facing=north]", CHAIN = "minecraft:chain[axis=y]",
             WALL = "minecraft:cobblestone_wall", OLIVE = "minecraft:green_terracotta", RUST = "minecraft:brown_terracotta";
@@ -274,7 +274,7 @@ public final class Structures {
     static void militaryCamp(B b) {
         for (int i = 0; i < 3; i++) armyTent(b, -18 + i * 12, -6);
         btr(b, 12, 6);
-        for (int x = -26; x <= 26; x += 2) if (b.chance(0.8)) { b.setG(x, 0, 14, SAND); if (b.chance(0.5)) b.setG(x, 1, 14, SAND); }
+        for (int x = -26; x <= 26; x += 2) if (b.chance(0.8)) { b.setG(x, 0, 14, Materials.SANDBAG.id()); if (b.chance(0.5)) b.setG(x, 1, 14, Materials.SANDBAG.id()); }
         for (int i = 0; i < 6; i++) b.set(-20 + i * 3, 0, 8, i % 2 == 0 ? "minecraft:barrel[facing=up]" : "minecraft:green_wool");
         b.fill(20, 0, -10, 22, 1, -9, IRON);
         b.set(21, 2, -10, "minecraft:lightning_rod");
@@ -314,15 +314,16 @@ public final class Structures {
 
     /** Вышка на четырёх ногах с площадкой, перилами, крышей и лестницей. */
     static void watchtower(B b, int cx, int cz) {
-        for (int dx : new int[] {-1, 2}) for (int dz : new int[] {-1, 2}) b.fill(cx + dx, -2, cz + dz, cx + dx, 7, cz + dz, LOG);
-        b.fill(cx - 2, 8, cz - 2, cx + 3, 8, cz + 3, PLANKS);
+        String post = Materials.POST_WOOD.id(), deck = Materials.PLANKS_OLD.id(), rail = Materials.FENCE_WOOD.id();
+        for (int dx : new int[] {-1, 2}) for (int dz : new int[] {-1, 2}) b.fill(cx + dx, -2, cz + dz, cx + dx, 7, cz + dz, post);
+        b.fill(cx - 2, 8, cz - 2, cx + 3, 8, cz + 3, deck);
         for (int x = cx - 2; x <= cx + 3; x++) for (int z = cz - 2; z <= cz + 3; z++)
-            if (x == cx - 2 || x == cx + 3 || z == cz - 2 || z == cz + 3) b.set(x, 9, z, x == cx + 3 && z == cz + 1 ? AIR : FENCE);
-        for (int dx : new int[] {-2, 3}) for (int dz : new int[] {-2, 3}) b.fill(cx + dx, 9, cz + dz, cx + dx, 11, cz + dz, FENCE);
-        b.fill(cx - 3, 12, cz - 3, cx + 4, 12, cz + 4, "minecraft:spruce_slab[type=bottom]");
+            if (x == cx - 2 || x == cx + 3 || z == cz - 2 || z == cz + 3) b.set(x, 9, z, x == cx + 3 && z == cz + 1 ? AIR : rail);
+        for (int dx : new int[] {-2, 3}) for (int dz : new int[] {-2, 3}) b.fill(cx + dx, 9, cz + dz, cx + dx, 11, cz + dz, rail);
+        b.fill(cx - 3, 12, cz - 3, cx + 4, 12, cz + 4, Materials.ROOF_SHEET_SLAB.id());
         b.set(cx, 11, cz, "minecraft:lantern[hanging=true]");
-        for (int y = 0; y <= 8; y++) b.set(cx + 3, y, cz + 1, "minecraft:ladder[facing=west]");
-        b.fill(cx + 2, 0, cz + 1, cx + 2, 8, cz + 1, PLANKS);
+        for (int y = 0; y <= 8; y++) b.set(cx + 3, y, cz + 1, Materials.LADDER.with("facing=west"));
+        b.fill(cx + 2, 0, cz + 1, cx + 2, 8, cz + 1, deck);
     }
 
     /** Хутор: изба, сарай, колодец. */
@@ -387,8 +388,8 @@ public final class Structures {
         for (int x = -half; x <= half; x++) { b.put(x, crest - 3, 5, (x & 1) == 0 ? "minecraft:yellow_concrete" : "minecraft:black_concrete"); b.put(x, crest - 3, -5, (x & 1) == 0 ? "minecraft:yellow_concrete" : "minecraft:black_concrete"); }
         // блокпост на мосту: мешки полукругом, пулемёт, навес, прожектор, ящики, рация
         int px = half + 6;
-        for (int z = -4; z <= 4; z++) { b.put(px, crest, z, SAND); b.put(px, crest + 1, z, z == 0 ? AIR : "minecraft:smooth_sandstone_slab[type=bottom]"); }
-        for (int x = px - 4; x < px; x++) { b.put(x, crest, -4, SAND); b.put(x, crest, 4, SAND); }
+        for (int z = -4; z <= 4; z++) { b.put(px, crest, z, Materials.SANDBAG.id()); b.put(px, crest + 1, z, z == 0 ? AIR : Materials.SANDBAG_SLAB.id()); }
+        for (int x = px - 4; x < px; x++) { b.put(x, crest, -4, Materials.SANDBAG.id()); b.put(x, crest, 4, Materials.SANDBAG.id()); }
         b.put(px - 1, crest, 0, "minecraft:dispenser[facing=east]");
         b.fill(px - 4, crest + 3, -4, px, crest + 3, 4, "minecraft:green_wool");
         for (int[] c : new int[][] {{px - 4, -4}, {px, -4}, {px - 4, 4}, {px, 4}}) b.fill(c[0], crest + 1, c[1], c[0], crest + 2, c[1], FENCE);
