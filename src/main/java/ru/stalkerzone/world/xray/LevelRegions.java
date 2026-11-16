@@ -13,7 +13,7 @@ public final class LevelRegions {
     public record Link(String a, String b, int ax, int az, int bx, int bz) {}
     private static volatile List<Link> links = List.of();
 
-    public static List<Link> links() { all(); return links; }
+    public static List<Link> links() { return all().isEmpty() ? List.of() : links; }
 
     static java.io.File dir() { return new java.io.File(System.getProperty("stalkerzone.levels", "stalkerzone/levels")); }
 
@@ -49,6 +49,8 @@ public final class LevelRegions {
     private LevelRegions() {}
 
     public static List<LevelRegion> all() {
+        // Э2-20: в TheZone уровни оригинала и площадки старого Кордона не грузятся (кэш прежнего мира не отдаётся)
+        if (!ru.stalkerzone.sim.TheZoneRules.originalLevels()) return List.of();
         List<LevelRegion> r = regions;
         if (r != null) return r;
         synchronized (LevelRegions.class) {

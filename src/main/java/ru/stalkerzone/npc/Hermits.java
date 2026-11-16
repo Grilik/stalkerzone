@@ -36,6 +36,7 @@ public final class Hermits {
     private Hermits() {}
 
     public static void tick(MinecraftServer server) {
+        if (!ru.stalkerzone.sim.TheZoneRules.simNpcSpawn()) return; // Э2-20: в TheZone NPC симуляции до Э2-05 не ставятся
         if (server.getTickCount() % 100 != 0) return;
         ServerLevel level = server.overworld();
         if (level.players().isEmpty()) return;
