@@ -367,7 +367,7 @@ def plan(w, site):
     # соседние уже стоящие панели и решётки — соединение в сторону новых (Э2-19); камуфляж сохраняется (KEEP)
     fix = {}
     for (x, y, z), (tmpl, camo) in new.items():
-        if tmpl not in ("PANE", "GRATING"):
+        if tmpl not in ("PANE", "GRATING") and not (bid(tmpl).startswith("stalkerzone:prop_") and y <= cells[(x, z)][0] + 2):
             continue
         for d, (dx, dz) in DIRS.items():
             q = (x + dx, y, z + dz)
@@ -375,8 +375,9 @@ def plan(w, site):
                 continue
             s0 = fix.get(q, (w.get(*q),))[0]
             b = bid(s0)
-            if b not in ("framedblocks:framed_pane", "stalkerzone:zm_grating_pane"):
-                continue
+            if b not in ("framedblocks:framed_pane", "stalkerzone:zm_grating_pane") or (
+                    tmpl not in ("PANE", "GRATING") and b != "stalkerzone:zm_grating_pane"):
+                continue  # к рабице подключается только решётка
             back = {"east": "west", "west": "east", "north": "south", "south": "north"}[d]
             pr = _props(s0)
             if pr.get(back) != "true":
@@ -501,7 +502,16 @@ def main():
             os.makedirs(o.map, exist_ok=True)
             top_map(w, s, cells, edits, os.path.join(o.map, "map-%s.png" % s))
     if o.cmd == "apply":
-        apply(o.world, [e for c, es in allp.values() for e in es], o.why, o.dry)
+        merged = {}  # одна правка на блок; две правки соединений одной решётки (разные места) — объединить
+        for c, es in allp.values():
+            for e in es:
+                k = e[:3]
+                if k in merged and bid(e[3]) == bid(merged[k][3]) and bid(e[3]).endswith('_pane'):
+                    p0, p1 = _props(merged[k][3]), _props(e[3])
+                    p0.update({d: 'true' for d in DIRS if p1.get(d) == 'true'})
+                    e = e[:3] + (_with(e[3], p0),) + e[4:]
+                merged[k] = e
+        apply(o.world, list(merged.values()), o.why, o.dry)
     elif o.cmd == "render":
         import fences_render
         fences_render.render_all(w, allp, o.out, o.pack, o.why.split(":")[0] + ": " + fences_render.TITLE)
