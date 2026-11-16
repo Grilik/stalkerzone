@@ -3,6 +3,7 @@
 
   python -I tools/thezone/trial_copy.py make  <рабочая копия> <папка новой копии> [X Y Z]
   python -I tools/thezone/trial_copy.py check <рабочая копия> <опытная копия> [--regions r.-9.7,...]
+  python -I tools/thezone/trial_copy.py spawn <опытная копия> [X Y Z]   # только level.dat: точка появления и игрок
 
 make  — копия рабочей копии (без backup/ и журнала stalkerzone/), манифест stalkerzone/world.json
         (режим thezone, решение а1), level.dat: команды включены, точка появления (по умолчанию —
@@ -25,7 +26,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import anvil as A  # noqa: E402
 
-SPAWN = (-4390, 70, 3790)  # атлас world.json: деревня новичков Кордона
+SPAWN = (-4404, 70, 3813)  # атлас world.json: у костра деревни новичков (Э2-19; костёр −4405 71 3812)
 
 
 def make(work, dst, spawn=SPAWN):
@@ -37,13 +38,20 @@ def make(work, dst, spawn=SPAWN):
     os.makedirs(os.path.join(dst, "stalkerzone"))
     with open(os.path.join(dst, "stalkerzone", "world.json"), "w", encoding="utf-8") as f:
         json.dump({"mode": "thezone", "atlas": 1, "source": "TheZone-work (Э1-03), опытная копия Э1-08"}, f, ensure_ascii=False, indent=1)
+    level_dat(dst, spawn, name=True)
+    print("готово:", dst, "— точка появления", spawn)
+
+
+def level_dat(dst, spawn=SPAWN, name=False):
+    """level.dat копии: команды, точка появления и игрок в ней, spawnRadius 0, randomTickSpeed 0 (и имя мира)."""
     p = os.path.join(dst, "level.dat")
-    name, root = A.nbt_load(gzip.decompress(open(p, "rb").read()))
+    nm, root = A.nbt_load(gzip.decompress(open(p, "rb").read()))
     d = root["Data"][1]
     x, y, z = spawn
     d["allowCommands"] = (A.BYTE, 1)
     d["SpawnX"], d["SpawnY"], d["SpawnZ"] = (A.INT, x), (A.INT, y), (A.INT, z)
-    d["LevelName"] = (A.STR, os.path.basename(os.path.normpath(dst)))
+    if name:
+        d["LevelName"] = (A.STR, os.path.basename(os.path.normpath(dst)))
     d["GameRules"][1]["spawnRadius"] = (A.STR, "0")
     # без случайных тиков: листва TheZone (persistent=false) не осыпается, саженцы не растут, трава не гибнет —
     # иначе сверка «блоки не изменились» ловит природу, а не мод (заход 1, 15.11: 4 622 блока, все — природа)
@@ -53,8 +61,7 @@ def make(work, dst, spawn=SPAWN):
         pl["Pos"] = (A.LIST, (A.DOUBLE, [x + 0.5, float(y), z + 0.5]))
         pl["Motion"] = (A.LIST, (A.DOUBLE, [0.0, 0.0, 0.0]))
         pl["Dimension"] = (A.STR, "minecraft:overworld")
-    open(p, "wb").write(gzip.compress(A.nbt_dump(name, root)))
-    print("готово:", dst, "— точка появления", spawn)
+    open(p, "wb").write(gzip.compress(A.nbt_dump(nm, root)))
 
 
 def _md5(p):
@@ -143,6 +150,10 @@ def main():
         if "--regions" in sys.argv:
             regs = set(sys.argv[sys.argv.index("--regions") + 1].split(","))
         sys.exit(check(sys.argv[2], sys.argv[3], regs))
+    elif cmd == "spawn":
+        sp = tuple(int(v) for v in sys.argv[3:6]) if len(sys.argv) >= 6 else SPAWN
+        level_dat(sys.argv[2], sp)
+        print("level.dat:", sys.argv[2], "— точка появления и игрок", sp)
     else:
         raise SystemExit(__doc__)
 
