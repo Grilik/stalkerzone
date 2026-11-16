@@ -36,11 +36,11 @@ public final class LootService {
         return cached;
     }
 
-    public static List<ItemStack> roll(MinecraftServer server, String kind, String place, int z, Random r) {
+    public static List<ItemStack> roll(MinecraftServer server, String kind, String place, int z, String loc, Random r) {
         List<ItemStack> out = new ArrayList<>();
         ContainerLoot l = loot(server);
         if (l == null) return out;
-        for (ContainerLoot.Drop d : l.roll(kind, place, z, r)) {
+        for (ContainerLoot.Drop d : l.roll(kind, place, z, loc, r)) {
             ItemStack st = ItemStack.EMPTY;
             if (d.gun() != null) st = Tacz.gun(d.gun(), d.mode() == null ? "SEMI" : d.mode(), 0);
             else if (d.ammo() != null) {

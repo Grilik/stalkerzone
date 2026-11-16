@@ -21,7 +21,32 @@
   "zinc":   {"kinds": ["ammo_zinc", "ammo_zinc_green"], "only": ["ammo"], "empty": 0.5},
   "locker": {"kinds": ["locker", "locker_blue"], "tags": {"clothes": 4, "small": 2}},
   "office": {"kinds": ["file_cabinet", "file_cabinet_grey"], "tier": {"junk": 1.5}, "tags": {"docs": 5}},
-  "safe":   {"kinds": ["safe", "safe_old"], "only": ["money", "valuable"], "empty": 0.6}
+  "safe":   {"kinds": ["safe", "safe_old"], "only": ["valuable", "med", "docs"], "empty": 0.6}
+ },
+ "locations": {
+  "note": "поправки тегов по локации (ближайшее место places.json); Кордон — старт: больше бинтов, консервов и патронов 9×18",
+  "Кордон": {"tags": {"food": 2, "med": 2, "ammo_9x18": 4}}
+ },
+ "budget": {
+  "note": "оружие, артефакты и рубли — не случайно при открытии, а раскладкой при правке мира в пределах бюджета локации (решение 16.11). Рубли — старая шкала ×8. Артефакты — только в сейфах (и лабораториях, когда будут размечены).",
+  "groups": {
+   "start":  {"locs": ["Кордон"], "guns": [2, 3], "artifacts": [0, 0], "rubles": [3200, 4800],
+              "gun_pool": ["szguns:pm", "szguns:fort12", "szguns:toz_obrez"], "art_tiers": []},
+   "south":  {"locs": ["Свалка", "Агропром", "Тёмная долина", "Болота, лагерь Чистого Неба", "Затон"], "guns": [3, 4], "artifacts": [0, 1], "rubles": [10000, 14000],
+              "gun_pool": ["szguns:pm", "szguns:fort12", "szguns:toz_obrez", "szguns:toz34", "szguns:aps", "szguns:aks74u"], "art_tiers": [1]},
+   "middle": {"locs": ["Бар «100 рентген»", "Армейские склады", "Янтарь", "Мёртвый город", "Лиманск"], "guns": [4, 5], "artifacts": [1, 2], "rubles": [14000, 18000],
+              "gun_pool": ["szguns:aps", "szguns:toz34", "szguns:aks74u", "szguns:ak74", "szguns:aks74", "szguns:akm"], "art_tiers": [1, 2]},
+   "north":  {"locs": ["Припять, запад", "Припять, север", "Припять, юг", "Припять, восток", "Припять, центр", "Станция Янов", "Дуга (Радар)", "ЧАЭС"],
+              "guns": [6, 8], "artifacts": [2, 3], "rubles": [28000, 36000],
+              "gun_pool": ["szguns:ak74", "szguns:akm", "szguns:an94", "szguns:svd", "szguns:groza", "szguns:vss", "szguns:pkm"], "art_tiers": [2, 3]}
+  },
+  "gun_modes": {"szguns:pm": "SEMI", "szguns:fort12": "SEMI", "szguns:aps": "AUTO", "szguns:toz_obrez": "SEMI", "szguns:toz34": "SEMI",
+                "szguns:aks74u": "AUTO", "szguns:ak74": "AUTO", "szguns:aks74": "AUTO", "szguns:akm": "AUTO", "szguns:an94": "BURST",
+                "szguns:svd": "SEMI", "szguns:groza": "AUTO", "szguns:vss": "AUTO", "szguns:pkm": "AUTO"},
+  "artifacts": {"1": ["stone_blood", "drop", "flash", "thorn", "medusa", "slime"],
+                "2": ["stone_flower", "fireball", "night_star", "gravi", "crystal", "flame", "moonlight", "battery", "empty", "crystal_thorn", "bracelet"],
+                "3": ["kolobok", "soul", "goldfish", "eye", "mama_beads", "etak", "urchin", "black_spray", "witch_jelly"]},
+  "max_per_container": 2
  },
  "items": [
   {"id": "minecraft:string",        "tier": "junk", "w": 3, "n": [1, 3], "tags": ["clothes", "small"], "ru": "тряпки"},
@@ -41,6 +66,7 @@
   {"id": "stalkerzone:good_meds",      "tier": "common", "w": 1, "n": [1, 1], "tags": ["med", "small"], "ru": "бинты"},
 
   {"id": "stalkerzone:good_ammo",      "tier": "useful", "w": 4, "n": [5, 20], "tags": ["ammo"], "ru": "патроны кустарные"},
+  {"ammo": "szguns:9x18",              "tier": "useful", "w": 2, "n": [8, 24], "tags": ["ammo", "ammo_9x18"], "ru": "патроны 9×18"},
   {"ammo": "tacz:12g",                 "tier": "useful", "w": 2, "n": [6, 16], "tags": ["ammo"], "ru": "патроны 12 калибра"},
   {"ammo": "tacz:545x39",              "tier": "useful", "w": 2, "n": [10, 30], "tags": ["ammo"], "ru": "патроны 5,45×39"},
   {"id": "stalkerzone:good_ammo_pro",  "tier": "useful", "w": 1, "n": [5, 15], "tags": ["ammo"], "ru": "патроны заводские"},
@@ -52,16 +78,7 @@
   {"id": "stalkerzone:backpack_small", "tier": "rare", "w": 2, "n": [1, 1], "tags": ["clothes", "gear"], "ru": "рюкзак"},
   {"id": "stalkerzone:detector_echo",  "tier": "rare", "w": 2, "n": [1, 1], "tags": ["gear", "valuable"], "ru": "детектор «Отклик»"},
   {"id": "stalkerzone:good_gear",      "tier": "rare", "w": 2, "n": [1, 1], "tags": ["gear"], "ru": "снаряжение кустарное"},
-  {"id": "stalkerzone:ruble",          "tier": "rare", "w": 3, "n": [20, 64], "tags": ["money"], "ru": "рубли"},
-  {"id": "stalkerzone:ruble_100",      "tier": "rare", "w": 2, "n": [1, 2], "tags": ["money", "valuable"], "ru": "сотни рублей"},
 
-  {"gun": "szguns:toz_obrez", "mode": "SEMI", "tier": "very_rare", "w": 2, "n": [1, 1], "tags": ["weapon", "gear"], "ru": "обрез"},
-  {"gun": "szguns:toz34",     "mode": "SEMI", "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["weapon", "gear"], "ru": "ТОЗ-34"},
-  {"gun": "szguns:aks74u",    "mode": "AUTO", "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["weapon", "gear"], "ru": "АКС-74У"},
-  {"id": "stalkerzone:artifact_stone_blood", "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["valuable"], "ru": "артефакт «Каменная кровь»"},
-  {"id": "stalkerzone:artifact_drop",        "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["valuable"], "ru": "артефакт «Капля»"},
-  {"id": "stalkerzone:artifact_flash",       "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["valuable"], "ru": "артефакт «Вспышка»"},
-  {"id": "stalkerzone:ruble_1000",           "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["money", "valuable"], "ru": "тысяча рублей"},
   {"id": "stalkerzone:good_gear_pro",        "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["gear"], "ru": "снаряжение с Большой земли"},
   {"id": "stalkerzone:backpack_raid",        "tier": "very_rare", "w": 1, "n": [1, 1], "tags": ["gear"], "ru": "рейдовый рюкзак"}
  ]

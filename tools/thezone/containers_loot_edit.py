@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Э1-17 (часть 2): контейнеры мода в мире — с ванильной LootTable на добычу мода (SzPlace + loot.json).
 
-  python -I tools/thezone/containers_loot_edit.py <рабочая копия> <правка.json> <сводка.json>
+  python -I tools/thezone/containers_loot_edit.py <рабочая копия> <правка.json> <сводка.json> [раскладка.json]
+
+раскладка.json — выход tools/containers/LootSummary.java: оружие, артефакты, рубли бюджета локаций по контейнерам
+(кладутся в блок-сущность заранее, учитываются в Ledger при первом открытии).
 
 Читает блок-сущности stalkerzone:zone_container (правка e0012). Место — из прежней таблицы
 containers/<семейство>_<место> (цинк — база, сейф — жильё); чердаки Припяти (y 94) — место «attic» (решение 16.11:
@@ -26,6 +29,16 @@ PRIPYAT_ATTIC = (-3700, -2700, -3300, -2200, 94)  # x0, x1, z0, z1, y — чер
 
 def main():
     work, out, summ = sys.argv[1], sys.argv[2], sys.argv[3]
+    stash = {}
+    if len(sys.argv) > 4:
+        for e in json.load(open(sys.argv[4], encoding="utf-8")):
+            its = []
+            for it in e["items"]:
+                if "gun" in it:
+                    its.append({"id": "tacz:modern_kinetic_gun", "count": 1, "tag": {"GunId": it["gun"], "GunFireMode": it["mode"], "GunCurrentAmmoCount": 0}})
+                else:
+                    its.append({"id": it["id"], "count": it["count"]})
+            stash[(e["x"], e["y"], e["z"])] = its
     places = json.load(open(os.path.join(ROOT, "docs/thezone/places.json"), encoding="utf-8"))["places"]
     rdir = os.path.join(work, "region")
     blocks, rows, stat, skipped = [], [], Counter(), 0
@@ -62,7 +75,8 @@ def main():
                 if y == ya and (x0 <= x < x1 and z0 <= z < z1 or near["ru"].startswith("Припять")):
                     place = "attic"
                 blocks.append({"pos": [x, y, z], "from": state.split("[")[0], "to": state,
-                               "be": {"id": BE_ID, "SzPlace": place, "keepItems": True}})
+                               "be": dict({"id": BE_ID, "SzPlace": place, "SzLoc": near["ru"], "keepItems": True},
+                                          **({"items": stash[(x, y, z)]} if (x, y, z) in stash else {}))})
                 rows.append({"kind": kind, "place": place, "x": x, "y": y, "z": z, "loc": near["ru"]})
                 stat[place] += 1
     spec = {"what": "Э1-17: добыча контейнеров — ванильная LootTable → SzPlace (loot.json мода), %d контейнеров" % len(blocks),
@@ -70,6 +84,7 @@ def main():
             "blocks": blocks}
     json.dump(spec, open(out, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     json.dump(rows, open(summ, "w", encoding="utf-8"), ensure_ascii=False)
+    print("с раскладкой бюджета:", sum(1 for b in blocks if "items" in b["be"]))
     print("контейнеров с таблицей:", len(blocks), "; с предметами автора (не трогаются):", skipped)
     print("места:", dict(stat))
 

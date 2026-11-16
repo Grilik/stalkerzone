@@ -25,12 +25,20 @@ def _be(old, spec):
     data = {}
     items = old["Items"][1][1] if old is not None and "Items" in old else []
     for k, v in spec.items():
-        if k in ("id", "keepItems"):
+        if k in ("id", "keepItems", "items"):
             continue
         if k == "LootTable" and spec.get("keepItems") and items:
             continue
         data[k] = (A.STR, v)
-    if spec.get("keepItems") and items:
+    if spec.get("items"):  # Э1-17: предметы, разложенные заранее (бюджет локации)
+        lst = []
+        for i, it in enumerate(spec["items"]):
+            d = {"Slot": (A.BYTE, i), "id": (A.STR, it["id"]), "Count": (A.BYTE, it.get("count", 1))}
+            if it.get("tag"):
+                d["tag"] = (A.COMP, {k: ((A.STR, v) if isinstance(v, str) else (A.INT, v)) for k, v in it["tag"].items()})
+            lst.append(d)
+        data["Items"] = (A.LIST, (A.COMP, lst))
+    elif spec.get("keepItems") and items:
         moved = []
         for i, it in enumerate(sorted(items, key=lambda t: t["Slot"][1])):
             it = dict(it)

@@ -28,6 +28,8 @@ public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
     private NonNullList<ItemStack> items;
     /** Место для добычи мода (storage, base, home, field, attic) — ставит правка мира; после генерации снимается. */
     private String szPlace;
+    /** Локация (ближайшее место places.json) — поправки добычи; ставит правка мира. */
+    private String szLoc;
 
     public ZoneContainerBlockEntity(BlockPos pos, BlockState state) {
         super(ModContainers.BLOCK_ENTITY.get(), pos, state);
@@ -68,7 +70,11 @@ public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
             // добыча мода (loot.json) — один раз; кладётся в открытые ячейки по порядку
             String place = szPlace;
             szPlace = null;
-            List<ItemStack> got = LootService.roll(sl.getServer(), kind.id, place, worldPosition.getZ(), new java.util.Random());
+            // уже разложенное правкой мира (оружие, артефакты, рубли бюджета локации) — тоже приход из мира, учитывается сейчас
+            List<ItemStack> stash = new java.util.ArrayList<>();
+            for (ItemStack st : items) if (!st.isEmpty()) stash.add(st.copy());
+            WorldLoot.account(sl.getServer(), stash);
+            List<ItemStack> got = LootService.roll(sl.getServer(), kind.id, place, worldPosition.getZ(), szLoc, new java.util.Random());
             int slot = 0;
             for (ItemStack st : got) {
                 while (slot < kind.slots && !items.get(slot).isEmpty()) slot++;
@@ -98,6 +104,7 @@ public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
         items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
         if (!tryLoadLootTable(tag)) ContainerHelper.loadAllItems(tag, items);
         szPlace = tag.contains("SzPlace") ? tag.getString("SzPlace") : null;
+        szLoc = tag.contains("SzLoc") ? tag.getString("SzLoc") : null;
     }
 
     @Override
@@ -105,5 +112,6 @@ public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
         super.saveAdditional(tag);
         if (!trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, items);
         if (szPlace != null) tag.putString("SzPlace", szPlace);
+        if (szLoc != null) tag.putString("SzLoc", szLoc);
     }
 }
