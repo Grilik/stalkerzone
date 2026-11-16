@@ -1,0 +1,361 @@
+{
+ "note": "Э8-09 (основа): базовые цены предметов, ₽. Источник — cost из конфигов Anomaly × 0.2 (шкала 16.11: аптечка — сотни, автомат — тысячи, артефакт — тысячи–десятки тысяч); без пары в Anomaly — старая цена мода × 8. Патроны — за штуку. Генератор — tools/economy/prices_from_anomaly.py (конфиги Anomaly локально). Читает ru.stalkerzone.economy.Prices.",
+ "scale": 0.2,
+ "prices": {
+  "ammo:szguns:9x18": {
+   "price": 7,
+   "source": "ammo_9x18_fmj / 16 шт.",
+   "per": "штука"
+  },
+  "ammo:szguns:9x39": {
+   "price": 33,
+   "source": "ammo_9x39_pab9 / 15 шт.",
+   "per": "штука"
+  },
+  "ammo:tacz:12g": {
+   "price": 15,
+   "source": "ammo_12x70_buck / 10 шт.",
+   "per": "штука"
+  },
+  "ammo:tacz:545x39": {
+   "price": 18,
+   "source": "ammo_5.45x39_fmj / 15 шт.",
+   "per": "штука"
+  },
+  "ammo:tacz:762x39": {
+   "price": 20,
+   "source": "ammo_7.62x39_fmj / 15 шт.",
+   "per": "штука"
+  },
+  "ammo:tacz:762x54": {
+   "price": 28,
+   "source": "ammo_7.62x54_7h1 / 10 шт.",
+   "per": "штука"
+  },
+  "ammo:tacz:9mm": {
+   "price": 9,
+   "source": "ammo_9x19_fmj / 15 шт.",
+   "per": "штука"
+  },
+  "gun:szguns:ak74": {
+   "price": 5390,
+   "source": "wpn_ak74"
+  },
+  "gun:szguns:akm": {
+   "price": 5760,
+   "source": "wpn_akm"
+  },
+  "gun:szguns:aks74": {
+   "price": 5170,
+   "source": "wpn_aks74"
+  },
+  "gun:szguns:aks74u": {
+   "price": 4170,
+   "source": "wpn_ak74u"
+  },
+  "gun:szguns:an94": {
+   "price": 7170,
+   "source": "wpn_abakan"
+  },
+  "gun:szguns:aps": {
+   "price": 1880,
+   "source": "wpn_aps"
+  },
+  "gun:szguns:fort12": {
+   "price": 1130,
+   "source": "wpn_fort"
+  },
+  "gun:szguns:gauss": {
+   "price": 17170,
+   "source": "wpn_gauss"
+  },
+  "gun:szguns:groza": {
+   "price": 7370,
+   "source": "wpn_groza"
+  },
+  "gun:szguns:pkm": {
+   "price": 10770,
+   "source": "wpn_pkm"
+  },
+  "gun:szguns:pm": {
+   "price": 980,
+   "source": "wpn_pm"
+  },
+  "gun:szguns:svd": {
+   "price": 8110,
+   "source": "wpn_svd"
+  },
+  "gun:szguns:toz34": {
+   "price": 2960,
+   "source": "wpn_toz34"
+  },
+  "gun:szguns:toz_obrez": {
+   "price": 1970,
+   "source": "wpn_toz34_obrez"
+  },
+  "gun:szguns:vss": {
+   "price": 8120,
+   "source": "wpn_vintorez"
+  },
+  "stalkerzone:artifact_battery": {
+   "price": 5440,
+   "source": "af_dummy_battery"
+  },
+  "stalkerzone:artifact_black_spray": {
+   "price": 11060,
+   "source": "af_black_spray"
+  },
+  "stalkerzone:artifact_bracelet": {
+   "price": 7590,
+   "source": "af_bracelet"
+  },
+  "stalkerzone:artifact_crystal": {
+   "price": 6360,
+   "source": "af_cristall"
+  },
+  "stalkerzone:artifact_crystal_thorn": {
+   "price": 7520,
+   "source": "af_rusty_kristall"
+  },
+  "stalkerzone:artifact_drop": {
+   "price": 6130,
+   "source": "af_drops"
+  },
+  "stalkerzone:artifact_empty": {
+   "price": 8550,
+   "source": "af_empty"
+  },
+  "stalkerzone:artifact_etak": {
+   "price": 10880,
+   "source": "af_glass"
+  },
+  "stalkerzone:artifact_eye": {
+   "price": 7380,
+   "source": "af_eye"
+  },
+  "stalkerzone:artifact_fireball": {
+   "price": 9360,
+   "source": "af_fireball"
+  },
+  "stalkerzone:artifact_flame": {
+   "price": 9380,
+   "source": "af_fire"
+  },
+  "stalkerzone:artifact_flash": {
+   "price": 9780,
+   "source": "af_electra_flash"
+  },
+  "stalkerzone:artifact_goldfish": {
+   "price": 13240,
+   "source": "af_gold_fish"
+  },
+  "stalkerzone:artifact_gravi": {
+   "price": 9500,
+   "source": "af_gravi"
+  },
+  "stalkerzone:artifact_kolobok": {
+   "price": 8120,
+   "source": "af_fuzz_kolobok"
+  },
+  "stalkerzone:artifact_mama_beads": {
+   "price": 4960,
+   "source": "af_dummy_glassbeads"
+  },
+  "stalkerzone:artifact_medusa": {
+   "price": 4980,
+   "source": "af_medusa"
+  },
+  "stalkerzone:artifact_moonlight": {
+   "price": 8720,
+   "source": "af_electra_moonlight"
+  },
+  "stalkerzone:artifact_night_star": {
+   "price": 6640,
+   "source": "af_night_star"
+  },
+  "stalkerzone:artifact_slime": {
+   "price": 6760,
+   "source": "af_ameba_slime"
+  },
+  "stalkerzone:artifact_soul": {
+   "price": 5240,
+   "source": "af_soul"
+  },
+  "stalkerzone:artifact_stone_blood": {
+   "price": 4440,
+   "source": "af_blood"
+  },
+  "stalkerzone:artifact_stone_flower": {
+   "price": 4560,
+   "source": "af_cristall_flower"
+  },
+  "stalkerzone:artifact_thorn": {
+   "price": 4540,
+   "source": "af_rusty_thorn"
+  },
+  "stalkerzone:artifact_urchin": {
+   "price": 10510,
+   "source": "af_rusty_sea"
+  },
+  "stalkerzone:artifact_witch_jelly": {
+   "price": 13550,
+   "source": "af_ameba_mica"
+  },
+  "stalkerzone:backpack_army": {
+   "price": 1200,
+   "source": "itm_backpack ×3"
+  },
+  "stalkerzone:backpack_raid": {
+   "price": 800,
+   "source": "itm_backpack ×2"
+  },
+  "stalkerzone:backpack_small": {
+   "price": 400,
+   "source": "itm_backpack"
+  },
+  "stalkerzone:bolt": {
+   "price": 2,
+   "source": "bolt"
+  },
+  "stalkerzone:detector_bear": {
+   "price": 1500,
+   "source": "detector_advanced"
+  },
+  "stalkerzone:detector_echo": {
+   "price": 690,
+   "source": "detector_simple"
+  },
+  "stalkerzone:detector_veles": {
+   "price": 9380,
+   "source": "detector_elite"
+  },
+  "stalkerzone:good_ammo": {
+   "price": 110,
+   "source": "ammo_9x18_fmj (коробка 16)"
+  },
+  "stalkerzone:good_ammo_pro": {
+   "price": 270,
+   "source": "ammo_5.45x39_fmj (коробка 15)"
+  },
+  "stalkerzone:good_artifact": {
+   "price": 7200,
+   "source": "mod×8"
+  },
+  "stalkerzone:good_food": {
+   "price": 120,
+   "source": "conserva"
+  },
+  "stalkerzone:good_gear": {
+   "price": 2800,
+   "source": "mod×8"
+  },
+  "stalkerzone:good_gear_pro": {
+   "price": 6860,
+   "source": "stalker_outfit"
+  },
+  "stalkerzone:good_materials": {
+   "price": 240,
+   "source": "mod×8"
+  },
+  "stalkerzone:good_meds": {
+   "price": 500,
+   "source": "medkit"
+  },
+  "stalkerzone:good_parts": {
+   "price": 150,
+   "source": "prt_o_ballistic_2"
+  },
+  "stalkerzone:good_proto": {
+   "price": 4480,
+   "source": "mod×8"
+  },
+  "stalkerzone:ruble": {
+   "price": 1,
+   "source": "номинал"
+  },
+  "stalkerzone:ruble_100": {
+   "price": 100,
+   "source": "номинал"
+  },
+  "stalkerzone:ruble_1000": {
+   "price": 1000,
+   "source": "номинал"
+  },
+  "stalkerzone:suit_bandit": {
+   "price": 2190,
+   "source": "bandit_novice_outfit"
+  },
+  "stalkerzone:suit_berill": {
+   "price": 8920,
+   "source": "specops_outfit"
+  },
+  "stalkerzone:suit_bulat": {
+   "price": 14140,
+   "source": "military_outfit"
+  },
+  "stalkerzone:suit_duty": {
+   "price": 9260,
+   "source": "dolg_outfit"
+  },
+  "stalkerzone:suit_duty_heavy": {
+   "price": 15990,
+   "source": "dolg_heavy_outfit"
+  },
+  "stalkerzone:suit_ecolog": {
+   "price": 29960,
+   "source": "ecolog_outfit_white"
+  },
+  "stalkerzone:suit_ecolog_m": {
+   "price": 33700,
+   "source": "ecolog_outfit_green"
+  },
+  "stalkerzone:suit_exo": {
+   "price": 25940,
+   "source": "exo_outfit"
+  },
+  "stalkerzone:suit_freedom": {
+   "price": 8940,
+   "source": "svoboda_light_outfit"
+  },
+  "stalkerzone:suit_freedom_guard": {
+   "price": 10260,
+   "source": "svoboda_heavy_outfit"
+  },
+  "stalkerzone:suit_jacket": {
+   "price": 1990,
+   "source": "novice_outfit"
+  },
+  "stalkerzone:suit_merc": {
+   "price": 7660,
+   "source": "merc_outfit"
+  },
+  "stalkerzone:suit_monolith": {
+   "price": 9020,
+   "source": "monolith_outfit"
+  },
+  "stalkerzone:suit_proto_exo": {
+   "price": 23000,
+   "source": "ecolog_proto_exo_outfit"
+  },
+  "stalkerzone:suit_proto_guard": {
+   "price": 11260,
+   "source": "cs_heavy_outfit"
+  },
+  "stalkerzone:suit_proto_scout": {
+   "price": 8050,
+   "source": "cs_light_outfit"
+  },
+  "stalkerzone:suit_seva": {
+   "price": 15080,
+   "source": "scientific_outfit"
+  },
+  "stalkerzone:suit_skat": {
+   "price": 10520,
+   "source": "specops_dolg_outfit"
+  },
+  "stalkerzone:suit_zarya": {
+   "price": 6860,
+   "source": "stalker_outfit"
+  }
+ }
+}
