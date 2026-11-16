@@ -225,20 +225,20 @@ public final class KordonSouthPost {
         for (int x = 50; x <= 62; x++) {
             if (x >= 54 && x <= 59) continue;                         // проезд
             int g = b.ground(x, 204);
-            b.set(x, g + 1, 204, BAGS);
-            if (b.lvl >= 1) b.set(x, g + 2, 204, BAGS + (b.lvl >= 3 ? "" : ""));
+            b.set(x, g + 1, 204, Materials.SANDBAG.id());
+            if (b.lvl >= 1) b.set(x, g + 2, 204, Materials.SANDBAG.id());
         }
-        for (int z = 205; z <= 207; z++) { int g = b.ground(51, z); b.set(51, g + 1, z, BAGS); }
+        for (int z = 205; z <= 207; z++) { int g = b.ground(51, z); b.set(51, g + 1, z, Materials.SANDBAG.id()); }
         // шлагбаум
         int g = b.ground(53, 206);
-        b.fill(53, g + 1, 206, 53, g + 2, 206, "minecraft:polished_andesite");
-        if (b.lvl >= 1) for (int x = 54; x <= 60; x++) b.set(x, g + 2, 206, (x & 1) == 0 ? "minecraft:red_concrete" : "minecraft:white_concrete");
-        else b.set(54, b.ground(54, 207) + 1, 207, "minecraft:red_concrete");
+        b.fill(53, g + 1, 206, 53, g + 2, 206, Materials.BETON.id());
+        if (b.lvl >= 1) for (int x = 54; x <= 60; x++) b.set(x, g + 2, 206, ((x & 1) == 0 ? Materials.BARRIER_RED : Materials.BARRIER_WHITE).id());
+        else b.set(54, b.ground(54, 207) + 1, 207, Materials.BARRIER_RED.id());
         // бетонные блоки (ФБС) у здания
         for (int x = 62; x <= 64; x++) for (int z = 209; z <= 213; z++) {
             int gg = b.ground(x, z);
-            b.set(x, gg + 1, z, CONC);
-            if ((x + z) % 2 == 0) b.set(x, gg + 2, z, CONC_D);
+            b.set(x, gg + 1, z, Materials.BETON_BLOCK.id());
+            if ((x + z) % 2 == 0) b.set(x, gg + 2, z, Materials.BETON_BLOCK_CRACKED.id());
         }
         // карточка 031: караул у проезда в мешках
         b.mark("gate", 55, b.ground(55, 207) + 1, 207);

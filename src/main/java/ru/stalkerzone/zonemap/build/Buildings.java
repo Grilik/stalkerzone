@@ -15,7 +15,7 @@ import static ru.stalkerzone.zonemap.build.Structures.*;
 final class Buildings {
     private Buildings() {}
 
-    static final String SANDSLAB = "minecraft:smooth_sandstone_slab[type=bottom]", TARP = "minecraft:brown_wool", CLOTH = "minecraft:green_wool",
+    static final String TARP = "minecraft:brown_wool", CLOTH = "minecraft:green_wool",
             WHITE_BRICK = "minecraft:white_terracotta", SEA = "minecraft:sea_lantern", HANG = "minecraft:lantern[hanging=true]",
             CRATE = "stalkerzone:wooden_crate", WATER = "minecraft:water", GRASSY = "minecraft:grass", FERN = "minecraft:fern",
             BUSH = "minecraft:dead_bush", WEB = "minecraft:cobweb", MOSSC = "minecraft:moss_carpet", GRAVEL = "minecraft:gravel",
@@ -63,8 +63,8 @@ final class Buildings {
     /** Ряд мешков с песком высотой h (верх полублоком). */
     static void sandbags(B b, int x1, int z1, int x2, int z2, int y, int h) {
         for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) for (int z = Math.min(z1, z2); z <= Math.max(z1, z2); z++) {
-            for (int k = 0; k < h; k++) b.put(x, y + k, z, SAND);
-            b.put(x, y + h, z, SANDSLAB);
+            for (int k = 0; k < h; k++) b.put(x, y + k, z, Materials.SANDBAG.id());
+            b.put(x, y + h, z, Materials.SANDBAG_SLAB.id());
         }
     }
 
@@ -72,8 +72,8 @@ final class Buildings {
     static void mgNest(B b, int cx, int y, int cz) {
         for (int dx = -2; dx <= 2; dx++) for (int dz = -2; dz <= 2; dz++) {
             if (Math.abs(dx) < 2 && Math.abs(dz) < 2 || dz == 2 && Math.abs(dx) < 2) continue;
-            b.put(cx + dx, y, cz + dz, SAND);
-            b.put(cx + dx, y + 1, cz + dz, dz == -2 && dx == 0 ? AIR : SANDSLAB);
+            b.put(cx + dx, y, cz + dz, Materials.SANDBAG.id());
+            b.put(cx + dx, y + 1, cz + dz, dz == -2 && dx == 0 ? AIR : Materials.SANDBAG_SLAB.id());
         }
         b.put(cx, y, cz - 1, "minecraft:dispenser[facing=north]");
         b.put(cx + 1, y, cz + 1, CRATE);
@@ -102,7 +102,7 @@ final class Buildings {
         int n = Math.max(Math.abs(x2 - x1), Math.abs(z2 - z1));
         for (int i = 0; i <= n; i++) {
             int x = x1 + (n == 0 ? 0 : (x2 - x1) * i / n), z = z1 + (n == 0 ? 0 : (z2 - z1) * i / n);
-            b.setG(x, 0, z, i % 3 == 0 ? BARS : WEB);
+            b.setG(x, 0, z, (i % 3 == 0 ? Materials.BARS : Materials.BARBED_WIRE).id());
         }
     }
 
@@ -414,10 +414,10 @@ final class Buildings {
             for (int y = 0; y <= 3; y++) b.setG(x, y, G, y == 3 ? (x % 4 == 0 ? "minecraft:stone_brick_wall" : BARS) : x % 4 == 0 ? GCONCRETE : PO2);
         }
         // шлагбаум (на нулевом — сломан и лежит)
-        b.fill(-6, 0, 4, -6, 1, 4, "minecraft:polished_andesite");
-        b.fill(6, 0, 4, 6, 1, 4, "minecraft:polished_andesite");
+        b.fill(-6, 0, 4, -6, 1, 4, Materials.BETON.id());
+        b.fill(6, 0, 4, 6, 1, 4, Materials.BETON.id());
         for (int x = -5; x <= 5; x++) {
-            String c = (x & 1) == 0 ? "minecraft:red_concrete" : "minecraft:white_concrete";
+            String c = ((x & 1) == 0 ? Materials.BARRIER_RED : Materials.BARRIER_WHITE).id();
             if (L == 0) { if (x < 2) b.put(x, 0, 6 + (x + 5) / 4, c); }
             else b.set(x, 1, 4, c);
         }
@@ -434,9 +434,9 @@ final class Buildings {
         // змейка из бетонных блоков
         for (int[] c : new int[][] {{-5, -8}, {-3, -8}, {2, -4}, {4, -4}, {-5, 9}, {-3, 9}, {2, 12}, {4, 12}, {-5, 15}, {-3, 15}}) {
             if (L == 0 && b.chance(0.4)) { b.put(c[0] + b.r.nextInt(5) - 2, 0, c[1] + b.r.nextInt(3), SLAB); continue; }
-            b.fill(c[0], 0, c[1], c[0] + 1, 0, c[1], SMOOTH);
-            b.put(c[0], 1, c[1], SLAB); b.put(c[0] + 1, 1, c[1], SLAB);
-            for (int x = c[0]; x <= c[0] + 1; x++) b.put(x, 0, c[1] + 1, (x & 1) == 0 ? "minecraft:yellow_concrete" : "minecraft:black_concrete");
+            b.fill(c[0], 0, c[1], c[0] + 1, 0, c[1], Materials.BETON_BLOCK.id());
+            b.put(c[0], 1, c[1], Materials.BETON_BLOCK_SLAB.id()); b.put(c[0] + 1, 1, c[1], Materials.BETON_BLOCK_SLAB.id());
+            for (int x = c[0]; x <= c[0] + 1; x++) b.put(x, 0, c[1] + 1, Materials.WARN_STRIPES.id());
         }
         // ----------------------------------------------------------- казарма: два этажа силикатного кирпича
         int bx0 = -34, bx1 = -18, bz0 = -10, bz1 = 14;
@@ -550,8 +550,8 @@ final class Buildings {
         for (int x = -4; x <= 4; x++) for (int z = -15; z <= 15; z++) if (b.chance(0.4)) b.put(x, -1, z, b.chance(0.5) ? ASPH : GRAVEL);
         for (int[] c : new int[][] {{-6, -8}, {-4, -8}, {2, -2}, {4, -2}, {-6, 6}, {-4, 6}}) {
             if (L == 0 && b.chance(0.5)) { b.put(c[0] - 3 + b.r.nextInt(6), 0, c[1] + 1, SLAB); continue; }
-            b.fill(c[0], 0, c[1], c[0] + 1, 0, c[1], SMOOTH);
-            b.put(c[0], 1, c[1], SLAB); b.put(c[0] + 1, 1, c[1], SLAB);
+            b.fill(c[0], 0, c[1], c[0] + 1, 0, c[1], Materials.BETON_BLOCK.id());
+            b.put(c[0], 1, c[1], Materials.BETON_BLOCK_SLAB.id()); b.put(c[0] + 1, 1, c[1], Materials.BETON_BLOCK_SLAB.id());
         }
         // будка
         B booth = b.sub(-14, 0, 0);
