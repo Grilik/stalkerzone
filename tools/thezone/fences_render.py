@@ -16,7 +16,17 @@ CAPS = {
     "atp": "АТП — В: плиты ПО-2 в 2 блока, 2 выбитые плиты, пролом",
     "far": "Дальний блокпост — В: плиты ПО-2",
     "bridge": "Под мостом — В: плиты ПО-2",
+    "farm_w": "Свиноферма, запад — А: серые доски, столбы через 4, 2 дыры и лаз",
+    "farm_c": "Свиноферма, между коровниками — А: серые доски, ворота оставлены",
+    "lake": "Хутор у озера — А: серые доски, столбы через 4, 2 дыры и лаз",
+    "south_e": "Южный блокпост, линия на восток — Б: рабица 3x2, колючка",
+    "south_w": "Южный блокпост, линия на запад — Б: рабица 3x2, колючка",
+    "atp_tree": "АТП у дерева — В: плиты ПО-2",
+    "far_e": "Дальний блокпост, южная линия — В: плиты ПО-2",
+    "bridge_w": "Под мостом, западный конец — В: плиты ПО-2",
+    "south_fix": "Южный блокпост, углы рабицы — Б: угловые столбы",
 }
+TITLE = "Заборы Кордона — слева до, справа после"
 
 
 def _font(sz, bold=False):
@@ -55,7 +65,7 @@ def _chain(p):
     return out
 
 
-def render_all(w, allp, outdir, pack):
+def render_all(w, allp, outdir, pack, title=TITLE):
     sys.argv = [sys.argv[0], pack]
     import iso_tex as it
     it.MODBLOCKS = None
@@ -84,6 +94,8 @@ def render_all(w, allp, outdir, pack):
         minx, maxx = min(p[0] for p in pts) - 3 * s, max(p[0] for p in pts) + 3 * s
         miny, maxy = min(p[1] for p in pts) - 4 * s, max(p[1] for p in pts) + 2 * s
         top = 64
+        if maxx - minx < 900:  # заголовок помещается (Э2-19)
+            minx -= (900 - (maxx - minx)) / 2; maxx = minx + 900
         W, H = int(maxx - minx), int(maxy - miny) + top
         arr = np.zeros((H, W, 4), np.uint8)
         gr = np.linspace(0, 1, H)[:, None]
@@ -137,36 +149,42 @@ def render_all(w, allp, outdir, pack):
         var, x0, x1, z0, z1 = F.SITES[site][:5]
         cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
         before = {}
-        for x in range(x0 - 2, x1 + 3):
-            for z in range(z0 - 2, z1 + 3):
+        pad = 2 if min(x1 - x0, z1 - z0) >= 10 else 7  # узкое место — с окружением (Э2-19)
+        for x in range(x0 - pad, x1 + pad + 1):
+            for z in range(z0 - pad, z1 + pad + 1):
                 g, st = F.column(w, x, z)
                 if g is None:
                     continue
                 for y in range(g - 1, g + 12):
                     s = w.get(x, y, z)
                     if F.bid(s) not in ("air", "cave_air"):
+                        if s.startswith("framedblocks:") and w.camo(x, y, z):  # Э2-19: уже стоящие панели — по камуфляжу
+                            s += '{camo:{state:{Name:"%s"}}}' % w.camo(x, y, z)
                         before[(x - cx, y, z - cz)] = s
         after = dict(before)
         for x, y, z, st, camo in edits:
             k = (x - cx, y, z - cz)
             if F.bid(st) == "air":
                 after.pop(k, None)
+            elif camo == "KEEP":
+                after[k] = st + ("{" + before[k].split("{", 1)[1] if "{" in before.get(k, "") else "")
             elif camo:
                 after[k] = st + '{camo:{state:{Name:"%s"}}}' % camo.split("[")[0]
             else:
                 after[k] = st
         nb = sum(len(v[1]) for v in cells.values())
+        sc = 10 if max(x1 - x0, z1 - z0) <= 60 else 6  # длинные линии мельче
         ib = draw(before, os.path.join(outdir, "final-%s-before.png" % site), "ДО: " + CAPS[site].split(" — ")[0],
-                  "TheZone: стенка из полных блоков, %d колонок, %d блоков" % (len(cells), nb))
+                  "TheZone: старая стенка, %d колонок, %d блоков" % (len(cells), nb), sc)
         ia = draw(after, os.path.join(outdir, "final-%s-after.png" % site), "ПОСЛЕ: " + CAPS[site],
-                  "правок блоков: %d (x %d..%d, z %d..%d)" % (len(edits), x0, x1, z0, z1))
+                  "правок блоков: %d (x %d..%d, z %d..%d)" % (len(edits), x0, x1, z0, z1), sc)
         pairs.append((ib, ia))
         print("png", site)
     w_ = max(a.width + b.width for a, b in pairs) + 30
     h_ = sum(max(a.height, b.height) + 20 for a, b in pairs) + 60
     sheet = Image.new("RGB", (w_, h_), (22, 24, 20))
     d = ImageDraw.Draw(sheet)
-    d.text((12, 12), "Э2-16: тонкие заборы Кордона — слева до, справа после", fill=(236, 214, 140), font=_font(26, True))
+    d.text((12, 12), title, fill=(236, 214, 140), font=_font(26, True))
     yy = 60
     for a, b in pairs:
         sheet.paste(a, (10, yy)); sheet.paste(b, (20 + a.width, yy))

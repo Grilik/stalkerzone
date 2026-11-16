@@ -35,6 +35,22 @@ SITES = {
     "far": ("C", -4158, -4130, 2888, 2914, {"smooth_stone_slab"}, set()),
     "bridge": ("C", -4168, -4146, 3478, 3482, {"quartz_block", "quartz_slab"}, set()),
 }
+# Э2-19: оставшиеся ванильные заборы Кордона (поиск по всему атласу cordon, заход 2). Колонки — find_simple:
+# от земли вверх подряд блоки из материалов места, первый — из них же (над забором может висеть крона).
+SITES.update({
+    "farm_w": ("A", -4204, -4201, 3315, 3337, {"oak_fence"}, set()),       # свиноферма, западная линия
+    "farm_c": ("A", -4189, -4189, 3320, 3332, {"oak_fence"}, set()),       # свиноферма, между коровниками (ворота 3325-3327)
+    "lake": ("A", -4702, -4648, 3536, 3580, {"oak_fence"}, set()),         # хутор у озера (запад Кордона)
+    "south_e": ("B", -4322, -4170, 3983, 3987, {"oak_fence"}, set()),      # линия Южного блокпоста на восток
+    "south_w": ("B", -4476, -4375, 3976, 3988, {"oak_fence"}, set()),      # линия Южного блокпоста на запад
+    "atp_tree": ("C", -4059, -4055, 3696, 3700, {"oak_fence", "smooth_stone_slab"}, set()),  # АТП у дерева
+    "far_e": ("C", -4131, -4116, 2909, 2909, {"oak_fence"}, set()),        # Дальний блокпост, южная линия на восток
+    "bridge_w": ("C", -4173, -4169, 3480, 3480, {"quartz_block", "quartz_slab"}, set()),  # под мостом, западный конец
+    "south_fix": ("B", -4352, -4320, 3983, 4019, set(), set()),             # углы рабицы Южного блокпоста
+})
+SIMPLE = {"farm_w", "farm_c", "lake", "south_e", "south_w", "atp_tree", "far_e", "bridge_w"}
+FIX = {"south_fix"}
+ATTACHED = ("wall_sign", "wall_torch", "wall_banner")  # висят на снимаемой стенке — снять вместе с ней
 # просмотрено вручную (Э2-16, этап 3): куски стенки, которые автопоиск отсекает (короткий кусок, примыкание к дому),
 # но это забор, а не стена дома
 INCL = {
@@ -67,6 +83,15 @@ class World:
 
     def __init__(self, root):
         self.root, self.cache = root, {}
+
+    def camo(self, x, y, z):
+        """Камуфляж framed-блока в точке ('minecraft:…') или None (для превью)."""
+        ch = self.chunk(x >> 4, z >> 4)
+        be = A.block_entity(ch, x, y, z) if ch else None
+        try:
+            return be["camo"][1]["state"][1]["Name"][1]
+        except (TypeError, KeyError):
+            return None
 
     def chunk(self, cx, cz):
         k = (cx, cz)
@@ -153,6 +178,65 @@ def find(w, site):
     return keep
 
 
+def find_simple(w, site):
+    """Э2-19: колонки забора из материалов места: подряд от земли вверх, первый блок — из материалов."""
+    var, x0, x1, z0, z1, mats, excl = SITES[site]
+    out = {}
+    for x in range(x0, x1 + 1):
+        for z in range(z0, z1 + 1):
+            g, st = column(w, x, z)
+            if g is None or (x, z) in excl:
+                continue
+            h = 0
+            while h < len(st) and bid(st[h]) in mats:
+                h += 1
+            if h:
+                out[(x, z)] = (g, st[:h])
+    return out
+
+
+def _joins(b):
+    """Соединяется ли панель/решётка с соседним блоком b (уже стоящим в мире)."""
+    return b == "iron_bars" or b.endswith("_pane") or "prop_" in b or (b not in SOFT and not any(t in b for t in THIN))
+
+
+def _props(s):
+    return dict(p.split("=", 1) for p in s[:-1].split("[", 1)[1].split(",")) if "[" in s else {}
+
+
+def _with(s, props):
+    return s.split("[")[0] + "[" + ",".join("%s=%s" % kv for kv in sorted(props.items())) + "]"
+
+
+def fix_grating(w, site):
+    """Э2-19: решётки zm_grating_pane места — соединения заново (с рабицей и корпусом пропса тоже),
+    колючка над углом — вертикальная цепь (столб), а не поперёк линии."""
+    var, x0, x1, z0, z1 = SITES[site][:5]
+    edits = []
+    for x in range(x0, x1 + 1):
+        for z in range(z0, z1 + 1):
+            g, st = column(w, x, z)
+            if g is None:
+                continue
+            for dy, s in enumerate(st, 1):
+                y = g + dy
+                if bid(s) != "stalkerzone:zm_grating_pane":
+                    continue
+                pr = _props(s)
+                con = {d: _joins(bid(w.get(x + dx, y, z + dz))) for d, (dx, dz) in DIRS.items()}
+                pr.update({d: str(v).lower() for d, v in con.items()})
+                ns = _with(s, pr)
+                if A.state_str(A._state(ns)) != A.state_str(A._state(s)):
+                    edits.append((x, y, z, ns, None))
+                up = w.get(x, y + 1, z)
+                if bid(up) == "chain" and (con["east"] or con["west"]) and (con["north"] or con["south"]):
+                    pu = _props(up)
+                    if pu.get("axis") != "y":
+                        pu["axis"] = "y"
+                        edits.append((x, y + 1, z, _with(up, pu), None))
+    return {}, edits, ["решёток и цепей поправлено %d" % len(edits)]
+
+
 def nbrs(cells, k):
     return {d: (k[0] + dx, k[1] + dz) in cells for d, (dx, dz) in DIRS.items()}
 
@@ -189,7 +273,9 @@ def pick(run_list, n, margin=2, width=1):
 def plan(w, site):
     """-> (колонки, правки [(x, y, z, состояние, камуфляж|None)], заметки)."""
     var = SITES[site][0]
-    cells = find(w, site)
+    if site in FIX:
+        return fix_grating(w, site)
+    cells = find_simple(w, site) if site in SIMPLE else find(w, site)
     wall = {k for k, (g, st) in cells.items() if not any(bid(s) in GATE for s in st)}
     rl = runs(cells, wall)
     new = {}  # (x, y, z) -> (состояние-шаблон, камуфляж); шаблон PANE/GRATING — соединения потом
@@ -247,7 +333,8 @@ def plan(w, site):
             for dy in (1, 2):
                 new[(k[0], g + dy, k[1])] = ("GRATING", None)
             n = nbrs(cells, k)  # колючка поверху: ванильная цепь вдоль линии забора (своей колючки в моде нет)
-            new[(k[0], g + 3, k[1])] = (WIRE % ("x" if n["east"] or n["west"] else "z"), None)
+            corner = (n["east"] or n["west"]) and (n["north"] or n["south"])  # угол — столб (Э2-19)
+            new[(k[0], g + 3, k[1])] = (WIRE % ("y" if corner else "x" if n["east"] or n["west"] else "z"), None)
         notes.append("секций рабицы %d, клеток решётки %d" % (len(used) // 3, len(rest)))
     # снять старую стенку
     edits = []
@@ -256,6 +343,10 @@ def plan(w, site):
         for dy in range(1, len(st) + 1):
             if (k[0], g + dy, k[1]) not in new:
                 edits.append((k[0], g + dy, k[1], "minecraft:air", None))
+            for dx, dz in DIRS.values():  # таблички и факелы на снимаемой стенке (Э2-19)
+                q = (k[0] + dx, g + dy, k[1] + dz)
+                if (q[0], q[2]) not in wall and any(t in bid(w.get(*q)) for t in ATTACHED):
+                    edits.append((q[0], q[1], q[2], "minecraft:air", None))
     # соединения панелей и решёток
     for (x, y, z), (tmpl, camo) in new.items():
         if tmpl in ("PANE", "GRATING"):
@@ -263,17 +354,38 @@ def plan(w, site):
             for d, (dx, dz) in DIRS.items():
                 q = (x + dx, y, z + dz)
                 if q in new:
-                    con[d] = new[q][0] in ("PANE", "GRATING")
+                    con[d] = new[q][0] in ("PANE", "GRATING") or tmpl == "GRATING"  # решётка цепляется и за рабицу (Э2-19)
                 else:
                     gone = (q[0], q[2]) in wall
-                    s = "minecraft:air" if gone else w.get(*q)
-                    b = bid(s)
-                    con[d] = b in ("iron_bars",) or b.endswith("_pane") or (b not in SOFT and not any(t in b for t in THIN) and not b.startswith("prop_"))
+                    b = bid("minecraft:air" if gone else w.get(*q))
+                    con[d] = _joins(b) and (tmpl == "GRATING" or "prop_" not in b)
             v = [str(con[d]).lower() for d in ("east", "north", "south", "west")]
             st = (PANE if tmpl == "PANE" else GRATING) % tuple(v)
             edits.append((x, y, z, st, camo))
         else:
             edits.append((x, y, z, tmpl, camo))
+    # соседние уже стоящие панели и решётки — соединение в сторону новых (Э2-19); камуфляж сохраняется (KEEP)
+    fix = {}
+    for (x, y, z), (tmpl, camo) in new.items():
+        if tmpl not in ("PANE", "GRATING"):
+            continue
+        for d, (dx, dz) in DIRS.items():
+            q = (x + dx, y, z + dz)
+            if q in new or (q[0], q[2]) in wall:
+                continue
+            s0 = fix.get(q, (w.get(*q),))[0]
+            b = bid(s0)
+            if b not in ("framedblocks:framed_pane", "stalkerzone:zm_grating_pane"):
+                continue
+            back = {"east": "west", "west": "east", "north": "south", "south": "north"}[d]
+            pr = _props(s0)
+            if pr.get(back) != "true":
+                pr[back] = "true"
+                fix[q] = (_with(s0, pr), "KEEP" if b.startswith("framedblocks") else None)
+    edits += [(q[0], q[1], q[2], s1, c) for q, (s1, c) in fix.items()]
+    edits = list({(e[0], e[1], e[2]): e for e in edits}.values())  # одна правка на блок, последняя главнее
+    if fix:
+        notes.append("соседних панелей подключено %d" % len(fix))
     return cells, edits, notes
 
 
@@ -293,15 +405,21 @@ def apply(world, edits, why, dry=False):
     if work:
         import world_edit_log as L
         wl = L.Work(world)
-        eid = wl.begin("Э2-16 тонкие заборы: %d блоков" % len(edits), why, files)
+        eid = wl.begin("%s тонкие заборы: %d блоков" % (why.split(":")[0], len(edits)), why, files)
     try:
         for (cx, cz), es in sorted(by.items()):
             p = os.path.join(world, "region", A.region_name(cx, cz))
             name, ch = A.read_chunk(p, cx, cz)
             for x, y, z, st, camo in es:
-                if A.block_entity(ch, x, y, z) is not None and camo is None:
+                if A.block_entity(ch, x, y, z) is not None and camo is None and not (
+                        bid(st) == "air" and any(t in A.get_block(ch, x, y, z) for t in ATTACHED)):
                     raise SystemExit("в (%d %d %d) блок-сущность — не трогаю" % (x, y, z))
-                if camo:
+                if camo == "KEEP":  # та же блок-сущность (камуфляж), другое состояние
+                    be = A.block_entity(ch, x, y, z)
+                    A.set_block(ch, x, y, z, st)
+                    if be is not None:
+                        ch["block_entities"][1][1].append(be)
+                elif camo:
                     A.set_framed(ch, x, y, z, st, camo)
                 else:
                     A.set_block(ch, x, y, z, st)
@@ -367,6 +485,7 @@ def main():
     ap.add_argument("--dry", action="store_true")
     ap.add_argument("--probe")
     ap.add_argument("--pack")
+    ap.add_argument("--why", default="Э2-16: заборы Кордона тоньше, как в оригинале")
     o = ap.parse_args()
     w = World(o.world)
     allp = {}
@@ -382,10 +501,10 @@ def main():
             os.makedirs(o.map, exist_ok=True)
             top_map(w, s, cells, edits, os.path.join(o.map, "map-%s.png" % s))
     if o.cmd == "apply":
-        apply(o.world, [e for c, es in allp.values() for e in es], "Э2-16: заборы Кордона тоньше, как в оригинале", o.dry)
+        apply(o.world, [e for c, es in allp.values() for e in es], o.why, o.dry)
     elif o.cmd == "render":
         import fences_render
-        fences_render.render_all(w, allp, o.out, o.pack)
+        fences_render.render_all(w, allp, o.out, o.pack, o.why.split(":")[0] + ": " + fences_render.TITLE)
 
 
 if __name__ == "__main__":
