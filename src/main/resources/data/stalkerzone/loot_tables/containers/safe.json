@@ -1,0 +1,98 @@
+{
+ "type": "minecraft:chest",
+ "pools": [
+  {
+   "rolls": {
+    "type": "minecraft:uniform",
+    "min": 1,
+    "max": 3
+   },
+   "entries": [
+    {
+     "type": "minecraft:item",
+     "name": "stalkerzone:ruble",
+     "weight": 60,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 50,
+        "max": 400
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:item",
+     "name": "stalkerzone:ruble_100",
+     "weight": 16,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 1,
+        "max": 3
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:item",
+     "name": "stalkerzone:good_meds",
+     "weight": 24,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 1,
+        "max": 2
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:item",
+     "name": "stalkerzone:good_ammo_pro",
+     "weight": 20,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 5,
+        "max": 15
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:item",
+     "name": "minecraft:paper",
+     "weight": 30,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 1,
+        "max": 4
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:item",
+     "name": "minecraft:book",
+     "weight": 10
+    },
+    {
+     "type": "minecraft:empty",
+     "weight": 40
+    }
+   ]
+  }
+ ]
+}

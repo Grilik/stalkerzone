@@ -1,0 +1,31 @@
+{
+ "variants": {
+  "facing=north,half=lower": {
+   "model": "stalkerzone:block/container/locker_blue"
+  },
+  "facing=north,half=upper": {
+   "model": "stalkerzone:block/container/empty"
+  },
+  "facing=east,half=lower": {
+   "model": "stalkerzone:block/container/locker_blue",
+   "y": 90
+  },
+  "facing=east,half=upper": {
+   "model": "stalkerzone:block/container/empty"
+  },
+  "facing=south,half=lower": {
+   "model": "stalkerzone:block/container/locker_blue",
+   "y": 180
+  },
+  "facing=south,half=upper": {
+   "model": "stalkerzone:block/container/empty"
+  },
+  "facing=west,half=lower": {
+   "model": "stalkerzone:block/container/locker_blue",
+   "y": 270
+  },
+  "facing=west,half=upper": {
+   "model": "stalkerzone:block/container/empty"
+  }
+ }
+}

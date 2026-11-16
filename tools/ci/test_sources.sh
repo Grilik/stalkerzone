@@ -8,4 +8,5 @@ echo src/main/java/ru/stalkerzone/artifact/ArtifactDef.java
 echo src/main/java/ru/stalkerzone/gear/TaczWeight.java
 echo src/main/java/ru/stalkerzone/mutant/MutantType.java
 echo src/main/java/ru/stalkerzone/client/PdaModel.java
+echo src/main/java/ru/stalkerzone/container/ContainerKind.java
 ls src/test/java/*.java

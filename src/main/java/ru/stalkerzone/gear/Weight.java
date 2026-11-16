@@ -61,6 +61,7 @@ public final class Weight {
         if (it instanceof ArmorItem a) return 1 + a.getDefense() * 1.2;
         if (it instanceof BowItem || it instanceof CrossbowItem || it instanceof ShieldItem) return 1.5;
         if (it instanceof TieredItem) return 1.5;
+        if (it instanceof BlockItem bi && bi.getBlock() instanceof ru.stalkerzone.container.ZoneContainerBlock zc) return zc.kind.weight; // Э1-17
         if (it instanceof BlockItem) return 0.8;
         if (s.isEdible()) return 0.3;
         return 0.1;

@@ -29,7 +29,7 @@ public final class Simulation {
     };
 
     /** Версия формата сохранения. Менять только вместе с чтением старых версий в {@link #load}. */
-    public static final int SAVE_VERSION = 22;
+    public static final int SAVE_VERSION = 23; // v23 (Э1-17): Ledger.worldLoot / worldRubles — добыча контейнеров мира
 
     public final long seed;
     public int day;
@@ -2821,11 +2821,13 @@ public final class Simulation {
             if (version < 21 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v22 (карточка 054): военные Кордона — только гарнизон, мост ничей; старый Кордон начинается заново с тем же сидом
             if (version < 22 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
+            // v23 (Э1-17): учёт добычи контейнеров мира в Ledger — Кордон, как при каждой смене версии, начинается заново
+            if (version < 23 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
             sim.day = in.readInt();
-            sim.ledger.read(in);
+            sim.ledger.read(in, version);
             for (int i = 0; i < Good.readCount; i++) sim.initialGoods[i] = in.readLong();
             if (Good.readCount < G) sim.migrateGoods();
             sim.initialMoney = in.readLong();

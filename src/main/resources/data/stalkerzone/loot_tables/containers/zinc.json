@@ -1,0 +1,48 @@
+{
+ "type": "minecraft:chest",
+ "pools": [
+  {
+   "rolls": {
+    "type": "minecraft:uniform",
+    "min": 1,
+    "max": 2
+   },
+   "entries": [
+    {
+     "type": "minecraft:item",
+     "name": "stalkerzone:good_ammo",
+     "weight": 140,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 10,
+        "max": 30
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:item",
+     "name": "stalkerzone:good_ammo_pro",
+     "weight": 50,
+     "functions": [
+      {
+       "function": "minecraft:set_count",
+       "count": {
+        "type": "minecraft:uniform",
+        "min": 5,
+        "max": 20
+       }
+      }
+     ]
+    },
+    {
+     "type": "minecraft:empty",
+     "weight": 10
+    }
+   ]
+  }
+ ]
+}

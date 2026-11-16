@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "stalkerzone:block/container/file_cabinet_grey"
+  },
+  "facing=east": {
+   "model": "stalkerzone:block/container/file_cabinet_grey",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "stalkerzone:block/container/file_cabinet_grey",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "stalkerzone:block/container/file_cabinet_grey",
+   "y": 270
+  }
+ }
+}

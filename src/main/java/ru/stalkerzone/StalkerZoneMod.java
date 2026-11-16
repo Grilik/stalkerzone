@@ -30,6 +30,7 @@ public class StalkerZoneMod {
         ru.stalkerzone.block.ModBlocks.init();
         ru.stalkerzone.block.ZoneBlocks.init();
         ru.stalkerzone.block.ModBlocks.BLOCKS.register(modBus);
+        ru.stalkerzone.container.ModContainers.BLOCK_ENTITIES.register(modBus); // Э1-17: контейнеры мода
         ru.stalkerzone.world.ZoneBiomeSource.SOURCES.register(modBus);
         ru.stalkerzone.world.xray.XrayTerrain.TYPES.register(modBus);
         System.setProperty("stalkerzone.levels", net.minecraftforge.fml.loading.FMLPaths.GAMEDIR.get().resolve("stalkerzone").resolve("levels").toString());

@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "stalkerzone:block/container/safe_old"
+  },
+  "facing=east": {
+   "model": "stalkerzone:block/container/safe_old",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "stalkerzone:block/container/safe_old",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "stalkerzone:block/container/safe_old",
+   "y": 270
+  }
+ }
+}

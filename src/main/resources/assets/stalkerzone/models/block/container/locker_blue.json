@@ -1,0 +1,98 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "front": "stalkerzone:block/container/locker_blue_front",
+  "side": "stalkerzone:block/container/locker_blue_side",
+  "top": "stalkerzone:block/container/locker_blue_top",
+  "particle": "stalkerzone:block/container/locker_blue_side"
+ },
+ "elements": [
+  {
+   "from": [
+    0.0,
+    0,
+    2.0
+   ],
+   "to": [
+    16.0,
+    32,
+    14.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0.0,
+      0,
+      16.0,
+      16
+     ],
+     "texture": "#front"
+    },
+    "south": {
+     "uv": [
+      0.0,
+      0,
+      16.0,
+      16
+     ],
+     "texture": "#side"
+    },
+    "east": {
+     "uv": [
+      2.0,
+      0,
+      14.0,
+      16
+     ],
+     "texture": "#side"
+    },
+    "west": {
+     "uv": [
+      2.0,
+      0,
+      14.0,
+      16
+     ],
+     "texture": "#side"
+    },
+    "up": {
+     "uv": [
+      0.0,
+      2.0,
+      16.0,
+      14.0
+     ],
+     "texture": "#top"
+    },
+    "down": {
+     "uv": [
+      0.0,
+      2.0,
+      16.0,
+      14.0
+     ],
+     "texture": "#top"
+    }
+   }
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    -2,
+    0
+   ],
+   "scale": [
+    0.42,
+    0.42,
+    0.42
+   ]
+  }
+ }
+}
