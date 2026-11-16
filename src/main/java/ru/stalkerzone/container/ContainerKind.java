@@ -27,9 +27,6 @@ public enum ContainerKind {
     /** Семейство — общая таблица добычи и материал (звук, прочность). */
     public enum Family { WOOD, METAL, ZINC, CABINET, SAFE }
 
-    /** Место контейнера в мире — от него зависит добыча. */
-    public enum Place { HOME, STORAGE, BASE, FIELD }
-
     public final String id, code, ru, en;
     public final Family family;
     /** Ячеек (окно — ряды по 9; лишние ячейки закрыты). */
@@ -50,12 +47,6 @@ public enum ContainerKind {
     public boolean tall() { return h > 16; }
 
     public boolean metal() { return family != Family.WOOD; }
-
-    /** Таблица добычи мода: {@code stalkerzone:containers/<семейство>[_<место>]} (цинк и сейф — без места). */
-    public static String lootTable(Family f, Place p) {
-        String fam = f.name().toLowerCase();
-        return "stalkerzone:containers/" + (f == Family.ZINC || f == Family.SAFE ? fam : fam + "_" + p.name().toLowerCase());
-    }
 
     public static ContainerKind byId(String id) {
         for (ContainerKind k : values()) if (k.id.equals(id)) return k;
