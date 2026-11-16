@@ -34,7 +34,7 @@ public class LootSummary {
         Random r = new Random(17);
         for (int i = 0; i < rows.size(); i++) {
             Map<String, Object> m = Json.obj(rows.get(i));
-            String loc = Json.str(m.get("loc"));
+            String loc = l.locOf(Json.str(m.get("loc")));
             double[] s = by.computeIfAbsent(loc, k -> new double[COLS.length]);
             double[] tot = by.computeIfAbsent("ВСЕГО", k -> new double[COLS.length]);
             int z = (int) Json.num(m.get("z"));
@@ -52,7 +52,7 @@ public class LootSummary {
                 js.append("]}");
             }
             for (int run = 0; run < runs; run++) {
-                List<ContainerLoot.Drop> d = l.roll(Json.str(m.get("kind")), Json.str(m.get("place")), z, loc, r);
+                List<ContainerLoot.Drop> d = l.roll(Json.str(m.get("kind")), Json.str(m.get("place")), z, Json.str(m.get("loc")), r);
                 if (d.isEmpty() && st.isEmpty()) add[1] += 1.0 / runs;
                 for (ContainerLoot.Drop x : d) count(x, add, pr, 1.0 / runs);
             }

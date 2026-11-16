@@ -38,7 +38,12 @@ public final class ContainerLoot {
     /** Поправки тегов по локации (ближайшее место places.json). */
     private final Map<String, Map<String, Double>> locTags = new HashMap<>();
     /** Бюджет локации: оружие, артефакты, рубли — раскладка при правке мира ({@link #plan}). */
-    private record Budget(int gunLo, int gunHi, int artLo, int artHi, int rubLo, int rubHi, List<String> guns, List<String> arts) {}
+    private record Budget(int gunLo, int gunHi, int artLo, int artHi, int rubLo, int rubHi, int gearLo, int gearHi,
+                          List<String> guns, List<String> arts, List<String> gear) {}
+    /** Слияние мест places.json в одну локацию бюджета (Припять основная). */
+    private final Map<String, String> aliases = new HashMap<>();
+    /** Полный бюджет — у места с не меньше чем fullAt контейнерами; меньше — пропорционально. */
+    private int fullAt = 1;
     private final Map<String, Budget> budgets = new HashMap<>();
     private final Map<String, String> gunModes = new HashMap<>();
     private int maxPerContainer = 2;
@@ -81,14 +86,19 @@ public final class ContainerLoot {
             Map<String, Object> artPools = Json.obj(b.get("artifacts"));
             for (Map.Entry<String, Object> e : Json.obj(b.get("gun_modes")).entrySet()) gunModes.put(e.getKey(), Json.str(e.getValue()));
             maxPerContainer = (int) Json.num(b.get("max_per_container"));
+            if (b.get("full_at") != null) fullAt = (int) Json.num(b.get("full_at"));
+            Map<String, Object> al = Json.obj(b.get("aliases"));
+            if (al != null) for (Map.Entry<String, Object> e : al.entrySet()) aliases.put(e.getKey(), Json.str(e.getValue()));
             for (Object go : Json.obj(b.get("groups")).values()) {
                 Map<String, Object> g = Json.obj(go);
-                List<String> guns = new ArrayList<>(), arts = new ArrayList<>();
+                List<String> guns = new ArrayList<>(), arts = new ArrayList<>(), gear = new ArrayList<>();
                 for (Object o : Json.list(g.get("gun_pool"))) guns.add(Json.str(o));
+                if (g.get("gear_pool") != null) for (Object o : Json.list(g.get("gear_pool"))) gear.add(Json.str(o));
                 for (Object t : Json.list(g.get("art_tiers")))
                     for (Object o : Json.list(artPools.get(String.valueOf((int) Json.num(t))))) arts.add(Json.str(o));
                 int[] gr = range(g.get("guns")), ar = range(g.get("artifacts")), rr = range(g.get("rubles"));
-                Budget bu = new Budget(gr[0], gr[1], ar[0], ar[1], rr[0], rr[1], guns, arts);
+                int[] ge = g.get("gear") != null ? range(g.get("gear")) : new int[]{0, 0};
+                Budget bu = new Budget(gr[0], gr[1], ar[0], ar[1], rr[0], rr[1], ge[0], ge[1], guns, arts, gear);
                 for (Object l : Json.list(g.get("locs"))) budgets.put(Json.str(l), bu);
             }
         }
@@ -206,31 +216,41 @@ public final class ContainerLoot {
     public Map<Integer, List<Drop>> plan(List<Box> boxes, Random r) {
         Map<Integer, List<Drop>> out = new HashMap<>();
         Map<String, List<Integer>> byLoc = new LinkedHashMap<>();
-        for (int i = 0; i < boxes.size(); i++) byLoc.computeIfAbsent(boxes.get(i).loc(), k -> new ArrayList<>()).add(i);
+        for (int i = 0; i < boxes.size(); i++) byLoc.computeIfAbsent(locOf(boxes.get(i).loc()), k -> new ArrayList<>()).add(i);
         for (Map.Entry<String, List<Integer>> e : byLoc.entrySet()) {
             Budget b = budgets.get(e.getKey());
             if (b == null) continue;
             List<Integer> all = e.getValue();
-            List<Integer> gunBox = new ArrayList<>(), gunLate = new ArrayList<>(), safes = new ArrayList<>(), money = new ArrayList<>();
+            double sc = Math.min(1.0, all.size() / (double) fullAt);  // мало контейнеров — бюджет меньше
+            List<Integer> gunBox = new ArrayList<>(), gunLate = new ArrayList<>(), safes = new ArrayList<>(), money = new ArrayList<>(), best = new ArrayList<>();
             for (int i : all) {
                 Box x = boxes.get(i);
                 if (x.kind().startsWith("safe")) { safes.add(i); money.add(i); }
                 else if (x.kind().contains("cabinet") || x.kind().startsWith("locker")) money.add(i);
                 if (!x.kind().startsWith("ammo_zinc")) ("attic".equals(x.place()) ? gunLate : gunBox).add(i);
+                // артефакт без сейфа — в лучший контейнер базы или склада, не в полевые ящики и не на чердаки
+                if (("base".equals(x.place()) || "storage".equals(x.place()))
+                        && (x.kind().startsWith("army_crate") || x.kind().startsWith("metal_box") || x.kind().startsWith("locker") || x.kind().contains("cabinet")))
+                    best.add(i);
             }
+            Collections.shuffle(best, r);
+            List<Integer> artBox = safes.isEmpty() ? best : safes;
             Collections.shuffle(gunBox, r);
             Collections.shuffle(gunLate, r);
             gunBox.addAll(gunLate);
-            int guns = b.gunLo + r.nextInt(b.gunHi - b.gunLo + 1);
+            int guns = scaled(b.gunLo, b.gunHi, sc, r);
             for (int k = 0; k < guns && !b.guns.isEmpty(); k++) {
                 String g = b.guns.get(r.nextInt(b.guns.size()));
                 put(out, gunBox, new Drop(null, g, gunModes.getOrDefault(g, "SEMI"), null, 1, "budget", "оружие"));
             }
-            int arts = b.artLo + r.nextInt(b.artHi - b.artLo + 1);
+            int arts = scaled(b.artLo, b.artHi, sc, r);
             Collections.shuffle(safes, r);
             for (int k = 0; k < arts && !b.arts.isEmpty(); k++)
-                put(out, safes, new Drop("stalkerzone:artifact_" + b.arts.get(r.nextInt(b.arts.size())), null, null, null, 1, "budget", "артефакт"));
-            int rub = (b.rubLo + r.nextInt(b.rubHi - b.rubLo + 1)) / 50 * 50;
+                put(out, artBox, new Drop("stalkerzone:artifact_" + b.arts.get(r.nextInt(b.arts.size())), null, null, null, 1, "budget", "артефакт"));
+            int gear = scaled(b.gearLo, b.gearHi, sc, r);
+            for (int k = 0; k < gear && !b.gear.isEmpty(); k++)
+                put(out, gunBox, new Drop(b.gear.get(r.nextInt(b.gear.size())), null, null, null, 1, "budget", "снаряжение"));
+            int rub = (int) (sc * (b.rubLo + r.nextInt(b.rubHi - b.rubLo + 1))) / 50 * 50;
             List<Integer> rbox = new ArrayList<>(money);
             Collections.shuffle(rbox, r);
             List<Integer> rest = new ArrayList<>(all);
@@ -263,7 +283,17 @@ public final class ContainerLoot {
         }
     }
 
-    public boolean hasBudget(String loc) { return budgets.containsKey(loc); }
+    public boolean hasBudget(String loc) { return budgets.containsKey(locOf(loc)); }
+
+    /** Локация бюджета для места places.json (слияние частей Припяти). */
+    public String locOf(String loc) { return loc == null ? null : aliases.getOrDefault(loc, loc); }
+
+    /** Случайное число из [lo, hi], умноженное на долю sc (округление вероятностное). */
+    private static int scaled(int lo, int hi, double sc, Random r) {
+        double v = (lo + r.nextInt(hi - lo + 1)) * sc;
+        int n = (int) v;
+        return n + (r.nextDouble() < v - n ? 1 : 0);
+    }
 
     /** Все id предметов (без gun/ammo) — для проверки, что они есть в моде. */
     public List<String> itemIds() {

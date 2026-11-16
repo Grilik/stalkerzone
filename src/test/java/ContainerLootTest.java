@@ -23,18 +23,19 @@ public class ContainerLootTest {
         for (ContainerKind k : ContainerKind.values()) ck(l.knowsKind(k.id), k.id + ": тип описан в loot.json");
         for (String p : ContainerLoot.PLACES) ck(l.knowsPlace(p), "место " + p + " описано");
 
-        // доли уровней на Кордоне (z = 3500), без поправок места и типа (старый деревянный ящик в жилье)
+        // случайная добыча — хлам, обычное, полезное в отношении 50 : 30 : 15 (редкое и очень редкое — бюджетом локации)
         Map<String, Double> tw = l.tierWeights("wood_crate_old", "home", 4400);
         double sum = tw.values().stream().mapToDouble(Double::doubleValue).sum();
-        double[] want = {50, 30, 15, 4, 1};
-        for (int i = 0; i < 5; i++) {
+        double[] want = {50 / 0.95, 30 / 0.95, 15 / 0.95};
+        for (int i = 0; i < 3; i++) {
             double pc = 100 * tw.get(ContainerLoot.TIERS[i]) / sum;
-            ck(Math.abs(pc - want[i]) < 0.6, "уровень " + ContainerLoot.TIERS[i] + " на юге ≈ " + want[i] + " % (" + String.format("%.1f", pc) + ")");
+            ck(Math.abs(pc - want[i]) < 0.6, "уровень " + ContainerLoot.TIERS[i] + " на юге ≈ " + String.format("%.1f", want[i]) + " % (" + String.format("%.1f", pc) + ")");
         }
+        ck(tw.get("rare") == 0 && tw.get("very_rare") == 0, "редкое и очень редкое — не случайно, а бюджетом локации");
         Map<String, Double> north = l.tierWeights("wood_crate_old", "home", -4400);
         double ns = north.values().stream().mapToDouble(Double::doubleValue).sum();
-        ck(north.get("junk") / ns < tw.get("junk") / sum && north.get("rare") / ns > 2 * tw.get("rare") / sum,
-                "север: хлама меньше, редкого больше");
+        ck(north.get("junk") / ns < tw.get("junk") / sum && north.get("useful") / ns > tw.get("useful") / sum,
+                "север: хлама меньше, полезного больше");
 
         // пустые 30–60 % по месту; 1–4 предмета
         for (String p : ContainerLoot.PLACES) {
@@ -90,7 +91,7 @@ public class ContainerLootTest {
         ck(guns[0] >= 2 && guns[0] <= 3 && arts[0] == 0 && rub[0] >= 3200 && rub[0] <= 4800,
                 "Кордон: 2–3 ствола, 0 артефактов, 3 200–4 800 ₽ (" + guns[0] + ", " + arts[0] + ", " + rub[0] + ")");
         ck(guns[1] >= 6 && guns[1] <= 8 && arts[1] >= 2 && arts[1] <= 3 && rub[1] >= 28000 && rub[1] <= 36000,
-                "Припять, запад: 6–8 стволов, 2–3 артефакта, 28–36 тыс. ₽ (" + guns[1] + ", " + arts[1] + ", " + rub[1] + ")");
+                "Припять (основная): 6–8 стволов, 2–3 артефакта, 28–36 тыс. ₽ (" + guns[1] + ", " + arts[1] + ", " + rub[1] + ")");
         ck(artInSafe && noZincGun && perBox, "артефакты только в сейфах, оружия нет в цинках, ценного ≤ 2 в ящике");
         System.exit(f > 0 ? 1 : 0);
     }
