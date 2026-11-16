@@ -18,6 +18,13 @@ public final class Ledger {
     public long moneyMinted;
     /** Деньги, ушедшие из Зоны (импорт, плата за вербовку). */
     public long moneyBurned;
+    /**
+     * Э1-17: приход из мира — добыча контейнеров мира (генерируется один раз, при первом открытии ящика игроком).
+     * Попадает к игроку, а не на склады симуляции, поэтому в инвариант не входит; продажа торговцу — как обычно, imported.
+     */
+    public final long[] worldLoot = new long[Good.ALL.length];
+    /** Э1-17: рубли (физические) из контейнеров мира. */
+    public long worldRubles;
 
     public void write(DataOutputStream out) throws IOException {
         for (long[] a : new long[][] {created, destroyed, imported, exported}) {
@@ -25,13 +32,21 @@ public final class Ledger {
         }
         out.writeLong(moneyMinted);
         out.writeLong(moneyBurned);
+        for (long v : worldLoot) out.writeLong(v); // v23
+        out.writeLong(worldRubles);
     }
 
-    public void read(DataInputStream in) throws IOException {
+    public void read(DataInputStream in) throws IOException { read(in, Simulation.SAVE_VERSION); }
+
+    public void read(DataInputStream in, int version) throws IOException {
         for (long[] a : new long[][] {created, destroyed, imported, exported}) {
             for (int i = 0; i < a.length; i++) a[i] = i < Good.readCount ? in.readLong() : 0;
         }
         moneyMinted = in.readLong();
         moneyBurned = in.readLong();
+        if (version >= 23) {
+            for (int i = 0; i < worldLoot.length; i++) worldLoot[i] = i < Good.readCount ? in.readLong() : 0;
+            worldRubles = in.readLong();
+        }
     }
 }

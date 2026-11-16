@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "stalkerzone:block/container/marked_crate_store"
+  },
+  "facing=east": {
+   "model": "stalkerzone:block/container/marked_crate_store",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "stalkerzone:block/container/marked_crate_store",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "stalkerzone:block/container/marked_crate_store",
+   "y": 270
+  }
+ }
+}

@@ -2,7 +2,6 @@
 import os, random, numpy as np
 from PIL import Image, ImageDraw, ImageFont
 OUT = "C:/MineStalker/PlayTest/Сундуки"
-os.makedirs(OUT + "/textures", exist_ok=True)
 F = lambda s: ImageFont.truetype("C:/Windows/Fonts/arialbd.ttf", s)
 S = 64
 
@@ -47,7 +46,7 @@ def stencil(im, text, size, col, xy=None):
     return im
 
 
-def metal(c, seed, rust=0, ribs=0):
+def metal(c, seed, rust=0, ribs=0, rc=(120, 62, 30)):
     r = np.random.default_rng(seed); im = Image.new("RGBA", (S, S), c + (255,)); d = ImageDraw.Draw(im)
     for i in range(ribs):
         y = int((i + 1) * S / (ribs + 1))
@@ -57,7 +56,7 @@ def metal(c, seed, rust=0, ribs=0):
     if rust:
         m = np.kron(r.random((S // 4, S // 4)), np.ones((4, 4)))
         m = (m + r.random((S, S)) * 0.5) / 1.5; mask = m > (1 - rust)
-        a[mask, :3] = (np.array([120, 62, 30]) + r.integers(-20, 20, (mask.sum(), 3)))
+        a[mask, :3] = (np.array(rc) + r.integers(-14, 14, (mask.sum(), 3)))
     return Image.fromarray(np.clip(a, 0, 255).astype("uint8"), "RGBA")
 
 
@@ -70,8 +69,8 @@ def latch(im, x, y):
     ImageDraw.Draw(im).rectangle((x, y, x + 5, y + 8), fill=(85, 85, 88, 255), outline=(40, 40, 42, 255)); return im
 
 
-def locker(c, seed, rust):
-    im = metal(c, seed, rust=rust); d = ImageDraw.Draw(im)
+def locker(c, seed, rust, rc=(120, 62, 30)):
+    im = metal(c, seed, rust=rust, rc=rc); d = ImageDraw.Draw(im)
     for y in range(6, 20, 3): d.line((16, y, 47, y), fill=(30, 34, 30, 255))
     d.line((S // 2, 0, S // 2, S), fill=tuple(v - 40 for v in c) + (255,)); handle(im, 26, 40, 4); handle(im, 34, 40, 4)
     d.rectangle((22, 26, 41, 31), fill=(220, 220, 210, 255)); stencil(im, "12", 6, (20, 20, 20), (28, 25)); return im
@@ -108,15 +107,15 @@ def variants():
     out.append(("3A", "Ящик с маркировкой — патроны", (16, 14, 16), f, stencil(frame(planks(wood, 14), fw), "№ 0471", 10, (25, 25, 25)), frame(planks(wood, 15, True), fw), "18 ячеек, 15 кг"))
     f = stencil(stencil(frame(planks(wd, 16, worn=8), fd), "ОГНЕОПАСНО", 8, (170, 30, 25), (6, 12)), "СКЛАД №3", 10, (25, 25, 25), (9, 34))
     out.append(("3B", "Ящик с маркировкой — склад", (16, 14, 16), f, stencil(frame(planks(wd, 17, worn=8), fd), "X", 22, (25, 25, 25)), frame(planks(wd, 18, True, worn=8), fd), "18 ячеек, 15 кг"))
-    gb, br = (88, 100, 104), (120, 90, 60)
+    gb, br, brc = (88, 100, 104), (104, 84, 64), (92, 62, 44)  # 4B: ржавчина приглушённая, коричневая (пользователь 16.11)
     out.append(("4A", "Металл. ящик — серый, ржавчина", (16, 12, 16), handle(metal(gb, 19, 0.35, 2), 26, 8, 12), metal(gb, 20, 0.4, 2), metal(gb, 21, 0.3, 3), "27 ячеек, 30 кг"))
-    out.append(("4B", "Металл. ящик — ржавый насквозь", (16, 12, 16), handle(metal(br, 22, 0.6, 2), 26, 8, 12), metal(br, 23, 0.65, 2), metal(br, 24, 0.55), "27 ячеек, 30 кг"))
+    out.append(("4B", "Металл. ящик — ржавый насквозь", (16, 12, 16), handle(metal(br, 22, 0.6, 2, brc), 26, 8, 12), metal(br, 23, 0.65, 2, brc), metal(br, 24, 0.55, 0, brc), "27 ячеек, 30 кг"))
     zn, zn2 = (120, 128, 112), (95, 110, 80)
     out.append(("5A", "Цинк патронный — серый", (10, 7, 12), stencil(metal(zn, 25, 0, 1), "7,62", 12, (230, 230, 220)), metal(zn, 26, 0, 1), handle(metal(zn, 27), 26, 30, 12), "6 ячеек, 3 кг"))
     out.append(("5B", "Цинк — зелёный, жёлтая надпись", (10, 7, 12), stencil(metal(zn2, 28, 0.12, 1), "5,45", 12, (240, 220, 80)), metal(zn2, 29, 0.1, 1), handle(metal(zn2, 30, 0.1), 26, 30, 12), "6 ячеек, 3 кг"))
-    lk, lb = (96, 116, 100), (80, 100, 130)
+    lk, lb = (96, 116, 100), (112, 124, 136)  # 6B: выцветший серо-синий (пользователь 16.11)
     out.append(("6A", "Шкафчик раздевалки — зелёный", (16, 32, 12), locker(lk, 31, 0.08), metal(lk, 32, 0.08), metal(lk, 33, 0.08), "27 ячеек, 40 кг"))
-    out.append(("6B", "Шкафчик — синий, облезлый", (16, 32, 12), locker(lb, 34, 0.25), metal(lb, 35, 0.25), metal(lb, 36, 0.2), "27 ячеек, 40 кг"))
+    out.append(("6B", "Шкафчик — синий, облезлый", (16, 32, 12), locker(lb, 34, 0.22, (98, 84, 72)), metal(lb, 35, 0.22, 0, (98, 84, 72)), metal(lb, 36, 0.18, 0, (98, 84, 72)), "27 ячеек, 40 кг"))
     bg, gr = (178, 168, 140), (128, 130, 132)
     out.append(("7A", "Канцелярский шкаф — бежевый", (16, 16, 14), office(bg, 37, 0.05), metal(bg, 38, 0.05), metal(bg, 39, 0.05), "18 ячеек, 35 кг"))
     out.append(("7B", "Канцелярский шкаф — серый", (16, 16, 14), office(gr, 40, 0.15), metal(gr, 41, 0.15), metal(gr, 42, 0.1), "18 ячеек, 35 кг"))
@@ -162,17 +161,23 @@ def render(shape, fr, sd, tp, U=9):
     return c
 
 
-vs = variants()
-cols, TW, TH = 4, 330, 420
-sheet = Image.new("RGBA", (cols * TW, (len(vs) + cols - 1) // cols * TH + 70), (38, 40, 38, 255))
-dr = ImageDraw.Draw(sheet)
-dr.text((20, 18), "Э1-17 — контейнеры мода: выберите A или B в каждой паре (или оба — тогда случайно по месту)", font=F(24), fill=(235, 235, 225))
-for i, (code, name, shape, fr, sd, tp, cap) in enumerate(vs):
-    for nm, t in (("front", fr), ("side", sd), ("top", tp)):
-        t.save("%s/textures/%s_%s.png" % (OUT, code, nm))
-    x, y = (i % cols) * TW, (i // cols) * TH + 70
-    sheet.alpha_composite(render(shape, fr, sd, tp), (x + 5, y))
-    dr.text((x + 14, y + 350), code + "  " + name, font=F(15), fill=(240, 240, 230))
-    dr.text((x + 14, y + 374), "%s;  размер %d×%d×%d из 16" % ((cap,) + shape), font=F(13), fill=(190, 195, 185))
-sheet.convert("RGB").save(OUT + "/preview.png")
-print(len(vs), OUT + "/preview.png")
+def main():
+    os.makedirs(OUT + "/textures", exist_ok=True)
+    vs = variants()
+    cols, TW, TH = 4, 330, 420
+    sheet = Image.new("RGBA", (cols * TW, (len(vs) + cols - 1) // cols * TH + 70), (38, 40, 38, 255))
+    dr = ImageDraw.Draw(sheet)
+    dr.text((20, 18), "Э1-17 — контейнеры мода: выберите A или B в каждой паре (или оба — тогда случайно по месту)", font=F(24), fill=(235, 235, 225))
+    for i, (code, name, shape, fr, sd, tp, cap) in enumerate(vs):
+        for nm, t in (("front", fr), ("side", sd), ("top", tp)):
+            t.save("%s/textures/%s_%s.png" % (OUT, code, nm))
+        x, y = (i % cols) * TW, (i // cols) * TH + 70
+        sheet.alpha_composite(render(shape, fr, sd, tp), (x + 5, y))
+        dr.text((x + 14, y + 350), code + "  " + name, font=F(15), fill=(240, 240, 230))
+        dr.text((x + 14, y + 374), "%s;  размер %d×%d×%d из 16" % ((cap,) + shape), font=F(13), fill=(190, 195, 185))
+    sheet.convert("RGB").save(OUT + "/preview.png")
+    print(len(vs), OUT + "/preview.png")
+
+
+if __name__ == "__main__":
+    main()

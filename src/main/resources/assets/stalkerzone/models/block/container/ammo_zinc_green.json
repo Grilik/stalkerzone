@@ -1,0 +1,98 @@
+{
+ "parent": "minecraft:block/block",
+ "textures": {
+  "front": "stalkerzone:block/container/ammo_zinc_green_front",
+  "side": "stalkerzone:block/container/ammo_zinc_green_side",
+  "top": "stalkerzone:block/container/ammo_zinc_green_top",
+  "particle": "stalkerzone:block/container/ammo_zinc_green_side"
+ },
+ "elements": [
+  {
+   "from": [
+    3.0,
+    0,
+    2.0
+   ],
+   "to": [
+    13.0,
+    7,
+    14.0
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      3.0,
+      4.5,
+      13.0,
+      11.5
+     ],
+     "texture": "#front"
+    },
+    "south": {
+     "uv": [
+      3.0,
+      4.5,
+      13.0,
+      11.5
+     ],
+     "texture": "#side"
+    },
+    "east": {
+     "uv": [
+      2.0,
+      4.5,
+      14.0,
+      11.5
+     ],
+     "texture": "#side"
+    },
+    "west": {
+     "uv": [
+      2.0,
+      4.5,
+      14.0,
+      11.5
+     ],
+     "texture": "#side"
+    },
+    "up": {
+     "uv": [
+      3.0,
+      2.0,
+      13.0,
+      14.0
+     ],
+     "texture": "#top"
+    },
+    "down": {
+     "uv": [
+      3.0,
+      2.0,
+      13.0,
+      14.0
+     ],
+     "texture": "#top"
+    }
+   }
+  }
+ ],
+ "display": {
+  "gui": {
+   "rotation": [
+    30,
+    225,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.625,
+    0.625,
+    0.625
+   ]
+  }
+ }
+}
