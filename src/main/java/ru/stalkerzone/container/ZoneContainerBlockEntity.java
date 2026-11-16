@@ -19,13 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Э1-17: содержимое контейнера мода. Добыча — по таблице {@code LootTable} (ставит правка мира), генерируется один раз
+ * Э1-17: содержимое контейнера мода. Добыча — по {@code SzPlace} и loot.json ({@link LootService}; ставит правка мира) или по ванильной {@code LootTable}; генерируется один раз
  * (при первом открытии или если ящик сломали) и записывается в Ledger как приход из мира ({@link WorldLoot}).
  * Окно — обычное окно сундука на rows() рядов; ячейки сверх kind.slots закрыты (canPlaceItem), добыча в них не кладётся.
  */
 public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
     private final ContainerKind kind;
     private NonNullList<ItemStack> items;
+    /** Место для добычи мода (storage, base, home, field, attic) — ставит правка мира; после генерации снимается. */
+    private String szPlace;
 
     public ZoneContainerBlockEntity(BlockPos pos, BlockState state) {
         super(ModContainers.BLOCK_ENTITY.get(), pos, state);
@@ -62,6 +64,20 @@ public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
 
     @Override
     public void unpackLootTable(Player player) {
+        if (szPlace != null && level instanceof ServerLevel sl) {
+            // добыча мода (loot.json) — один раз; кладётся в открытые ячейки по порядку
+            String place = szPlace;
+            szPlace = null;
+            List<ItemStack> got = LootService.roll(sl.getServer(), kind.id, place, worldPosition.getZ(), new java.util.Random());
+            int slot = 0;
+            for (ItemStack st : got) {
+                while (slot < kind.slots && !items.get(slot).isEmpty()) slot++;
+                if (slot >= kind.slots) break;
+                items.set(slot++, st);
+            }
+            WorldLoot.account(sl.getServer(), got);
+            setChanged();
+        }
         boolean fresh = lootTable != null && level instanceof ServerLevel;
         super.unpackLootTable(player);
         if (!fresh) return;
@@ -81,11 +97,13 @@ public class ZoneContainerBlockEntity extends RandomizableContainerBlockEntity {
         super.load(tag);
         items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
         if (!tryLoadLootTable(tag)) ContainerHelper.loadAllItems(tag, items);
+        szPlace = tag.contains("SzPlace") ? tag.getString("SzPlace") : null;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (!trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, items);
+        if (szPlace != null) tag.putString("SzPlace", szPlace);
     }
 }
