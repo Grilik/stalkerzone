@@ -2,15 +2,15 @@
 
 Любая правка TheZone обратима: есть проверенный неизменный оригинал, одна рабочая копия, журнал правок и откат.
 
-## Где что лежит
+## Где что лежит (обновлено 18.11.2026)
 | Что | Путь | Можно менять? |
 |---|---|---|
-| Мир, с которым начинали | `C:\MineStalker\The Zone` | **нет** |
-| Неизменный оригинал | `C:\MineStalker\08_BACKUPS\TheZone-original\world` (+ `world.md5` — md5 всех 494 файлов) | **нет**, файлы «только чтение» |
-| Архивы оригинала | там же: `TheZone_2026-11-08@02-38-25.zip` (Java-конверсия), `TheZone.mcworld` (Bedrock) + `archives.md5`; исходники остались в `Downloads` | **нет** |
-| Рабочая копия | `C:\MineStalker\TheZone-work` (метка `stalkerzone/WORKCOPY`) | **да — только здесь** |
-| Журнал правок | `TheZone-work\stalkerzone\edits.jsonl` | пишет только инструмент |
-| Резерв перед каждой правкой | `TheZone-work\backup\<id>-<время>\` | не трогать руками |
+| Неизменный оригинал | `C:\MineStalker\The Zone` | **нет** (1.8 ГБ) |
+| Архивы оригинала | `C:\MineStalker\08_BACKUPS\TheZone-original\` — `TheZone_2026-11-08@02-38-25.zip`, `TheZone.mcworld`, `world.md5` | **нет** |
+| **Рабочая копия (новая)** | `C:\MineStalker\TheZone-work-fresh` | **да — только здесь** |
+| Старая рабочая копия | `C:\MineStalker\TheZone-work` (3.7 ГБ) | архив, не использовать |
+| Журнал правок (Python) | `TheZone-work-fresh\stalkerzone\edits.jsonl` | пишет `world_edit_log.py` |
+| Резервы (PowerShell) | `C:\MineStalker\08_BACKUPS\thezone-backups\<метка>` | создаются `backup_world.ps1` |
 
 ## Проверка резерва (15.11.2026, `tools/thezone/verify_backup.py`)
 | Архив | md5 | CRC | Состав против `The Zone` |
