@@ -2,15 +2,21 @@
 
 Любая правка TheZone обратима: есть проверенный неизменный оригинал, одна рабочая копия, журнал правок и откат.
 
-## Где что лежит
+## Где что лежит (обновлено 18.11.2026)
 | Что | Путь | Можно менять? |
 |---|---|---|
-| Мир, с которым начинали | `C:\MineStalker\The Zone` | **нет** |
-| Неизменный оригинал | `C:\MineStalker\08_BACKUPS\TheZone-original\world` (+ `world.md5` — md5 всех 494 файлов) | **нет**, файлы «только чтение» |
-| Архивы оригинала | там же: `TheZone_2026-11-08@02-38-25.zip` (Java-конверсия), `TheZone.mcworld` (Bedrock) + `archives.md5`; исходники остались в `Downloads` | **нет** |
-| Рабочая копия | `C:\MineStalker\TheZone-work` (метка `stalkerzone/WORKCOPY`) | **да — только здесь** |
-| Журнал правок | `TheZone-work\stalkerzone\edits.jsonl` | пишет только инструмент |
-| Резерв перед каждой правкой | `TheZone-work\backup\<id>-<время>\` | не трогать руками |
+| Мир, с которым начинали | `C:\MineStalker\The Zone` | **нет** (1.8 ГБ) |
+| Неизменный оригинал (эталон) | `C:\MineStalker\08_BACKUPS\TheZone-original\world` (+ `world.md5` — md5 всех 494 файлов) | **нет**, файлы «только чтение» |
+| Архивы оригинала | там же: `TheZone_2026-11-08@02-38-25.zip` (Java-конверсия), `TheZone.mcworld` (Bedrock) + `archives.md5` | **нет** |
+| **Рабочая копия** | `C:\MineStalker\TheZone-work` (метка `stalkerzone\WORKCOPY`) | **да — только здесь** |
+| Чистая копия оригинала | `C:\MineStalker\TheZone-work-fresh` (1.8 ГБ, без метки `WORKCOPY` и правок) | запасная, не использовать без `init` |
+| Журнал правок | `TheZone-work\stalkerzone\edits.jsonl` (32 события, правки e0004–e0014) | пишет `world_edit_log.py` |
+| Предобразы правок | `TheZone-work\backup\<id>-<время>\` (1.9 ГБ — причина, почему копия 3.7 ГБ) | не трогать руками |
+| Резервы (PowerShell) | `C:\MineStalker\08_BACKUPS\thezone-backups\<метка>` | создаются `backup_world.ps1` |
+
+**Почему `TheZone-work` 3.7 ГБ:** `region/` 1.8 ГБ + `backup/` 1.9 ГБ предобразов для отката правок. Это не порча — `verify` возвращает `ok`. Удалять `backup/` нельзя, иначе откат e0004–e0014 станет невозможен.
+
+**`TheZone-work-fresh` — не рабочая копия.** Она скопирована из оригинала и правок не содержит (регионы побайтно равны `The Zone`). Чтобы ей пользоваться, нужен `init` (создаст метку `WORKCOPY`) — но тогда правки e0004–e0014 придётся переносить заново. По умолчанию правьте `TheZone-work`.
 
 ## Проверка резерва (15.11.2026, `tools/thezone/verify_backup.py`)
 | Архив | md5 | CRC | Состав против `The Zone` |
@@ -30,6 +36,8 @@ python -I world_edit_log.py log    C:/MineStalker/TheZone-work     # списо�
 python -I world_edit_log.py verify C:/MineStalker/TheZone-work     # файлы совпадают с журналом
 python -I world_edit_log.py undo   C:/MineStalker/TheZone-work e0007
 ```
+
+Полный резерв мира — `tools/thezone/backup_world.ps1` / `restore_world.ps1` (см. `README-backup.md`). Это другой уровень: файлы целиком, а не отдельные блоки.
 
 Большие правки (чистка Э1-10, декор Э1-12, постановки Э2-01 до раздачи) — из своего скрипта через тот же журнал:
 ```python
