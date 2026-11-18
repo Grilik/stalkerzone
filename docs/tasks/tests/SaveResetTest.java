@@ -21,7 +21,7 @@ public class SaveResetTest {
     }
 
     public static void main(String[] a) {
-        ck(Simulation.SAVE_VERSION == 23, "SAVE_VERSION = 23");
+        ck(Simulation.SAVE_VERSION == 24, "SAVE_VERSION = 24");
         Simulation s = Scenarios.create("kordon", 7);
         for (int d = 0; d < 10; d++) s.step();
         String data = s.save();

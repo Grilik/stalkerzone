@@ -25,6 +25,9 @@ public final class Ledger {
     public final long[] worldLoot = new long[Good.ALL.length];
     /** Э1-17: рубли (физические) из контейнеров мира. */
     public long worldRubles;
+    /** Э8-10 (К16): книга мутантов — сколько родилось и погибло за историю мира. Отдельная книга: в инвариант audit() не входит. */
+    public long mutantsBorn;
+    public long mutantsDied;
 
     public void write(DataOutputStream out) throws IOException {
         for (long[] a : new long[][] {created, destroyed, imported, exported}) {
@@ -34,6 +37,8 @@ public final class Ledger {
         out.writeLong(moneyBurned);
         for (long v : worldLoot) out.writeLong(v); // v23
         out.writeLong(worldRubles);
+        out.writeLong(mutantsBorn); // v24
+        out.writeLong(mutantsDied);
     }
 
     public void read(DataInputStream in) throws IOException { read(in, Simulation.SAVE_VERSION); }
@@ -47,6 +52,10 @@ public final class Ledger {
         if (version >= 23) {
             for (int i = 0; i < worldLoot.length; i++) worldLoot[i] = i < Good.readCount ? in.readLong() : 0;
             worldRubles = in.readLong();
+        }
+        if (version >= 24) {
+            mutantsBorn = in.readLong();
+            mutantsDied = in.readLong();
         }
     }
 }
