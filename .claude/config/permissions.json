@@ -1,0 +1,28 @@
+{
+  "bash": {
+    "mode": "auto_approve",
+    "filters": [
+      {
+        "pattern": "^(git status|git log|git diff|git branch|git show)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^(ls|cat|head|tail|grep|find|pwd|cd)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^(gradlew|gradle) (build|test|compileJava)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^python.*test",
+        "action": "allow"
+      },
+      {
+        "pattern": "^gh (pr|issue) (view|list)",
+        "action": "allow"
+      }
+    ]
+  },
+  "note": "Разрешения для команд, не требующих подтверждения. Деструктивные операции (git push, rm, etc) всё равно требуют подтверждения."
+}
