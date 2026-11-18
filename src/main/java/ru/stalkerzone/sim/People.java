@@ -238,9 +238,8 @@ public final class People {
         if (x == null) return false;
         roster.remove(x);
         Faction f = s.factions.get(x.faction);
-        if (f.members > 1) {
-            f.members--;
-            f.deaths++;
+        if (f.members > 0) { // К2: последний участник гибнет по-настоящему (members=0, deaths учитывается)
+            f.killMembers(1);
             lastDeaths[f.id]++;
         }
         personDied(s, f, x, how);
@@ -419,7 +418,8 @@ public final class People {
         Faction f = s.factions.get(w.dest);
         long fee = s.gatewayNode > 0 ? KordonBalance.JOIN_FEE : 120;
         boolean room = s.housingOf(f) > f.members;
-        if (!room || f.stock.money < fee || !f.takesNewcomers) {
+        // К2 (правило C): уничтоженную группировку новичок не «воскрешает» молча — ищет другую или уходит
+        if (!room || f.stock.money < fee || !f.takesNewcomers || f.members < 1) {
             // не взяли: ищет другую фракцию отсюда же, иначе уходит
             if (!route(s, w, s.factions.get(w.dest).baseNode, w.dest, r)) leftZone++;
             return;
@@ -487,7 +487,7 @@ public final class People {
     /** Медпункт: раненых лечат медики и врачи, на лечение уходят медикаменты; без помощи часть умирает. */
     private void treatWounded(Simulation s, Random r) {
         for (Faction f : s.factions) {
-            f.wounded = Math.max(0, Math.min(f.wounded, f.members - 1));
+            f.wounded = Math.max(0, Math.min(f.wounded, f.members)); // К2: раненые входят в members, все могут погибнуть
             if (f.wounded == 0) continue;
             double clinic = s.qualityOf(f, BuildingType.CLINIC);
             int skill = bestMedic(f.id);
@@ -505,10 +505,8 @@ public final class People {
             }
             f.wounded -= healed + died;
             woundedSaved += healed;
+            died = f.killMembers(died); // К2: фактическая гибель, последний не бессмертен
             woundedDied += died;
-            died = Math.min(died, f.members - 1);
-            f.members -= died;
-            f.deaths += died;
         }
     }
 
@@ -521,8 +519,7 @@ public final class People {
                 Faction f = s.factions.get(n.owner);
                 z *= f.fanatic ? 1.0 : 0.85;
                 if (!f.fanatic && z > 5 && r.nextDouble() < 0.08 && f.members > 5) {
-                    f.members--;
-                    f.deaths++;
+                    f.killMembers(1);
                 }
             }
             zombies[n.id] = Math.min(40, z < 0.3 ? 0 : z);
@@ -544,7 +541,9 @@ public final class People {
         for (Faction f : s.factions) {
             List<Person> mine = of(f.id);
             int target = rosterTarget(f);
-            while (mine.size() > Math.max(1, Math.min(target, f.members))) {
+            // К2: у уничтоженной группировки не остаётся фиктивных именных (все участники погибли)
+            int keep = f.members <= 0 ? 0 : Math.max(1, Math.min(target, f.members));
+            while (mine.size() > keep) {
                 Person drop = null;
                 for (Person p : mine) if (p.role == Person.Role.MEMBER || p.role == Person.Role.SPECIALIST) { drop = p; break; }
                 if (drop == null) drop = mine.get(mine.size() - 1);

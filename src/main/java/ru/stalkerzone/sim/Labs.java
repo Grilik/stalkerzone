@@ -129,9 +129,7 @@ public final class Labs {
                 case "x2" -> {
                     Faction m = s.monolith();
                     if (m != null) {
-                        int lost = m.members / 3;
-                        m.members -= lost;
-                        m.deaths += lost;
+                        m.killMembers(m.members / 3);
                     }
                     s.log("Учёные изучили данные X-2: тайна О-Сознания раскрыта, Монолит ослаб");
                 }

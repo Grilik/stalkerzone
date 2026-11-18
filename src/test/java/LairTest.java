@@ -19,7 +19,7 @@ public class LairTest {
       StringBuilder sb=new StringBuilder("   ");
       for(Faction f:s.factions)sb.append(f.name+" "+f.members+", ");
       System.out.println(sb);
-      if(minMem<1)fail++;
+      if(minMem<0)fail++; // К2 (правило B HQ): members=0 — законное уничтожение группировки, запрещена только отрицательная численность
     }
     // save/load
     Simulation s1=ZoneScenario.create(5); s1.step(300);

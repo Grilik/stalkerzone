@@ -60,6 +60,7 @@ public final class Logistics {
     /** Гарнизон точки (бойцы, живущие на ней постоянно). База фракции снабжается со склада фракции, у неё гарнизона нет. */
     public static int garrison(Simulation s, Faction f, Node n) {
         if (n.owner != f.id || n.id == f.baseNode || f.fanatic) return 0;
+        if (f.members <= 0) return 0; // К2: у уничтоженной группировки нет фиктивных гарнизонов
         int owned = Math.max(1, s.ownedCount(f));
         int g = Math.max(1, (int) Math.round(f.members * 0.35 / owned));
         // полевые базы армии держат усиленный гарнизон
@@ -210,7 +211,8 @@ public final class Logistics {
     /** Раз в неделю учёные отправляют армии плату по контракту на ближайшую полевую базу. */
     private void contract(Simulation s, Random r) {
         Faction sci = s.scientists(), m = s.military();
-        if (sci == null || m == null) return;
+        // К2: уничтоженные учёные/армия не ведут оборонный контракт (грант, платы, конвои)
+        if (sci == null || m == null || sci.members <= 0 || m.members <= 0) return;
         // оборонный грант приходит в отдельный сейф бункера учёных: из него платят армии
         Node lab = s.nodes.get(sci.baseNode);
         if (sci.members > 0 && lab.owner == sci.id && !grantFrozen) {
@@ -566,9 +568,7 @@ public final class Logistics {
         int fromTroops = Math.min(dead, c.troops);
         c.troops -= fromTroops;
         c.guards -= dead - fromTroops;
-        dead = Math.min(dead, Math.max(0, f.members - 1));
-        f.members -= dead;
-        f.deaths += dead;
+        f.killMembers(dead); // К2: фактическая гибель, последний не бессмертен
     }
 
     /** Засада у чужой точки: бандиты грабят всех, враждебные фракции отбивают груз у врагов. */
@@ -586,9 +586,7 @@ public final class Logistics {
         int units = 0;
         for (Good g : Good.ALL) units += Stock.move(c.cargo, o.stock, g, c.cargo.get(g));
         int dead = Math.min(c.guards + c.troops, 1 + r.nextInt(2 + (c.guards + c.troops) / 2));
-        dead = Math.min(dead, Math.max(0, f.members - 1));
-        f.members -= dead;
-        f.deaths += dead;
+        dead = f.killMembers(dead); // К2: фактическая гибель, последний не бессмертен
         f.caravansLost++;
         f.resent(o.id, 1.0);
         convoysRobbed++;

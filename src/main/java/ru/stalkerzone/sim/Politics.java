@@ -98,7 +98,7 @@ public final class Politics {
 
     private void enclaves(Simulation s, Random r) {
         for (Faction f : s.factions) {
-            if (f.fanatic || f.isService()) continue;
+            if (f.fanatic || f.isService() || f.members <= 0) continue; // К2: у уничтоженной группировки нет гарнизонов для раскола
             boolean[] ok = connected(s, f);
             for (Node n : s.nodes) {
                 if (n.owner != f.id || n.id == f.baseNode || ok[n.id]) {
@@ -232,18 +232,14 @@ public final class Politics {
             s.log("ЗАСАДА: «" + h.name + "» напали на встречу лидеров «" + a.name + "» и «" + b.name + "» на «" + s.nodes.get(m.venue).name + "»");
             for (Faction x : new Faction[] {a, b}) {
                 x.resent(h.id, 2.0);
-                int dead = Math.min(x.members - 1, 2 + r.nextInt(4));
-                x.members -= dead;
-                x.deaths += dead;
+                x.killMembers(2 + r.nextInt(4)); // К2: фактическая гибель, встреча может обезглавить фракцию
                 Person l = s.people.leader(x.id);
                 if (l != null && r.nextDouble() < (m.guarded ? 0.1 : 0.3)) {
                     s.people.kill(s, l.id, "убит в засаде");
                     leaderDied = true;
                 }
             }
-            int lost = Math.min(h.members - 1, 1 + r.nextInt(4));
-            h.members -= lost;
-            h.deaths += lost;
+            h.killMembers(1 + r.nextInt(4));
             s.contracts.meetingResolved(s, m, false, leaderDied);
             return;
         }
