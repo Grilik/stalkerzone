@@ -59,8 +59,8 @@ public final class Simulation {
     /** Логова мутантов. */
     public final List<Building> buildings = new ArrayList<>();
     public final List<Anomaly> anomalies = new ArrayList<>();
-    /** Насколько изучены аномалии точки (0..1): разведчики поднимают, выброс сбрасывает. */
-    public final double[] knowledge = new double[64];
+    /** Насколько изучены аномалии точки (0..1): разведчики поднимают, выброс сбрасывает. Размер — по числу узлов (Э4-07). */
+    public final double[] knowledge;
     public int lastEmissionDay = -1;
     public int anomalyDeaths, artifactsWild;
     /**
@@ -152,6 +152,9 @@ public final class Simulation {
         this.graph = graph;
         this.factions = factions;
         this.hostility = hostility;
+        knowledge = new double[nodes.size()];
+        people.init(nodes.size());
+        politics.init(nodes.size());
         this.labs = new Labs(this);
         for (Faction f : factions) {
             f.initMemory(nodes.size(), factions.size());
