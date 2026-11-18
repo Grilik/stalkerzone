@@ -8,9 +8,13 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import ru.stalkerzone.world.ZoneBounds;
 
@@ -29,7 +33,7 @@ public final class Simulation {
     };
 
     /** Версия формата сохранения. Менять только вместе с чтением старых версий в {@link #load}. */
-    public static final int SAVE_VERSION = 23; // v23 (Э1-17): Ledger.worldLoot / worldRubles — добыча контейнеров мира
+    public static final int SAVE_VERSION = 24; // v24 (Э8-10/К16): книга мутантов Ledger.mutantsBorn / mutantsDied
 
     public final long seed;
     public int day;
@@ -59,8 +63,8 @@ public final class Simulation {
     /** Логова мутантов. */
     public final List<Building> buildings = new ArrayList<>();
     public final List<Anomaly> anomalies = new ArrayList<>();
-    /** Насколько изучены аномалии точки (0..1): разведчики поднимают, выброс сбрасывает. */
-    public final double[] knowledge = new double[64];
+    /** Насколько изучены аномалии точки (0..1): разведчики поднимают, выброс сбрасывает. Размер — по числу узлов (Э4-07). */
+    public final double[] knowledge;
     public int lastEmissionDay = -1;
     public int anomalyDeaths, artifactsWild;
     /**
@@ -79,6 +83,8 @@ public final class Simulation {
     public final List<Lair> lairs = new ArrayList<>();
     public static final int MAX_LAIRS = 9;
     public int lairsDestroyed, lairsSpawned;
+    /** Э8-10 (К16): снимок числа мутантов по логовам на конец дня — точка отсчёта книги мутантов. Не сохраняется: строится из логов. */
+    private final Map<Lair, Integer> mutantCensus = new IdentityHashMap<>();
 
     /** v14: узлы, где логова недопустимы (выходы за карту). */
     public int[] lairExits = {};
@@ -152,6 +158,9 @@ public final class Simulation {
         this.graph = graph;
         this.factions = factions;
         this.hostility = hostility;
+        knowledge = new double[nodes.size()];
+        people.init(nodes.size());
+        politics.init(nodes.size());
         this.labs = new Labs(this);
         for (Faction f : factions) {
             f.initMemory(nodes.size(), factions.size());
@@ -223,6 +232,7 @@ public final class Simulation {
         System.arraycopy(g, 0, initialGoods, 0, G);
         initialMoney = m;
         seedLairs();
+        for (Lair l : lairs) mutantCensus.put(l, l.mutantCount()); // стартовый снимок книги мутантов (Э8-10)
         seedBuildings();
         seedAnomalies();
     }
@@ -1142,6 +1152,31 @@ public final class Simulation {
         processRespawnQueue();
     }
 
+    /**
+     * Э8-10 (К16): книга мутантов. Раз в день сравниваем снимок числа мутантов по логовам:
+     * выросло — родились, упало — погибли, новое логово — все родились, исчезло — все погибли.
+     * Вызывается в конце step(): логова меняются не только в lairsDaily(), но и в выбросе и resolveWars().
+     * Книга отдельная: в инвариант audit() по товарам и деньгам не входит.
+     */
+    private void mutantsDaily() {
+        Set<Lair> alive = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Lair l : lairs) {
+            alive.add(l);
+            int now = l.mutantCount();
+            Integer was = mutantCensus.put(l, now);
+            int prev = was == null ? 0 : was;
+            if (now > prev) ledger.mutantsBorn += now - prev;
+            else if (now < prev) ledger.mutantsDied += prev - now;
+        }
+        for (Iterator<Map.Entry<Lair, Integer>> it = mutantCensus.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<Lair, Integer> e = it.next();
+            if (!alive.contains(e.getKey())) {
+                ledger.mutantsDied += e.getValue();
+                it.remove();
+            }
+        }
+    }
+
     /** Мутанты нападают на ближайшую территорию фракции. */
     private void raid(Lair l, List<Lair> born) {
         Node target = null;
@@ -1578,6 +1613,7 @@ public final class Simulation {
             phaseUpdate(f);
             recruit(f);
         }
+        mutantsDaily();
     }
 
     // ------------------------------------------------------------------ доступ для подсистем
@@ -2823,6 +2859,8 @@ public final class Simulation {
             if (version < 22 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v23 (Э1-17): учёт добычи контейнеров мира в Ledger — Кордон, как при каждой смене версии, начинается заново
             if (version < 23 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
+            // v24 (Э8-10): книга мутантов в Ledger — Кордон, как при каждой смене версии, начинается заново
+            if (version < 24 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
@@ -2994,6 +3032,9 @@ public final class Simulation {
                     }
                 }
             }
+            // Э8-10: снимок книги мутантов — по загруженным логовам (счётчики пришли из сохранения)
+            sim.mutantCensus.clear();
+            for (Lair l : sim.lairs) sim.mutantCensus.put(l, l.mutantCount());
             sim.recalcPassDanger();
             return sim;
         } catch (IOException e) {

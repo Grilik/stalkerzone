@@ -35,8 +35,14 @@ public final class Politics {
     public final List<Truce> truces = new ArrayList<>();
     public Meeting meeting;
     public int nextMeetingDay = 12;
-    public final int[] cutDays = new int[64];
+    /** Дни отрезанности точки; размер — по числу узлов (Э4-07), задаётся в {@link #init}. */
+    public int[] cutDays = new int[0];
     public int meetingsHeld, ambushes, schisms, trucesSigned;
+
+    /** Э4-07 (К1): массивы по числу узлов атласа; вызывает конструктор Simulation до первого шага. */
+    public void init(int nodeCount) {
+        cutDays = new int[nodeCount];
+    }
 
     public boolean truce(int a, int b) {
         for (Truce t : truces) if ((t.a == a && t.b == b) || (t.a == b && t.b == a)) return true;

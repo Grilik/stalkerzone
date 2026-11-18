@@ -30,11 +30,16 @@ public final class People {
 
     public final List<Person> roster = new ArrayList<>();
     public final List<Walker> transit = new ArrayList<>();
-    /** Зомбированные сталкеры по точкам. */
-    public final double[] zombies = new double[64];
+    /** Зомбированные сталкеры по точкам. Размер — по числу узлов (Э4-07), задаётся в {@link #init}. */
+    public double[] zombies = new double[0];
     public int nextId = 1;
     public int arrived, joined, diedOnRoad, zombified, deserted, leftZone, woundedSaved, woundedDied;
     private int[] lastDeaths;
+
+    /** Э4-07 (К1): массивы по числу узлов атласа; вызывает конструктор Simulation до первого шага. */
+    public void init(int nodeCount) {
+        zombies = new double[nodeCount];
+    }
 
     // ------------------------------------------------------------------ имена
 
