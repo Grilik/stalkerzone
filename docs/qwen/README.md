@@ -1,6 +1,6 @@
 # Qwen Code — параллельная работа с Claude
 
-**Статус:** этап 1.2 (инфраструктура, 18.11.2026).
+**Статус:** этап 1.3 (падающие тесты для пилота готовы, 18.11.2026).
 
 Это рабочий каталог для интеграции Qwen Code как параллельного исполнителя задач мода Stalker Zone. Целевой результат — экономия лимита Qwen Plus (фиксированный месячный бюджет токенов) и ускорение работы.
 
@@ -15,13 +15,14 @@
 
 ### Цикл 1: Пилот (К1, К15, К16 — 3 К-карты)
 
-Напишу 3 падающих теста (этап 1.3), запущу Qwen на них:
+Падающие тесты **написаны и красные** (проверено 18.11): `NodeCountTest`, `ZoneBenchTest`, `MutantLedgerTest`.
+Красные ровно по делу, остальные 90 тестов набора зелёные.
 
-1. **К1 (Э4-07)** — `NodeCountTest.java` (массивы по `nodes.size()`, не 64)
-2. **К15 (Э4-09)** — `ZoneBenchTest.java` (синтетический бенчмарк с атласом 400 узлов)
-3. **К16 (Э8-10)** — `MutantLedgerTest.java` (счётчики мутантов в Ledger)
+1. **К1 (Э4-07)** — `NodeCountTest.java`: массивы по `nodes.size()` вместо жёстких 64. Делать первым.
+2. **К15 (Э4-09)** — `ZoneBenchTest.java`: 30 дней × 3 сида на синтетическом атласе 400 узлов, медиана шага ≤ 15 мс.
+3. **К16 (Э8-10)** — `MutantLedgerTest.java`: книга мутантов в `Ledger` (`mutantsBorn`, `mutantsDied`).
 
-**Когда:** После написания тестов (этап 1.3). На пилоте Qwen решит 3 задачи, вернёт PR. Claude проверит, слит.
+**Порядок:** К1 → К15 → К16. Промпты — `tasks-short.md`, спецификации — `tasks-full.md`.
 
 ### Цикл 2: Остальные К-карты (13 шт., 49 задач)
 
@@ -38,7 +39,7 @@
 - ✅ Писать код по падающему тесту (от Read красного теста к зелёному коду)
 - ✅ Редактировать файлы, создавать новые
 - ✅ Коммитить, пушить в ветку (не в main)
-- ✅ Собирать (`./gradlew build`), запускать тесты (`./gradlew test`)
+- ✅ Собирать (`./gradlew build`), запускать тесты (`javac` + `java`, см. раздел выше — JUnit нет)
 - ✅ Советоваться с Claude (ведущий) если неясно или нужен дизайн
 
 ### Что нельзя делать
@@ -56,6 +57,40 @@
 - В начало PR названия — номер задачи из `docs/roadmap.md` (например, `К1: …`, `К15: …`)
 - Конец коммит-сообщения: `Co-Authored-By: Qwen Code <noreply@alibaba.com>`
 - Конец PR описания: `🤖 Generated with Qwen Code`
+
+## Как устроены тесты в этом проекте (прочитать до первой задачи)
+
+JUnit **нет**. Каждый `src/test/java/<Имя>Test.java` — обычный класс с `public static void main`:
+
+```java
+public class FooTest {
+    static int f = 0;
+    static void ck(boolean ok, String m) { System.out.println((ok ? "OK   " : "FAIL ") + m); if (!ok) f++; }
+    public static void main(String[] a) { ck(true, "…"); System.exit(f > 0 ? 1 : 0); }
+}
+```
+
+CI (`.github/workflows/build.yml`) делает так:
+
+```bash
+mkdir -p out
+javac --release 17 -encoding UTF-8 -d out $(bash tools/ci/test_sources.sh)   # ВСЕ тесты одним javac
+for f in src/test/java/*Test.java; do timeout 600 java -cp out "$(basename $f .java)"; done
+```
+
+Отсюда два правила, которые легко нарушить:
+
+1. **Тест обязан компилироваться сразу.** Один нескомпилировавшийся файл ломает весь набор.
+   Нужно поле, которого ещё нет, — читай его по имени (`getDeclaredField`) и падай по `ck`, а не по компиляции.
+2. **Подпапки не работают.** Запускаются только `src/test/java/*Test.java` — плоско, без пакетов.
+   Вспомогательный класс без `Test` в имени (`BigAtlas.java`) можно, он просто не запускается.
+
+Прогон одного теста:
+
+```bash
+mkdir -p out && javac --release 17 -encoding UTF-8 -d out $(bash tools/ci/test_sources.sh)
+java -Dfile.encoding=UTF-8 -cp out NodeCountTest
+```
 
 ## Лимит и экономия
 
