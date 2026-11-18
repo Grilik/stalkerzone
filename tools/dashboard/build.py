@@ -20,6 +20,7 @@ ROADMAP = "docs/roadmap.md"
 REQS = "docs/requirements.json"
 PROMPTS = "docs/prompts"
 SPEC = "docs/spec/master-project.md"
+QWEN_PROGRESS = "docs/qwen/progress.md"
 MSK = datetime.timezone(datetime.timedelta(hours=3))
 MANUAL = {"готово": "done", "в работе": "work", "отложено": "later", "снято": "dropped", "ждёт": "todo"}
 LABEL = {"done": "готово", "work": "в работе", "todo": "ждёт", "later": "отложено", "dropped": "снято"}
@@ -244,6 +245,29 @@ def req_badges(reqs):
     return f"<span class='rq' title='требования реестра'>{dots}</span>"
 
 
+def parse_qwen_progress():
+    """Парсит docs/qwen/progress.md: таблица с задачами Qwen."""
+    if not os.path.isfile(QWEN_PROGRESS):
+        return []
+    rows = []
+    in_table = False
+    for line in open(QWEN_PROGRESS, encoding="utf-8").read().splitlines():
+        if line.strip().startswith("|"):
+            if not in_table:
+                in_table = True
+                continue
+            if re.match(r"^\|\s*[-:]+\s*\|", line):
+                continue
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if len(cells) >= 4:
+                rows.append({"task": cells[0], "status": cells[1], "model": cells[2], "attempt": cells[3],
+                            "result": cells[4] if len(cells) > 4 else "", "when": cells[5] if len(cells) > 5 else "",
+                            "note": cells[6] if len(cells) > 6 else ""})
+        elif in_table and not line.strip().startswith("|"):
+            in_table = False
+    return rows
+
+
 def build(out_dir):
     text = open(ROADMAP, encoding="utf-8").read()
     stages, about = parse_roadmap(text), parse_about(text)
@@ -280,7 +304,7 @@ def build(out_dir):
     a("<!DOCTYPE html><html lang='ru'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>"
       "<title>Stalker Zone — прогресс</title><style>" + CSS + "</style></head><body>")
     a("<nav class='top'><b>Stalker Zone</b><a href='#summary'>Сводка</a><a href='#now'>Сейчас</a><a href='#stages'>Этапы</a>"
-      "<a href='#reqs'>Требования</a><a href='#merged'>Слияния</a><span class='muted nav-r'>обновлено " + now + " МСК</span></nav><main>")
+      "<a href='#reqs'>Требования</a><a href='#qwen'>Qwen</a><a href='#merged'>Слияния</a><span class='muted nav-r'>обновлено " + now + " МСК</span></nav><main>")
 
     # ---------- сводка
     a("<section id='summary'><div class='tiles'>")
@@ -431,13 +455,27 @@ def build(out_dir):
             a("</table></div></details>")
         a("</section>")
 
+    # ---------- qwen
+    qwen_rows = parse_qwen_progress()
+    if qwen_rows:
+        a("<section id='qwen'><h2>Работа Qwen</h2><p class='muted small'>Параллельный исполнитель для К-карт (карточки заданий). Отслеживание: `docs/qwen/progress.md`.</p>")
+        a("<table>")
+        a("<tr><td><b>Задача</b></td><td><b>Статус</b></td><td><b>Модель</b></td><td><b>Попытка</b></td><td><b>Результат</b></td><td><b>Когда</b></td><td><b>Примечание</b></td></tr>")
+        for r in qwen_rows:
+            status_icon = {"⏳ Ожидание": "▢", "🔨 В работе": "◐", "✅ Готово": "✓", "❌ Блокировано": "✕", "🔄 Переделка": "↻"}
+            icon = next((v for k, v in status_icon.items() if k in r["status"]), "")
+            a(f"<tr><td><b>{esc(r['task'])}</b></td><td>{icon} {esc(r['status'])}</td><td><code>{esc(r['model'])}</code></td>"
+              f"<td class='muted'>{esc(r['attempt'])}</td><td class='small'>{esc(r['result'])}</td><td class='muted small'>{esc(r['when'])}</td>"
+              f"<td class='muted small'>{esc(r['note'])}</td></tr>")
+        a("</table></section>")
+
     # ---------- слияния
     a("<section id='merged'><h2>Последние слияния</h2><table>")
     for p in merged:
         a(f"<tr><td class='muted nowrap'>{ago(p['merged_at'])}</td><td><a href='{esc(p['html_url'])}'>#{p['number']}</a> {md_inline(p['title'])}</td></tr>")
     a("</table></section>")
     a(f"<footer class='muted'>Этапы и задачи — <a href='https://github.com/{REPO}/blob/main/{ROADMAP}'>{ROADMAP}</a>, требования — "
-      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>. "
+      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>, Qwen — <a href='https://github.com/{REPO}/blob/main/{QWEN_PROGRESS}'>{QWEN_PROGRESS}</a>. "
       "Статус задачи ставится сам: PR с номером задачи в начале заголовка.</footer></main><script>" + JS + "</script></body></html>")
 
     os.makedirs(out_dir, exist_ok=True)
