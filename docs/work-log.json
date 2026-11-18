@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "version": 1,
+    "created": "2026-11-18T21:00:00+03:00",
+    "purpose": "Журнал выполнения задач и проверок Living Zone"
+  },
+  "entries": [
+    {
+      "id": 1,
+      "task_id": "К1",
+      "task_title": "NodeCountTest — массивы симуляции по числу узлов",
+      "agent": "Qwen Code",
+      "date": "2026-11-18",
+      "branch": "qwen/pilot",
+      "files_changed": [
+        "src/main/java/ru/stalkerzone/sim/People.java",
+        "src/main/java/ru/stalkerzone/sim/Politics.java",
+        "src/main/java/ru/stalkerzone/sim/Simulation.java"
+      ],
+      "commit": "2565915",
+      "pr_number": 204,
+      "tests_run": ["NodeCountTest"],
+      "tests_result": "PASS",
+      "ci_result": "SUCCESS",
+      "game_verified": false,
+      "status": "TESTS_PASSED",
+      "acceptance_status": "pending",
+      "notes": "Массивы People.zombies, Politics.cutDays, Simulation.knowledge теперь размером nodes.size(); SAVE_VERSION 24"
+    },
+    {
+      "id": 2,
+      "task_id": "К15",
+      "task_title": "ZoneBenchTest — бенчмарк симуляции 400 узлов",
+      "agent": "Qwen Code",
+      "date": "2026-11-18",
+      "branch": "qwen/pilot",
+      "files_changed": [],
+      "commit": "2565915",
+      "pr_number": 204,
+      "tests_run": ["ZoneBenchTest"],
+      "tests_result": "PASS",
+      "ci_result": "SUCCESS",
+      "game_verified": false,
+      "status": "TESTS_PASSED",
+      "acceptance_status": "pending",
+      "notes": "Отдельный код не потребовался после К1; медиана шага 5.39 мс, p99 263.42 мс"
+    },
+    {
+      "id": 3,
+      "task_id": "К16",
+      "task_title": "MutantLedgerTest — книга мутантов в Ledger",
+      "agent": "Qwen Code",
+      "date": "2026-11-18",
+      "branch": "qwen/pilot",
+      "files_changed": [
+        "src/main/java/ru/stalkerzone/sim/Ledger.java"
+      ],
+      "commit": "2d3cc95",
+      "pr_number": 204,
+      "tests_run": ["MutantLedgerTest"],
+      "tests_result": "PASS",
+      "ci_result": "SUCCESS",
+      "game_verified": false,
+      "status": "TESTS_PASSED",
+      "acceptance_status": "pending",
+      "notes": "Ledger.mutantsBorn/mutantsDied добавлены; снимок по логовам в конце step()"
+    },
+    {
+      "id": 4,
+      "task_id": "staff/unified-registry",
+      "task_title": "Единый реестр проекта и автономность агентов",
+      "agent": "Claude Code Opus 5.5",
+      "date": "2026-11-18",
+      "branch": "staff/unified-registry",
+      "files_changed": [
+        "docs/project-tasks.json",
+        "tools/registry/validate.py",
+        "tools/registry/utils.py",
+        "tools/dashboard/build.py",
+        "docs/registry-guide.md",
+        ".claude/config/permissions.json"
+      ],
+      "commit": "pending",
+      "pr_number": null,
+      "tests_run": ["tools/registry/validate.py", "tools/dashboard/build.py"],
+      "tests_result": "PASS",
+      "ci_result": "pending",
+      "game_verified": false,
+      "status": "CODE_COMPLETE",
+      "acceptance_status": "pending",
+      "notes": "Миграция 132 requirements + 173 tasks; Dashboard обновлён; разрешения расширены"
+    }
+  ],
+  "cost_tracking": []
+}

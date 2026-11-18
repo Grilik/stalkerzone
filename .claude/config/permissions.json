@@ -3,26 +3,68 @@
     "mode": "auto_approve",
     "filters": [
       {
-        "pattern": "^(git status|git log|git diff|git branch|git show)",
+        "pattern": "^git (status|log|diff|branch|show|ls-files|ls-tree|rev-parse|describe)",
         "action": "allow"
       },
       {
-        "pattern": "^(ls|cat|head|tail|grep|find|pwd|cd)",
+        "pattern": "^(ls|cat|head|tail|grep|find|pwd|cd|wc|file|stat)",
         "action": "allow"
       },
       {
-        "pattern": "^(gradlew|gradle) (build|test|compileJava)",
+        "pattern": "^python3? (-I )?tools/(registry/validate\\.py|dashboard/build\\.py|ci/)",
         "action": "allow"
       },
       {
-        "pattern": "^python.*test",
+        "pattern": "^python3? -m pytest",
         "action": "allow"
       },
       {
-        "pattern": "^gh (pr|issue) (view|list)",
+        "pattern": "^(gradlew|gradle|./gradlew) (build|test|compileJava|classes)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^javac .* -d out",
+        "action": "allow"
+      },
+      {
+        "pattern": "^java -cp out .*Test",
+        "action": "allow"
+      },
+      {
+        "pattern": "^gh (pr|issue|api) (view|list|checks)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^gh api repos/.*/(pulls|issues|commits)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^(bash|sh) tools/ci/(test_sources\\.sh|check\\.sh)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^powershell -File tools/thezone/",
         "action": "allow"
       }
     ]
   },
-  "note": "Разрешения для команд, не требующих подтверждения. Деструктивные операции (git push, rm, etc) всё равно требуют подтверждения."
+  "note": "Разрешения Claude Code: безопасные операции чтения, сборка, тесты, git read-only. Деструктивные операции (push, merge, rm, reset) требуют подтверждения.",
+  "git": {
+    "mode": "auto_approve",
+    "filters": [
+      {
+        "pattern": "^checkout -b (staff/|claude/|docs/)",
+        "action": "allow"
+      },
+      {
+        "pattern": "^commit -m",
+        "action": "allow"
+      },
+      {
+        "pattern": "^add ",
+        "action": "allow"
+      }
+    ],
+    "note": "Git: разрешены commit и add; push/merge требуют подтверждения"
+  }
 }

@@ -15,6 +15,20 @@ import re
 import subprocess
 import sys
 
+
+# Единый реестр проекта
+try:
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+    from registry.utils import (
+        load_registry, get_entities_by_type, get_entity_by_id,
+        get_linked_requirements, get_status_counts, to_dashboard_status,
+        STATUS_LABEL as UNIFIED_STATUS_LABEL
+    )
+    UNIFIED_REGISTRY_AVAILABLE = True
+except ImportError:
+    UNIFIED_REGISTRY_AVAILABLE = False
+
 REPO = os.environ.get("GITHUB_REPOSITORY", "Grilik/stalkerzone")
 ROADMAP = "docs/roadmap.md"
 REQS = "docs/requirements.json"
@@ -268,6 +282,57 @@ def parse_qwen_progress():
     return rows
 
 
+
+
+def build_unified_registry_section():
+    """Построить секцию статистики единого реестра."""
+    if not UNIFIED_REGISTRY_AVAILABLE:
+        return ""
+    
+    try:
+        registry = load_registry()
+    except Exception as e:
+        return f"<p>Ошибка загрузки реестра: {esc(str(e))}</p>"
+    
+    requirements = get_entities_by_type(registry, "requirement")
+    tasks = get_entities_by_type(registry, "task")
+    
+    req_status_counts = get_status_counts(requirements)
+    task_status_counts = get_status_counts(tasks)
+    
+    html = "<section id='unified-registry'><h3>Единый реестр проекта</h3>"
+    html += f"<p>Версия реестра: {registry.get('meta', {}).get('version', '?')}, обновлён: {registry.get('meta', {}).get('created', '?')[:16]}</p>"
+    
+    # Требования
+    html += f"<h4>Требования ({len(requirements)})</h4><div class='stats'>"
+    for status in ["GAME_VERIFIED", "TESTS_PASSED", "IN_PROGRESS", "PLANNED", "BLOCKED", "DEFERRED"]:
+        count = req_status_counts.get(status, 0)
+        if count > 0:
+            label = UNIFIED_STATUS_LABEL.get(status, status)
+            html += f"<span class='stat-item'><b>{label}:</b> {count}</span>"
+    html += "</div>"
+    
+    # Задачи
+    html += f"<h4>Задачи ({len(tasks)})</h4><div class='stats'>"
+    for status in ["ACCEPTED", "GAME_VERIFIED", "TESTS_PASSED", "IN_PROGRESS", "PLANNED", "BLOCKED", "DEFERRED", "REJECTED"]:
+        count = task_status_counts.get(status, 0)
+        if count > 0:
+            label = UNIFIED_STATUS_LABEL.get(status, status)
+            html += f"<span class='stat-item'><b>{label}:</b> {count}</span>"
+    html += "</div>"
+    
+    # Топ заблокированных задач
+    blocked_tasks = [t for t in tasks if t.get("status") == "BLOCKED"]
+    if blocked_tasks:
+        html += "<h4>Заблокированные задачи</h4><ul>"
+        for task in blocked_tasks[:5]:
+            html += f"<li><code>{esc(task.get('id'))}</code>: {esc(task.get('title', '')[:80])}</li>"
+        html += "</ul>"
+    
+    html += "</section>"
+    return html
+
+
 def build(out_dir):
     text = open(ROADMAP, encoding="utf-8").read()
     stages, about = parse_roadmap(text), parse_about(text)
@@ -469,13 +534,16 @@ def build(out_dir):
               f"<td class='muted small'>{esc(r['note'])}</td></tr>")
         a("</table></section>")
 
+    # ---------- единый реестр
+    a(build_unified_registry_section())
+
     # ---------- слияния
     a("<section id='merged'><h2>Последние слияния</h2><table>")
     for p in merged:
         a(f"<tr><td class='muted nowrap'>{ago(p['merged_at'])}</td><td><a href='{esc(p['html_url'])}'>#{p['number']}</a> {md_inline(p['title'])}</td></tr>")
     a("</table></section>")
     a(f"<footer class='muted'>Этапы и задачи — <a href='https://github.com/{REPO}/blob/main/{ROADMAP}'>{ROADMAP}</a>, требования — "
-      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>, Qwen — <a href='https://github.com/{REPO}/blob/main/{QWEN_PROGRESS}'>{QWEN_PROGRESS}</a>. "
+      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, **единый реестр** — <a href='https://github.com/{REPO}/blob/main/docs/project-tasks.json'>project-tasks.json</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>, Qwen — <a href='https://github.com/{REPO}/blob/main/{QWEN_PROGRESS}'>{QWEN_PROGRESS}</a>. "
       "Статус задачи ставится сам: PR с номером задачи в начале заголовка.</footer></main><script>" + JS + "</script></body></html>")
 
     os.makedirs(out_dir, exist_ok=True)
@@ -557,6 +625,9 @@ table.md{width:auto;margin:6px 0;font-size:12px}table.md td{border:1px solid var
 .prompt h4{margin:10px 0 4px;font-size:14px;color:var(--acc)}.prompt pre{white-space:pre-wrap;font-size:12px;background:#0b0e0b;padding:8px;border-radius:6px}
 footer{margin-top:30px;font-size:13px}
 @media(max-width:700px){.cols{grid-template-columns:1fr}.nav-r{display:none}.tid{min-width:0}.sum-r{margin-left:0;width:100%}.task-body{padding-left:8px}table.rt td{font-size:13px}}
+
+#unified-registry .stats{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+#unified-registry .stat-item{background:var(--card);border:1px solid var(--line);padding:8px 12px;border-radius:4px}
 """
 
 if __name__ == "__main__":
