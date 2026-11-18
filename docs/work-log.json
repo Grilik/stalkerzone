@@ -25,7 +25,7 @@
       "game_verified": false,
       "status": "TESTS_PASSED",
       "acceptance_status": "pending",
-      "notes": "Массивы People.zombies, Politics.cutDays, Simulation.knowledge теперь размером nodes.size(); SAVE_VERSION 24"
+      "notes": "Массивы People.zombies, Politics.cutDays, Simulation.knowledge теперь размером nodes.size(); логика и SAVE_VERSION не менялись (версия поднята в К16)"
     },
     {
       "id": 2,
@@ -53,7 +53,10 @@
       "date": "2026-11-18",
       "branch": "qwen/pilot",
       "files_changed": [
-        "src/main/java/ru/stalkerzone/sim/Ledger.java"
+        "src/main/java/ru/stalkerzone/sim/Ledger.java",
+        "src/main/java/ru/stalkerzone/sim/Simulation.java",
+        "src/test/java/SaveResetTest.java",
+        "docs/tasks/tests/SaveResetTest.java"
       ],
       "commit": "2d3cc95",
       "pr_number": 204,
@@ -63,7 +66,7 @@
       "game_verified": false,
       "status": "TESTS_PASSED",
       "acceptance_status": "pending",
-      "notes": "Ledger.mutantsBorn/mutantsDied добавлены; снимок по логовам в конце step()"
+      "notes": "Ledger.mutantsBorn/mutantsDied добавлены; снимок по логовам в конце step(); SAVE_VERSION 23→24; литерал SaveResetTest обновлён в src/test/java и docs/tasks/tests"
     },
     {
       "id": 4,
@@ -80,15 +83,35 @@
         "docs/registry-guide.md",
         ".claude/config/permissions.json"
       ],
-      "commit": "pending",
-      "pr_number": null,
+      "commit": "410664e83c30fdc8c6acb6680b26935996835e0a",
+      "pr_number": 205,
       "tests_run": ["tools/registry/validate.py", "tools/dashboard/build.py"],
       "tests_result": "PASS",
-      "ci_result": "pending",
+      "ci_result": "SUCCESS",
       "game_verified": false,
-      "status": "CODE_COMPLETE",
+      "status": "TESTS_PASSED",
       "acceptance_status": "pending",
-      "notes": "Миграция 132 requirements + 173 tasks; Dashboard обновлён; разрешения расширены"
+      "notes": "Миграция 132 requirements + 173 tasks; Dashboard обновлён; разрешения расширены. Исправления аудита Qwen (S1/D1/D3/G3/C1/C2/C3) — коммитом Qwen поверх 410664e; валидатор и Dashboard зелёные"
+    },
+    {
+      "id": 5,
+      "task_id": "К5",
+      "task_title": "WarLedgerTest — учёт войны и длительный прогон kordon_war",
+      "agent": "Qwen Code",
+      "date": "2026-11-18",
+      "branch": "qwen/k5-war-ledger",
+      "files_changed": [
+        "src/test/java/WarLedgerTest.java"
+      ],
+      "commit": "e7aac57",
+      "pr_number": 206,
+      "tests_run": ["WarLedgerTest"],
+      "tests_result": "PASS",
+      "ci_result": "SUCCESS",
+      "game_verified": false,
+      "status": "TESTS_PASSED",
+      "acceptance_status": "pending",
+      "notes": "PR #206 открыт, CI зелёный, не слит. Захват 8%, разгром 25%/20–50%, контракт-захват, соак kordon_war 365×4; время теста ~1,2 с; производственный код не менялся"
     }
   ],
   "cost_tracking": []

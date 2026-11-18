@@ -35,7 +35,7 @@
         "action": "allow"
       },
       {
-        "pattern": "^gh api repos/.*/(pulls|issues|commits)",
+        "pattern": "^gh api (?!.*(?:-X|--method|-f|-F|--field|--raw-field|--input))repos/.*$",
         "action": "allow"
       },
       {
@@ -48,7 +48,7 @@
       }
     ]
   },
-  "note": "Разрешения Claude Code: безопасные операции чтения, сборка, тесты, git read-only. Деструктивные операции (push, merge, rm, reset) требуют подтверждения.",
+  "note": "Разрешения Claude Code: безопасные операции чтения, сборка, тесты, git read-only. Деструктивные операции (push, merge, rm, reset) требуют подтверждения. Границы gh api (S1 аудита 18.11): автоодобряются ТОЛЬКО GET-запросы вида 'gh api repos/…' без флагов метода и тела; наличие -X, --method, -f, -F, --field, --raw-field, --input в любом месте команды (включая слитные формы -XPOST, -fkey=value) отключает автоодобрение — требуется подтверждение. 'gh api graphql' и прочие хосты не автоодобряются. Правило консервативное: ложное срабатывание (например '-f' внутри URL) ведёт к ручному подтверждению, а не к обходу.",
   "git": {
     "mode": "auto_approve",
     "filters": [

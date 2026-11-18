@@ -31,24 +31,23 @@ def validate_registry(registry_path):
 
     entities = registry.get("entities", [])
 
-    # 1. Проверка уникальности ID
+    # 1. Проверка уникальности ID (C3: None-безопасно)
     ids = [e.get("id") for e in entities]
     id_counts = Counter(ids)
-    duplicates = [id_ for id_, count in id_counts.items() if count > 1]
+    duplicates = [str(id_) for id_, count in id_counts.items() if count > 1]
     if duplicates:
         errors.append(f"Duplicate IDs found: {', '.join(duplicates)}")
 
-    # 2. Проверка обязательных полей
+    # 2. Проверка обязательных полей (C3: id, type, title, status, updated — по registry-guide.md)
+    required = ("id", "type", "title", "status", "updated")
     for i, entity in enumerate(entities):
-        if "id" not in entity:
-            errors.append(f"Entity #{i}: missing 'id' field")
-        if "type" not in entity:
-            errors.append(f"Entity {entity.get('id', f'#{i}')}: missing 'type' field")
-        if "status" not in entity:
-            errors.append(f"Entity {entity.get('id', f'#{i}')}: missing 'status' field")
+        label = entity.get("id", f"#{i}")
+        for field in required:
+            if field not in entity:
+                errors.append(f"Entity {label}: missing '{field}' field")
 
     # 3. Проверка типов сущностей
-    invalid_types = [e.get("id") for e in entities if e.get("type") not in VALID_TYPES]
+    invalid_types = [str(e.get("id")) for e in entities if e.get("type") not in VALID_TYPES]
     if invalid_types:
         errors.append(f"Invalid entity types: {', '.join(invalid_types[:10])}")
 
@@ -61,20 +60,18 @@ def validate_registry(registry_path):
     if invalid_statuses:
         errors.append(f"Invalid statuses: {', '.join(invalid_statuses[:10])}")
 
-    # 5. Проверка связей (существуют ли связанные сущности)
+    # 5. Проверка связей (C3: висячие ссылки и не-списки — ошибки целостности, ненулевой exit code)
     all_ids = set(ids)
     for entity in entities:
         eid = entity.get("id", "?")
-
-        # Проверить linked_tasks
-        for task_id in entity.get("linked_tasks", []):
-            if task_id and task_id not in all_ids:
-                warnings.append(f"{eid}: linked task '{task_id}' not found in registry")
-
-        # Проверить linked_requirements
-        for req_id in entity.get("linked_requirements", []):
-            if req_id and req_id not in all_ids:
-                warnings.append(f"{eid}: linked requirement '{req_id}' not found in registry")
+        for field in ("linked_tasks", "linked_requirements"):
+            links = entity.get(field, [])
+            if not isinstance(links, list):
+                errors.append(f"{eid}: '{field}' must be a list")
+                continue
+            for target in links:
+                if target and target not in all_ids:
+                    errors.append(f"{eid}: linked entity '{target}' ({field}) not found in registry")
 
     # 6. Статистика
     type_counts = Counter(e.get("type") for e in entities)
@@ -109,6 +106,6 @@ def validate_registry(registry_path):
     return errors, warnings
 
 if __name__ == "__main__":
-    registry_path = Path(__file__).parent.parent.parent / "docs" / "project-tasks.json"
+    registry_path = Path(__file__).resolve().parent.parent.parent / "docs" / "project-tasks.json"
     errors, warnings = validate_registry(registry_path)
     sys.exit(1 if errors else 0)

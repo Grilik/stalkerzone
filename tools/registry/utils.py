@@ -6,7 +6,9 @@
 import json
 from pathlib import Path
 
-REGISTRY_PATH = Path(__file__).parent.parent.parent / "docs" / "project-tasks.json"
+# C4: resolve() нормализует «..» в __file__ (build.py добавляет в sys.path путь tools/dashboard/..,
+# иначе Path.parent цепочка даёт tools/dashboard/docs вместо корня репозитория)
+REGISTRY_PATH = Path(__file__).resolve().parent.parent.parent / "docs" / "project-tasks.json"
 
 # Маппинг новых статусов → Dashboard статусы
 STATUS_TO_DASHBOARD = {
@@ -40,12 +42,12 @@ def load_registry():
         return json.load(f)
 
 def get_entities_by_type(registry, entity_type):
-    """Получить все сущности заданного типа."""
-    return [e for e in registry["entities"] if e.get("type") == entity_type]
+    """Получить все сущности заданного типа (C2: отсутствующий ключ entities не ломает сборку)."""
+    return [e for e in registry.get("entities", []) if e.get("type") == entity_type]
 
 def get_entity_by_id(registry, entity_id):
     """Найти сущность по ID."""
-    for entity in registry["entities"]:
+    for entity in registry.get("entities", []):
         if entity.get("id") == entity_id:
             return entity
     return None
