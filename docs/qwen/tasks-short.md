@@ -1,37 +1,55 @@
 # CLI промпты для Qwen
 
-**Использование:** `qwen-code < prompts.txt` или по одному: `echo "..." | qwen-code`.
+Короткие промпты — по одному на задачу. Полная спецификация: `docs/qwen/tasks-full.md`.
+Запускать из корня репозитория `C:\MineStalker\stalkerzone-git`:
 
-Каждый промпт — однострочный или короткий, отправляется в Qwen Code. Dispatcher заполняет этот файл после этапа 1.3 (когда будут написаны падающие тесты).
+```bash
+qwen --approval-mode auto-edit "…промпт…"
+```
+
+JUnit в проекте нет: тесты — классы с `main` и `ck(...)`, собираются одним `javac` через
+`bash tools/ci/test_sources.sh`. Падать надо по условию `ck`, а не ошибкой компиляции.
 
 ---
 
-## К1 (Э4-07): NodeCountTest
+## К1 (Э4-07): NodeCountTest — делать первым
 
 ```
-Прочитай src/test/java/ru/stalkerzone/sim/NodeCountTest.java (падающий тест красный). Тест проверяет, что массивы в Faction, Group, Ledger инициализированы на nodes.size(), не жёсткая 64. Найди все такие массивы в src/main/java/ru/stalkerzone/sim/, замени конструкторы и load() методы. После правки тест должен быть зелёный. Запусти ./gradlew build и убедись CI проходит. Скопируй хеши RNG из KordonBalanceTest/ZoneBalanceTest и проверь, что они совпадают. Если совпадают — коммит "К1 (Э4-07): калибровка массивов по nodes.size()".
+Прочитай docs/qwen/tasks-full.md, раздел К1, и src/test/java/NodeCountTest.java (сейчас красный).
+Массивы People.zombies, Politics.cutDays и Simulation.knowledge объявлены как new ...[64]; на 300 узлах
+симуляция падает Index 64 в seedAnomalies. Сделай их размер от nodes.size(): инициализация из конструктора
+Simulation (в People и Politics добавь init(int nodeCount)). Собери и прогони:
+  mkdir -p out && javac --release 17 -encoding UTF-8 -d out $(bash tools/ci/test_sources.sh)
+  java -Dfile.encoding=UTF-8 -cp out NodeCountTest
+Добейся «ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ». Потом прогони весь набор (цикл из docs/qwen/README.md) — падать должны
+только MutantLedgerTest и ZoneBenchTest. Коммит: «К1 (Э4-07): массивы симуляции по числу узлов».
 ```
 
-## К15 (Э4-09): ZoneBenchTest
+## К15 (Э4-09): ZoneBenchTest — после К1
 
 ```
-Прочитай src/test/java/ru/stalkerzone/sim/ZoneBenchTest.java (падающий тест красный). Тест — бенчмарк на синтетическом атласе 400 узлов. Напиши генератор атласа (сетка узлов, рёбра между соседями), инициализируй симуляцию на 1000 тиков, проверь что мутанты живы и репутация считается. Запусти тест, он должен завершиться < 5 сек. Затем ./gradlew build. Коммит "К15 (Э4-09): бенчмарк симуляции на 400 узлов".
+Прочитай docs/qwen/tasks-full.md, раздел К15, и src/test/java/ZoneBenchTest.java.
+Сначала выполни К1, если он ещё не сделан. Тест гоняет 30 дней × 3 сида на синтетическом атласе 400 узлов
+(BigAtlas), проверяет отсутствие исключений, сходимость audit() и медиану шага ≤ 15 мс.
+Прогон: java -Dfile.encoding=UTF-8 -cp out ZoneBenchTest (после сборки из test_sources.sh).
+Порог 15 мс НЕ ослабляй и audit() не отключай; если медиана выше — остановись и напиши в отчёт цифры.
+Коммит: «К15 (Э4-09): бенчмарк ядра на 400 узлах».
 ```
 
-## К16 (Э8-10): MutantLedgerTest
+## К16 (Э8-10): MutantLedgerTest — независимо от К1/К15
 
 ```
-Прочитай src/test/java/ru/stalkerzone/sim/MutantLedgerTest.java (падающий тест красный). Тест проверяет счётчики мутантов в Ledger: спауни разные виды, проверь что счётчики растут, убей мутантов, проверь что убывают, сумма счётчиков = живым. Отредактируй src/main/java/ru/stalkerzone/sim/Ledger.java, добавь логику. После правки тест зелёный. ./gradlew build. Коммит "К16 (Э8-10): счётчики мутантов в Ledger".
+Прочитай docs/qwen/tasks-full.md, раздел К16, и src/test/java/MutantLedgerTest.java.
+Формула Lair.mutantCount() уже верна — её не трогай. Нужна третья книга Ledger: long mutantsBorn и
+long mutantsDied, инвариант Σ mutantCount() по логовам = старт + born − died каждый день.
+Считай раз в день в Simulation после lairsDaily(), сравнивая снимок по логовам. Сохранение — дописать
+в конец и поднять SAVE_VERSION. Тест читает поля по имени, поэтому имена не меняй.
+Собери и прогони java -Dfile.encoding=UTF-8 -cp out MutantLedgerTest до «ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ».
+Коммит: «К16 (Э8-10): книга мутантов в Ledger».
 ```
 
 ---
 
-## Этап 2: Остальные К-карты (К2–К14)
+## Остальные К-карты (К2–К14)
 
-```
-[Заполнится после этапа 1.3, после написания тестов для К2–К14]
-```
-
----
-
-**Синтаксис:** Dispatcher парсит этот файл построчно. Пустые строки и строки-комментарии (начинаются с `#`) пропускаются. Каждый блок промпта отправляется в Qwen Code. Результат: PR в ветке (не в main), коммит с названием из промпта.
+Заполнится, когда для них будут падающие тесты (этап 3).
