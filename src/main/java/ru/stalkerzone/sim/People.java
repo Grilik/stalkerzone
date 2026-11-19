@@ -127,6 +127,18 @@ public final class People {
         return out;
     }
 
+    /**
+     * К2: вольные сталкеры — люди без группировки (faction == Person.NONE), не группировка
+     * (docs/spec/faction-hierarchy.md §3). Пул наполняет приток с Большой земли через хаб новичков
+     * (Э6-02, ещё не реализован); ежедневные циклы К2 пул не расходуют. Единственный потребитель —
+     * возрождение уничтоженной группировки отдельным событием (Simulation.reviveByFreeStalkers).
+     */
+    public List<Person> freeStalkers() {
+        List<Person> out = new ArrayList<>();
+        for (Person p : roster) if (p.faction == Person.NONE) out.add(p);
+        return out;
+    }
+
     public Person leader(int faction) {
         for (Person p : roster) if (p.faction == faction && p.role == Person.Role.LEADER) return p;
         return null;
@@ -237,6 +249,8 @@ public final class People {
         Person x = byId(personId);
         if (x == null) return false;
         roster.remove(x);
+        // К2: вольный сталкер не принадлежит группировке — её потери не учитываются
+        if (x.faction == Person.NONE) return true;
         Faction f = s.factions.get(x.faction);
         if (f.members > 0) { // К2: последний участник гибнет по-настоящему (members=0, deaths учитывается)
             f.killMembers(1);

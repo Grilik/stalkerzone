@@ -8,8 +8,12 @@ import java.util.Arrays;
  *   <li>уничтоженная группировка не действует: ни войн, ни караванов, ни гарнизонов, ни решений;</li>
  *   <li>нет автоматического возрождения: ни новичками в пути, ни паломниками Монолита, ни призывом
  *       армии, ни пробуждением Монолита — 60 дней наблюдения;</li>
- *   <li>точка расширения reviveByFreeStalkers: основатели переходят из Одиночков (население сохраняется),
+ *   <li>точка расширения reviveByFreeStalkers: основатели — только люди без группировки
+ *       (Person.faction == Person.NONE, вольные сталкеры; docs/spec/faction-hierarchy.md §3).
+ *       Одиночки (группировка) и другие группировки людей не теряют; пул уменьшается только
+ *       на фактическом переходе; больше, чем есть вольных, взять нельзя; людей из воздуха нет;
  *       склад и история не трогаются, повторный вызов не дублирует;</li>
+ *   <li>пул вольных сохраняется save/load (SAVE_VERSION не менялся), возрождение детерминировано;</li>
  *   <li>длительные сценарии (zone и kordon_war, 365 дней): audit пуст ежедневно, численность
  *       не отрицательна, deaths монотонны, уничтоженные не воскрешают сами себя.</li>
  * </ul>
@@ -29,6 +33,9 @@ public class DestroyedFactionTest {
         armyDoesNotRecruit();
         garrisonsGone();
         revivalExtensionPoint();
+        freePoolNoAutoRevival();
+        saveLoadFreePool();
+        revivalDeterminism();
         saveLoadKeepsDestroyed();
         soakNoRevival();
         System.out.println("время: " + (System.currentTimeMillis() - t0) / 1000.0 + " с");
@@ -66,6 +73,32 @@ public class DestroyedFactionTest {
         s.ledger.moneyMinted += money;
         st.add(Good.FOOD, food);
         s.ledger.created[Good.FOOD.ordinal()] += food;
+    }
+
+    /**
+     * Вольный сталкер в пуле: человек без группировки (faction = Person.NONE). Фикстура будущего
+     * притока через хаб (Э6-02): в нормальной симуляции К2 пул пуст, людей из воздуха код не создаёт.
+     */
+    static Person freeStalker(Simulation s, String name) {
+        Person p = new Person(s.people.nextId++);
+        p.name = name;
+        p.faction = Person.NONE;
+        p.cls = Person.Cls.ASSAULT;
+        p.combat = 40; p.medicine = 10; p.tech = 15; p.scouting = 20;
+        p.bravery = 0.2; p.greed = 0.0; p.loyalty = 0.1;
+        s.people.roster.add(p);
+        return p;
+    }
+
+    static int[] membersSnapshot(Simulation s) {
+        int[] m = new int[s.factions.size()];
+        for (Faction f : s.factions) m[f.id] = f.members;
+        return m;
+    }
+
+    static boolean othersUnchanged(Simulation s, int[] snap, int except) {
+        for (Faction f : s.factions) if (f.id != except && f.members != snap[f.id]) return false;
+        return true;
     }
 
     // ------------------------------------------------------------------ 1. событие уничтожения — один раз
@@ -176,22 +209,43 @@ public class DestroyedFactionTest {
         ck(Logistics.outside(s, duty) == 0, "гарнизоны: вне базы людей нет");
     }
 
-    // ------------------------------------------------------------------ 7. точка расширения: возрождение вольными сталкерами
+    // ------------------------------------------------------------------ 7. точка расширения: возрождение только вольными сталкерами
 
     static void revivalExtensionPoint() {
         Simulation s = setup(57);
         Faction duty = s.factions.get(ZoneScenario.DUTY);
         Faction loners = s.mercenaries();
-        ck(loners != null && !loners.isDestroyed(), "возрождение: Одиночки живы (инициатор есть)");
+        ck(loners != null && !loners.isDestroyed(), "возрождение: Одиночки живы (группировка, не источник основателей)");
         destroy(duty);
         long money0 = duty.stock.money;
         int[] goods0 = duty.stock.qty.clone();
         int loners0 = loners.members;
+        int lonersNamed0 = s.people.of(loners.id).size();
+        int[] members0 = membersSnapshot(s);
         long total0 = s.totalMoney();
+        ck(s.people.freeStalkers().isEmpty(), "возрождение: в текущей симуляции пул вольных пуст (приток Э6-02 не реализован)");
+
+        // источник — только люди без группировки: Одиночки не подменяют пул, людей из воздуха нет
+        ck(!s.reviveByFreeStalkers(duty, 3), "возрождение: пустой пул — false, хотя Одиночки полны (они не источник)");
+        ck(duty.members == 0 && loners.members == loners0, "возрождение: отказ не тронул ни Долг, ни Одиночек");
+        ck(!s.reviveByFreeStalkers(duty, loners.members), "возрождение: основатели не берутся из численности Одиночек");
+
+        Person a = freeStalker(s, "Вольный «Тихий»");
+        Person b = freeStalker(s, "Вольный «Грач»");
+        Person c = freeStalker(s, "Вольный «Штырь»");
+        ck(s.people.freeStalkers().size() == 3, "возрождение: пул — люди без группировки (faction=none)");
+        ck(!s.reviveByFreeStalkers(duty, 4), "возрождение: больше, чем есть вольных, взять нельзя — false");
+        ck(s.people.freeStalkers().size() == 3 && duty.members == 0,
+                "возрождение: неудачный вызов не тронул пул (частичного перехода нет)");
 
         ck(s.reviveByFreeStalkers(duty, 3), "возрождение: состоялось");
         ck(duty.members == 3 && !duty.isDestroyed(), "возрождение: численность 3, фракция жива");
-        ck(loners.members == loners0 - 3, "возрождение: основатели ушли из Одиночков (население сохранено)");
+        ck(a.faction == duty.id && b.faction == duty.id && c.faction == duty.id,
+                "возрождение: основатели — те самые вольные (переход none → Долг, других людей нет)");
+        ck(s.people.freeStalkers().isEmpty(), "возрождение: пул уменьшился ровно на число основателей");
+        ck(loners.members == loners0 && s.people.of(loners.id).size() == lonersNamed0,
+                "возрождение: Одиночки не потеряли ни одного человека (ни числом, ни именными)");
+        ck(othersUnchanged(s, members0, duty.id), "возрождение: остальные группировки не тронуты");
         ck(duty.phase == Phase.ACCUMULATE && duty.phaseDays == 0 && duty.wounded == 0,
                 "возрождение: состояние сброшено (фаза, раненые)");
         ck(duty.stock.money == money0 && Arrays.equals(goods0, duty.stock.qty),
@@ -199,16 +253,82 @@ public class DestroyedFactionTest {
         ck(s.totalMoney() == total0 && s.audit().isEmpty(), "возрождение: денежный баланс не тронут");
         ck(!s.reviveByFreeStalkers(duty, 3), "возрождение: повторный вызов — false (без дублирования)");
         ck(!s.reviveByFreeStalkers(s.factions.get(ZoneScenario.FREEDOM), 0), "возрождение: 0 основателей — false");
-        ck(!s.reviveByFreeStalkers(s.factions.get(ZoneScenario.FREEDOM), loners.members + 1),
-                "возрождение: не хватает основателей — false");
+        ck(!s.reviveByFreeStalkers(s.factions.get(ZoneScenario.FREEDOM), 1),
+                "возрождение: живую фракцию «возродить» нельзя (за чужую фракцию не инициируют)");
         ck(s.reviveByFreeStalkers(null, 3) == false, "возрождение: null — false");
 
         give(s, duty.stock, 5000, 200); // еда и деньги для штатного роста
         for (int d = 0; d < 30; d++) s.step();
         ck(duty.members > 0, "возрождение: фракция живёт и растёт штатно (30 дней, факт " + duty.members + ")");
         ck(!s.people.of(duty.id).isEmpty(), "возрождение: именные восстановлены штатным maintainRoster");
-        ck(s.people.leader(duty.id) != null, "возрождение: лидер восстановлен");
+        ck(s.people.leader(duty.id) != null, "возрождение: лидер восстановлен (из самих основателей)");
         ck(s.audit().isEmpty(), "возрождение: audit пуст после 30 дней");
+    }
+
+    // ------------------------------------------------------------------ 7б. пул вольных не возрождает сам
+
+    static void freePoolNoAutoRevival() {
+        Simulation s = setup(59);
+        Faction duty = s.factions.get(ZoneScenario.DUTY);
+        s.caravans.removeIf(c -> c.owner == duty.id);
+        destroy(duty);
+        for (int i = 0; i < 5; i++) freeStalker(s, "Вольный «Бродяга» " + i);
+        int free0 = s.people.freeStalkers().size();
+        boolean membersOk = true, poolOk = true;
+        for (int d = 0; d < 60; d++) {
+            s.step();
+            if (duty.members != 0) membersOk = false;
+            if (s.people.freeStalkers().size() != free0) poolOk = false;
+        }
+        ck(membersOk, "вольные в пуле: 60 дней — уничтоженная фракция не возродилась сама");
+        ck(poolOk, "вольные в пуле: ежедневные циклы не расходуют пул без отдельного события");
+        ck(s.audit().isEmpty(), "вольные в пуле: audit пуст");
+    }
+
+    // ------------------------------------------------------------------ 7в. save/load: разделение Одиночек и вольных
+
+    static void saveLoadFreePool() {
+        Simulation s = setup(60);
+        Faction duty = s.factions.get(ZoneScenario.DUTY);
+        destroy(duty);
+        Person a = freeStalker(s, "Вольный «Лис»");
+        Person b = freeStalker(s, "Вольный «Кот»");
+        s.step(1);
+        Simulation l = Simulation.load(s.save());
+        ck(l.people.freeStalkers().size() == 2, "save/load: пул вольных сохранён (faction=none)");
+        ck(l.factions.get(ZoneScenario.DUTY).isDestroyed(), "save/load: уничтоженная осталась уничтоженной");
+        ck(l.people.byId(a.id).faction == Person.NONE && l.people.byId(b.id).faction == Person.NONE,
+                "save/load: вольные не приписаны ни к одной группировке (Одиночки отдельно)");
+        int loners0 = l.mercenaries().members;
+        ck(l.reviveByFreeStalkers(l.factions.get(ZoneScenario.DUTY), 2), "save/load: возрождение после загрузки состоялось");
+        ck(l.people.freeStalkers().isEmpty(), "save/load: пул израсходован ровно на основателей");
+        ck(l.mercenaries().members == loners0, "save/load: Одиночки не потеряли людей");
+        ck(l.people.byId(a.id).faction == ZoneScenario.DUTY && l.people.byId(b.id).faction == ZoneScenario.DUTY,
+                "save/load: основатели сохранены как участники Долга");
+        // детерминизм: то же событие на исходной симуляции даёт идентичное сохранение
+        ck(s.reviveByFreeStalkers(s.factions.get(ZoneScenario.DUTY), 2), "save/load: возрождение на исходной симуляции");
+        s.events.clear(); // журнал входит в сохранение: сравниваем симметрично (только новые события дня)
+        l.events.clear();
+        s.step(1);
+        l.step(1);
+        ck(s.save().equals(l.save()), "save/load: поведение после возрождения идентично (детерминизм)");
+    }
+
+    // ------------------------------------------------------------------ 7г. детерминизм возрождения
+
+    static void revivalDeterminism() {
+        Simulation s1 = setup(63);
+        Simulation s2 = setup(63);
+        for (Simulation s : new Simulation[]{s1, s2}) {
+            Faction duty = s.factions.get(ZoneScenario.DUTY);
+            destroy(duty);
+            freeStalker(s, "Вольный «Один»");
+            freeStalker(s, "Вольный «Два»");
+            freeStalker(s, "Вольный «Три»");
+            ck(s.reviveByFreeStalkers(duty, 3), "детерминизм: возрождение состоялось");
+        }
+        for (int d = 0; d < 30; d++) { s1.step(); s2.step(); }
+        ck(s1.save().equals(s2.save()), "детерминизм: одинаковый сид и событие — идентичные сохранения (30 дней)");
     }
 
     // ------------------------------------------------------------------ 8. save/load: состояние и однократность события

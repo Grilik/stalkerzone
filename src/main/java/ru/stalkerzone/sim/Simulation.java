@@ -2642,23 +2642,35 @@ public final class Simulation {
 
     /**
      * К2 (правило C HQ): точка расширения возрождения уничтоженной группировки вольными сталкерами.
+     * Вольные сталкеры — не группировка, а состояние человека без группировки (Person.faction ==
+     * Person.NONE, docs/spec/faction-hierarchy.md §3). Одиночки (Simulation.mercenaries()) —
+     * организованная группировка и людей на возрождение НЕ отдают; другие группировки тоже не источник,
+     * фиктивная группировка «Вольные сталкеры» не создаётся.
+     * Основатели — только люди из пула вольных (People.freeStalkers()): они физически переходят
+     * в фракцию, население Зоны сохраняется. Пул наполняет приток с Большой земли через хаб (Э6-02,
+     * ещё не реализован) — без вольных возрождение невозможно, люди «из воздуха» не берутся.
      * Ежедневные циклы симуляции этот метод НЕ вызывают: возрождение — отдельное игровое событие,
      * полная механика (триггеры, стоимость, территория, дипломатия) — спецификация
      * docs/qwen/k2-faction-revival-spec.md и отдельная задача К17.
-     * Основатели переходят из Одиночков: население сохраняется, деньги и склад уничтоженной
-     * группировки не трогаются (стартовые ресурсы повторно не начисляются, двойного учёта нет).
-     * Именные и лидер восстановятся штатным maintainRoster на следующих шагах.
-     * Возвращает false, если возрождение невозможно: группировка жива, Одиночков нет/они уничтожены,
-     * основателей не хватает. Повторный вызов для уже возрождённой группировки — false (без дублирования).
+     * Деньги и склад уничтоженной группировки не трогаются (стартовые ресурсы повторно не начисляются,
+     * двойного учёта нет). Именные и лидер восстановятся штатным maintainRoster на следующих шагах.
+     * Возвращает false, если возрождение невозможно: группировка жива, founders <= 0, вольных не хватает
+     * (без частичного перехода). Повторный вызов для уже возрождённой группировки — false (без дублирования).
      */
     public boolean reviveByFreeStalkers(Faction f, int founders) {
         if (f == null || !f.isDestroyed() || founders <= 0) return false;
-        Faction loners = mercenaries();
-        if (loners == null || loners.isDestroyed() || loners.members < founders) return false;
-        loners.members -= founders;
-        loners.wounded = Math.min(loners.wounded, loners.members);
-        f.members = founders;
-        f.wounded = 0;
+        List<Person> free = people.freeStalkers();
+        if (free.size() < founders) return false;
+        int wounded = 0;
+        for (int i = 0; i < founders; i++) {
+            Person p = free.get(i);
+            p.faction = f.id;
+            p.joined = day;
+            p.role = Person.Role.MEMBER;
+            if (p.injury > 0) wounded++;
+        }
+        f.members += founders;
+        f.wounded = wounded;
         f.phase = Phase.ACCUMULATE;
         f.phaseDays = 0;
         f.destructionNoted = false;
