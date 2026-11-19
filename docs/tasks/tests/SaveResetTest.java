@@ -21,7 +21,7 @@ public class SaveResetTest {
     }
 
     public static void main(String[] a) {
-        ck(Simulation.SAVE_VERSION == 24, "SAVE_VERSION = 24");
+        ck(Simulation.SAVE_VERSION == 25, "SAVE_VERSION = 25");
         Simulation s = Scenarios.create("kordon", 7);
         for (int d = 0; d < 10; d++) s.step();
         String data = s.save();
@@ -33,6 +33,10 @@ public class SaveResetTest {
         Simulation r = Simulation.load(withVersion(data, 21));
         ck(r.resetFromVersion == 21, "версия 21 на Кордоне: resetFromVersion = 21 (" + r.resetFromVersion + ")");
         ck(r.day == 0, "версия 21: симуляция пересоздана (день 0)");
+
+        // Э1-16 (v25): территории зон атласа — прежний Кордон начинается заново с тем же сидом
+        Simulation t = Simulation.load(withVersion(data, 24));
+        ck(t.resetFromVersion == 24 && t.day == 0, "версия 24 на Кордоне: пересоздана, resetFromVersion = 24");
 
         Simulation z = Scenarios.create("zone", 3);
         for (int d = 0; d < 3; d++) z.step();
