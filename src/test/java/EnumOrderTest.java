@@ -22,6 +22,7 @@ public class EnumOrderTest {
     chk(Person.Role.class,"Person.Role","MEMBER","SPECIALIST","SQUAD_LEADER","DEPUTY","LEADER");
     chk(MutantType.class,"MutantType","DOG","FLESH","BOAR","SNORK","BLOODSUCKER","CHIMERA","CONTROLLER","PSEUDODOG","PSYDOG","TUSHKAN","BURER","POLTERGEIST","PSEUDOGIANT");
     chk(Good.class,"Good","FOOD","PARTS","AMMO","MEDS","GEAR","ARTIFACT","MATERIALS","PROTO","AMMO_PRO","GEAR_PRO");
+    chk(TerritoryTask.class,"TerritoryTask","WOOD","PARTS","ARTIFACTS","MUTANT","WORKSHOP","STORAGE","TRADE","SHELTER");
     boolean idx=Good.ALL.length==Good.values().length;
     for(int i=0;idx&&i<Good.ALL.length;i++) if(Good.ALL[i]!=Good.values()[i]||Good.ALL[i].ordinal()!=i) idx=false;
     ck(idx,"Good.ALL совпадает с values() и ординалами");

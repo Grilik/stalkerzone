@@ -32,7 +32,7 @@
   },
   "object": {
     "id": "<loc>.<kind>.<имя>, уникален во всём атласе",
-    "kind": ["base", "outpost", "checkpoint", "field", "lair", "cache", "trader", "exit", "landmark", "road_node"],
+    "kind": ["base", "outpost", "checkpoint", "field", "lair", "cache", "trader", "exit", "landmark", "road_node", "zone"],
     "name": "строка",
     "node": "целое, номер узла симуляции (необязательно); уникален, никогда не переиспользуется, только дописывается в конец (б3)",
     "pos": "pos",
@@ -40,6 +40,12 @@
     "site": "необязательно: { builder, mode: keep | adapt | redesign, bbox: rect, clear: [rect] }; bbox любых площадок не пересекаются; clear допустим только при mode=redesign",
     "status": ["observed", "accepted", "redesign", "new", "built", "verified", "integrated", "removed"],
     "source": "откуда взято (смарт-террейн, съёмка, ручная правка с картой задачи)",
-    "smart": "необязательно, имя смарт-террейна оригинала"
+    "smart": "необязательно, имя смарт-террейна оригинала",
+    "type": "Э1-16, kind=zone: тип территории - forest | scrap | anomaly_field | lair | industrial | ruins | crossroads | underground",
+    "area": "Э1-16, kind=zone: polygon - территория внутри area локации; у zone обязательна",
+    "potential": "Э1-16, kind=zone: { wood, parts, artifacts, mutant, workshop, storage, trade, shelter } - сила 0..1; ключей food и water нет, валидатор их запрещает (еды и воды зона не даёт). Значения выводит TerritoryPotential.derive из type и features, произвольные силы не записываются",
+    "features": "Э1-16, kind=zone: измеряемые особенности { forest: доля 0..1, buildingArea, undergroundArea, roads, lairs, fields: целые >= 0 }; источник - съёмка Э1-04 (tools/atlas/zone_features.py) и атлас",
+    "buildings": "Э1-16, kind=zone: [{ ref: id объекта атласа }] - существующие постройки TheZone внутри area зоны, пригодные под сектор; новых построек нет (стройка отложена, Э5-13)",
+    "parent": "Э1-16, kind=zone: необязательно, id объекта-узла своей локации (зона - данные узла-родителя, решение б3); у zone нет node и нет site"
   }
 }
