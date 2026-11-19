@@ -11,6 +11,8 @@ public class ZoneData extends SavedData {
     private static final String NAME = "stalkerzone_sim";
 
     public Simulation sim;
+    /** Э1-11В: отдельный сид симуляции этого мира (не сид генерации Minecraft). Сохраняется и восстанавливается. */
+    public long simSeed;
     /** Сколько тиков прошло с последнего игрового дня симуляции. */
     public int tickCounter;
     /** Локации, на которых уже построен лагерь. */
@@ -25,16 +27,26 @@ public class ZoneData extends SavedData {
     /** v1.14: живая Зона — лента КПК, тайники погибших, слухи. */
     public ru.stalkerzone.sim.ZoneLife life = new ru.stalkerzone.sim.ZoneLife();
 
-    private ZoneData(Simulation sim, int tickCounter) {
+    private ZoneData(Simulation sim, int tickCounter, long simSeed) {
         this.sim = sim;
         this.tickCounter = tickCounter;
+        this.simSeed = simSeed;
     }
 
     public static ZoneData get(MinecraftServer server) {
-        long worldSeed = server.overworld().getSeed();
+        // Э1-11В: simSeed нового мира случаен и не зависит от сида генерации Minecraft —
+        // копии TheZone делят один level-seed, общая история симуляции из него недопустима.
         return server.overworld().getDataStorage().computeIfAbsent(
                 ZoneData::load,
-                () -> new ZoneData(Scenarios.create(worldSeed), 0),
+                () -> {
+                    long seed = ru.stalkerzone.sim.SimSeed.newSeed();
+                    LOGGER.info("[stalkerzone] новый мир: simSeed={} (сценарий {})", seed, Scenarios.current());
+                    ZoneData d = new ZoneData(Scenarios.create(seed), 0, seed);
+                    // simSeed и история должны сохраниться при первом же сохранении мира,
+                    // даже если игрок вышел до первого дня симуляции (иначе сид создастся заново)
+                    d.setDirty();
+                    return d;
+                },
                 NAME);
     }
 
@@ -52,21 +64,28 @@ public class ZoneData extends SavedData {
         // v1.11: состояние хранится байтами (строка NBT ограничена 65 535 байтами, а Зона выросла)
         String state = tag.contains("simBytes") ? java.util.Base64.getEncoder().encodeToString(tag.getByteArray("simBytes")) : tag.getString("sim");
         Simulation sim = Simulation.load(state);
+        // Э1-11В: simSeed мира восстанавливается из данных мира; старые сохранения без него
+        // сохраняют историю — сид уже лежит внутри сохранения симуляции.
+        boolean hasSeed = tag.contains("simSeed");
+        long seed = ru.stalkerzone.sim.SimSeed.resolve(hasSeed, tag.getLong("simSeed"), sim.seed);
+        if (hasSeed) LOGGER.info("[stalkerzone] мир загружен: simSeed={}", seed);
+        else LOGGER.info("[stalkerzone] старое сохранение: simSeed={} взят из симуляции (история сохранена)", seed);
         // Э0-14b (D3): сохранение симуляции старой версии — Кордон начат заново. Ничего вне ZoneData не удаляется.
         if (sim.resetFromVersion >= 0) {
             LOGGER.warn("[stalkerzone] сохранение симуляции v{} → v{}: Кордон начат заново (режим {})",
                     sim.resetFromVersion, Simulation.SAVE_VERSION, ru.stalkerzone.world.WorldMode.current());
             if (!ru.stalkerzone.world.WorldMode.theZone()) {
                 // старый режим: журнал лагерей прежней симуляции не читаем — лагеря новой ставятся заново
-                ZoneData d = new ZoneData(sim, 0);
+                ZoneData d = new ZoneData(sim, 0, seed);
                 d.resetNotice = notice(sim);
                 d.setDirty(); // сброс — сразу на диск при ближайшем сохранении
                 return d;
             }
             // режим TheZone (решение а3): сброшена только симуляция; журнал постановок и чанки не трогаем
         }
-        ZoneData d = new ZoneData(sim, sim.resetFromVersion >= 0 ? 0 : tag.getInt("tick"));
-        if (sim.resetFromVersion >= 0) { d.resetNotice = notice(sim); d.setDirty(); }
+        ZoneData d = new ZoneData(sim, sim.resetFromVersion >= 0 ? 0 : tag.getInt("tick"), seed);
+        if (sim.resetFromVersion >= 0) d.resetNotice = notice(sim);
+        if (sim.resetFromVersion >= 0 || !hasSeed) d.setDirty();
         for (int id : tag.getIntArray("built")) d.built.add(id);
         int[] cy = tag.getIntArray("campY");
         for (int i = 0; i + 1 < cy.length; i += 2) d.campY.put(cy[i], cy[i + 1]);
@@ -87,6 +106,7 @@ public class ZoneData extends SavedData {
     @Override
     public CompoundTag save(CompoundTag tag) {
         tag.putByteArray("simBytes", java.util.Base64.getDecoder().decode(sim.save()));
+        tag.putLong("simSeed", simSeed); // Э1-11В: отдельный сид симуляции мира
         tag.putInt("tick", tickCounter);
         tag.putIntArray("built", built.stream().mapToInt(Integer::intValue).toArray());
         tag.putIntArray("campY", flatten(campY));
@@ -115,6 +135,7 @@ public class ZoneData extends SavedData {
 
     public void reset(long seed) {
         sim = Scenarios.create(seed);
+        simSeed = seed; // Э1-11В: явный сброс меняет и сид мира
         life = new ru.stalkerzone.sim.ZoneLife();
         hidden.clear();
         tickCounter = 0;

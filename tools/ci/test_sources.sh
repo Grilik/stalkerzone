@@ -11,4 +11,6 @@ echo src/main/java/ru/stalkerzone/client/PdaModel.java
 echo src/main/java/ru/stalkerzone/container/ContainerKind.java
 echo src/main/java/ru/stalkerzone/container/ContainerLoot.java
 echo src/main/java/ru/stalkerzone/economy/Prices.java
+echo src/main/java/ru/stalkerzone/world/golden/GoldenCopy.java
+echo src/main/java/ru/stalkerzone/client/ZoneButtonLayout.java
 ls src/test/java/*.java
