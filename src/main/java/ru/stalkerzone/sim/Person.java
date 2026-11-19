@@ -11,6 +11,13 @@ import java.io.IOException;
 public final class Person {
     public static final String[] RANKS = {"Новичок", "Опытный", "Ветеран", "Мастер"};
     public static final double[] RANK_XP = {0, 30, 90, 200};
+    /**
+     * К2: состояние «без группировки» — вольный сталкер (docs/spec/faction-hierarchy.md §3,
+     * решение 17.11). Это не id группировки и не группировка «Вольные сталкеры»: Одиночки —
+     * организованная группировка (ZoneScenario.LONERS), а вольные сталкеры группировке не
+     * принадлежат и выбирают группировку сами по характеру.
+     */
+    public static final int NONE = -1;
 
     public enum Cls {
         ASSAULT("Штурмовик"), SNIPER("Снайпер"), MEDIC("Медик"), DOCTOR("Врач"), TECH("Техник"), SCOUT("Разведчик");

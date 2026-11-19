@@ -505,6 +505,12 @@ public final class ContractBoard {
 
     private void npcResolve(Simulation s, Contract c, Random r) {
         Faction t = s.factions.get(c.taker), iss = s.factions.get(c.issuer);
+        // К2: уничтоженный исполнитель не выполняет заказы — контракт возвращается в открытые
+        if (t.members <= 0) {
+            c.status = Contract.Status.OPEN;
+            c.taker = Contract.NOBODY;
+            return;
+        }
         double p = 0.85 - 0.13 * c.difficulty + 0.002 * t.exp;
         boolean ok = r.nextDouble() < p;
         switch (c.type) {

@@ -165,6 +165,7 @@ public final class Simulation {
         for (Faction f : factions) {
             f.initMemory(nodes.size(), factions.size());
             if (f.brain == null) f.brain = new UtilityBrain();
+            f.destructionNoted = f.members <= 0; // пустые фракции сценария не логируются как уничтоженные
         }
         applyGate();
     }
@@ -204,7 +205,7 @@ public final class Simulation {
         scorcher.disabled = true;
         applyGate();
         Faction m = monolith();
-        if (m != null) m.members += 42;
+        if (m != null && m.members > 0) m.members += 42; // К2: пробуждение не воскрешает уничтоженный Монолит
         nextPostDay = day + 2;
         log("МОНОЛИТ ПРОБУДИЛСЯ: дорога к ЧАЭС открыта, начинается поход против группировок и учёных");
     }
@@ -213,7 +214,7 @@ public final class Simulation {
     private void monolithPosts() {
         if (!monolithActive || day < nextPostDay) return;
         Faction m = monolith();
-        if (m == null) return;
+        if (m == null || m.members <= 0) return; // К2: уничтоженный Монолит не занимает блокпосты
         for (Node n : nodes) {
             if (n.type == NodeType.OUTPOST && n.owner < 0) {
                 n.owner = m.id;
@@ -524,8 +525,7 @@ public final class Simulation {
                     knowledge[n.id] = Math.min(1, k + 0.07);
                     double guard = 1 + 0.6 * (1 - Arms.anomalyGuard(scout.stock));
                     if (rng.nextDouble() < 0.05 * guard * (1 - k) * Math.min(2.5, count / Math.max(1, anomaliesAt(n.id).size()))) {
-                        scout.members = Math.max(1, scout.members - 1);
-                        scout.deaths++;
+                        scout.killMembers(1); // разведчик отобран с members >= 10, гибель фактическая
                         anomalyDeaths++;
                         log(scout.name + ": разведчик погиб в аномалии у «" + n.name + "»");
                     }
@@ -537,10 +537,8 @@ public final class Simulation {
                 // заводская броня хуже держит аномалии: у армии и «импортных» гарнизонов потери выше
                 double expect = f.members / (double) Math.max(1, ownedCount(f)) * 0.0006 * (1 - k) * count / 7.0
                         * (1 + 0.6 * (1 - Arms.anomalyGuard(f.stock)));
-                int dead = Math.min(f.members - 1, randomRound(expect));
+                int dead = f.killMembers(randomRound(expect));
                 if (dead > 0) {
-                    f.members -= dead;
-                    f.deaths += dead;
                     anomalyDeaths += dead;
                     log(f.name + ": " + dead + " чел. погибло в аномалиях у «" + n.name + "»");
                 }
@@ -989,14 +987,10 @@ public final class Simulation {
         return out;
     }
 
-    /** Погиб игровой NPC фракции: симуляция теряет одного человека. */
+    /** Погиб игровой NPC фракции: симуляция теряет одного человека. Последний участник гибнет по-настоящему (К2). */
     public void npcKilled(int factionId) {
         if (factionId < 0 || factionId >= factions.size()) return;
-        Faction f = factions.get(factionId);
-        if (f.members > 1) {
-            f.members--;
-            f.deaths++;
-        }
+        factions.get(factionId).killMembers(1);
     }
 
     public Lair lairAt(int node) {
@@ -1205,7 +1199,7 @@ public final class Simulation {
         double garrison = lairGarrison(f, target);
         double force = l.strength * 0.7;
         double ratio = force / (force + garrison);
-        int dead = Math.min(f.members - 1, randomRound(garrisonPeople(f, target) * 0.15 * ratio));
+        int dead = Math.min(f.members, randomRound(garrisonPeople(f, target) * 0.15 * ratio));
         applyCasualties(f, dead);
         l.strength -= l.strength * 0.1 * (1 - ratio);
         // убитые налётом люди — добыча логова (карточка 062)
@@ -1219,9 +1213,7 @@ public final class Simulation {
     private void overrun(Lair l, Faction f, Node n, List<Lair> born) {
         damageNode(n.id, n.id == f.baseNode ? 25 : 20);
         if (n.id == f.baseNode) {
-            int dead = Math.min(f.members - 1, (int) (f.members * 0.1));
-            f.members -= dead;
-            f.deaths += dead;
+            int dead = f.killMembers((int) (f.members * 0.1));
             for (Good g : Good.ALL) {
                 int lost = (int) (f.stock.get(g) * 0.15);
                 f.stock.take(g, lost);
@@ -1610,6 +1602,15 @@ public final class Simulation {
         contracts.daily(this, rng);
         for (Faction f : factions) {
             if (f.isService()) continue;
+            // К2: событие уничтожения регистрируется один раз (отметка восстанавливается из members при загрузке)
+            if (f.members <= 0) {
+                if (!f.destructionNoted) {
+                    f.destructionNoted = true;
+                    log("Группировка «" + f.name + "» уничтожена: не осталось ни одного участника");
+                }
+            } else {
+                f.destructionNoted = false;
+            }
             phaseUpdate(f);
             recruit(f);
         }
@@ -1701,6 +1702,7 @@ public final class Simulation {
     }
 
     private void economy(Faction f) {
+        if (f.members <= 0) return; // К2: уничтоженная группировка не ест, не добывает и не крафтит
         Stock s = f.stock;
 
         // питание: на базе каждый ест 1 еду в день со склада фракции; гарнизоны точек едят со своих складов (Logistics)
@@ -1710,8 +1712,9 @@ public final class Simulation {
         int hungry = need - eaten;
         if (hungry > 0) {
             int desert = (int) Math.ceil(hungry * 0.08);
-            f.members = Math.max(1, f.members - desert);
-            if (desert >= 3) log(f.name + ": голод, ушли " + desert + " человек");
+            int left = Math.min(desert, f.members); // К2: уйти может не больше, чем есть людей
+            f.members -= left;
+            if (left >= 3) log(f.name + ": голод, ушли " + left + " человек");
         }
 
         int m = f.members;
@@ -1733,9 +1736,8 @@ public final class Simulation {
         int art = (int) expected;
         if (rng.nextDouble() < expected - art) art++;
         produce(f, Good.ARTIFACT, art, n -> n.artifactCap);
-        if (rng.nextDouble() < hunters * 0.004) {
-            f.members = Math.max(1, f.members - 1);
-            f.deaths++;
+        if (rng.nextDouble() < hunters * 0.004 && f.members > 0) {
+            f.killMembers(1); // К2: охотник гибнет по-настоящему, последний не бессмертен
             Arms.loseGear(this, s, 1);
         }
 
@@ -1800,12 +1802,9 @@ public final class Simulation {
         }
         for (Node n : nodes) damageNode(n.id, 2);
         for (Faction f : factions) {
-            if (f.isService() || f.members <= 1) continue; // сервисные и пустые фракции выброс не задевает
+            if (f.isService() || f.members <= 0) continue; // сервисные и уничтоженные фракции выброс не задевает
             if (f.fanatic && !monolithActive) continue; // спящий Монолит выброс не задевает
-            int dead = randomRound(f.members * 0.02);
-            dead = Math.min(dead, f.members - 1);
-            f.members -= dead;
-            f.deaths += dead;
+            int dead = f.killMembers(randomRound(f.members * 0.02));
             // часть застигнутых выбросом не умирает, а превращается в зомби
             if (dead > 0 && !f.fanatic) people.addZombies(f.baseNode == 0 ? 1 : f.baseNode, dead * 0.4);
             int owned = ownedCount(f);
@@ -1887,6 +1886,7 @@ public final class Simulation {
     }
 
     private void recruit(Faction f) {
+        if (f.members <= 0) return; // К2 (правило C): уничтоженная группировка не пополняется сама (ни паломники, ни призыв)
         int cap = housing(f);
         if (f.fanatic) {
             // к Монолиту стекаются паломники: бесплатно, во сне медленно (раз в 20 дней), в походе каждый день
@@ -2015,7 +2015,8 @@ public final class Simulation {
 
     private void think(Faction f) {
         // карточка 054: гарнизон (напр. военные «Малого Кордона») не действует — ни войн, ни отрядов, ни захвата
-        if (f.garrisonOnly) return;
+        // К2: уничтоженная группировка не действует — ни войн, ни торговли, ни отрядов
+        if (f.garrisonOnly || f.members <= 0) return;
         f.decayMemory();
         for (Command c : f.brain.decide(this, f, rng)) apply(f, c);
     }
@@ -2323,8 +2324,7 @@ public final class Simulation {
         }
         int gd = Math.min(c.guards, rng.nextInt(c.guards / 2 + 2));
         c.guards -= gd;
-        f.members = Math.max(1, f.members - gd);
-        f.deaths += gd;
+        f.killMembers(gd); // К2: deaths — фактическая гибель, не больше численности
         f.caravansLost++;
         f.hubRisk[c.hub()] += r * 0.6;
         if (lostUnits > 50 || gd > 0) log(f.name + ": караван попал на мутантов (потери: " + lostUnits + " ед., люди: " + gd + ")");
@@ -2355,8 +2355,7 @@ public final class Simulation {
         long cash = Stock.moveMoney(c.cargo, raider.stock, (long) (c.cargo.money * 0.7));
         int gd = Math.min(c.guards, rng.nextInt(c.guards / 2 + 2));
         c.guards -= gd;
-        f.members = Math.max(1, f.members - gd);
-        f.deaths += gd;
+        f.killMembers(gd); // К2: deaths — фактическая гибель, не больше численности
         f.caravansLost++;
         f.resent(raider.id, 0.8);
         f.hubRisk[c.hub()] += 0.5;
@@ -2371,6 +2370,10 @@ public final class Simulation {
         if (raider == null || !caravans.remove(c)) return false;
         Faction f = factions.get(c.owner);
         String loot = raidCargo(c, f, raider);
+        // К2 (правило A HQ): караван ликвидирован — остаток наличных (30%), не захваченный налётчиком,
+        // теряется через moneyBurned (образец courierLost). Захваченные 70% уже у налётчика: двойного учёта нет.
+        ledger.moneyBurned += c.cargo.money;
+        c.cargo.money = 0;
         log(raider.name + " устроили засаду на курьера «" + f.name + "» (потери курьера: " + loot + ")");
         return true;
     }
@@ -2431,18 +2434,17 @@ public final class Simulation {
     }
 
     private void applyCasualties(Faction f, int deaths) {
+        deaths = Math.max(0, deaths); // К2: отрицательные потери не «воскрешают» фракцию
         deaths = (int) Math.round(deaths * (1 - Math.min(0.4, 0.1 * factionQuality(f, BuildingType.CLINIC))));
         int meds = f.stock.take(Good.MEDS, deaths);
         ledger.destroyed[Good.MEDS.ordinal()] += meds;
         deaths = Math.max(0, deaths - meds / 2);
         // часть потерь не гибнет сразу, а попадает в медпункт ранеными (v1.6)
         int wounded = f.fanatic ? 0 : (int) Math.round(deaths * 0.4);
-        wounded = Math.min(wounded, Math.max(0, f.members - 1 - f.wounded));
+        wounded = Math.min(wounded, Math.max(0, f.members - f.wounded));
         f.wounded += wounded;
         deaths -= wounded;
-        deaths = Math.min(deaths, f.members - 1);
-        f.members -= deaths;
-        f.deaths += deaths;
+        deaths = f.killMembers(deaths); // К2: фактическая гибель, последний участник не бессмертен
         if (f.members > 0 && deaths > 0 && !f.fanatic) f.stress = Math.min(100, f.stress + 40.0 * deaths / f.members);
         Arms.loseGear(this, f.stock, deaths / 2);
     }
@@ -2450,6 +2452,7 @@ public final class Simulation {
     private void resolveWars() {
         for (Faction a : factions) {
             if (a.phase != Phase.WAR) continue;
+            if (a.members <= 0) { endWar(a); continue; } // К2: уничтоженная группировка не продолжает штурм
             Node n = nodes.get(a.warNode);
             if (n.owner == a.id) {
                 endWar(a);
@@ -2459,9 +2462,7 @@ public final class Simulation {
 
             // кто не хочет драться с Монолитом, отходит с чужой (не базовой) точки без боя
             if (a.fanatic && d != null && !d.fightMonolith && n.id != d.baseNode) {
-                int lost = Math.min(d.members - 1, randomRound(d.members * 0.02));
-                d.members -= lost;
-                d.deaths += lost;
+                d.killMembers(randomRound(d.members * 0.02));
                 n.owner = a.id;
                 a.nodesCaptured++;
                 d.nodesLost++;
@@ -2562,9 +2563,7 @@ public final class Simulation {
         damageNode(n.id, 40);
         double killed = d.scientist ? 0.7 : 0.35;
         double burned = d.scientist ? 0.5 : 0.2;
-        int dead = Math.min(d.members - 1, (int) (d.members * killed));
-        d.members -= dead;
-        d.deaths += dead;
+        int dead = d.killMembers((int) (d.members * killed)); // К2: разгром может уничтожить группировку полностью
         for (Good g : Good.ALL) {
             int lost = (int) (d.stock.get(g) * burned);
             d.stock.take(g, lost);
@@ -2639,6 +2638,44 @@ public final class Simulation {
         ledger.moneyBurned += c.cargo.money;
         c.cargo.money = 0;
         return out;
+    }
+
+    /**
+     * К2 (правило C HQ): точка расширения возрождения уничтоженной группировки вольными сталкерами.
+     * Вольные сталкеры — не группировка, а состояние человека без группировки (Person.faction ==
+     * Person.NONE, docs/spec/faction-hierarchy.md §3). Одиночки (Simulation.mercenaries()) —
+     * организованная группировка и людей на возрождение НЕ отдают; другие группировки тоже не источник,
+     * фиктивная группировка «Вольные сталкеры» не создаётся.
+     * Основатели — только люди из пула вольных (People.freeStalkers()): они физически переходят
+     * в фракцию, население Зоны сохраняется. Пул наполняет приток с Большой земли через хаб (Э6-02,
+     * ещё не реализован) — без вольных возрождение невозможно, люди «из воздуха» не берутся.
+     * Ежедневные циклы симуляции этот метод НЕ вызывают: возрождение — отдельное игровое событие,
+     * полная механика (триггеры, стоимость, территория, дипломатия) — спецификация
+     * docs/qwen/k2-faction-revival-spec.md и отдельная задача К17.
+     * Деньги и склад уничтоженной группировки не трогаются (стартовые ресурсы повторно не начисляются,
+     * двойного учёта нет). Именные и лидер восстановятся штатным maintainRoster на следующих шагах.
+     * Возвращает false, если возрождение невозможно: группировка жива, founders <= 0, вольных не хватает
+     * (без частичного перехода). Повторный вызов для уже возрождённой группировки — false (без дублирования).
+     */
+    public boolean reviveByFreeStalkers(Faction f, int founders) {
+        if (f == null || !f.isDestroyed() || founders <= 0) return false;
+        List<Person> free = people.freeStalkers();
+        if (free.size() < founders) return false;
+        int wounded = 0;
+        for (int i = 0; i < founders; i++) {
+            Person p = free.get(i);
+            p.faction = f.id;
+            p.joined = day;
+            p.role = Person.Role.MEMBER;
+            if (p.injury > 0) wounded++;
+        }
+        f.members += founders;
+        f.wounded = wounded;
+        f.phase = Phase.ACCUMULATE;
+        f.phaseDays = 0;
+        f.destructionNoted = false;
+        log("ВОЗРОЖДЕНИЕ: вольные сталкеры восстановили «" + f.name + "» (" + founders + " основателей)");
+        return true;
     }
 
     public String audit() {
@@ -2887,6 +2924,7 @@ public final class Simulation {
             for (int fi = 0; fi < loadFactions; fi++) {
                 Faction f = sim.factions.get(fi);
                 f.members = in.readInt();
+                f.destructionNoted = f.members <= 0; // уничтожение до сохранения не регистрируется повторно
                 f.stock.read(in);
                 f.phase = Phase.values()[in.readInt()];
                 f.phaseDays = in.readInt();

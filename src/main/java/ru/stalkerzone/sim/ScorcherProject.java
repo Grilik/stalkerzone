@@ -85,13 +85,12 @@ public final class ScorcherProject {
         int escortLoss = Math.min(ESCORT, ESCORT * (stage + 1) / 3 + rng.nextInt(2));
         int sciLoss = stage == 0 ? 0 : stage == 1 ? 1 + rng.nextInt(2) : 2 + rng.nextInt(3);
         double dataLoss = stage == 0 ? 10 : stage == 1 ? 30 : 50;
-        esc.members = Math.max(1, esc.members - escortLoss);
-        esc.deaths += escortLoss;
-        Arms.loseGear(sim, esc.stock, escortLoss / 2);
-        sci.members = Math.max(1, sci.members - sciLoss);
-        sci.deaths += sciLoss;
+        // К2: deaths — фактическая гибель (расчётные потери сверх численности не завышают счётчик)
+        int escDead = esc.killMembers(escortLoss);
+        Arms.loseGear(sim, esc.stock, escDead / 2);
+        int sciDead = sci.killMembers(sciLoss);
         research = Math.max(0, research - dataLoss);
-        sim.log("Прорыв сорван на этапе «" + STAGE_NAMES[stage] + "»: погибло " + escortLoss + " бойцов и "
-                + sciLoss + " учёных, потеряно " + (int) dataLoss + "% данных");
+        sim.log("Прорыв сорван на этапе «" + STAGE_NAMES[stage] + "»: погибло " + escDead + " бойцов и "
+                + sciDead + " учёных, потеряно " + (int) dataLoss + "% данных");
     }
 }

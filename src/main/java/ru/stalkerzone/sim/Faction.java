@@ -78,6 +78,11 @@ public final class Faction {
     public int nodesCaptured;
     public int nodesLost;
     public int caravansLost;
+    /**
+     * К2: отметка, что событие уничтожения уже зарегистрировано (журнал). Не сохраняется:
+     * при загрузке восстанавливается из members, чтобы уничтожение не регистрировалось повторно.
+     */
+    boolean destructionNoted;
 
     public Faction(int id, String name, int baseNode, double aggression, boolean raider, int members, Doctrine doctrine) {
         this.id = id;
@@ -96,6 +101,27 @@ public final class Faction {
     }
 
     public boolean isService() { return service; }
+
+    /**
+     * К2 (правило B HQ): группировка с нулевой численностью уничтожена. Состояние производное от members,
+     * отдельного поля в сохранении не требует. Служебные фракции (Торговцы) не участвуют в симуляции
+     * и уничтоженными не считаются. Возрождение — только отдельным событием вольных сталкеров
+     * ({@link Simulation#reviveByFreeStalkers}), ежедневные циклы его не запускают.
+     */
+    public boolean isDestroyed() { return !service && members <= 0; }
+
+    /**
+     * К2 (правило B HQ): фактическая гибель участников. Гибнет не больше, чем есть людей (расчётные
+     * потери сверх численности не завышают deaths); раненые входят в members и не могут пережить
+     * всех остальных. Возвращает фактическое число погибших.
+     */
+    public int killMembers(int n) {
+        int actual = Math.min(Math.max(0, n), members);
+        members -= actual;
+        deaths += actual;
+        wounded = Math.min(wounded, members);
+        return actual;
+    }
 
     void decayMemory() {
         for (int i = 0; i < grudge.length; i++) grudge[i] *= 0.985;
