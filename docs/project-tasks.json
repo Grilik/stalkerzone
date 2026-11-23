@@ -2922,11 +2922,7 @@
       "assignee": "Claude Code",
       "status": "REJECTED",
       "original_status": "снято",
-      "linked_requirements": [
-        "R-WLD-09",
-        "R-WLD-10",
-        "R-WLD-12"
-      ],
+      "linked_requirements": [],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064835",
@@ -2939,11 +2935,7 @@
       "assignee": "Claude Code + конвейер",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [
-        "R-BLD-09",
-        "R-NPC-03",
-        "R-ANO-02"
-      ],
+      "linked_requirements": ["R-BLD-09", "R-NPC-03", "R-ANO-02", "R-WLD-09"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064843",
@@ -2971,7 +2963,7 @@
       "assignee": "Claude Code + `@builder`",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [],
+      "linked_requirements": ["R-WLD-09", "R-WLD-10"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064858",
@@ -3016,9 +3008,7 @@
       "assignee": "Claude Code",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [
-        "R-WLD-07"
-      ],
+      "linked_requirements": ["R-WLD-07", "R-WLD-10"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064881",
@@ -3044,9 +3034,7 @@
       "assignee": "Claude Code",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [
-        "R-WLD-08"
-      ],
+      "linked_requirements": ["R-WLD-08", "R-WLD-10"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064898",
@@ -4851,7 +4839,7 @@
       "assignee": "пользователь",
       "status": "ACCEPTED",
       "original_status": "готово",
-      "linked_requirements": [],
+      "linked_requirements": ["R-TST-01"],
       "updated": "2026-11-18T00:00:00",
       "migrated_from": "roadmap.md",
       "acceptance_note": "Выполнен пользователем, отчёт в логах"
@@ -4863,7 +4851,7 @@
       "assignee": "пользователь",
       "status": "ACCEPTED",
       "original_status": "готово",
-      "linked_requirements": [],
+      "linked_requirements": ["R-TST-02"],
       "updated": "2026-11-16T00:00:00",
       "migrated_from": "roadmap.md",
       "acceptance_note": "Выполнен пользователем, этап 0 принят"
