@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "created": "2026-11-18T21:35:31.064074",
-    "updated": "2026-11-19T11:00:05+03:00",
+    "updated": "2026-11-24T00:06:58+03:00",
     "source_files": [
       "docs/requirements.json",
       "docs/roadmap.md",
@@ -154,10 +154,8 @@
       "original_status": "PARTIAL",
       "source": "§7; 06.11",
       "proof": "`KordonTunnel` (#98), `TunnelTest`; ПТ-1: **выполнен неправильно** (слова пользователя)",
-      "next_action": "**DEFERRED** — исправить при интеграции полной карты (решение 14.11); точки застав — этап 2",
-      "linked_tasks": [
-        "Э2-04"
-      ],
+      "next_action": "Перепривязка 24.11: Э2-04 снята (туннель есть в TheZone, решение 15.11). Тело туннеля — оригинал TheZone; осталось наполнение: электры, точки, 2 заставы на координатах TheZone (Э2-05) и аванпосты у туннеля (Э2-07).",
+      "linked_tasks": ["Э2-05", "Э2-07"],
       "updated": "2026-11-18T21:35:31.064114",
       "migrated_from": "requirements.json"
     },
@@ -171,10 +169,8 @@
       "original_status": "MISSING",
       "source": "§7; `07-plan-to-bridge.md`",
       "proof": "—",
-      "next_action": "этап 2 (2.3)",
-      "linked_tasks": [
-        "Э2-04"
-      ],
+      "next_action": "Перепривязка 24.11: Э2-04 снята (мост есть в TheZone, решение 15.11). Облик — TheZone как есть, полировка Э11-10 отложена; проход под мостом — Э2-12; граница — Э2-10; аванпост у моста — Э2-07. Формулировка «граница участка» устарела вместе с Малым Кордоном (15.11).",
+      "linked_tasks": ["Э2-07", "Э2-10", "Э2-12"],
       "updated": "2026-11-18T21:35:31.064116",
       "migrated_from": "requirements.json"
     },
@@ -205,10 +201,8 @@
       "original_status": "DONE_UNVERIFIED",
       "source": "карточка 003, 012",
       "proof": "`sim/Crossings`, `Gate`, `BridgePost`; `CrossingsTest`, `GateTest`",
-      "next_action": "—",
-      "linked_tasks": [
-        "Э2-04"
-      ],
+      "next_action": "Связь с Э2-04 снята 24.11 как ошибочная при миграции: требование о симуляции (sim/Crossings, Gate, BridgePost), подтверждено CrossingsTest и GateTest, к постройке в мире отношения не имеет. Открытой задачи не требует.",
+      "linked_tasks": [],
       "updated": "2026-11-18T21:35:31.064119",
       "migrated_from": "requirements.json"
     },
@@ -966,7 +960,7 @@
       "title": "Заставы одиночек не гибнут от выброса (только события)",
       "category": "Война",
       "group": "D. Группировки, война, военные",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "D6",
       "proof": "карточка Э0-17 после Э0-14a",
@@ -1085,7 +1079,7 @@
       "title": "Гибель курьера — деньги через `Ledger`",
       "category": "Караваны",
       "group": "E. Караваны, экономика, снабжение",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "P-07",
       "proof": "карточка Э0-09 (конвейер)",
@@ -2038,7 +2032,7 @@
       "title": "Порядок enum-ов (11+) и индекса `Good` под тестом",
       "category": "Тесты",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "Э0-10",
       "proof": "—",
@@ -2055,7 +2049,7 @@
       "title": "Единый реестр узлов + тест согласованности",
       "category": "Архитектура",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "Э0-11",
       "proof": "—",
@@ -2072,7 +2066,7 @@
       "title": "Круговой проход `PdaSnapshot → PdaModel` под тестом",
       "category": "Архитектура",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "Э0-12",
       "proof": "—",
@@ -2089,7 +2083,7 @@
       "title": "Сброс симуляции с логом и уведомлением игрока; мир не трогать",
       "category": "Сохранения",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "D3; Э0-14a/b",
       "proof": "—",
@@ -2106,7 +2100,7 @@
       "title": "Границы D4 и исключения записаны в правила; паспорт «видно в игре»; копии тестов совпадают",
       "category": "Конвейер",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "Э0-13, Э0-16",
       "proof": "—",
@@ -2123,7 +2117,7 @@
       "title": "`00/01/02`, `CLAUDE.md`, `05-handoff` обновлены по D1–D8 и коду; `07` в карте",
       "category": "Документы",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "Э0-06",
       "proof": "—",
@@ -2140,7 +2134,7 @@
       "title": "Метрики реального `.szl` в синтетический уровень",
       "category": "Данные",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "REJECTED",
       "original_status": "BLOCKED",
       "source": "Э0-19; D7",
       "proof": "—",
@@ -2191,7 +2185,7 @@
       "title": "ПТ-2 (приёмочный) в другой день на другой сборке после Э0-18 и Э0-14b",
       "category": "Плейтест",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "BLOCKED",
+      "status": "TESTS_PASSED",
       "original_status": "BLOCKED",
       "source": "§3.5 плана",
       "proof": "—",
@@ -2208,7 +2202,7 @@
       "title": "Отметки «проверено в игре (дата, сборка)» в чек-листах (≈319 пунктов)",
       "category": "Плейтест",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "PLANNED",
+      "status": "TESTS_PASSED",
       "original_status": "MISSING",
       "source": "P-24",
       "proof": "отметок нет",
@@ -2264,7 +2258,7 @@
         "R-ARC-04"
       ],
       "pr_number": 118,
-      "merge_commit": null,
+      "merge_commit": "1de130b",
       "updated": "2026-11-18T21:35:31.064479",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-13T18:55:28Z"
@@ -2280,7 +2274,7 @@
         "R-ARC-05"
       ],
       "pr_number": 119,
-      "merge_commit": null,
+      "merge_commit": "a53cb52",
       "updated": "2026-11-18T21:35:31.064489",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-13T19:59:57Z"
@@ -2294,7 +2288,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 124,
-      "merge_commit": null,
+      "merge_commit": "58f663b",
       "updated": "2026-11-18T21:35:31.064497",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T08:14:54Z"
@@ -2310,7 +2304,7 @@
         "R-ARC-07"
       ],
       "pr_number": 125,
-      "merge_commit": null,
+      "merge_commit": "3f394f5",
       "updated": "2026-11-18T21:35:31.064505",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T08:14:35Z"
@@ -2326,7 +2320,7 @@
         "R-ARC-06"
       ],
       "pr_number": 121,
-      "merge_commit": null,
+      "merge_commit": "95f35c2",
       "updated": "2026-11-18T21:35:31.064513",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-13T20:51:12Z"
@@ -2342,7 +2336,7 @@
         "R-ARC-13"
       ],
       "pr_number": 162,
-      "merge_commit": null,
+      "merge_commit": "e7c4c0f",
       "updated": "2026-11-18T21:35:31.064521",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:34:06Z"
@@ -2358,7 +2352,7 @@
         "R-ARC-02"
       ],
       "pr_number": 122,
-      "merge_commit": null,
+      "merge_commit": "467a8d5",
       "updated": "2026-11-18T21:35:31.064528",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-13T21:23:01Z"
@@ -2374,7 +2368,7 @@
         "R-ARC-03"
       ],
       "pr_number": 123,
-      "merge_commit": null,
+      "merge_commit": "a581fc2",
       "updated": "2026-11-18T21:35:31.064536",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-13T21:29:13Z"
@@ -2390,7 +2384,7 @@
         "R-CAR-03"
       ],
       "pr_number": 146,
-      "merge_commit": null,
+      "merge_commit": "62e9ec8",
       "updated": "2026-11-18T21:35:31.064544",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T16:20:10Z"
@@ -2406,7 +2400,7 @@
         "R-ARC-08"
       ],
       "pr_number": 151,
-      "merge_commit": null,
+      "merge_commit": "811e096",
       "updated": "2026-11-18T21:35:31.064552",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T18:16:25Z"
@@ -2422,7 +2416,7 @@
         "R-ARC-09"
       ],
       "pr_number": 159,
-      "merge_commit": null,
+      "merge_commit": "09fe915",
       "updated": "2026-11-18T21:35:31.064559",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:33:19Z"
@@ -2438,7 +2432,7 @@
         "R-ARC-10"
       ],
       "pr_number": 164,
-      "merge_commit": null,
+      "merge_commit": "94a663c",
       "updated": "2026-11-18T21:35:31.064567",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:42:41Z"
@@ -2452,7 +2446,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 166,
-      "merge_commit": null,
+      "merge_commit": "4bb200c",
       "updated": "2026-11-18T21:35:31.064576",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:51:19Z"
@@ -2468,7 +2462,7 @@
         "R-ARC-11"
       ],
       "pr_number": 144,
-      "merge_commit": null,
+      "merge_commit": "a65b926",
       "updated": "2026-11-18T21:35:31.064584",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T16:15:18Z"
@@ -2482,7 +2476,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 160,
-      "merge_commit": null,
+      "merge_commit": "30ff7cd",
       "updated": "2026-11-18T21:35:31.064591",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:33:36Z"
@@ -2496,7 +2490,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 120,
-      "merge_commit": null,
+      "merge_commit": "3cf502c",
       "updated": "2026-11-18T21:35:31.064599",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-13T20:50:33Z"
@@ -2512,7 +2506,7 @@
         "R-ARC-12"
       ],
       "pr_number": 168,
-      "merge_commit": null,
+      "merge_commit": "649f944",
       "updated": "2026-11-18T21:35:31.064607",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:56:57Z"
@@ -2528,7 +2522,7 @@
         "R-WAR-03"
       ],
       "pr_number": 148,
-      "merge_commit": null,
+      "merge_commit": "48465f2",
       "updated": "2026-11-18T21:35:31.064620",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T17:43:08Z"
@@ -2570,7 +2564,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 131,
-      "merge_commit": null,
+      "merge_commit": "40c4a14",
       "updated": "2026-11-18T21:35:31.064646",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T10:15:28Z"
@@ -2584,7 +2578,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 135,
-      "merge_commit": null,
+      "merge_commit": "c9a0e82",
       "updated": "2026-11-18T21:35:31.064654",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T12:47:49Z"
@@ -2598,7 +2592,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 138,
-      "merge_commit": null,
+      "merge_commit": "1918792",
       "updated": "2026-11-18T21:35:31.064663",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T14:42:51Z"
@@ -2614,7 +2608,7 @@
         "R-TST-03"
       ],
       "pr_number": 172,
-      "merge_commit": null,
+      "merge_commit": "5d390b8",
       "updated": "2026-11-18T21:35:31.064670",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T05:35:22Z"
@@ -2628,7 +2622,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 154,
-      "merge_commit": null,
+      "merge_commit": "f76a623",
       "updated": "2026-11-18T21:35:31.064678",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T20:48:56Z"
@@ -2655,7 +2649,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 200,
-      "merge_commit": null,
+      "merge_commit": "e0562e6",
       "updated": "2026-11-18T21:35:31.064693",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-17T22:25:52Z"
@@ -2671,7 +2665,7 @@
         "R-WLD-15"
       ],
       "pr_number": 140,
-      "merge_commit": null,
+      "merge_commit": "cbfc957",
       "updated": "2026-11-18T21:35:31.064701",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T14:45:58Z"
@@ -2685,7 +2679,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 149,
-      "merge_commit": null,
+      "merge_commit": "6b8041c",
       "updated": "2026-11-18T21:35:31.064708",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T17:43:25Z"
@@ -2699,7 +2693,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 156,
-      "merge_commit": null,
+      "merge_commit": "d5e59fb",
       "updated": "2026-11-18T21:35:31.064716",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:02:25Z"
@@ -2715,7 +2709,7 @@
         "R-WLD-02"
       ],
       "pr_number": 198,
-      "merge_commit": null,
+      "merge_commit": "3af4c93",
       "updated": "2026-11-18T21:35:31.064723",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-17T22:24:58Z"
@@ -2729,7 +2723,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 169,
-      "merge_commit": null,
+      "merge_commit": "7d336d3",
       "updated": "2026-11-18T21:35:31.064731",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T21:57:11Z"
@@ -2745,7 +2739,7 @@
         "R-WLD-01"
       ],
       "pr_number": 142,
-      "merge_commit": null,
+      "merge_commit": "c7b8f34",
       "updated": "2026-11-18T21:35:31.064739",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T14:51:48Z"
@@ -2761,7 +2755,7 @@
         "R-WLD-14"
       ],
       "pr_number": 192,
-      "merge_commit": null,
+      "merge_commit": "f789584",
       "updated": "2026-11-18T21:35:31.064748",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T18:19:00Z"
@@ -2789,7 +2783,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 147,
-      "merge_commit": null,
+      "merge_commit": "107456b",
       "updated": "2026-11-18T21:35:31.064764",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T17:42:16Z"
@@ -2803,7 +2797,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 141,
-      "merge_commit": null,
+      "merge_commit": "a23318a",
       "updated": "2026-11-18T21:35:31.064772",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T14:48:51Z"
@@ -2817,7 +2811,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 193,
-      "merge_commit": null,
+      "merge_commit": "aca779a",
       "updated": "2026-11-18T21:35:31.064779",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T18:19:08Z"
@@ -2831,7 +2825,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 189,
-      "merge_commit": null,
+      "merge_commit": "3e92289",
       "updated": "2026-11-18T21:35:31.064787",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T12:38:37Z"
@@ -2861,7 +2855,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 183,
-      "merge_commit": null,
+      "merge_commit": "3830f53",
       "updated": "2026-11-18T21:35:31.064802",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T17:34:49Z"
@@ -2928,11 +2922,7 @@
       "assignee": "Claude Code",
       "status": "REJECTED",
       "original_status": "снято",
-      "linked_requirements": [
-        "R-WLD-09",
-        "R-WLD-10",
-        "R-WLD-12"
-      ],
+      "linked_requirements": [],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064835",
@@ -2945,11 +2935,7 @@
       "assignee": "Claude Code + конвейер",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [
-        "R-BLD-09",
-        "R-NPC-03",
-        "R-ANO-02"
-      ],
+      "linked_requirements": ["R-BLD-09", "R-NPC-03", "R-ANO-02", "R-WLD-09"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064843",
@@ -2977,7 +2963,7 @@
       "assignee": "Claude Code + `@builder`",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [],
+      "linked_requirements": ["R-WLD-09", "R-WLD-10"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064858",
@@ -3022,9 +3008,7 @@
       "assignee": "Claude Code",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [
-        "R-WLD-07"
-      ],
+      "linked_requirements": ["R-WLD-07", "R-WLD-10"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064881",
@@ -3050,9 +3034,7 @@
       "assignee": "Claude Code",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": [
-        "R-WLD-08"
-      ],
+      "linked_requirements": ["R-WLD-08", "R-WLD-10"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064898",
@@ -3067,7 +3049,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 187,
-      "merge_commit": null,
+      "merge_commit": "5d9293d",
       "updated": "2026-11-18T21:35:31.064906",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T12:39:00Z"
@@ -3107,7 +3089,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 170,
-      "merge_commit": null,
+      "merge_commit": "5d50bb8",
       "updated": "2026-11-18T21:35:31.064929",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-15T22:17:37Z"
@@ -3147,7 +3129,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 176,
-      "merge_commit": null,
+      "merge_commit": "4b86bf9",
       "updated": "2026-11-18T21:35:31.064951",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T07:09:06Z"
@@ -3161,7 +3143,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 173,
-      "merge_commit": null,
+      "merge_commit": "92a4838",
       "updated": "2026-11-18T21:35:31.064958",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T05:35:38Z"
@@ -3241,7 +3223,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 190,
-      "merge_commit": null,
+      "merge_commit": "3ed63cc",
       "updated": "2026-11-18T21:35:31.065006",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T12:39:30Z"
@@ -3534,7 +3516,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 195,
-      "merge_commit": null,
+      "merge_commit": "2bea1fc",
       "updated": "2026-11-18T21:35:31.065171",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T18:19:23Z"
@@ -4250,7 +4232,7 @@
       "original_status": null,
       "linked_requirements": [],
       "pr_number": 182,
-      "merge_commit": null,
+      "merge_commit": "e10dc0e",
       "updated": "2026-11-18T21:35:31.065564",
       "migrated_from": "roadmap.md",
       "merged_at": "2026-11-16T09:34:07Z"
@@ -4857,7 +4839,7 @@
       "assignee": "пользователь",
       "status": "ACCEPTED",
       "original_status": "готово",
-      "linked_requirements": [],
+      "linked_requirements": ["R-TST-01"],
       "updated": "2026-11-18T00:00:00",
       "migrated_from": "roadmap.md",
       "acceptance_note": "Выполнен пользователем, отчёт в логах"
@@ -4869,7 +4851,7 @@
       "assignee": "пользователь",
       "status": "ACCEPTED",
       "original_status": "готово",
-      "linked_requirements": [],
+      "linked_requirements": ["R-TST-02"],
       "updated": "2026-11-16T00:00:00",
       "migrated_from": "roadmap.md",
       "acceptance_note": "Выполнен пользователем, этап 0 принят"
