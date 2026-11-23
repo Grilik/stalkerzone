@@ -38,7 +38,7 @@
 
 ## Карточки конвейера
 Из решения г): К2, К3, К13 → Э6-01; К4 → Э6-02; К9 → Э7-06; К10 → Э7-02; К11 → Э7-04 (критерий по г-П9: «занятие зоны», а не «доставка стройматериалов»); К12 → Э8-01; К16 → Э8-10. К8 отложена.
-Новые (написать в 3б): К17 `InjuryStateTest` (Э6-04) · К18 `SkillGrowthTest` (Э6-07) · К19 `RelationsMemoryTest` (Э6-08) · К20 `LifePathTest` (Э6-09) · К21 `CaptivityTest` (Э6-03) · К22 `MoneyTransferTest` (Э8-04) · К23 `PriceDynamicsTest` (Э8-09) · К24 `FoodImportTest` (Э8-08) · К25 `ContractEscrowTest` (Э8-05) · К26 `FactionEconomyTest` (Э8-07) · К27 `MilitaryChainTest` (Э7-03) · К28 `DiplomacyTest` (Э7-05) · К29 `LeaderSuccessionTest` (Э7-08) · К30 `PersonalityTest` (Э6-06) · К31 `FourteenForcesTest` (Э7-01) · К32 `LocationAddTest` (Э5-02).
+Новые (написать в 3б): К17 `InjuryStateTest` (Э6-04) · К18 `SkillGrowthTest` (Э6-11) · К19 `RelationsMemoryTest` (Э6-08) · К20 `LifePathTest` (Э6-09) · К21 `CaptivityTest` (Э6-03) · К22 `MoneyTransferTest` (Э8-04) · К23 `PriceDynamicsTest` (Э8-09) · К24 `FoodImportTest` (Э8-08) · К25 `ContractEscrowTest` (Э8-05) · К26 `FactionEconomyTest` (Э8-07) · К27 `MilitaryChainTest` (Э7-03) · К28 `DiplomacyTest` (Э7-05) · К29 `LeaderSuccessionTest` (Э7-08) · К30 `PersonalityTest` (Э6-06) · К31 `FourteenForcesTest` (Э7-01) · К32 `LocationAddTest` (Э5-02).
 
 ## Где нужен пользователь
 | Задача | Что нужно |

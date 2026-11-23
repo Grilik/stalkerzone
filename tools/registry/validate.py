@@ -27,7 +27,9 @@ def validate_registry(registry_path):
         with open(registry_path, encoding="utf-8") as f:
             registry = json.load(f)
     except Exception as e:
-        return [f"Failed to load registry: {e}"], []
+        msg = f"Failed to load registry: {e}"
+        print(f"❌ {msg}")
+        return [msg], []
 
     entities = registry.get("entities", [])
 
@@ -106,6 +108,6 @@ def validate_registry(registry_path):
     return errors, warnings
 
 if __name__ == "__main__":
-    registry_path = Path(__file__).resolve().parent.parent.parent / "docs" / "project-tasks.json"
+    registry_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent.parent / "docs" / "project-tasks.json"
     errors, warnings = validate_registry(registry_path)
     sys.exit(1 if errors else 0)
