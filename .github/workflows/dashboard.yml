@@ -9,14 +9,14 @@ on:
   pull_request_target:
     types: [opened, reopened, closed, ready_for_review]
   schedule:
-    - cron: '7,37 * * * *'   # проверки PR и сборка main меняются без событий выше
+    - cron: '7,37 * * * *'
   workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: read
   checks: read
-  actions: read
+  actions: write          # удаление артефактов прошлых попыток этого же run
   pages: write
   id-token: write
 
@@ -39,8 +39,24 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 -I tools/dashboard/build.py _site
+      # При перезапуске джоба артефакт прошлой попытки остаётся в run,
+      # и deploy-pages падает на "Multiple artifacts". Чистим заранее.
+      - name: Убрать артефакты github-pages прошлых попыток
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
+            -q '.artifacts[] | select(.name=="github-pages") | .id' \
+            | while read -r id; do
+                echo "удаляю артефакт прошлой попытки: $id"
+                gh api -X DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$id" || true
+              done
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+      # API артефактов отстаёт от загрузки: наблюдалось Found 0 через 0.49 с
+      # после успешного upload. Пауза с запасом.
+      - name: Пауза перед деплоем
+        run: sleep 15
       - id: deploy
         uses: actions/deploy-pages@v4
