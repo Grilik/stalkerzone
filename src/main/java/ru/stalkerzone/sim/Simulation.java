@@ -33,7 +33,7 @@ public final class Simulation {
     };
 
     /** Версия формата сохранения. Менять только вместе с чтением старых версий в {@link #load}. */
-    public static final int SAVE_VERSION = 24; // v24 (Э8-10/К16): книга мутантов Ledger.mutantsBorn / mutantsDied
+    public static final int SAVE_VERSION = 25; // v25 (Э1-16): территории зон атласа — потенциал, занятие, локальная задача, запас
 
     public final long seed;
     public int day;
@@ -148,6 +148,8 @@ public final class Simulation {
     public final GlobalMarket world = new GlobalMarket();
     /** Склады точек, конвои снабжения, контракт учёных с армией (v1.10). */
     public final Logistics logistics = new Logistics();
+    /** Э1-16: территории зон атласа (kind=zone) — потенциал, занятие группировкой, локальные задачи. */
+    public final Territories territories = new Territories();
 
     Random rng = new Random();
 
@@ -1615,6 +1617,7 @@ public final class Simulation {
             recruit(f);
         }
         mutantsDaily();
+        territories.daily(day); // Э1-16: только восстановление природного запаса зон, производства нет
     }
 
     // ------------------------------------------------------------------ доступ для подсистем
@@ -2854,6 +2857,8 @@ public final class Simulation {
                 out.writeInt(c.lairTotal);
                 out.writeInt(c.lairKilled);
             }
+            // v25 (Э1-16): территории зон атласа — определения и состояние (занятие, задача, запас)
+            territories.write(out);
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
@@ -2898,6 +2903,8 @@ public final class Simulation {
             if (version < 23 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v24 (Э8-10): книга мутантов в Ledger — Кордон, как при каждой смене версии, начинается заново
             if (version < 24 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
+            // v25 (Э1-16): территории зон атласа — Кордон, как при каждой смене версии, начинается заново
+            if (version < 25 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
@@ -3070,6 +3077,8 @@ public final class Simulation {
                     }
                 }
             }
+            // v25 (Э1-16): территории зон атласа; у старых сохранений секции нет — территории определяет мир (ZoneData)
+            if (version >= 25) sim.territories.read(in);
             // Э8-10: снимок книги мутантов — по загруженным логовам (счётчики пришли из сохранения)
             sim.mutantCensus.clear();
             for (Lair l : sim.lairs) sim.mutantCensus.put(l, l.mutantCount());

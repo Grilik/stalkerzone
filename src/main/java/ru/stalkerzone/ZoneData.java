@@ -42,6 +42,7 @@ public class ZoneData extends SavedData {
                     long seed = ru.stalkerzone.sim.SimSeed.newSeed();
                     LOGGER.info("[stalkerzone] новый мир: simSeed={} (сценарий {})", seed, Scenarios.current());
                     ZoneData d = new ZoneData(Scenarios.create(seed), 0, seed);
+                    defineTerritories(d.sim);
                     // simSeed и история должны сохраниться при первом же сохранении мира,
                     // даже если игрок вышел до первого дня симуляции (иначе сид создастся заново)
                     d.setDirty();
@@ -64,6 +65,7 @@ public class ZoneData extends SavedData {
         // v1.11: состояние хранится байтами (строка NBT ограничена 65 535 байтами, а Зона выросла)
         String state = tag.contains("simBytes") ? java.util.Base64.getEncoder().encodeToString(tag.getByteArray("simBytes")) : tag.getString("sim");
         Simulation sim = Simulation.load(state);
+        defineTerritories(sim);
         // Э1-11В: simSeed мира восстанавливается из данных мира; старые сохранения без него
         // сохраняют историю — сид уже лежит внутри сохранения симуляции.
         boolean hasSeed = tag.contains("simSeed");
@@ -133,8 +135,24 @@ public class ZoneData extends SavedData {
         return out;
     }
 
+    /**
+     * Э1-16: территории зон атласа (kind=zone). Определения и потенциал — из ресурсов мода,
+     * состояние занятия и запаса — из сохранения симуляции (секция v25). Старые сохранения
+     * без секции получают территории с полным запасом и без владельца.
+     */
+    private static void defineTerritories(Simulation sim) {
+        if (!sim.territories.isEmpty()) return;
+        try {
+            sim.territories.define(ru.stalkerzone.sim.Territories.fromAtlas(
+                    ru.stalkerzone.zonemap.atlas.Atlas.loadResources()));
+        } catch (RuntimeException e) {
+            LOGGER.error("[stalkerzone] атлас: территории зон не прочитаны", e);
+        }
+    }
+
     public void reset(long seed) {
         sim = Scenarios.create(seed);
+        defineTerritories(sim);
         simSeed = seed; // Э1-11В: явный сброс меняет и сид мира
         life = new ru.stalkerzone.sim.ZoneLife();
         hidden.clear();
