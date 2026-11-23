@@ -1,0 +1,38 @@
+# Реестр — единственный источник истины проекта. Проверка на каждом PR,
+# который его трогает: статусы, уникальность ID, висячие связи, симметрия связей.
+name: registry
+
+on:
+  pull_request:
+    paths:
+      - 'docs/project-tasks.json'
+      - 'tools/registry/**'
+      - '.github/workflows/registry.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/project-tasks.json'
+      - 'tools/registry/**'
+      - '.github/workflows/registry.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: registry-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Валидатор реестра
+        run: python3 -I tools/registry/validate.py
+      - name: Симметрия связей требование - задача
+        run: python3 -I tools/registry/check_links.py
