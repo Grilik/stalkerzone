@@ -154,10 +154,8 @@
       "original_status": "PARTIAL",
       "source": "§7; 06.11",
       "proof": "`KordonTunnel` (#98), `TunnelTest`; ПТ-1: **выполнен неправильно** (слова пользователя)",
-      "next_action": "**DEFERRED** — исправить при интеграции полной карты (решение 14.11); точки застав — этап 2",
-      "linked_tasks": [
-        "Э2-04"
-      ],
+      "next_action": "Перепривязка 24.11: Э2-04 снята (туннель есть в TheZone, решение 15.11). Тело туннеля — оригинал TheZone; осталось наполнение: электры, точки, 2 заставы на координатах TheZone (Э2-05) и аванпосты у туннеля (Э2-07).",
+      "linked_tasks": ["Э2-05", "Э2-07"],
       "updated": "2026-11-18T21:35:31.064114",
       "migrated_from": "requirements.json"
     },
@@ -171,10 +169,8 @@
       "original_status": "MISSING",
       "source": "§7; `07-plan-to-bridge.md`",
       "proof": "—",
-      "next_action": "этап 2 (2.3)",
-      "linked_tasks": [
-        "Э2-04"
-      ],
+      "next_action": "Перепривязка 24.11: Э2-04 снята (мост есть в TheZone, решение 15.11). Облик — TheZone как есть, полировка Э11-10 отложена; проход под мостом — Э2-12; граница — Э2-10; аванпост у моста — Э2-07. Формулировка «граница участка» устарела вместе с Малым Кордоном (15.11).",
+      "linked_tasks": ["Э2-07", "Э2-10", "Э2-12"],
       "updated": "2026-11-18T21:35:31.064116",
       "migrated_from": "requirements.json"
     },
@@ -205,10 +201,8 @@
       "original_status": "DONE_UNVERIFIED",
       "source": "карточка 003, 012",
       "proof": "`sim/Crossings`, `Gate`, `BridgePost`; `CrossingsTest`, `GateTest`",
-      "next_action": "—",
-      "linked_tasks": [
-        "Э2-04"
-      ],
+      "next_action": "Связь с Э2-04 снята 24.11 как ошибочная при миграции: требование о симуляции (sim/Crossings, Gate, BridgePost), подтверждено CrossingsTest и GateTest, к постройке в мире отношения не имеет. Открытой задачи не требует.",
+      "linked_tasks": [],
       "updated": "2026-11-18T21:35:31.064119",
       "migrated_from": "requirements.json"
     },
