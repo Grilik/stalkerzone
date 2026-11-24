@@ -36,3 +36,5 @@ jobs:
         run: python3 -I tools/registry/validate.py
       - name: Симметрия связей требование - задача
         run: python3 -I tools/registry/check_links.py
+      - name: Целостность зависимостей
+        run: python3 -I tools/registry/check_deps.py
