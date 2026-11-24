@@ -12,7 +12,7 @@
 set -u
 cd "$(git rev-parse --show-toplevel)"
 GOLDEN=${1:-run/stalkerzone/golden}
-WORK=${2:-C:/MineStalker/TheZone-work-fresh}
+WORK=${2:-C:/MineStalker/TheZone-work}
 LOG=/tmp/sz-e1-11.log
 START_TIMEOUT=${SMOKE_START_TIMEOUT:-900}
 WORLD="ZoneSmoke-$(date +%s)"

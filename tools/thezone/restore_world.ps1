@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$BackupName,
-    [string]$WorldPath = "C:\MineStalker\TheZone-work-fresh",
+    [string]$WorldPath = "C:\MineStalker\TheZone-work",
     [string]$BackupRoot = "C:\MineStalker\08_BACKUPS\thezone-backups",
     [switch]$Force
 )
