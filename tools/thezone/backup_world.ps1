@@ -2,7 +2,7 @@
 # Использование: .\backup_world.ps1 [-Label "описание"]
 
 param(
-    [string]$WorldPath = "C:\MineStalker\TheZone-work-fresh",
+    [string]$WorldPath = "C:\MineStalker\TheZone-work",
     [string]$BackupRoot = "C:\MineStalker\08_BACKUPS\thezone-backups",
     [string]$Label = ""
 )

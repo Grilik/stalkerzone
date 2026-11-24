@@ -2,7 +2,7 @@
 import json, os
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-W = "C:/MineStalker/stalkerzone-git/.claude/worktrees/p1/"
+W = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")).replace("\\", "/") + "/"
 atlas = json.load(open(W + "src/main/resources/data/stalkerzone/atlas/locations/cordon.json", encoding="utf-8"))
 M = np.load("C:/MineStalker/TheZone-work-survey/mosaic.npz")
 ox, oz = M["origin"]
