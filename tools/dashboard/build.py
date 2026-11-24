@@ -26,8 +26,8 @@ try:
         STATUS_LABEL as UNIFIED_STATUS_LABEL
     )
     UNIFIED_REGISTRY_AVAILABLE = True
-except ImportError:
-    UNIFIED_REGISTRY_AVAILABLE = False
+except ImportError as e:
+    raise SystemExit("Не импортируется tools/registry/utils.py: %s" % e)
 
 REPO = os.environ.get("GITHUB_REPOSITORY", "Grilik/stalkerzone")
 ROADMAP = "docs/roadmap.md"
@@ -43,6 +43,7 @@ RLABEL = {"DONE_TESTED": "проверено в игре", "DONE_UNVERIFIED": "�
           "DOCUMENTED_ONLY": "только описано", "MISSING": "нет", "BLOCKED": "заблокировано",
           "DEFERRED": "отложено", "CANCELLED": "отменено"}
 RORDER = ["DONE_TESTED", "DONE_UNVERIFIED", "PARTIAL", "BLOCKED", "DOCUMENTED_ONLY", "MISSING", "DEFERRED", "CANCELLED"]
+RORDER_REG = ["GAME_VERIFIED", "ACCEPTED", "TESTS_PASSED", "CODE_COMPLETE", "IN_PROGRESS", "PLANNED", "BLOCKED", "DEFERRED", "REJECTED"]
 
 
 def gh(path):
@@ -259,6 +260,21 @@ def req_badges(reqs):
     return f"<span class='rq' title='требования реестра'>{dots}</span>"
 
 
+def req_badges_reg(reqs):
+    """Точки требований из статусов единого реестра (подшаг 2а)."""
+    if not reqs:
+        return ""
+    cnt = {}
+    for r in reqs:
+        k = r.get("status", "?")
+        cnt[k] = cnt.get(k, 0) + 1
+    dots = "".join(
+        f"<i class='rd {k}' title='{UNIFIED_STATUS_LABEL.get(k, k)}: {v}'></i>" * v
+        for k, v in sorted(cnt.items(),
+                           key=lambda kv: RORDER_REG.index(kv[0]) if kv[0] in RORDER_REG else 99))
+    return f"<span class='rq' title='требования реестра'>{dots}</span>"
+
+
 def parse_qwen_progress():
     """Парсит docs/qwen/progress.md: таблица с задачами Qwen."""
     if not os.path.isfile(QWEN_PROGRESS):
@@ -286,9 +302,6 @@ def parse_qwen_progress():
 
 def build_unified_registry_section():
     """Построить секцию статистики единого реестра (C2: все статусы в разбивке, устойчивость к отсутствующим ключам)."""
-    if not UNIFIED_REGISTRY_AVAILABLE:
-        return ""
-
     try:
         registry = load_registry()
         requirements = get_entities_by_type(registry, "requirement")
@@ -336,24 +349,58 @@ def build_unified_registry_section():
         html += "</section>"
         return html
     except Exception as e:
-        return f"<p>Ошибка секции реестра: {esc(str(e))}</p>"
+        raise SystemExit("Секция реестра не собрана: %s" % e)
 
 
 def build(out_dir):
     text = open(ROADMAP, encoding="utf-8").read()
     stages, about = parse_roadmap(text), parse_about(text)
     spec = parse_spec(SPEC)
-    reqs = json.load(open(REQS, encoding="utf-8"))["requirements"] if os.path.isfile(REQS) else []
+    registry = load_registry()
+    reg_tasks = {e["id"]: e for e in get_entities_by_type(registry, "task")}
+    reqs = get_entities_by_type(registry, "requirement")
     by_task = {}
     for r in reqs:
-        by_task.setdefault(r.get("task"), []).append(r)
-    task_ids = {t["id"] for s in stages for t in s["tasks"]}
-    orphan = [r for r in reqs if r.get("task") not in task_ids and r.get("task") != "снято"]
+        for tid in (r.get("linked_tasks") or []):
+            by_task.setdefault(tid, []).append(r)
+    # orphan больше не считается — все требования из реестра имеют linked_tasks или не должны быть в отчёте
 
     prs = load_prs()
+
+    def reg_pr(reg):
+        pn = reg.get("pr_number") if isinstance(reg, dict) else None
+        return next((q for q in prs if q["number"] == pn), None) if pn else None
+
+    def mk(tid, reg):
+        return {"id": tid, "title": reg.get("title", ""), "who": reg.get("assignee", ""),
+                "manual": "", "status": to_dashboard_status(reg.get("status", "PLANNED")),
+                "pr": reg_pr(reg), "reqs": by_task.get(tid, [])}
+
+    present = {t["id"] for st in stages for t in st["tasks"]}
+    extras = {}
+    for tid, reg in reg_tasks.items():
+        if tid in present:
+            continue
+        m = re.match(r"^(Э\d+)[a-z]?-", tid)
+        extras.setdefault(m.group(1) if m else "ДОП", []).append((tid, reg))
+    for st in stages:
+        for tid, reg in sorted(extras.pop(st["id"], [])):
+            st["tasks"].append(mk(tid, reg))
+    if extras.get("ДОП"):
+        stages.append({"id": "ДОП", "title": "Карточки вне этапов: конвейер, аудит, штаб",
+                       "goal": "", "done_when": "", "spec": [],
+                       "tasks": [mk(tid, reg) for tid, reg in sorted(extras.pop("ДОП"))]})
+
     for st in stages:
         for t in st["tasks"]:
-            t["status"], t["pr"] = status_of(t, prs)
+            reg = reg_tasks.get(t["id"])
+            if reg is not None:
+                t["title"] = reg.get("title", t["title"])
+                t["who"] = reg.get("assignee", t["who"])
+                t["status"] = to_dashboard_status(reg.get("status", "PLANNED"))
+                t["pr"] = reg_pr(reg) or t.get("pr")
+            else:
+                t["status"], t["pr"] = status_of(t, prs)
             t["reqs"] = by_task.get(t["id"], [])
         counted = [t for t in st["tasks"] if t["status"] not in ("later", "dropped")]
         st["done"] = sum(t["status"] == "done" for t in counted)
@@ -390,7 +437,7 @@ def build(out_dir):
     a(f"<a class='tile' href='#stages'><div class='k'>Весь мод</div><div class='v'>{allp}%</div><div class='bar'><i style='width:{allp}%'></i></div>"
       f"<div class='muted'>{all_d} из {all_t} задач · этапов {len(stages)}</div></a>")
     if reqs:
-        rt = sum(r["status"] == "DONE_TESTED" for r in reqs)
+        rt = sum(r["status"] == "GAME_VERIFIED" for r in reqs)
         ru = sum(r["status"] == "DONE_UNVERIFIED" for r in reqs)
         a(f"<a class='tile' href='#reqs'><div class='k'>Требования (реестр)</div><div class='v'>{rt} из {len(reqs)}</div>"
           f"<div class='bar two'><i style='width:{round(100 * rt / len(reqs))}%'></i><i class='b' style='width:{round(100 * ru / len(reqs))}%'></i></div>"
@@ -471,10 +518,10 @@ def build(out_dir):
             link = f" <a href='{esc(t['pr']['html_url'])}'>#{t['pr']['number']}</a>" if t["pr"] else ""
             when = f" <span class='muted'>{ago(t['pr']['merged_at'])}</span>" if t["pr"] and t["pr"].get("merged_at") else ""
             ppath, ptext = prompt_of(t["id"])
-            search = " ".join([t["id"], t["title"], t["who"]] + [r["id"] + " " + r["req"] for r in t["reqs"]]).lower()
+            search = " ".join([t["id"], t["title"], t["who"]] + [r["id"] + " " + r.get("title", "") for r in t["reqs"]]).lower()
             a(f"<details class='task {t['status']}' id='t-{esc(t['id'])}' data-s='{t['status']}' data-w='{esc(t['who'])}' data-q='{esc(search)}'>"
               f"<summary><b class='tid'>{esc(t['id'])}</b><span class='tt'>{md_inline(t['title'])}</span>"
-              f"<span class='sum-r'>{req_badges(t['reqs'])}<span class='muted small'>{esc(t['who'])}</span>"
+              f"<span class='sum-r'>{req_badges_reg(t['reqs'])}<span class='muted small'>{esc(t['who'])}</span>"
               f"<span class='st {t['status']}'>{LABEL[t['status']]}</span></span></summary><div class='task-body'>")
             a(f"<p><b>Исполнитель:</b> {esc(t['who'])} · <b>Статус:</b> {LABEL[t['status']]}{link}{when}"
               + (" · <span class='muted'>промпт есть</span>" if ptext else "") + "</p>")
@@ -483,7 +530,7 @@ def build(out_dir):
             if t["reqs"]:
                 a("<p><b>Требования реестра, которые закрывает задача:</b></p><ul class='rl'>")
                 for r in t["reqs"]:
-                    a(f"<li><span class='rs {r['status']}'>{RLABEL.get(r['status'], r['status'])}</span> <b>{esc(r['id'])}</b> {md_inline(r['req'])}"
+                    a(f"<li><span class='rs {r['status']}'>{UNIFIED_STATUS_LABEL.get(r['status'], r['status'])}</span> <b>{esc(r['id'])}</b> {md_inline(r.get('title', ''))}"
                       + (f"<div class='muted small'>Сейчас: {md_inline(r['proof'])}</div>" if r.get("proof") and r["proof"] != "—" else "")
                       + (f"<div class='muted small'>Следующий шаг (реестр): {md_inline(r['next'])}</div>" if r.get("next") and r["next"] != "—" else "")
                       + "</li>")
@@ -508,21 +555,19 @@ def build(out_dir):
             if k in cnt:
                 a(f"<span class='rs {k}'>{RLABEL[k]}: {cnt[k]}</span>")
         a("</div>")
-        if orphan:
-            a("<div class='card warn'><b>Требования без задачи:</b> " + ", ".join(esc(r["id"]) for r in orphan) + "</div>")
         groups = []
         for r in reqs:
             if not groups or groups[-1][0] != r["group"]:
                 groups.append((r["group"], []))
             groups[-1][1].append(r)
         for g, rs in groups:
-            ok = sum(r["status"] == "DONE_TESTED" for r in rs)
+            ok = sum(r["status"] == "GAME_VERIFIED" for r in rs)
             a(f"<details class='stg'><summary>{esc(g)}<span class='sum-r'>проверено {ok}/{len(rs)}</span></summary><div class='stg-body'><table class='rt'>")
             for r in rs:
                 task = r.get("task")
                 tl = "снято (15.11)" if task == "снято" else f"<a href='#t-{esc(task)}'>{esc(task)}</a>"
-                a(f"<tr><td class='nowrap'><b>{esc(r['id'])}</b></td><td>{md_inline(r['req'])}</td>"
-                  f"<td class='nowrap'><span class='rs {r['status']}'>{RLABEL.get(r['status'], r['status'])}</span></td><td class='nowrap'>{tl}</td></tr>")
+                a(f"<tr><td class='nowrap'><b>{esc(r['id'])}</b></td><td>{md_inline(r.get('title', ''))}</td>"
+                  f"<td class='nowrap'><span class='rs {r['status']}'>{UNIFIED_STATUS_LABEL.get(r['status'], r['status'])}</span></td><td class='nowrap'>{tl}</td></tr>")
             a("</table></div></details>")
         a("</section>")
 
@@ -548,14 +593,13 @@ def build(out_dir):
     for p in merged:
         a(f"<tr><td class='muted nowrap'>{ago(p['merged_at'])}</td><td><a href='{esc(p['html_url'])}'>#{p['number']}</a> {md_inline(p['title'])}</td></tr>")
     a("</table></section>")
-    a(f"<footer class='muted'>Этапы и задачи — <a href='https://github.com/{REPO}/blob/main/{ROADMAP}'>{ROADMAP}</a>, требования — "
-      f"<a href='https://github.com/{REPO}/blob/main/{REQS}'>{REQS}</a>, <b>единый реестр</b> — <a href='https://github.com/{REPO}/blob/main/docs/project-tasks.json'>project-tasks.json</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>, Qwen — <a href='https://github.com/{REPO}/blob/main/{QWEN_PROGRESS}'>{QWEN_PROGRESS}</a>. "
+    a(f"<footer class='muted'>Этапы и задачи — <a href='https://github.com/{REPO}/blob/main/{ROADMAP}'>{ROADMAP}</a>,  <b>единый реестр</b> — <a href='https://github.com/{REPO}/blob/main/docs/project-tasks.json'>project-tasks.json</a>, мастер-проект — <a href='https://github.com/{REPO}/blob/main/{SPEC}'>{SPEC}</a>, промпты — <a href='https://github.com/{REPO}/tree/main/{PROMPTS}'>{PROMPTS}</a>, Qwen — <a href='https://github.com/{REPO}/blob/main/{QWEN_PROGRESS}'>{QWEN_PROGRESS}</a>. "
       "Статус задачи ставится сам: PR с номером задачи в начале заголовка.</footer></main><script>" + JS + "</script></body></html>")
 
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write("".join(h))
-    print(f"страница: {len(stages)} этапов, {sum(len(s['tasks']) for s in stages)} задач, требований {len(reqs)} (без задачи {len(orphan)}), "
+    print(f"страница: {len(stages)} этапов, {sum(len(s['tasks']) for s in stages)} задач, требований {len(reqs)} (без задачи {sum(1 for r in reqs if not (r.get('linked_tasks') or []))}), "
           f"PR {len(prs)}, открытых {len(open_prs)}")
 
 
@@ -616,6 +660,7 @@ details.task.done>summary .tt,details.task.later>summary,details.task.dropped>su
 .rd.DONE_TESTED,.rs.DONE_TESTED{background:#2f5a35}.rd.DONE_UNVERIFIED,.rs.DONE_UNVERIFIED{background:#2b4a72}.rd.PARTIAL,.rs.PARTIAL{background:#6b5a1e}
 .rd.BLOCKED,.rs.BLOCKED{background:#7a4a1e}.rd.MISSING,.rs.MISSING{background:#6e2c25}.rd.DOCUMENTED_ONLY,.rs.DOCUMENTED_ONLY{background:#3d4540}
 .rd.DEFERRED,.rs.DEFERRED,.rd.CANCELLED,.rs.CANCELLED{background:#2c322e}
+.rd.ACCEPTED,.rs.ACCEPTED,.rd.GAME_VERIFIED,.rs.GAME_VERIFIED{background:#2f5a35}.rd.TESTS_PASSED,.rs.TESTS_PASSED,.rd.CODE_COMPLETE,.rs.CODE_COMPLETE{background:#2b4a72}.rd.IN_PROGRESS,.rs.IN_PROGRESS{background:#6b5a1e}.rd.PLANNED,.rs.PLANNED{background:#3d4540}.rd.REJECTED,.rs.REJECTED{background:#2c322e}
 .rs{display:inline-block;padding:0 7px;border-radius:9px;font-size:12px;color:#e8eee6;white-space:nowrap}
 ul.rl{padding-left:18px;margin:4px 0 8px}ul.rl li{margin:6px 0}
 .legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
