@@ -2871,6 +2871,7 @@
         "R-WLD-05",
         "R-WLD-06"
       ],
+      "depends_on": ["Э2-13"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064810",
@@ -2888,6 +2889,7 @@
         "R-BLD-03",
         "R-BLD-10"
       ],
+      "depends_on": ["Э1-14"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064819",
@@ -2964,6 +2966,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": ["R-WLD-09", "R-WLD-10"],
+      "depends_on": ["Э2-13", "Э1-15"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064858",
@@ -3075,6 +3078,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
+      "depends_on": ["Э1-14"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064921",
@@ -3156,6 +3160,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
+      "depends_on": ["Э2-17"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064966",
@@ -3169,6 +3174,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
+      "depends_on": ["Э2-21"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064974",
@@ -3830,6 +3836,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
+      "depends_on": ["Э2-23"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065351",
@@ -3902,6 +3909,7 @@
       "linked_requirements": [
         "R-NPC-05"
       ],
+      "depends_on": ["Э2-23", "Э6-01"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-19T11:00:05+03:00",
@@ -3947,6 +3955,7 @@
       "linked_requirements": [
         "R-NPC-02"
       ],
+      "depends_on": ["Э2-15"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065414",
@@ -3977,6 +3986,7 @@
       "linked_requirements": [
         "R-AI-06"
       ],
+      "depends_on": ["Э2-17"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065429",
@@ -4084,6 +4094,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
+      "depends_on": ["Э2-21"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065484",
@@ -4320,6 +4331,7 @@
       "linked_requirements": [
         "R-ANO-03"
       ],
+      "depends_on": ["Э2-18"],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065611",
@@ -4813,6 +4825,7 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
+      "depends_on": ["Э6-02", "Э6-01"],
       "tests": [],
       "pr_number": null,
       "merge_commit": null,
