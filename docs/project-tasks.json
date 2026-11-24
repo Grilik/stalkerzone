@@ -2,7 +2,7 @@
   "meta": {
     "version": 2,
     "created": "2026-11-18T21:35:31.064074",
-    "updated": "2026-11-24T01:06:58+03:00",
+    "updated": "2026-11-24T15:20:26+03:00",
     "source_files": [
       "docs/requirements.json",
       "docs/roadmap.md",
@@ -5080,6 +5080,17 @@
       "merge_commit": null,
       "updated": "2026-11-24T13:16:34+03:00",
       "migrated_from": "решение штаба 24.11.2026"
+    },
+    {
+      "id": "И-01",
+      "type": "idea",
+      "title": "исследовать qwen board как среду передачи работ между агентами после сброса квоты",
+      "status": "NEW",
+      "source": "чат 24.11.2026",
+      "converted_to": null,
+      "notes": "",
+      "created": "2026-11-24T15:20:26+03:00",
+      "updated": "2026-11-24T15:20:26+03:00"
     }
   ]
 }

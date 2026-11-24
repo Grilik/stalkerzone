@@ -3,7 +3,7 @@
 Сгенерировано из docs/project-tasks.json. Руками не править:
 измените реестр и запустите python tools/registry/gen.py
 
-Состояние реестра: 2026-11-24T01:06:58+03:00
+Состояние реестра: 2026-11-24T15:20:26+03:00
 
 Вставлять в новый чат вместе с DECISIONS.md и RULES.md.
 При вопросах об ID — ещё docs/01-IDS.md.
@@ -23,9 +23,9 @@
 
 ## Состояние
 
-Сущностей 320: требований 132, задач 188.
+Сущностей 321: требований 132, задач 188.
 
-PLANNED 145 · TESTS_PASSED 94 · GAME_VERIFIED 32 · IN_PROGRESS 29 · DEFERRED 11 · REJECTED 6 · ACCEPTED 3
+PLANNED 145 · TESTS_PASSED 94 · GAME_VERIFIED 32 · IN_PROGRESS 29 · DEFERRED 11 · REJECTED 6 · ACCEPTED 3 · NEW 1
 
 | Этап | Закрыто | Всего |
 |---|---|---|
@@ -100,6 +100,13 @@ PLANNED 145 · TESTS_PASSED 94 · GAME_VERIFIED 32 · IN_PROGRESS 29 · DEFERRED
 
 Обязательные ворота PR: build/build и build/server.
 dashboard/page — витрина, не ворота.
+
+## Inbox идей
+
+NEW: 1, DEFERRED: 0.
+Заведение: python tools/registry/idea.py add "текст".
+
+- И-01 [NEW] исследовать qwen board как среду передачи работ между агентами после сброса квот
 
 ## Правила и решения
 

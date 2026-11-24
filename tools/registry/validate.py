@@ -9,13 +9,18 @@ from pathlib import Path
 from collections import Counter
 
 # Допустимые статусы
-VALID_STATUSES = {
-    "PLANNED", "IN_PROGRESS", "CODE_COMPLETE", "TESTS_PASSED",
-    "GAME_VERIFIED", "ACCEPTED", "BLOCKED", "DEFERRED", "REJECTED"
+VALID_STATUSES_BY_TYPE = {
+    "task": {"PLANNED", "IN_PROGRESS", "CODE_COMPLETE", "TESTS_PASSED",
+             "GAME_VERIFIED", "ACCEPTED", "BLOCKED", "DEFERRED", "REJECTED"},
+    "requirement": {"PLANNED", "IN_PROGRESS", "CODE_COMPLETE", "TESTS_PASSED",
+                    "GAME_VERIFIED", "ACCEPTED", "BLOCKED", "DEFERRED", "REJECTED"},
+    "subtask": {"PLANNED", "IN_PROGRESS", "CODE_COMPLETE", "TESTS_PASSED",
+                "GAME_VERIFIED", "ACCEPTED", "BLOCKED", "DEFERRED", "REJECTED"},
+    "idea": {"NEW", "DEFERRED", "TAKEN", "REJECTED"}
 }
 
 # Допустимые типы сущностей
-VALID_TYPES = {"requirement", "task", "subtask"}
+VALID_TYPES = {"requirement", "task", "subtask", "idea"}
 
 def validate_registry(registry_path):
     """Проверить целостность реестра."""
@@ -54,11 +59,12 @@ def validate_registry(registry_path):
         errors.append(f"Invalid entity types: {', '.join(invalid_types[:10])}")
 
     # 4. Проверка статусов
-    invalid_statuses = [
-        f"{e.get('id')}:{e.get('status')}"
-        for e in entities
-        if e.get("status") not in VALID_STATUSES
-    ]
+    invalid_statuses = []
+    for e in entities:
+        et = e.get("type", "?")
+        allowed = VALID_STATUSES_BY_TYPE.get(et, set())
+        if e.get("status") not in allowed:
+            invalid_statuses.append(f"{e.get('id')}:{e.get('status')}")
     if invalid_statuses:
         errors.append(f"Invalid statuses: {', '.join(invalid_statuses[:10])}")
 
