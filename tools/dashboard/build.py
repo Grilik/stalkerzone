@@ -5,7 +5,7 @@ python3 -I tools/dashboard/build.py [выходная папка]   (по умо
 Данные GitHub — через `gh api` (в Actions — GH_TOKEN). Статус задачи:
   ручной (колонка «статус»: готово / отложено / снято / в работе / ждёт) — главнее;
   иначе слит PR, заголовок которого начинается с номера задачи → готово; открыт такой PR → в работе; иначе ждёт.
-Требования (реестр проекта) привязаны к задачам полем task в docs/requirements.json.
+Требования реестра привязаны к задачам полем linked_tasks в docs/project-tasks.json.
 """
 import datetime
 import html
@@ -438,7 +438,7 @@ def build(out_dir):
       f"<div class='muted'>{all_d} из {all_t} задач · этапов {len(stages)}</div></a>")
     if reqs:
         rt = sum(r["status"] == "GAME_VERIFIED" for r in reqs)
-        ru = sum(r["status"] == "DONE_UNVERIFIED" for r in reqs)
+        ru = sum(r["status"] == "TESTS_PASSED" for r in reqs)
         a(f"<a class='tile' href='#reqs'><div class='k'>Требования (реестр)</div><div class='v'>{rt} из {len(reqs)}</div>"
           f"<div class='bar two'><i style='width:{round(100 * rt / len(reqs))}%'></i><i class='b' style='width:{round(100 * ru / len(reqs))}%'></i></div>"
           f"<div class='muted'>проверено в игре · ещё {ru} есть в коде без проверки</div></a>")
@@ -564,8 +564,15 @@ def build(out_dir):
             ok = sum(r["status"] == "GAME_VERIFIED" for r in rs)
             a(f"<details class='stg'><summary>{esc(g)}<span class='sum-r'>проверено {ok}/{len(rs)}</span></summary><div class='stg-body'><table class='rt'>")
             for r in rs:
-                task = r.get("task")
-                tl = "снято (15.11)" if task == "снято" else f"<a href='#t-{esc(task)}'>{esc(task)}</a>"
+                linked = r.get("linked_tasks") or []
+                if not linked:
+                    tl = "—"
+                elif linked[0] == "снято":
+                    tl = "снято (15.11)"
+                else:
+                    first = linked[0]
+                    more = f" +{len(linked)-1}" if len(linked) > 1 else ""
+                    tl = f"<a href='#t-{esc(first)}'>{esc(first)}</a>{more}"
                 a(f"<tr><td class='nowrap'><b>{esc(r['id'])}</b></td><td>{md_inline(r.get('title', ''))}</td>"
                   f"<td class='nowrap'><span class='rs {r['status']}'>{UNIFIED_STATUS_LABEL.get(r['status'], r['status'])}</span></td><td class='nowrap'>{tl}</td></tr>")
             a("</table></div></details>")
