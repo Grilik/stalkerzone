@@ -1,9 +1,9 @@
-# Резервное копирование рабочей копии TheZone
+﻿# Резервное копирование рабочей копии TheZone
 # Использование: .\backup_world.ps1 [-Label "описание"]
 
 param(
-    [string]$WorldPath = "C:\MineStalker\TheZone-work",
-    [string]$BackupRoot = "C:\MineStalker\08_BACKUPS\thezone-backups",
+    [string]$WorldPath = "C:\MineStalker\world\work",
+    [string]$BackupRoot = "C:\MineStalker\backups\thezone-backups",
     [string]$Label = ""
 )
 
@@ -69,3 +69,4 @@ Write-Host "Размер: $([math]::Round($backupSize, 1)) МБ"
 Write-Host "MD5:    checksums.md5"
 Write-Host ""
 Write-Host "Для отката используй: .\restore_world.ps1 -BackupName '$backupName'"
+

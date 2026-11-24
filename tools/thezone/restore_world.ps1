@@ -1,11 +1,11 @@
-# Откат рабочей копии TheZone из резерва
+﻿# Откат рабочей копии TheZone из резерва
 # Использование: .\restore_world.ps1 -BackupName "2026-11-18_14-30-00"
 
 param(
     [Parameter(Mandatory=$true)]
     [string]$BackupName,
-    [string]$WorldPath = "C:\MineStalker\TheZone-work",
-    [string]$BackupRoot = "C:\MineStalker\08_BACKUPS\thezone-backups",
+    [string]$WorldPath = "C:\MineStalker\world\work",
+    [string]$BackupRoot = "C:\MineStalker\backups\thezone-backups",
     [switch]$Force
 )
 
@@ -95,3 +95,4 @@ if (Test-Path $checksumInWorld) {
 Write-Host ""
 Write-Host "=== ОТКАТ ЗАВЕРШЁН ===" -ForegroundColor Green
 Write-Host "Рабочая копия восстановлена из: $BackupName"
+
