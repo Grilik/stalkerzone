@@ -41,3 +41,5 @@
 | Временные файлы gitlog.txt, gitstatus.txt, gs.txt удалены (были от 05.11) | устаревшие снапшоты состояния, не нужны после перехода на реестр и CI | решение 13.11 "оставить" |
 
 | А34: Реструктуризация локальных папок | единая структура C:\MineStalker\ (world, dumps, backups, quarantine, docs-local), скрипты используют tools/paths.py и tools/paths.ps1 | разрозненные папки в корне C:\MineStalker |
+
+| Реструктуризация C:\MineStalker (А34) | 17 папок → 10 логических групп: world/, dumps/, backups/, quarantine/, docs-local/, tools/, modpack/, playtest/, stalkerzone-git/; централизованные конфиги tools/paths.py и tools/paths.ps1 | разрозненная структура, дублирование путей в скриптах |
