@@ -52,14 +52,15 @@
       "title": "Уровни оригинала 1:1 (.szl) — рельеф, воксели, деревья, дороги",
       "category": "Мир",
       "group": "A. Фундамент: мир, география, дороги",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§4, §5",
       "proof": "`world/xray/*`; лог ПТ-1: `l01_escape` 894 797 байт, 189 714 вокселей; П-31.10, П-05.11",
       "next_action": "Э0-19 метрики реального уровня",
       "linked_tasks": [],
-      "updated": "2026-11-18T21:35:31.064100",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-WLD-04",
@@ -82,16 +83,17 @@
       "title": "Площадки: плато AUTO с откосом, расчистка, постройки сверху, места NPC своего узла",
       "category": "Мир",
       "group": "A. Фундамент: мир, география, дороги",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§8; `01-malyi-kordon.md`",
       "proof": "`zonemap/build/Site`, `Prefabs.SITES`; лог ПТ-1 строка площадок; ПТ-1 — 9 площадок проверены",
       "next_action": "—",
       "linked_tasks": [
         "Э2-01"
       ],
-      "updated": "2026-11-18T21:35:31.064104",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-WLD-06",
@@ -99,16 +101,17 @@
       "title": "Высоты площадок согласованы с рельефом (проблема 5)",
       "category": "Мир",
       "group": "A. Фундамент: мир, география, дороги",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "`00-start-here.md` п.5",
       "proof": "лог 14.11: земля (2,−1)=80,0; (154,−75)=95,9; (−35,−8)=80,4",
       "next_action": "записать в `00` (Э0-06)",
       "linked_tasks": [
         "Э2-01"
       ],
-      "updated": "2026-11-18T21:35:31.064108",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-WLD-07",
@@ -155,7 +158,10 @@
       "source": "§7; 06.11",
       "proof": "`KordonTunnel` (#98), `TunnelTest`; ПТ-1: **выполнен неправильно** (слова пользователя)",
       "next_action": "Перепривязка 24.11: Э2-04 снята (туннель есть в TheZone, решение 15.11). Тело туннеля — оригинал TheZone; осталось наполнение: электры, точки, 2 заставы на координатах TheZone (Э2-05) и аванпосты у туннеля (Э2-07).",
-      "linked_tasks": ["Э2-05", "Э2-07"],
+      "linked_tasks": [
+        "Э2-05",
+        "Э2-07"
+      ],
       "updated": "2026-11-18T21:35:31.064114",
       "migrated_from": "requirements.json"
     },
@@ -170,7 +176,11 @@
       "source": "§7; `07-plan-to-bridge.md`",
       "proof": "—",
       "next_action": "Перепривязка 24.11: Э2-04 снята (мост есть в TheZone, решение 15.11). Облик — TheZone как есть, полировка Э11-10 отложена; проход под мостом — Э2-12; граница — Э2-10; аванпост у моста — Э2-07. Формулировка «граница участка» устарела вместе с Малым Кордоном (15.11).",
-      "linked_tasks": ["Э2-07", "Э2-10", "Э2-12"],
+      "linked_tasks": [
+        "Э2-07",
+        "Э2-10",
+        "Э2-12"
+      ],
       "updated": "2026-11-18T21:35:31.064116",
       "migrated_from": "requirements.json"
     },
@@ -263,16 +273,17 @@
       "title": "Облик по обмерам оригинала (гибрид), образец — южный блокпост",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§8; 31.10",
       "proof": "`zonemap/build/Kordon*`, `docs/kordon_objects`; П-05.11 «нравятся», ПТ-1 9 площадок",
       "next_action": "доводка по замечаниям",
       "linked_tasks": [
         "Э2-03"
       ],
-      "updated": "2026-11-18T21:35:31.064127",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-02",
@@ -280,16 +291,17 @@
       "title": "Деревня: 7 изб по оригиналу, 2 подвала у костра, забор «люками», стены 4 блока",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "05.11, 06.11",
       "proof": "`KordonVillage` (#70, #72, #76), `VillageTest`; П-05.11, ПТ-1",
       "next_action": "—",
       "linked_tasks": [
         "Э2-02"
       ],
-      "updated": "2026-11-18T21:35:31.064128",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-03",
@@ -297,16 +309,17 @@
       "title": "Бункер Сидоровича врыт в склон, торговец в комнате, без охраны",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "05.11",
       "proof": "`KordonBunker` (#65, #68), `BunkerTest`; П-05.11, ПТ-1",
       "next_action": "—",
       "linked_tasks": [
         "Э2-02"
       ],
-      "updated": "2026-11-18T21:35:31.064130",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-04",
@@ -331,16 +344,17 @@
       "title": "АТП — база бандитов по обмеру, уровни 0–3",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "06.11 23:50",
       "proof": "`KordonATP` (#101, #103), `AtpTest`; ПТ-1",
       "next_action": "декор узла — этап 2",
       "linked_tasks": [
         "Э2-03"
       ],
-      "updated": "2026-11-18T21:35:31.064134",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-06",
@@ -348,16 +362,17 @@
       "title": "Элеватор — малая застава одиночек",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "06.11",
       "proof": "`KordonElevator` (#106), `ElevatorTest`; ПТ-1",
       "next_action": "—",
       "linked_tasks": [
         "Э2-03"
       ],
-      "updated": "2026-11-18T21:35:31.064135",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-07",
@@ -365,16 +380,17 @@
       "title": "Свалка А6 + застава О12 (зона без уровней, застава 0–3)",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "06.11",
       "proof": "`KordonDump` (#86), `KordonDumpTest`; ПТ-1",
       "next_action": "Строитель, этап 2",
       "linked_tasks": [
         "Э2-03"
       ],
-      "updated": "2026-11-18T21:35:31.064137",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-08",
@@ -382,16 +398,17 @@
       "title": "Застава О7 у вагончика (детализированный вагончик)",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "01.11",
       "proof": "`KordonWagon` (#83); ПТ-1",
       "next_action": "этап 2",
       "linked_tasks": [
         "Э2-03"
       ],
-      "updated": "2026-11-18T21:35:31.064138",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-09",
@@ -416,16 +433,17 @@
       "title": "FramedBlocks для кровель/откосов/рам с ванильным запасом",
       "category": "Постройки",
       "group": "B. Строительство, базы, сектора",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "05.11",
       "proof": "`Framed`, #71, #73, #77 (замер BE 4→256); ПТ-1 с FramedBlocks 9.4.3",
       "next_action": "кровли всех построек (решение #77)",
       "linked_tasks": [
         "Э2-02"
       ],
-      "updated": "2026-11-18T21:35:31.064142",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-BLD-11",
@@ -739,16 +757,17 @@
       "title": "Тактический ИИ отряда: укрытия, перебежки, приказы, медики позади",
       "category": "ИИ",
       "group": "C. NPC, население, ИИ",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§12, §25",
       "proof": "`TacticalCombatGoal`, `SquadOrders`, `TacticsTest`; арена в облаке; П-31.10 «ИИ нравится»",
       "next_action": "—",
       "linked_tasks": [
         "Э10-04"
       ],
-      "updated": "2026-11-18T21:35:31.064178",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-AI-03",
@@ -1096,8 +1115,8 @@
       "title": "Закон сохранения, `Ledger`, ежедневный аудит",
       "category": "Экономика",
       "group": "E. Караваны, экономика, снабжение",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§17",
       "proof": "`Ledger`, `Simulation.audit()`; 1440 дней × 6 сидов; `TradeTest`",
       "next_action": "—",
@@ -1105,8 +1124,9 @@
         "Э4-04",
         "А2"
       ],
-      "updated": "2026-11-19T10:23:26+03:00",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ECO-02",
@@ -1114,16 +1134,17 @@
       "title": "Торговцы: цена от запаса, спред, касса, лимит ввоза; рынок Большой земли",
       "category": "Экономика",
       "group": "E. Караваны, экономика, снабжение",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§17",
       "proof": "`GlobalMarket`, `TradeService`; П-31.10 (с замечанием о бюджете → 025)",
       "next_action": "—",
       "linked_tasks": [
         "Э3-05"
       ],
-      "updated": "2026-11-18T21:35:31.064220",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ECO-03",
@@ -1233,16 +1254,17 @@
       "title": "Аномалии с анимациями и эффектами; поля по районам; смещение после выброса внутри зоны",
       "category": "Аномалии",
       "group": "F. Аномалии, артефакты, мутанты, север",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§19",
       "proof": "`AnomalyManager`, `AnomalyDistrict`; П-31.10, П-05.11",
       "next_action": "—",
       "linked_tasks": [
         "Э9-02"
       ],
-      "updated": "2026-11-18T21:35:31.064232",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ANO-02",
@@ -1267,16 +1289,17 @@
       "title": "Выброс: предупреждение, гроза, красный эффект, укрытия, последствия",
       "category": "Аномалии",
       "group": "F. Аномалии, артефакты, мутанты, север",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§19",
       "proof": "`EmissionEvent`, `ClientEmission` (030); П-31.10 «выброс хорош»",
       "next_action": "—",
       "linked_tasks": [
         "Э9-07"
       ],
-      "updated": "2026-11-18T21:35:31.064236",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ANO-04",
@@ -1318,16 +1341,17 @@
       "title": "Каталог, появление у границы аномалии после выброса, пояс, контейнеры, продажа",
       "category": "Артефакты",
       "group": "F. Аномалии, артефакты, мутанты, север",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§20",
       "proof": "`ArtifactDef`, `Artifacts`, `Belt`; П-31.10",
       "next_action": "—",
       "linked_tasks": [
         "Э9-05"
       ],
-      "updated": "2026-11-18T21:35:31.064242",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-MUT-01",
@@ -1335,16 +1359,17 @@
       "title": "13 видов в мире, логова копят силу, набеги, зачистка, новые логова",
       "category": "Мутанты",
       "group": "F. Аномалии, артефакты, мутанты, север",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§21",
       "proof": "`MutantManager`, `Lair*`; П-31.10",
       "next_action": "—",
       "linked_tasks": [
         "Э9-01"
       ],
-      "updated": "2026-11-18T21:35:31.064244",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-MUT-02",
@@ -1471,16 +1496,17 @@
       "title": "КПК игрока: карта-граф, контракты, события, группировки, лаборатории, лента",
       "category": "КПК",
       "group": "G. КПК, интерфейсы, задания",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "v1.3–1.14",
       "proof": "`PdaScreen`, `PdaService`; плейтесты",
       "next_action": "—",
       "linked_tasks": [
         "Э3-02"
       ],
-      "updated": "2026-11-18T21:35:31.064260",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-PDA-02",
@@ -1658,16 +1684,17 @@
       "title": "TaCZ как основа; ганпак «Оружие Зоны»; кустарное/заводское",
       "category": "Оружие",
       "group": "H. Бой, снаряжение, выживание",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§25",
       "proof": "`compat/*`, `szguns_pack`; ПТ-1 с TaCZ 1.1.8",
       "next_action": "Э0 (тест)",
       "linked_tasks": [
         "Э10-01"
       ],
-      "updated": "2026-11-18T21:35:31.064279",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-CMB-02",
@@ -1726,16 +1753,17 @@
       "title": "Вес и ячейки, рюкзаки, вес патронов/денег",
       "category": "Инвентарь",
       "group": "H. Бой, снаряжение, выживание",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§25",
       "proof": "`Weight`, `Carry`, `TaczWeight` (П-10)",
       "next_action": "—",
       "linked_tasks": [
         "Э10-03"
       ],
-      "updated": "2026-11-18T21:35:31.064287",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-CMB-06",
@@ -1777,16 +1805,17 @@
       "title": "Мораль STEADY/SHAKEN/PANIC/BROKEN, паника, бегство",
       "category": "Бой",
       "group": "H. Бой, снаряжение, выживание",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§25",
       "proof": "`Morale`, `FleeGoal`; арена v1.16",
       "next_action": "—",
       "linked_tasks": [
         "Э10-04"
       ],
-      "updated": "2026-11-18T21:35:31.064292",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-SRV-01",
@@ -1794,16 +1823,17 @@
       "title": "Усталость и сон, радиация, пси, выброс, перерождение в деревне/на базе",
       "category": "Выживание",
       "group": "H. Бой, снаряжение, выживание",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§25",
       "proof": "`PlayerNeeds`, `Radiation`, `PlayerStart`; плейтесты",
       "next_action": "—",
       "linked_tasks": [
         "Э10-07"
       ],
-      "updated": "2026-11-18T21:35:31.064295",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-SRV-02",
@@ -1845,16 +1875,17 @@
       "title": "Свои блоки Зоны, встроенный текстурпак, личный пак ТЧ, 3D-пропсы и техника",
       "category": "Визуал",
       "group": "I. Звук, визуал, анимации",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§27",
       "proof": "`ZoneBlocks`, `ZonePacks`, `GeneratedProps`, `VehicleBlock`",
       "next_action": "—",
       "linked_tasks": [
         "Э11-03"
       ],
-      "updated": "2026-11-18T21:35:31.064300",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-VIS-02",
@@ -1896,16 +1927,17 @@
       "title": "Модели мутантов, скин по фракции, рендер рюкзака, красный выброс",
       "category": "Анимации",
       "group": "I. Звук, визуал, анимации",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "v1.2–П-10",
       "proof": "`MutantModels`, `StalkerRenderer`, `DeathBackpackRenderer`",
       "next_action": "—",
       "linked_tasks": [
         "Э11-01"
       ],
-      "updated": "2026-11-18T21:35:31.064305",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-01",
@@ -1913,16 +1945,17 @@
       "title": "Чистое ядро `sim`/`zonemap` без Minecraft; CI компилирует отдельно",
       "category": "Архитектура",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§29",
       "proof": "`tools/ci/test_sources.sh`, CI",
       "next_action": "—",
       "linked_tasks": [
         "Э4-01"
       ],
-      "updated": "2026-11-18T21:35:31.064307",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-02",
@@ -1930,16 +1963,17 @@
       "title": "Единый API записи блоков при загрузке чанка + тест запрета обходов + поведенческая проверка BE",
       "category": "Архитектура",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "§29; Э0-07",
       "proof": "`ObjPropBlock.replaceBlockEntity`, `ChunkLoadPlaceTest`, `zone wallbe` в CI (`wallbe: OK`), PR #122",
       "next_action": "ПТ-2",
       "linked_tasks": [
         "Э0-07"
       ],
-      "updated": "2026-11-18T21:35:31.064308",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-03",
@@ -1947,16 +1981,17 @@
       "title": "Счётчик подмен блоков воздухом; провал CI при >0",
       "category": "Архитектура",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "Э0-08",
       "proof": "`ZoneMapPlacer`, `ZoneWorld`, PR #123; ПТ-1 `substitutions=0`",
       "next_action": "—",
       "linked_tasks": [
         "Э0-08"
       ],
-      "updated": "2026-11-18T21:35:31.064310",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-04",
@@ -1964,16 +1999,17 @@
       "title": "Релиз `nightly` только после зелёных `build` и `server`; таймауты тестов; список упавших",
       "category": "CI",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "Э0-01",
       "proof": "`build.yml` (#118); 13.11 ворота сработали при сбое Modrinth",
       "next_action": "—",
       "linked_tasks": [
         "Э0-01"
       ],
-      "updated": "2026-11-18T21:35:31.064313",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-05",
@@ -1981,16 +2017,17 @@
       "title": "Сервер в CI: 9 площадок + периметр, TPS, сторож, аудит, лог без ошибок вне белого списка",
       "category": "CI",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "Э0-02",
       "proof": "`server_smoke.sh`, `smoke_allow.txt` (#119)",
       "next_action": "этап 0.5 (с игроком)",
       "linked_tasks": [
         "Э0-02"
       ],
-      "updated": "2026-11-18T21:35:31.064316",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-06",
@@ -1998,16 +2035,17 @@
       "title": "Чистый индекс (`bin/`, логи), концы строк `.gitattributes`, нормализация в 7 тестах",
       "category": "Git",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "Э0-15, Э0-05",
       "proof": "#120, #121; `FramedTest` зелёный на CRLF",
       "next_action": "—",
       "linked_tasks": [
         "Э0-05"
       ],
-      "updated": "2026-11-18T21:35:31.064317",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-ARC-07",
@@ -2168,16 +2206,17 @@
       "title": "ПТ-1 (предварительный): ≥15 мин, обзор 20, 9 площадок, без «СТОРОЖ», «Saving worlds», строка высот и размер `.szl`",
       "category": "Плейтест",
       "group": "J. Архитектура, качество, процесс (этап 0)",
-      "status": "TESTS_PASSED",
-      "original_status": "DONE_TESTED",
+      "status": "GAME_VERIFIED",
+      "original_status": "TESTS_PASSED",
       "source": "Э0-03; §3.5 плана",
       "proof": "лог 14.11 18:16–18:32: 15 мин 5 с, СТОРОЖ 0, substitutions=0, Saving worlds, все строки; пользователь: 9 площадок ок, туннель неправильный",
       "next_action": "слить #124, записать результат",
       "linked_tasks": [
         "ПТ-1"
       ],
-      "updated": "2026-11-18T21:35:31.064461",
-      "migrated_from": "requirements.json"
+      "updated": "2026-11-24T14:20:39+03:00",
+      "migrated_from": "requirements.json",
+      "notes": "24.11 миграция: статус перенесён из requirements.json (DONE_TESTED → GAME_VERIFIED). Основание — отметка плейтеста ПТ-1 или ПТ-2, см. requirements.json."
     },
     {
       "id": "R-TST-02",
@@ -2838,7 +2877,11 @@
       "status": "TESTS_PASSED",
       "original_status": null,
       "linked_requirements": [],
-      "tests": ["TerritoryPotentialTest", "AtlasTest", "SaveResetTest"],
+      "tests": [
+        "TerritoryPotentialTest",
+        "AtlasTest",
+        "SaveResetTest"
+      ],
       "pr_number": 209,
       "merge_commit": "601a612",
       "merged_at": "2026-11-23T19:29:36Z",
@@ -2871,7 +2914,9 @@
         "R-WLD-05",
         "R-WLD-06"
       ],
-      "depends_on": ["Э2-13"],
+      "depends_on": [
+        "Э2-13"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064810",
@@ -2889,7 +2934,9 @@
         "R-BLD-03",
         "R-BLD-10"
       ],
-      "depends_on": ["Э1-14"],
+      "depends_on": [
+        "Э1-14"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064819",
@@ -2937,7 +2984,12 @@
       "assignee": "Claude Code + конвейер",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": ["R-BLD-09", "R-NPC-03", "R-ANO-02", "R-WLD-09"],
+      "linked_requirements": [
+        "R-BLD-09",
+        "R-NPC-03",
+        "R-ANO-02",
+        "R-WLD-09"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064843",
@@ -2965,8 +3017,14 @@
       "assignee": "Claude Code + `@builder`",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": ["R-WLD-09", "R-WLD-10"],
-      "depends_on": ["Э2-13", "Э1-15"],
+      "linked_requirements": [
+        "R-WLD-09",
+        "R-WLD-10"
+      ],
+      "depends_on": [
+        "Э2-13",
+        "Э1-15"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064858",
@@ -3011,7 +3069,10 @@
       "assignee": "Claude Code",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": ["R-WLD-07", "R-WLD-10"],
+      "linked_requirements": [
+        "R-WLD-07",
+        "R-WLD-10"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064881",
@@ -3037,7 +3098,10 @@
       "assignee": "Claude Code",
       "status": "PLANNED",
       "original_status": null,
-      "linked_requirements": ["R-WLD-08", "R-WLD-10"],
+      "linked_requirements": [
+        "R-WLD-08",
+        "R-WLD-10"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064898",
@@ -3078,7 +3142,9 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
-      "depends_on": ["Э1-14"],
+      "depends_on": [
+        "Э1-14"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064921",
@@ -3160,7 +3226,9 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
-      "depends_on": ["Э2-17"],
+      "depends_on": [
+        "Э2-17"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064966",
@@ -3174,7 +3242,9 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
-      "depends_on": ["Э2-21"],
+      "depends_on": [
+        "Э2-21"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.064974",
@@ -3836,7 +3906,9 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
-      "depends_on": ["Э2-23"],
+      "depends_on": [
+        "Э2-23"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065351",
@@ -3909,7 +3981,10 @@
       "linked_requirements": [
         "R-NPC-05"
       ],
-      "depends_on": ["Э2-23", "Э6-01"],
+      "depends_on": [
+        "Э2-23",
+        "Э6-01"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-19T11:00:05+03:00",
@@ -3955,7 +4030,9 @@
       "linked_requirements": [
         "R-NPC-02"
       ],
-      "depends_on": ["Э2-15"],
+      "depends_on": [
+        "Э2-15"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065414",
@@ -3986,7 +4063,9 @@
       "linked_requirements": [
         "R-AI-06"
       ],
-      "depends_on": ["Э2-17"],
+      "depends_on": [
+        "Э2-17"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065429",
@@ -4094,7 +4173,9 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
-      "depends_on": ["Э2-21"],
+      "depends_on": [
+        "Э2-21"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065484",
@@ -4331,7 +4412,9 @@
       "linked_requirements": [
         "R-ANO-03"
       ],
-      "depends_on": ["Э2-18"],
+      "depends_on": [
+        "Э2-18"
+      ],
       "pr_number": null,
       "merge_commit": null,
       "updated": "2026-11-18T21:35:31.065611",
@@ -4743,7 +4826,9 @@
       "status": "TESTS_PASSED",
       "original_status": null,
       "linked_requirements": [],
-      "tests": ["NodeCountTest"],
+      "tests": [
+        "NodeCountTest"
+      ],
       "pr_number": 204,
       "merge_commit": "79038dcd5a91325dc3b2bc3c6320170c8882a6de",
       "merged_at": "2026-11-18T18:22:07Z",
@@ -4759,7 +4844,9 @@
       "status": "TESTS_PASSED",
       "original_status": null,
       "linked_requirements": [],
-      "tests": ["ZoneBenchTest"],
+      "tests": [
+        "ZoneBenchTest"
+      ],
       "pr_number": 204,
       "merge_commit": "79038dcd5a91325dc3b2bc3c6320170c8882a6de",
       "merged_at": "2026-11-18T18:22:07Z",
@@ -4775,7 +4862,9 @@
       "status": "TESTS_PASSED",
       "original_status": null,
       "linked_requirements": [],
-      "tests": ["MutantLedgerTest"],
+      "tests": [
+        "MutantLedgerTest"
+      ],
       "pr_number": 204,
       "merge_commit": "79038dcd5a91325dc3b2bc3c6320170c8882a6de",
       "merged_at": "2026-11-18T18:22:07Z",
@@ -4792,7 +4881,9 @@
       "status": "TESTS_PASSED",
       "original_status": null,
       "linked_requirements": [],
-      "tests": ["WarLedgerTest"],
+      "tests": [
+        "WarLedgerTest"
+      ],
       "pr_number": 206,
       "merge_commit": "509876f",
       "merged_at": "2026-11-19T08:32:11Z",
@@ -4808,8 +4899,14 @@
       "assignee": "Qwen Code",
       "status": "TESTS_PASSED",
       "original_status": null,
-      "linked_requirements": ["R-ECO-01"],
-      "tests": ["AmbushLedgerTest", "CombatDeathsTest", "DestroyedFactionTest"],
+      "linked_requirements": [
+        "R-ECO-01"
+      ],
+      "tests": [
+        "AmbushLedgerTest",
+        "CombatDeathsTest",
+        "DestroyedFactionTest"
+      ],
       "pr_number": 207,
       "merge_commit": "e39c6b8",
       "merged_at": "2026-11-19T08:32:33Z",
@@ -4825,7 +4922,10 @@
       "status": "PLANNED",
       "original_status": null,
       "linked_requirements": [],
-      "depends_on": ["Э6-02", "Э6-01"],
+      "depends_on": [
+        "Э6-02",
+        "Э6-01"
+      ],
       "tests": [],
       "pr_number": null,
       "merge_commit": null,
@@ -4856,7 +4956,9 @@
       "assignee": "пользователь",
       "status": "ACCEPTED",
       "original_status": "готово",
-      "linked_requirements": ["R-TST-01"],
+      "linked_requirements": [
+        "R-TST-01"
+      ],
       "updated": "2026-11-18T00:00:00",
       "migrated_from": "roadmap.md",
       "acceptance_note": "Выполнен пользователем, отчёт в логах"
@@ -4868,7 +4970,9 @@
       "assignee": "пользователь",
       "status": "ACCEPTED",
       "original_status": "готово",
-      "linked_requirements": ["R-TST-02"],
+      "linked_requirements": [
+        "R-TST-02"
+      ],
       "updated": "2026-11-16T00:00:00",
       "migrated_from": "roadmap.md",
       "acceptance_note": "Выполнен пользователем, этап 0 принят"

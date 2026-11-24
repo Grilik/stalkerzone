@@ -59,3 +59,10 @@ build/build и build/server. dashboard/page — витрина, не ворот�
 
 Идея → запись в реестр → задача со статусом. Решение → строка в DECISIONS.md.
 Без записи не считается сделанным.
+## Кодировка файлов реестра
+
+project-tasks.json и генерируемые файлы — UTF-8 БЕЗ BOM. PowerShell 5.1
+Set-Content -Encoding UTF8 пишет с BOM — битый JSON, падают сборка и CI.
+Использовать [System.IO.File]::WriteAllText(, , (New-Object System.Text.UTF8Encoding False))
+или Python с encoding="utf-8". Проверено 24.11: битый файл ломал сборку страницы
+с ошибкой «Unexpected UTF-8 BOM».
