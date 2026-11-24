@@ -180,3 +180,27 @@
 
 Заполнено 13 задач, 16 связей. Узкие места: Э2-17 открывает Э2-21, Э7-02, Э2-22,
 Э7-09; Э2-23 открывает Э6-02, Э6-07, А17.
+
+## 9. Inbox идей (добавлено 24.11.2026)
+
+Пространство имён: \И-01\, \И-02\, ... — инкрементный номер, без разделения на серии.
+
+| Статус | Смысл |
+|---|---|
+| \NEW\ | в inbox, ждёт решения штаба |
+| \DEFERRED\ | отложено, причина в \
+otes\ |
+| \TAKEN\ | конвертировано в задачу/требование, \converted_to\ = ID |
+| \REJECTED\ | отклонено, причина в \
+otes\ |
+
+Команды:
+
+    python tools/registry/idea.py add "текст" [--source "источник"]
+    python tools/registry/idea.py list
+    python tools/registry/idea.py take И-01 Э2-24
+    python tools/registry/idea.py reject И-01 "причина"
+    python tools/registry/idea.py defer И-01 "причина"
+
+Каждая правка повышает \meta.updated\. Идеи попадают в точку входа
+(docs/handoff/START-HERE.md) в секции «Inbox идей» (NEW и DEFERRED).

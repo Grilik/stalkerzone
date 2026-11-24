@@ -80,6 +80,9 @@ def render():
                 if by[d].get("status") == "DEFERRED"]
     acards = [e for e in tasks if re.match(r"^А\d+$", e["id"])
               and e.get("status") in OPEN]
+    ideas = [e for e in ents if e.get("type") == "idea"]
+    ideas_new = [e for e in ideas if e.get("status") == "NEW"]
+    ideas_def = [e for e in ideas if e.get("status") == "DEFERRED"]
 
     L = []
     a = L.append
@@ -161,6 +164,18 @@ def render():
     a("Обязательные ворота PR: build/build и build/server.")
     a("dashboard/page — витрина, не ворота.")
     a("")
+    if ideas_new or ideas_def:
+        a("## Inbox идей")
+        a("")
+        a(f"NEW: {len(ideas_new)}, DEFERRED: {len(ideas_def)}.")
+        a("Заведение: python tools/registry/idea.py add \"текст\".")
+        a("")
+        for e in ideas_new:
+            a(f"- {e['id']} [NEW] {e.get('title', '')[:80]}")
+        for e in ideas_def:
+            note = e.get("notes", "")[:60]
+            a(f"- {e['id']} [DEFERRED] {e.get('title', '')[:70]} | {note}")
+        a("")
     a("## Правила и решения")
     a("")
     a("Действующие решения — docs/handoff/DECISIONS.md (только дописывать).")
