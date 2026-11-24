@@ -26,6 +26,61 @@ def stage(eid):
     return int(m.group(1)) if m else 99
 
 
+def compute_waves(reg):
+    """Волны: группа 0 готова сейчас, группа N ждёт волн младше N."""
+    ents = reg["entities"]
+    by = {e["id"]: e for e in ents}
+    done = CLOSED | WAIVED
+    tasks = [e for e in ents if e.get("type") == "task" and e.get("status") in OPEN]
+    deps = {e["id"]: (e.get("depends_on") or []) for e in ents}
+
+    def blockers(tid, assigned):
+        return [d for d in deps.get(tid, [])
+                if d in by and by[d].get("status") not in done and d not in assigned]
+
+    waves = {}
+    assigned = set()
+    wave = 0
+    ready = [t["id"] for t in tasks if not blockers(t["id"], assigned)]
+    while ready:
+        for tid in ready:
+            waves[tid] = wave
+            assigned.add(tid)
+        wave += 1
+        ready = [t["id"] for t in tasks
+                 if t["id"] not in assigned and not blockers(t["id"], assigned)]
+    return waves
+
+
+def compute_critical_path(reg):
+    """Самая длинная цепочка открытых задач по depends_on."""
+    ents = reg["entities"]
+    by = {e["id"]: e for e in ents}
+    deps = {e["id"]: (e.get("depends_on") or []) for e in ents}
+    rev = {}
+    for tid, ds in deps.items():
+        for d in ds:
+            rev.setdefault(d, []).append(tid)
+
+    def dfs(tid, seen):
+        best = [tid]
+        for c in rev.get(tid, []):
+            if c in seen or by.get(c, {}).get("status") not in OPEN:
+                continue
+            path = [tid] + dfs(c, seen | {tid})
+            if len(path) > len(best):
+                best = path
+        return best
+
+    longest = []
+    for e in ents:
+        if e.get("type") == "task" and e.get("status") in OPEN:
+            path = dfs(e["id"], frozenset())
+            if len(path) > len(longest):
+                longest = path
+    return longest
+
+
 def render():
     data = json.loads(REG.read_text(encoding="utf-8"))
     ents = data["entities"]
@@ -135,6 +190,38 @@ def render():
     a("")
     a("Готовы всего: %d. Заблокировано зависимостями: %d." % (len(order), len(unmet)))
     a("")
+    # План работ: волны и критический путь (А41)
+    waves = compute_waves(data)
+    critical = compute_critical_path(data)
+    wave0 = sorted([tid for tid, w in waves.items() if w == 0],
+                   key=lambda k: (-unlock.get(k, 0), stage(k), k))
+    a("## План работ")
+    a("")
+    a("Волна 0 — можно брать сейчас: %d задач." % len(wave0))
+    a("Сортировка: по числу разблокируемых, затем по этапу.")
+    a("")
+    a("| Задача | Открывает | Название |")
+    a("|---|---|---|")
+    for k in wave0[:10]:
+        ttl = by[k].get("title", "")[:70].replace("|", "/")
+        a("| %s | %d | %s |" % (k, unlock.get(k, 0), ttl))
+    a("")
+    if len(wave0) > 10:
+        a("...и ещё %d задач в волне 0; полный список: python tools/registry/check_deps.py" % (len(wave0) - 10))
+        a("")
+    if waves:
+        a("Всего волн: %d. Открытые задачи вне волн — циклы зависимостей, их ловит check_deps." % (max(waves.values()) + 1))
+        a("")
+    if len(critical) > 1:
+        a("### Критический путь")
+        a("")
+        a("Самая длинная цепочка открытых зависимостей (%d задач): %s" % (len(critical), " -> ".join(critical)))
+        a("")
+        for tid in critical:
+            ttl = by.get(tid, {}).get("title", "")[:60]
+            a("- %s — %s" % (tid, ttl))
+        a("")
+
     if unmet:
         a("### Ждут")
         a("")
