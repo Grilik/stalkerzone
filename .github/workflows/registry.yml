@@ -38,3 +38,5 @@ jobs:
         run: python3 -I tools/registry/check_links.py
       - name: Целостность зависимостей
         run: python3 -I tools/registry/check_deps.py
+      - name: Точка входа не разошлась с реестром
+        run: python3 -I tools/registry/gen.py --check
