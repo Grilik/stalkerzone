@@ -46,6 +46,9 @@ RORDER = ["DONE_TESTED", "DONE_UNVERIFIED", "PARTIAL", "BLOCKED", "DOCUMENTED_ON
 RORDER_REG = ["GAME_VERIFIED", "ACCEPTED", "TESTS_PASSED", "CODE_COMPLETE", "IN_PROGRESS", "PLANNED", "BLOCKED", "DEFERRED", "REJECTED"]
 
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
 import zonemap_svg
 
 
