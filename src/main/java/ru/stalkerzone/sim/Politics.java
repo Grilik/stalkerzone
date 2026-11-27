@@ -78,6 +78,20 @@ public final class Politics {
         }
     }
 
+    /**
+     * Э2-17 (К10): спор групп одной фракции снижает единство. Чем ниже сплочённость спорящих,
+     * тем сильнее удар. Событие без случайности: вызывается сценарием или игрой, ежедневный цикл
+     * его не запускает. Раскол после гибели лидера — отдельная карточка Э7-02.
+     */
+    public boolean dispute(Simulation s, Group a, Group b) {
+        if (a == null || b == null || a == b || a.faction != b.faction || a.faction < 0) return false;
+        Faction f = s.factions.get(a.faction);
+        double drop = 0.04 + 0.08 * (1 - (a.cohesion + b.cohesion) / 2);
+        f.unity = Math.max(0, f.unity - drop);
+        s.log("СПОР: «" + a.name + "» и «" + b.name + "» («" + f.name + "») не поделили влияние — единство снижено");
+        return true;
+    }
+
     /** Точки фракции, не связанные с базой через свои точки. */
     public boolean[] connected(Simulation s, Faction f) {
         boolean[] seen = new boolean[s.nodes.size()];

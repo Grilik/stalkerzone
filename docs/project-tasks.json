@@ -2,7 +2,7 @@
  "meta": {
   "version": 2,
   "created": "2026-11-18T21:35:31.064074",
-  "updated": "2026-11-27T20:16:03+03:00",
+  "updated": "2026-11-27T20:35:27+03:00",
   "source_files": [
    "docs/requirements.json",
    "docs/roadmap.md",
@@ -3168,13 +3168,13 @@
    "id": "Э2-17",
    "type": "task",
    "title": "Группы на Кордоне (поднято из Э7-02): вольные сталкеры — без группировки, хаб — деревня новичков; одиночки — основная база Свиноферма и зависимые группы (лагерь у вагончика, дыра в заборе, проводники), бандиты — конкурирующие банды (АТП и др.); у группы лидер, база, бюджет, запасы, свои отношения (`GroupRelations`); раскол после гибели лидера, переход человека — событие",
-   "assignee": "Claude Code + `@sim-worker`",
-   "status": "PLANNED",
+   "assignee": "Qwen Code",
+   "status": "IN_PROGRESS",
    "original_status": null,
    "linked_requirements": [],
    "pr_number": null,
    "merge_commit": null,
-   "updated": "2026-11-18T21:35:31.064936",
+   "updated": "2026-11-27T20:35:27+03:00",
    "migrated_from": "roadmap.md"
   },
   {

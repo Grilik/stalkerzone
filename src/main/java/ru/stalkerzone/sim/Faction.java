@@ -1,5 +1,8 @@
 package ru.stalkerzone.sim;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Группировка: люди, склад с кошельком, фаза кампании, характер и память командования. */
 public final class Faction {
     public final int id;
@@ -28,6 +31,8 @@ public final class Faction {
     public boolean garrisonOnly;
 
     public int members;
+    /** Э2-17 (К10): группы фракции; members — сумма по группам (синхронизация в конце дня). */
+    public final List<Group> groups = new ArrayList<>();
     /** Средний опыт бойцов 0..100: растёт в боях, новички его разбавляют. */
     public double exp = 20;
     /** Средний стресс 0..100: растёт в войнах и от потерь, снимается на базе. */
@@ -121,6 +126,53 @@ public final class Faction {
         deaths += actual;
         wounded = Math.min(wounded, members);
         return actual;
+    }
+
+    /** Э2-17 (К10): сумма членов групп фракции. */
+    public int groupMembers() {
+        int s = 0;
+        for (Group g : groups) s += g.members;
+        return s;
+    }
+
+    /**
+     * Э2-17 (К10): численность фракции распределяется по группам пропорционально их размеру
+     * (метод наибольших остатков, детерминированно, без случайности). Вызывается в конце дня:
+     * сумма по группам равна members. Поведение ежедневных циклов фракции не меняется —
+     * группы отражают численность, а не управляют ею.
+     */
+    public void syncGroupMembers() {
+        if (groups.isEmpty()) return;
+        int total = groupMembers();
+        int delta = members - total;
+        if (delta == 0) return;
+        if (groups.size() == 1 || total == 0) {
+            groups.get(0).members = members;
+            return;
+        }
+        int n = groups.size();
+        int[] base = new int[n];
+        double[] frac = new double[n];
+        int assigned = 0;
+        for (int i = 0; i < n; i++) {
+            double exact = (double) delta * groups.get(i).members / total;
+            base[i] = (int) Math.floor(exact);
+            frac[i] = exact - base[i];
+            assigned += base[i];
+        }
+        int rem = delta - assigned;
+        // остаток — большим дробным частям первым, при равенстве — раньше в списке
+        for (int k = 0; k < rem; k++) {
+            int best = -1;
+            for (int i = 0; i < n; i++) {
+                if (frac[i] <= 0) continue;
+                if (best < 0 || frac[i] > frac[best]) best = i;
+            }
+            if (best < 0) break;
+            base[best]++;
+            frac[best] = 0;
+        }
+        for (int i = 0; i < n; i++) groups.get(i).members += base[i];
     }
 
     void decayMemory() {
