@@ -50,6 +50,7 @@ import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent))
 import zonemap_svg
+import zonemap_build
 
 
 def gh(path):
@@ -587,7 +588,9 @@ def build(out_dir):
     # ---------- карта зоны (А44)
     a("<section id='map'><h2>Карта Зоны</h2>"
       "<p class='muted'>Контур границы и локации из docs/thezone/border.json и places.json; владелец/статус/задача — из полей локации и реестра, когда привязаны. Клик по локации — карточка узла.</p>")
-    a(zonemap_svg.render_map())
+    a("<div style='border:1px solid #2c352a;border-radius:10px;overflow:hidden'>" + zonemap_svg.render_map() + "</div>")
+    a("<p style='margin:10px 0'><a href='map/index.html' style='display:inline-block;padding:9px 16px;border-radius:9px;background:linear-gradient(135deg,#e0912f,#c4552c);color:#1a1206;font-weight:650;text-decoration:none'>Открыть интерактивную карту — зум, границы локаций, слои, метки</a></p>")
+    zonemap_build.build(out_dir)
     a("</section>")
 
     # ---------- qwen
