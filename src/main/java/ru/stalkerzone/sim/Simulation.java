@@ -33,7 +33,7 @@ public final class Simulation {
     };
 
     /** Версия формата сохранения. Менять только вместе с чтением старых версий в {@link #load}. */
-    public static final int SAVE_VERSION = 25; // v25 (Э1-16): территории зон атласа — потенциал, занятие, локальная задача, запас
+    public static final int SAVE_VERSION = 26; // v26 (Э2-17): группы и их отношения (секция-хвост г-П8); состав без секции — из сценария
 
     public final long seed;
     public int day;
@@ -150,6 +150,10 @@ public final class Simulation {
     public final Logistics logistics = new Logistics();
     /** Э1-16: территории зон атласа (kind=zone) — потенциал, занятие группировкой, локальные задачи. */
     public final Territories territories = new Territories();
+    /** Э2-17 (К10): группы фракций и вольные сталкеры; состав задаёт сценарий, численность — сумма по группам. */
+    public final List<Group> groups = new ArrayList<>();
+    /** Э2-17 (К10): разреженная таблица отклонений отношений групп от отношений фракций. */
+    public final GroupRelations groupRelations = new GroupRelations();
 
     Random rng = new Random();
 
@@ -169,6 +173,7 @@ public final class Simulation {
             if (f.brain == null) f.brain = new UtilityBrain();
             f.destructionNoted = f.members <= 0; // пустые фракции сценария не логируются как уничтоженные
         }
+        initDefaultGroups();
         applyGate();
     }
 
@@ -185,6 +190,111 @@ public final class Simulation {
     public Faction mercenaries() { return byRole(f -> f.mercenary); }
     public Faction traders() { for (Faction f : factions) if (f.id == ZoneScenario.TRADERS) return f; return null; }
 
+    // ------------------------------------------------------------------ группы (Э2-17, К10)
+
+    /** Одна группа на фракцию — режим по умолчанию (г-П8): остальные сценарии до переноса. */
+    private void initDefaultGroups() {
+        List<Group> gs = new ArrayList<>();
+        for (Faction f : factions) gs.add(Group.defaultFor(f));
+        installGroups(gs);
+    }
+
+    /** Сценарий задаёт состав групп; узлы и лидеры распределяются сразу. */
+    public void installGroups(List<Group> gs) {
+        groups.clear();
+        for (Faction f : factions) f.groups.clear();
+        for (Group g : gs) {
+            groups.add(g);
+            if (!g.isFree()) factions.get(g.faction).groups.add(g);
+        }
+        syncGroups();
+    }
+
+    /** Группа, владеющая узлом; null — узел ничей или без группы. Владелец-фракция выводится: Node.owner = faction группы. */
+    public Group groupAt(int node) {
+        for (Group g : groups) if (g.nodes.contains(node)) return g;
+        return null;
+    }
+
+    /**
+     * Конец дня: численность фракций — сумма по группам, узлы розданы группам владельца,
+     * лидеры — из существующего ростера. Детерминированно, без случайности: поведение
+     * ежедневных циклов фракций не меняется (г-П8).
+     */
+    void syncGroups() {
+        for (Faction f : factions) f.syncGroupMembers();
+        for (Group g : groups) {
+            if (g.isFree()) {
+                g.members = people.freeStalkers().size();
+                g.nodes.clear();
+                g.leader = null;
+                continue;
+            }
+            g.nodes.removeIf(nid -> nodes.get(nid).owner != g.faction);
+        }
+        for (Node n : nodes) {
+            if (n.owner < 0) continue;
+            Faction f = factions.get(n.owner);
+            if (f.groups.isEmpty()) continue;
+            boolean claimed = false;
+            for (Group g : f.groups) if (g.nodes.contains(n.id)) { claimed = true; break; }
+            if (claimed) continue;
+            Group best = null;
+            for (Group g : f.groups) if (g.baseNode == n.id) { best = g; break; }
+            if (best == null) best = f.groups.get(0);
+            best.nodes.add(n.id);
+        }
+        for (Faction f : factions) {
+            if (f.groups.isEmpty()) continue;
+            f.groups.get(0).leader = people.leader(f.id);
+            List<Person> pool = people.of(f.id);
+            for (int i = 1; i < f.groups.size(); i++) {
+                Person best = null;
+                double bestScore = 0;
+                for (Person p : pool) {
+                    if (p == f.groups.get(0).leader) continue;
+                    boolean taken = false;
+                    for (int j = 1; j < i; j++) if (f.groups.get(j).leader == p) { taken = true; break; }
+                    if (taken) continue;
+                    double score = p.command() + (p.role == Person.Role.DEPUTY ? 40 : p.role == Person.Role.SQUAD_LEADER ? 15 : 0);
+                    if (best == null || score > bestScore || (score == bestScore && p.id < best.id)) { best = p; bestScore = score; }
+                }
+                f.groups.get(i).leader = best;
+            }
+        }
+    }
+
+    /**
+     * Э2-17 (К10): переход человека между группами — событие, без глобального реестра людей (Э6-01).
+     * Именной сталкер переходит из группы в группу; при смене фракции численность фракций следует
+     * за событием, сумма по группам сохраняется. Возвращает false, если переход невозможен:
+     * человек не из ростера, не состоит в фракции исходной группы, группа пуста или это та же группа.
+     */
+    public boolean transferPerson(Person p, Group from, Group to) {
+        if (p == null || from == null || to == null || from == to) return false;
+        if (people.byId(p.id) != p) return false;
+        if (p.faction != from.faction || from.members <= 0) return false;
+        from.members--;
+        to.members++;
+        if (from.leader == p) from.leader = null;
+        if (p.faction != to.faction) {
+            if (p.faction >= 0) {
+                Faction old = factions.get(p.faction);
+                old.members--;
+                if (p.injury > 0) old.wounded = Math.max(0, old.wounded - 1);
+            }
+            if (!to.isFree()) {
+                Faction nf = factions.get(to.faction);
+                nf.members++;
+                if (p.injury > 0) nf.wounded++;
+            }
+            p.faction = to.faction;
+            p.role = Person.Role.MEMBER;
+            p.joined = day;
+        }
+        log("ПЕРЕХОД: " + p.name + " из «" + from.name + "» в «" + to.name + "»");
+        return true;
+    }
 
     /** Дорога от пси-поля к ЧАЭС закрыта, пока Выжигатель работает. */
     private void applyGate() {
@@ -1618,6 +1728,7 @@ public final class Simulation {
         }
         mutantsDaily();
         territories.daily(day); // Э1-16: только восстановление природного запаса зон, производства нет
+        syncGroups(); // Э2-17: численность фракций — сумма по группам, владение узлами и лидеры групп
     }
 
     // ------------------------------------------------------------------ доступ для подсистем
@@ -2606,6 +2717,10 @@ public final class Simulation {
             for (int i = 0; i < G; i++) out[i] += f.stock.qty[i];
             money += f.stock.money;
         }
+        for (Group g : groups) {
+            for (int i = 0; i < G; i++) out[i] += g.stock.qty[i];
+            money += g.stock.money;
+        }
         for (Caravan c : caravans) {
             for (int i = 0; i < G; i++) out[i] += c.cargo.qty[i];
             money += c.cargo.money;
@@ -2859,11 +2974,61 @@ public final class Simulation {
             }
             // v25 (Э1-16): территории зон атласа — определения и состояние (занятие, задача, запас)
             territories.write(out);
+            // v26 (Э2-17): группы и их отношения — секция-хвост г-П8
+            writeGroups(out);
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /** v26 (Э2-17): секция групп — состав, численность, базы, узлы, склад, параметры, лидеры и отклонения отношений. */
+    private void writeGroups(DataOutputStream out) throws IOException {
+        out.writeInt(groups.size());
+        for (Group g : groups) {
+            out.writeUTF(g.id);
+            out.writeUTF(g.name);
+            out.writeInt(g.faction);
+            out.writeInt(g.baseNode);
+            out.writeInt(g.members);
+            out.writeInt(g.leader == null ? -1 : g.leader.id);
+            out.writeInt(g.nodes.size());
+            for (int nid : g.nodes) out.writeInt(nid);
+            g.stock.write(out);
+            out.writeDouble(g.aggression);
+            out.writeDouble(g.expansion);
+            out.writeDouble(g.discipline);
+            out.writeDouble(g.cohesion);
+            out.writeDouble(g.caution);
+            out.writeDouble(g.morale);
+            out.writeDouble(g.leaderInfluence);
+        }
+        groupRelations.write(out);
+    }
+
+    private void readGroups(DataInputStream in) throws IOException {
+        groups.clear();
+        for (Faction f : factions) f.groups.clear();
+        int n = in.readInt();
+        for (int i = 0; i < n; i++) {
+            Group g = new Group(in.readUTF(), in.readUTF(), in.readInt(), in.readInt(), in.readInt());
+            int lid = in.readInt();
+            g.leader = lid < 0 ? null : people.byId(lid);
+            int nn = in.readInt();
+            for (int k = 0; k < nn; k++) g.nodes.add(in.readInt());
+            g.stock.read(in);
+            g.aggression = in.readDouble();
+            g.expansion = in.readDouble();
+            g.discipline = in.readDouble();
+            g.cohesion = in.readDouble();
+            g.caution = in.readDouble();
+            g.morale = in.readDouble();
+            g.leaderInfluence = in.readDouble();
+            groups.add(g);
+            if (!g.isFree()) factions.get(g.faction).groups.add(g);
+        }
+        groupRelations.read(in);
     }
 
     /** Старое сохранение (до v11): новых товаров в нём не было, их начальный запас считается нулевым. */
@@ -2905,6 +3070,8 @@ public final class Simulation {
             if (version < 24 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v25 (Э1-16): территории зон атласа — Кордон, как при каждой смене версии, начинается заново
             if (version < 25 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
+            // v26 (Э2-17): секция групп — Кордон, как при каждой смене версии, начинается заново с тем же сидом
+            if (version < 26 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
@@ -3079,6 +3246,10 @@ public final class Simulation {
             }
             // v25 (Э1-16): территории зон атласа; у старых сохранений секции нет — территории определяет мир (ZoneData)
             if (version >= 25) sim.territories.read(in);
+            // v26 (Э2-17): группы и отношения; у старых сохранений секции нет — состав из сценария,
+            // численность и владение согласуются с загруженным состоянием фракций
+            if (version >= 26) sim.readGroups(in);
+            else sim.syncGroups();
             // Э8-10: снимок книги мутантов — по загруженным логовам (счётчики пришли из сохранения)
             sim.mutantCensus.clear();
             for (Lair l : sim.lairs) sim.mutantCensus.put(l, l.mutantCount());

@@ -299,6 +299,18 @@ public final class KordonScenario {
         Simulation sim = new Simulation(seed, nodes, g, factions, h);
         sim.scenario = war ? Scenarios.KORDON_WAR : Scenarios.KORDON;
 
+        // Э2-17 (К10): состав групп Кордона — вольные сталкеры (без группировки, хаб — деревня новичков),
+        // одиночки (основная база Свиноферма + зависимые: вагончик, дыра, проводники),
+        // бандиты (конкурирующие банды АТП и Дальнего блокпоста); прочие фракции — одна группа на фракцию
+        sim.installGroups(kordonGroups(factions));
+        // конкурирующие банды по-разному относятся к одиночкам: Боров грабит, Крюк торгует;
+        // между собой банды соперничают; проводники лояльнее к военным (сопровождение через КПП)
+        sim.groupRelations.set("bandits-atp", ZoneScenario.LONERS, 0.25);
+        sim.groupRelations.set("bandits-hook", ZoneScenario.LONERS, -0.25);
+        sim.groupRelations.set("bandits-atp", ZoneScenario.BANDITS, 0.3);
+        sim.groupRelations.set("bandits-hook", ZoneScenario.BANDITS, 0.3);
+        sim.groupRelations.set("loners-guides", ZoneScenario.MILITARY, -0.15);
+
         // v20 (карточка 025): касса торговцев Кордона — минимум на 3 артефакта уровня 2 и 10 частей мутантов
         // по текущим ценам скупки плюс оборотный запас; выручка с Большой земли держит кассу на плаву месяц.
         for (Node n : nodes) {
@@ -370,6 +382,37 @@ public final class KordonScenario {
         sim.finishSetup();
         sim.recalcPassDanger();
         return sim;
+    }
+
+    /**
+     * Э2-17 (К10): группы Кордона. Вольные сталкеры — без фракции (Person.NONE), хаб — деревня
+     * новичков, члены — пул People.freeStalkers() (наполняет Э6-02). Одиночки: ведущая группа
+     * Свинофермы и зависимые (лагерь у вагончика, дыра в заборе, проводники). Бандиты: банда Борова
+     * (АТП) и банда Крюка (Дальний блокпост). Стартовая численность групп в сумме равна members фракции.
+     */
+    private static List<Group> kordonGroups(List<Faction> factions) {
+        List<Group> gs = new ArrayList<>();
+        gs.add(new Group("free-stalkers", "Вольные сталкеры", Person.NONE, VILLAGE, 0)
+                .traits(0.2, 0.1, 0.2, 0.3, 0.7, 0.5, 0.2));
+        gs.add(new Group("loners-farm", "Свиноферма", ZoneScenario.LONERS, FARM, LONER_MEMBERS - 18)
+                .traits(0.3, 0.4, 0.5, 0.6, 0.6, 0.6, 0.5));
+        gs.add(new Group("loners-wagon", "Лагерь у вагончика", ZoneScenario.LONERS, WAGON, 6)
+                .traits(0.25, 0.3, 0.45, 0.65, 0.7, 0.6, 0.4));
+        gs.add(new Group("loners-hole", "Дыра в заборе", ZoneScenario.LONERS, HOLE, 6)
+                .traits(0.35, 0.35, 0.4, 0.55, 0.55, 0.55, 0.45));
+        gs.add(new Group("loners-guides", "Проводники", ZoneScenario.LONERS, VILLAGE, 6)
+                .traits(0.2, 0.2, 0.55, 0.7, 0.8, 0.65, 0.4));
+        gs.add(new Group("bandits-atp", "Банда Борова", ZoneScenario.BANDITS, ATP, BANDIT_MEMBERS - 12)
+                .traits(0.8, 0.7, 0.4, 0.5, 0.3, 0.5, 0.7));
+        gs.add(new Group("bandits-hook", "Банда Крюка", ZoneScenario.BANDITS, FAR_POST, 12)
+                .traits(0.65, 0.6, 0.35, 0.45, 0.4, 0.5, 0.6));
+        gs.add(new Group("military-south", "Гарнизон Южного блокпоста", ZoneScenario.MILITARY, SOUTH_POST, MILITARY_MEMBERS)
+                .traits(0.5, 0.3, 0.85, 0.8, 0.6, 0.7, 0.6));
+        for (Faction f : factions) {
+            if (f.id == ZoneScenario.LONERS || f.id == ZoneScenario.BANDITS || f.id == ZoneScenario.MILITARY) continue;
+            gs.add(Group.defaultFor(f));
+        }
+        return gs;
     }
 
     private static Node node(List<Node> list, String name, NodeType t, int x, int z) {
