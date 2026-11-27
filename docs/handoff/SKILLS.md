@@ -13,3 +13,6 @@
 
 10. Воспроизводи вызов как в CI: дашборд собирается 'python3 -I tools/dashboard/build.py _site'; флаг -I не добавляет каталог скрипта в sys.path, поэтому локальные соседние модули импортируются через явную вставку пути. Проверка: python -I tools/dashboard/build.py _site без traceback.
 
+
+11. dashboard.yml на pull_request_target собирает код BASE (main), не ветки PR. PR с фиксом дашборда показывает красный dashboard до слияния; зелёность оценивать после merge или run по main. Локальная проверка: python -I tools/dashboard/build.py _site.
+
