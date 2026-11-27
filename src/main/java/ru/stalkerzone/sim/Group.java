@@ -34,6 +34,12 @@ public final class Group {
     public int members;
     /** Лидер из существующего ростера; назначается симуляцией, сохраняется как id. */
     public Person leader;
+    /**
+     * Э2-21: ведущая группа (id) по связи {@link GroupLink}; null — группа независима.
+     * Задаётся связями ({@link Simulation#installLinks}), меняется событиями ухода и мятежа;
+     * в сохранение не входит — восстанавливается из секции связей.
+     */
+    public String dependsOn;
 
     /** Агрессия 0..1. */
     public double aggression;

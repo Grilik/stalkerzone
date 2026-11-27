@@ -310,6 +310,8 @@ public final class KordonScenario {
         sim.groupRelations.set("bandits-atp", ZoneScenario.BANDITS, 0.3);
         sim.groupRelations.set("bandits-hook", ZoneScenario.BANDITS, 0.3);
         sim.groupRelations.set("loners-guides", ZoneScenario.MILITARY, -0.15);
+        // Э2-21: шесть связей ведущих и зависимых групп ровно по docs/thezone/11-group-links.md
+        sim.installLinks(kordonLinks());
 
         // v20 (карточка 025): касса торговцев Кордона — минимум на 3 артефакта уровня 2 и 10 частей мутантов
         // по текущим ценам скупки плюс оборотный запас; выручка с Большой земли держит кассу на плаву месяц.
@@ -406,13 +408,41 @@ public final class KordonScenario {
                 .traits(0.8, 0.7, 0.4, 0.5, 0.3, 0.5, 0.7));
         gs.add(new Group("bandits-hook", "Банда Крюка", ZoneScenario.BANDITS, FAR_POST, 12)
                 .traits(0.65, 0.6, 0.35, 0.45, 0.4, 0.5, 0.6));
-        gs.add(new Group("military-south", "Гарнизон Южного блокпоста", ZoneScenario.MILITARY, SOUTH_POST, MILITARY_MEMBERS)
+        gs.add(new Group("military-south", "Гарнизон Южного блокпоста", ZoneScenario.MILITARY, SOUTH_POST, MILITARY_MEMBERS - 6)
                 .traits(0.5, 0.3, 0.85, 0.8, 0.6, 0.7, 0.6));
+        // Э2-21: гарнизон Разрушенного моста — зависимая группа Южного блокпоста (приказ).
+        // В «Малом Кордоне» мост ничей (карточка 054): группа живёт там, но узлом не владеет.
+        gs.add(new Group("military-bridge", "Гарнизон Разрушенного моста", ZoneScenario.MILITARY, BRIDGE, 6)
+                .traits(0.4, 0.2, 0.85, 0.8, 0.6, 0.7, 0.5));
         for (Faction f : factions) {
             if (f.id == ZoneScenario.LONERS || f.id == ZoneScenario.BANDITS || f.id == ZoneScenario.MILITARY) continue;
             gs.add(Group.defaultFor(f));
         }
         return gs;
+    }
+
+    /**
+     * Э2-21: связи Кордона (docs/thezone/11-group-links.md, поправка 17.11; тип и доля — по идеологии
+     * ведущей силы, docs/spec/faction-hierarchy.md §1). Деревня новичков — договор защиты БЕЗ подчинения
+     * (хаб нейтрален, владелец-поселение и касса — Э2-23); вагончик, дыра и проводники — договор
+     * 10/15/20 %; мост — приказ без доли; Дальний блокпост — дань, половина пошлины с перехода на Свалку.
+     * Приход услуги (руб/неделю) — плата за дозор/проход/проводку и пошлина; учитывается в Ledger.moneyMinted.
+     */
+    private static List<GroupLink> kordonLinks() {
+        List<GroupLink> ls = new ArrayList<>();
+        ls.add(new GroupLink("loners-farm", "free-stalkers", GroupLink.Kind.PROTECTION)
+                .support(false, false, true).splitTendency(0.15));
+        ls.add(new GroupLink("loners-farm", "loners-wagon", GroupLink.Kind.CONTRACT)
+                .share(0.10).support(true, true, false).splitTendency(0.2).income(60));
+        ls.add(new GroupLink("loners-farm", "loners-hole", GroupLink.Kind.CONTRACT)
+                .share(0.15).support(true, true, false).splitTendency(0.45).income(90));
+        ls.add(new GroupLink("loners-farm", "loners-guides", GroupLink.Kind.CONTRACT)
+                .share(0.20).support(false, true, false).splitTendency(0.8).income(150));
+        ls.add(new GroupLink("military-south", "military-bridge", GroupLink.Kind.ORDER)
+                .support(true, true, false).splitTendency(0.1));
+        ls.add(new GroupLink("bandits-atp", "bandits-hook", GroupLink.Kind.TRIBUTE)
+                .share(0.50).support(true, true, false).splitTendency(0.85).income(200));
+        return ls;
     }
 
     private static Node node(List<Node> list, String name, NodeType t, int x, int z) {

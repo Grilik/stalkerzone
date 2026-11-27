@@ -422,17 +422,17 @@ public final class Logistics {
 
     private int active(Faction f) {
         int c = 0;
-        for (Convoy cv : convoys) if (cv.owner == f.id) c++;
+        for (Convoy cv : convoys) if (cv.owner == f.id && cv.forGroup == null) c++;
         return c;
     }
 
     private boolean headingTo(Faction f, int node) {
-        for (Convoy cv : convoys) if (cv.owner == f.id && cv.dest() == node && cv.kind != Convoy.Kind.RETURN) return true;
+        for (Convoy cv : convoys) if (cv.owner == f.id && cv.forGroup == null && cv.dest() == node && cv.kind != Convoy.Kind.RETURN) return true;
         return false;
     }
 
     private boolean leaving(Faction f, int node) {
-        for (Convoy cv : convoys) if (cv.owner == f.id && cv.from() == node && cv.kind == Convoy.Kind.RETURN) return true;
+        for (Convoy cv : convoys) if (cv.owner == f.id && cv.forGroup == null && cv.from() == node && cv.kind == Convoy.Kind.RETURN) return true;
         return false;
     }
 
@@ -524,7 +524,8 @@ public final class Logistics {
         }
     }
 
-    private void launch(Simulation s, Convoy c) {
+    /** Отправить конвой; пакетный доступ — для связей групп (Э2-21, {@link GroupLink}). */
+    void launch(Simulation s, Convoy c) {
         convoysSent++;
         if (c.route.length <= 1) { arrive(s, c); return; }
         c.leg = 0;
@@ -601,6 +602,21 @@ public final class Logistics {
 
     private void arrive(Simulation s, Convoy c) {
         Faction f = s.factions.get(c.owner);
+        // Э2-21: адресат-группа — доля/поддержка ведущих и зависимых групп, касса группы вместо склада фракции
+        if (c.forGroup != null) {
+            Group g = s.groupById(c.forGroup);
+            if (g != null && g.faction == c.owner) {
+                convoysArrived++;
+                cashDelivered += c.cargo.money;
+                unloadTo(s, c, g.stock);
+            } else {
+                convoysLost++;
+                for (Good gd : Good.ALL) s.ledger.destroyed[gd.ordinal()] += c.cargo.take(gd, c.cargo.get(gd));
+                s.ledger.moneyBurned += c.cargo.money;
+                c.cargo.money = 0;
+            }
+            return;
+        }
         Node d = s.nodes.get(c.dest());
         if (d.owner != f.id) {
             // точку потеряли, пока ехали: везём обратно на базу

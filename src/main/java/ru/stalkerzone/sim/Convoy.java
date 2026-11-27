@@ -20,6 +20,11 @@ public final class Convoy {
     public int guards;
     /** Бойцы пополнения в пути (уже в численности фракции, гибнут при нападении). */
     public int troops;
+    /**
+     * Э2-21: адресат-группа (id) для доли и поддержки ведущих и зависимых групп; null — обычная
+     * доставка фракции (склад базы или сейф точки). Груз группы принадлежит её фракции-владельцу.
+     */
+    public String forGroup;
     public final Stock cargo = new Stock();
 
     public Convoy(int owner, Kind kind, int[] route, int guards) {

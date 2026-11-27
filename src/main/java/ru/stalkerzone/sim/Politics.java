@@ -63,6 +63,11 @@ public final class Politics {
             }
         }
         unity(s);
+        // Э2-21: связи ведущих и зависимых групп — напряжение по факторам, недельный расчёт доли
+        // и поддержки, при пороге событие своего типа (уход, мятеж, дезертирство); распавшиеся убираем
+        for (Iterator<GroupLink> it = s.groupLinks.iterator(); it.hasNext(); ) {
+            if (!it.next().daily(s, r)) it.remove();
+        }
         enclaves(s, r);
         meetings(s, r);
     }

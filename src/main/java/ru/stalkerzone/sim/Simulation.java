@@ -33,7 +33,7 @@ public final class Simulation {
     };
 
     /** Версия формата сохранения. Менять только вместе с чтением старых версий в {@link #load}. */
-    public static final int SAVE_VERSION = 26; // v26 (Э2-17): группы и их отношения (секция-хвост г-П8); состав без секции — из сценария
+    public static final int SAVE_VERSION = 27; // v27 (Э2-21): связи ведущих и зависимых групп (секция-хвост после групп); состав без секции — из сценария
 
     public final long seed;
     public int day;
@@ -154,6 +154,8 @@ public final class Simulation {
     public final List<Group> groups = new ArrayList<>();
     /** Э2-17 (К10): разреженная таблица отклонений отношений групп от отношений фракций. */
     public final GroupRelations groupRelations = new GroupRelations();
+    /** Э2-21: связи «ведущая → зависимая» группа Кордона; состав задаёт сценарий. */
+    public final List<GroupLink> groupLinks = new ArrayList<>();
 
     Random rng = new Random();
 
@@ -294,6 +296,37 @@ public final class Simulation {
         }
         log("ПЕРЕХОД: " + p.name + " из «" + from.name + "» в «" + to.name + "»");
         return true;
+    }
+
+    // ------------------------------------------------------------------ связи групп (Э2-21)
+
+    /** Группа по id; null — нет такой. */
+    public Group groupById(String id) {
+        for (Group g : groups) if (g.id.equals(id)) return g;
+        return null;
+    }
+
+    /** Связь, в которой группа зависимая; null — группа независима или ведущая. */
+    public GroupLink linkOf(String dependent) {
+        for (GroupLink l : groupLinks) if (l.dependent.equals(dependent)) return l;
+        return null;
+    }
+
+    /**
+     * Э2-21: сценарий задаёт состав связей; обе группы должны существовать. Зависимая получает
+     * {@link Group#dependsOn}; факторы побед и повышений начинают отсчёт с текущего состояния.
+     */
+    public void installLinks(List<GroupLink> ls) {
+        groupLinks.clear();
+        for (Group g : groups) g.dependsOn = null;
+        for (GroupLink l : ls) {
+            Group lead = groupById(l.leader), dep = groupById(l.dependent);
+            if (lead == null || dep == null) continue;
+            groupLinks.add(l);
+            dep.dependsOn = l.leader;
+            l.lastLeaderCaptures = lead.faction >= 0 ? factions.get(lead.faction).nodesCaptured : 0;
+            l.lastLeaderRank = dep.leader != null ? dep.leader.rank() : 0;
+        }
     }
 
     /** Дорога от пси-поля к ЧАЭС закрыта, пока Выжигатель работает. */
@@ -2977,6 +3010,17 @@ public final class Simulation {
             territories.write(out);
             // v26 (Э2-17): группы и их отношения — секция-хвост г-П8
             writeGroups(out);
+            // v27 (Э2-21): связи ведущих и зависимых групп — секция-хвост после групп
+            writeLinks(out);
+            // v27 (Э2-21): адресаты-группы конвоев — хвост после секции связей (индекс конвоя → id группы);
+            // середина потока (секция конвоев) не меняется — старые сохранения читаются прежним порядком
+            int groupConvoys = 0;
+            for (Convoy c : logistics.convoys) if (c.forGroup != null) groupConvoys++;
+            out.writeInt(groupConvoys);
+            for (int i = 0; i < logistics.convoys.size(); i++) {
+                Convoy c = logistics.convoys.get(i);
+                if (c.forGroup != null) { out.writeInt(i); out.writeUTF(c.forGroup); }
+            }
             out.flush();
             return Base64.getEncoder().encodeToString(bos.toByteArray());
         } catch (IOException e) {
@@ -3032,6 +3076,54 @@ public final class Simulation {
         groupRelations.read(in);
     }
 
+    /** v27 (Э2-21): секция связей — тип, доля, поддержка, напряжение, события и накопленные передачи. */
+    private void writeLinks(DataOutputStream out) throws IOException {
+        out.writeInt(groupLinks.size());
+        for (GroupLink l : groupLinks) {
+            out.writeUTF(l.leader);
+            out.writeUTF(l.dependent);
+            out.writeInt(l.kind.ordinal());
+            out.writeDouble(l.share);
+            out.writeBoolean(l.supportPeople);
+            out.writeBoolean(l.supportSupply);
+            out.writeBoolean(l.supportProtection);
+            out.writeDouble(l.splitTendency);
+            out.writeDouble(l.tension);
+            out.writeInt(l.lastEventDay);
+            out.writeLong(l.sharePaid);
+            out.writeLong(l.supportReceived);
+            out.writeInt(l.events);
+            out.writeLong(l.incomeRate);
+            out.writeInt(l.lastLeaderCaptures);
+            out.writeInt(l.lastLeaderRank);
+        }
+    }
+
+    private void readLinks(DataInputStream in) throws IOException {
+        groupLinks.clear();
+        for (Group g : groups) g.dependsOn = null;
+        int n = in.readInt();
+        for (int i = 0; i < n; i++) {
+            GroupLink l = new GroupLink(in.readUTF(), in.readUTF(), GroupLink.Kind.values()[in.readInt()]);
+            l.share = in.readDouble();
+            l.supportPeople = in.readBoolean();
+            l.supportSupply = in.readBoolean();
+            l.supportProtection = in.readBoolean();
+            l.splitTendency = in.readDouble();
+            l.tension = in.readDouble();
+            l.lastEventDay = in.readInt();
+            l.sharePaid = in.readLong();
+            l.supportReceived = in.readLong();
+            l.events = in.readInt();
+            l.incomeRate = in.readLong();
+            l.lastLeaderCaptures = in.readInt();
+            l.lastLeaderRank = in.readInt();
+            groupLinks.add(l);
+            Group dep = groupById(l.dependent);
+            if (dep != null) dep.dependsOn = l.leader;
+        }
+    }
+
     /** Старое сохранение (до v11): новых товаров в нём не было, их начальный запас считается нулевым. */
     void migrateGoods() {
         for (int i = Good.readCount; i < G; i++) initialGoods[i] = 0;
@@ -3073,6 +3165,8 @@ public final class Simulation {
             if (version < 25 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v26 (Э2-17): секция групп — Кордон, как при каждой смене версии, начинается заново с тем же сидом
             if (version < 26 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
+            // v27 (Э2-21): секция связей — Кордон, как при каждой смене версии, начинается заново с тем же сидом
+            if (version < 27 && Scenarios.isKordon(scenario)) return reset(scenario, seed, version);
             // v11: кустарное, прототипы и снаряжение с Большой земли (три новых товара в конце списка)
             Good.readCount = version >= 11 ? Good.ALL.length : 7;
             Simulation sim = Scenarios.create(scenario, seed);
@@ -3251,6 +3345,17 @@ public final class Simulation {
             // численность и владение согласуются с загруженным состоянием фракций
             if (version >= 26) sim.readGroups(in);
             else sim.syncGroups();
+            // v27 (Э2-21): связи групп; у старых сохранений секции нет — состав из сценария
+            // (Кордон прежних версий пересоздан выше, Зона связей не имеет)
+            if (version >= 27) {
+                sim.readLinks(in);
+                int ng = in.readInt();
+                for (int i = 0; i < ng; i++) {
+                    int idx = in.readInt();
+                    String fg = in.readUTF();
+                    if (idx >= 0 && idx < sim.logistics.convoys.size()) sim.logistics.convoys.get(idx).forGroup = fg;
+                }
+            }
             // Э8-10: снимок книги мутантов — по загруженным логовам (счётчики пришли из сохранения)
             sim.mutantCensus.clear();
             for (Lair l : sim.lairs) sim.mutantCensus.put(l, l.mutantCount());

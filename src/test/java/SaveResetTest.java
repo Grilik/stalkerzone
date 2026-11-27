@@ -21,7 +21,7 @@ public class SaveResetTest {
     }
 
     public static void main(String[] a) {
-        ck(Simulation.SAVE_VERSION == 26, "SAVE_VERSION = 26");
+        ck(Simulation.SAVE_VERSION == 27, "SAVE_VERSION = 27");
         Simulation s = Scenarios.create("kordon", 7);
         for (int d = 0; d < 10; d++) s.step();
         String data = s.save();
@@ -41,6 +41,10 @@ public class SaveResetTest {
         // Э2-17 (v26): секция групп — прежний Кордон начинается заново с тем же сидом
         Simulation g = Simulation.load(withVersion(data, 25));
         ck(g.resetFromVersion == 25 && g.day == 0, "версия 25 на Кордоне: пересоздана, resetFromVersion = 25");
+
+        // Э2-21 (v27): секция связей — прежний Кордон начинается заново с тем же сидом
+        Simulation gl = Simulation.load(withVersion(data, 26));
+        ck(gl.resetFromVersion == 26 && gl.day == 0, "версия 26 на Кордоне: пересоздана, resetFromVersion = 26");
 
         Simulation z = Scenarios.create("zone", 3);
         for (int d = 0; d < 3; d++) z.step();
