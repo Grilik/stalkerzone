@@ -3,7 +3,7 @@
 Автор: Fable, 16.11
 
 **Конвейер:** да
-**Тест:** `src/test/java/ru/stalkerzone/sim/GroupRelationsTest.java`
+**Тест:** `src/test/java/GroupRelationsTest.java`
 **Файлы:** новый `sim/Group.java`, новый `sim/GroupRelations.java`, `sim/Politics.java`, `sim/Faction.java`
 **Чек-лист:** нет
 **Видно в игре:** на Кордоне несколько групп одиночек и конкурирующие банды, у каждой свои база и отношение к соседям
