@@ -2,7 +2,7 @@
  "meta": {
   "version": 2,
   "created": "2026-11-18T21:35:31.064074",
-  "updated": "2026-11-27T21:51:40+03:00",
+  "updated": "2026-11-27T22:09:18+03:00",
   "source_files": [
    "docs/requirements.json",
    "docs/roadmap.md",
@@ -3887,8 +3887,9 @@
    ],
    "pr_number": null,
    "merge_commit": null,
-   "updated": "2026-11-27T21:51:40+03:00",
-   "migrated_from": "roadmap.md"
+   "updated": "2026-11-27T22:09:18+03:00",
+   "migrated_from": "roadmap.md",
+   "notes": "27.11 К2 слита PR #242: теневой PersonRegistry, PersonId без переиспользования, ровно одно состояние, хуки People (11 строк), сверка в конце дня; SAVE_VERSION не поднят. Осталось К3, К13, переключение счётчиков и секция сохранения."
   },
   {
    "id": "Э6-06",
