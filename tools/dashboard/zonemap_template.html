@@ -137,6 +137,7 @@ canvas#map.adding{cursor:crosshair}
     <button class="btn" id="btnSide" title="Панель объекта">Объект</button>
     <button class="btn" id="btnFit" title="Вписать всю Зону (0)">Вписать</button>
     <button class="btn pri" id="btnAdd" title="Поставить метку (M)">+ Метка</button>
+    <button class="btn" id="btnLink" title="Связать два узла (K)">↔ Связь</button>
   </header>
 
   <aside class="rail">
@@ -165,10 +166,14 @@ canvas#map.adding{cursor:crosshair}
     <div class="grp">
       <h3>Слои</h3>
       <div class="tg on" data-layer="terrain"><i></i>Рельеф / подложка</div>
-      <div class="tg on" data-layer="territory"><i></i>Территории локаций</div>
-      <div class="tg on" data-layer="borders"><i></i>Границы локаций</div>
+      <div class="tg" data-layer="territory"><i></i>Территории (расчёт, Вороной)</div>
+      <div class="tg on" data-layer="borders"><i></i>Границы локаций (измеренные)</div>
       <div class="tg on" data-layer="zone"><i></i>Контур Зоны</div>
-      <div class="tg on" data-layer="roads"><i></i>Связи между узлами</div>
+      <div class="tg on" data-layer="atlasroads"><i></i>Дороги атласа</div>
+      <div class="tg on" data-layer="objects"><i></i>Объекты атласа (базы, аванпосты)</div>
+      <div class="tg on" data-layer="exits"><i></i>Переходы и закрытые проходы</div>
+      <div class="tg on" data-layer="links"><i></i>Мои связи</div>
+      <div class="tg" data-layer="roads"><i></i>Связи (расчёт, не дороги)</div>
       <div class="tg on" data-layer="markers"><i></i>Метки и базы</div>
       <div class="tg on" data-layer="structures"><i></i>Строения (съёмка)</div>
       <div class="tg on" data-layer="labels"><i></i>Подписи</div>
@@ -235,6 +240,10 @@ canvas#map.adding{cursor:crosshair}
       <div class="list" id="listUser"></div>
     </div>
     <div class="grp">
+      <h3>Мои связи <span class="val" id="cntLinks"></span></h3>
+      <div class="list" id="listLinks"></div>
+    </div>
+    <div class="grp">
       <h3>Источник данных</h3>
       <div id="src" style="font-size:11.5px;color:var(--ink3);line-height:1.6"></div>
     </div>
@@ -255,7 +264,9 @@ const TYPES = {
   lair:     {ru:"Логово",          c:"--rust"},
   anomaly:  {ru:"Аномалия",        c:"--warn"},
   landmark: {ru:"Ориентир",        c:"--ink2"},
-  custom:   {ru:"Своя метка",      c:"--acid"}
+  custom:   {ru:"Своя метка",      c:"--acid"},
+  forest:   {ru:"Лесной массив",   c:"--ok"},
+  exit:     {ru:"Переход",         c:"--blue"}
 };
 const $ = s=>document.querySelector(s);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -263,14 +274,15 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 const DEF = {theme:"zone",labels:70,mark:100,bw:22,fill:34,terr:70,relief:110,
-  layers:{terrain:1,territory:1,borders:1,zone:1,roads:1,markers:1,structures:1,labels:1,grid:0,glow:1},types:{}};
+  layers:{terrain:1,territory:0,borders:1,zone:1,roads:0,atlasroads:1,objects:1,exits:1,links:1,markers:1,structures:1,labels:1,grid:0,glow:1},types:{}};
 let S = JSON.parse(JSON.stringify(DEF));
 let USER = [];
+let LINKS = [];
 try{
   const raw = localStorage.getItem("lz-map-v2");
-  if(raw){const p=JSON.parse(raw); S=Object.assign(S,p.S||{}); S.layers=Object.assign({},DEF.layers,p.S&&p.S.layers||{}); S.types=p.S&&p.S.types||{}; USER=Array.isArray(p.U)?p.U:[];}
+  if(raw){const p=JSON.parse(raw); S=Object.assign(S,p.S||{}); S.layers=Object.assign({},DEF.layers,p.S&&p.S.layers||{}); S.types=p.S&&p.S.types||{}; USER=Array.isArray(p.U)?p.U:[];LINKS=Array.isArray(p.L)?p.L:[];}
 }catch(e){}
-const save=()=>{try{localStorage.setItem("lz-map-v2",JSON.stringify({S,U:USER}))}catch(e){}};
+const save=()=>{try{localStorage.setItem("lz-map-v2",JSON.stringify({S,U:USER,L:LINKS}))}catch(e){}};
 
 const BB = DATA.meta.bbox;
 const CX=(BB[0]+BB[2])/2, CZ=(BB[1]+BB[3])/2;
@@ -306,6 +318,12 @@ const CENT = TERR.map(poly=>{
   for(let i=0;i<poly.length;i++){const p=poly[i],q=poly[(i+1)%poly.length];const f=p[0]*q[1]-q[0]*p[1];a+=f;cx+=(p[0]+q[0])*f;cz+=(p[1]+q[1])*f;}
   if(Math.abs(a)<1e-6)return null; a*=3; return [cx/a,cz/a];
 });
+const REAL = DATA.places.map(p=>{
+  if(p.area&&p.area.length>2)return p.area;
+  if(p.bbox&&p.bbox.length===4){const b=p.bbox;return [[b[0],b[1]],[b[2],b[1]],[b[2],b[3]],[b[0],b[3]]];}
+  return null;
+});
+const findNode=id=>MK.find(m=>m.id===id);
 function inPoly(x,z,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])c=!c;}return c;}
 
 /* ---------- камера ---------- */
@@ -359,7 +377,8 @@ if(DATA.meta.terrain){
 function markers(){
   const arr=[];
   DATA.places.forEach((p,i)=>arr.push({id:"p"+i,kind:"place",idx:i,x:p.x,z:p.z,name:p.ru||p.name||p.id,type:p.type||"landmark",owner:p.owner||"",status:p.status||"",task:p.task||"",note:p.note||""}));
-  (DATA.marks||[]).forEach((m,i)=>arr.push({id:"m"+i,kind:"mark",x:m.x,z:m.z,name:m.name||("Ориентир "+(i+1)),type:"landmark",owner:"",note:m.kind||""}));
+  (DATA.objects||[]).forEach((o,i)=>arr.push({id:"o"+i,kind:"object",x:o.x,z:o.z,name:o.name,type:o.type||"base",owner:o.owner||"",note:o.note||"",task:o.task||""}));
+  (DATA.exits||[]).forEach((e,i)=>arr.push({id:"x"+i,kind:"exit",x:e.x,z:e.z,name:e.name,type:"exit",owner:"",note:e.note||""}));
   USER.forEach(u=>arr.push(Object.assign({kind:"user"},u)));
   return arr;
 }
@@ -406,8 +425,13 @@ function render(){
     });
   }
   if(S.layers.borders){
-    ctx.lineWidth=lw(S.bw/10);ctx.strokeStyle=P.line;ctx.globalAlpha=.9;
-    TERR.forEach(poly=>{if(poly.length>2){path(poly);ctx.stroke();}});
+    ctx.lineWidth=lw(S.bw/10);ctx.globalAlpha=.95;
+    DATA.places.forEach((p,i)=>{const poly=REAL[i];
+      if(poly&&poly.length>2){ctx.strokeStyle=tcol(p.type);path(poly);ctx.stroke();}});
+    (DATA.survey||[]).forEach(s=>{if(s.polygon.length>2){ctx.strokeStyle=P.sand;
+      ctx.setLineDash([lw(6),lw(4)]);path(s.polygon);ctx.stroke();ctx.setLineDash([]);}});
+    if(S.layers.territory){ctx.strokeStyle=P.line;ctx.globalAlpha=.45;
+      TERR.forEach(poly=>{if(poly.length>2){path(poly);ctx.stroke();}});}
     ctx.globalAlpha=1;
   }
   if(S.layers.zone&&DATA.border.length>2){
@@ -416,6 +440,22 @@ function render(){
     if(S.layers.glow)ctx.restore();
     ctx.setLineDash([lw(9),lw(7)]);ctx.lineWidth=lw(1);ctx.strokeStyle=P.amber;ctx.globalAlpha=.55;
     path(DATA.border);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  }
+  if(S.layers.atlasroads){
+    ctx.lineCap="round";ctx.lineJoin="round";
+    (DATA.atlasroads||[]).forEach(r=>{if(!r.line||r.line.length<2)return;
+      ctx.beginPath();r.line.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));
+      ctx.lineWidth=lw(r.passable?3.4:1.6);ctx.strokeStyle=r.passable?P.sand:P.ink3;
+      ctx.globalAlpha=r.passable?.9:.45;
+      if(!r.passable)ctx.setLineDash([lw(5),lw(5)]);
+      ctx.stroke();ctx.setLineDash([]);});
+    ctx.globalAlpha=1;
+  }
+  if(S.layers.links&&LINKS.length){
+    ctx.lineWidth=lw(2.6);ctx.strokeStyle=P.acid;ctx.globalAlpha=.9;
+    LINKS.forEach(L=>{const a=findNode(L.a),b=findNode(L.b);if(!a||!b)return;
+      ctx.beginPath();ctx.moveTo(a.x,a.z);ctx.lineTo(b.x,b.z);ctx.stroke();});
+    ctx.globalAlpha=1;
   }
   if(S.layers.roads){
     ctx.lineWidth=lw(1.4);ctx.strokeStyle=P.amber;ctx.globalAlpha=.42;ctx.setLineDash([lw(7),lw(6)]);
@@ -447,6 +487,8 @@ function render(){
   if(S.layers.markers){
     MK.forEach(m=>{
       if(!visible(m))return;
+      if(m.kind==="object"&&!S.layers.objects)return;
+      if(m.kind==="exit"&&!S.layers.exits)return;
       const X=sx(m.x),Y=sy(m.z);
       if(X<-40||X>W+40||Y<-40||Y>H+40)return;
       const c=tcol(m.type), r=(m.kind==="place"?7:5.5)*ms;
@@ -454,6 +496,7 @@ function render(){
       if(S.layers.glow){ctx.shadowColor=c;ctx.shadowBlur=isSel?22:(isHov?16:9);}
       ctx.beginPath();
       if(m.kind==="user"){ctx.moveTo(X,Y-r*1.5);ctx.lineTo(X+r,Y);ctx.lineTo(X,Y+r*1.5);ctx.lineTo(X-r,Y);ctx.closePath();}
+      else if(m.kind==="exit"){ctx.moveTo(X,Y-r*1.4);ctx.lineTo(X+r*1.2,Y+r);ctx.lineTo(X-r*1.2,Y+r);ctx.closePath();}
       else if(m.type==="checkpoint"||m.type==="outpost"){ctx.rect(X-r,Y-r,r*2,r*2);}
       else{ctx.arc(X,Y,r,0,6.2832);}
       ctx.fillStyle=c;ctx.fill();
@@ -536,6 +579,11 @@ cv.addEventListener("pointerup",e=>{
   const r=cv.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top;
   const wasMoved=moved;endPtr(e);
   if(wasMoved)return;
+  if(linkMode){const h0=hit(px,py);
+    if(!h0){toast("Кликните по узлу или объекту");return;}
+    if(!linkFrom){linkFrom=h0;toast("От: "+h0.name+" — выберите второй узел");dirty=true;return;}
+    if(linkFrom.id!==h0.id){LINKS.push({a:linkFrom.id,b:h0.id});save();buildLinks();toast("Связь: "+linkFrom.name+" → "+h0.name);}
+    linkFrom=null;setLink(false);dirty=true;return;}
   if(addMode){pend={x:Math.round(wx(px)),z:Math.round(wz(py))};openForm();return;}
   const h=hit(px,py);
   if(h){select(h);flyTo(h.x,h.z,Math.max(cam.s,h.kind==="place"?0.16:0.6));}
@@ -743,7 +791,7 @@ $("#btnPng").onclick=()=>{
   toast("PNG сохранён");
 };
 $("#btnJson").onclick=()=>{
-  const blob=new Blob([JSON.stringify({generated:new Date().toISOString(),camera:cam,settings:S,markers:USER},null,1)],{type:"application/json"});
+  const blob=new Blob([JSON.stringify({generated:new Date().toISOString(),camera:cam,settings:S,markers:USER,links:LINKS},null,1)],{type:"application/json"});
   const a=document.createElement("a");a.download="living-zone-markers.json";a.href=URL.createObjectURL(blob);a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast("Метки выгружены ("+USER.length+")");
 };
@@ -754,18 +802,39 @@ $("#fileImport").onchange=e=>{
   r.onload=()=>{try{
     const p=JSON.parse(r.result);const arr=Array.isArray(p)?p:(p.markers||[]);
     let n=0;arr.forEach(m=>{if(typeof m.x==="number"&&typeof m.z==="number"){USER.push({id:"u"+Math.random().toString(36).slice(2),x:m.x,z:m.z,name:m.name||"Метка",type:TYPES[m.type]?m.type:"custom",owner:m.owner||"",note:m.note||""});n++;}});
-    save();refresh();buildLegend();toast("Импортировано меток: "+n);
+    if(Array.isArray(p.links))p.links.forEach(L=>{if(L&&L.a&&L.b)LINKS.push(L);});
+    save();refresh();buildLegend();buildLinks();toast("Импортировано меток: "+n);
   }catch(err){toast("Файл не разобран");}};
   r.readAsText(f);e.target.value="";
 };
+
+let linkMode=false,linkFrom=null;
+function setLink(v){linkMode=v;linkFrom=null;$("#btnLink").classList.toggle("on",v);
+  cv.classList.toggle("adding",v);
+  $("#hint").innerHTML=v?"Кликните два узла подряд, чтобы связать их · <b>Esc</b> — отмена":"Колесо — зум · перетаскивание — панорама · клик по объекту — карточка · <b>M</b> — метка · <b>K</b> — связь";}
+function buildLinks(){
+  const box=$("#listLinks");if(!box)return;box.innerHTML="";$("#cntLinks").textContent=LINKS.length;
+  LINKS.forEach((L,i)=>{const a=findNode(L.a),b=findNode(L.b);
+    const el=document.createElement("div");el.className="item";
+    el.innerHTML='<span class="nm">'+esc((a&&a.name)||L.a)+' → '+esc((b&&b.name)||L.b)+'</span>';
+    const del=document.createElement("button");del.className="btn sm";del.textContent="×";
+    del.onclick=ev=>{ev.stopPropagation();LINKS.splice(i,1);save();buildLinks();dirty=true;toast("Связь удалена");};
+    el.appendChild(del);
+    el.onclick=()=>{if(a)flyTo(a.x,a.z,Math.max(cam.s,.2));};
+    box.appendChild(el);});
+  if(!LINKS.length)box.innerHTML='<div class="empty">Связей нет. Кнопка «↔ Связь» или клавиша K</div>';
+}
+$("#btnLink").onclick=()=>{setAdd(false);setLink(!linkMode);};
+window.addEventListener("keydown",e=>{if(/input|textarea|select/i.test(e.target.tagName))return;
+  if(e.key.toLowerCase()==="k"){setAdd(false);setLink(!linkMode);}});
 
 /* ---------- инициализация ---------- */
 (function init(){
   const selT=$("#fType");Object.keys(TYPES).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=TYPES[k].ru;selT.appendChild(o);});
   selT.value="outpost";
   $("#src").innerHTML=(DATA.meta.source||[]).map(esc).join("<br>")+"<br>Сгенерировано: "+esc(DATA.meta.generated)+
-    "<br>Территории — разбиение Вороного по узлам внутри контура; связи — минимальное остовное дерево (расчёт).";
-  palette();buildLegend();refresh();
+    "<br>Границы локаций — измеренные bbox из border.json и съёмки; дороги и объекты — из атласа. Вороной и расчётные связи выключены по умолчанию.";
+  palette();buildLegend();refresh();buildLinks();
   new ResizeObserver(()=>{resize();}).observe(cv.parentElement);
   resize();fit();
   const p=DATA.places.find(x=>/кордон/i.test(x.ru||x.name||""))||DATA.places[0];
