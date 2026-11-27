@@ -13,8 +13,9 @@ world_survey = ROOT / "world" / "survey"  # Растры и мозаика съ�
 backups = ROOT / "backups"                # Резервные копии миров
 
 # Игровые данные
-anomaly = ROOT / "dumps" / "anomaly"      # Распакованные файлы Anomaly (исходные игры)
+anomaly = ROOT / "games" / "Anomaly"      # Игра Anomaly 1.5.x (установка)
 dumps_an_cut = ROOT / "dumps" / "an_cut"  # Вырезки из Anomaly
+dumps_stalker = ROOT / "dumps" / "stalker_dump"  # Извлечённый дамп (level.game/configs/textures)
 
 # Сборка и тестирование
 modpack = ROOT / "modpack"                # Сборка модпака
@@ -53,6 +54,7 @@ if __name__ == "__main__":
         ("backups", backups),
         ("anomaly", anomaly),
         ("dumps_an_cut", dumps_an_cut),
+        ("dumps_stalker", dumps_stalker),
         ("modpack", modpack),
         ("playtest", playtest),
         ("docs_local", docs_local),
