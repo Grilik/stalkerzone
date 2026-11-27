@@ -11,7 +11,7 @@
   lairs, fields   логов и аномальных полей атласа внутри зоны
   area            колонок в зоне (для справки)
 
-Мозаика — вне git (TheZone-work-survey/mosaic.npz, tools/thezone/survey_raster.py + survey_analyze.py).
+Мозаика — вне git (world/survey/mosaic.npz, tools/thezone/survey_raster.py + survey_analyze.py).
 Классы поверхности и маска многоугольника берутся из survey_analyze.py, чтобы оценка совпадала со съёмкой.
 Инструмент печатает JSON и ничего не записывает: значения features переносятся в атлас вручную
 (правка атласа — по правилам Э1-07), potential{} пересчитывается TerritoryPotential.derive и

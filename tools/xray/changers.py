@@ -1,5 +1,5 @@
 import re,struct,sys,glob,os,json
-B=(sys.argv[1] if len(sys.argv)>1 else 'stalker_dump').rstrip('/')+'/'   # папка с извлечёнными level.cform/level.spawn
+B=(sys.argv[1] if len(sys.argv)>1 else 'dumps/stalker_dump').rstrip('/')+'/'   # папка с извлечёнными level.cform/level.spawn
 lv=['l01_escape','l02_garbage','l03_agroprom','l04_darkvalley','l05_bar','l06_rostok','l07_military','l08_yantar','l10_radar','l11_pripyat','l12_stancia']
 out={}
 for L in lv:

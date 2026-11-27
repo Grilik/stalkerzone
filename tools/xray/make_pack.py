@@ -1,5 +1,5 @@
 """Личный ресурспак «Зона: оригинал»: текстуры блоков Зоны из копии игры игрока (только для себя, не публиковать).
-Запуск: python3 tools/xray/make_pack.py <папка с .dds (stalker_dump/textures)> <выход.zip> [размер, 64]"""
+Запуск: python3 tools/xray/make_pack.py <папка с .dds (dumps/stalker_dump/textures)> <выход.zip> [размер, 64]"""
 import sys, os, io, zipfile, json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'zone_blocks'))
 from materials import M

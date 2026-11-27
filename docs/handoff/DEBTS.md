@@ -6,14 +6,15 @@
 ## Открытые
 | # | Долг | Карточка | Критерий готовности | Проверка |
 |---|------|----------|---------------------|----------|
-| 3 | Семантика папок: игра в dumps\anomaly, stalker_dump в корне, PlayTest не перенесён, games\ нет | А34 | paths.py совпадает с реальностью; игра в games\Anomaly; дамп в dumps\stalker_dump; PlayTest в playtest\ | python tools/paths.py; Get-ChildItem C:\MineStalker -Directory |
-| 4 | Старые пути в скриптах и доках (прямые слэши, экранированные \\, пути без префикса) | А34 | grep по голым именам старых папок вне tools/paths.* пуст | Select-String -Path tools -Pattern 'TheZone-work|The Zone|stalker_dump|08_BACKUPS|TRASH|LivingZone_Documentation|PlayTest' -Recurse |
-| 5 | Smoke мира после переноса не запускался | А34 | tools/ci/e1_11_smoke.sh зелёный; результат записан | bash tools/ci/e1_11_smoke.sh |
 | 6 | Карта TheZone на дашборде не реализована | А44 | SVG из border/places/реестра; ворота зелёные | python tools/dashboard/build.py |
 | 7 | Роли и лимиты исполнителей не описаны | А42 | RULES.md + промпты ролей + лимит попыток | Select-String docs/handoff/RULES.md -Pattern 'роль|лимит' |
 | 8 | Очередь механик для агента не подготовлена | Э2-17 | промпты с объёмом, запретами, критериями, зависимостями | Test-Path docs/prompts/Э2-17.md |
+
+| 9 | Скрипты используют литералы путей вместо чтения tools/paths.py | А34 | скрипты импортируют paths | grep 'import paths' в tools |
+| 10 | Одноразовые скрипты в корне C:\MineStalker (cmp_*, dump_conv*, hist_stat, get_tacz, rcon_test) | А34 | перенесены в tools\, ссылки обновлены | Get-ChildItem C:\MineStalker -File |
 
 ## Закрытые
 - 27.11 Git-санация: И-02 закоммичена; журнал А44 перенесён на main; ветка staff/a44-revert удалена.
 - 27.11 Карточки А34/А43 заведены в реестре.
 
+- 27.11 Пункты 3-5: семантика папок, пути в скриптах/ранбуках (включая tools md), smoke мира зелёный (cert-флаг gradle).

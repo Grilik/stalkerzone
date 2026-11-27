@@ -1,10 +1,10 @@
-# Э1-07: карта ролей мест и связей групп Кордона (рельеф из mosaic.npz съёмки, границы баз — выход base_layout.py) -> C:/MineStalker/PlayTest/Кордон/Роли-мест.png
+# Э1-07: карта ролей мест и связей групп Кордона (рельеф из mosaic.npz съёмки, границы баз — выход base_layout.py) -> C:/MineStalker/playtest/Кордон/Роли-мест.png
 import json, os
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 W = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")).replace("\\", "/") + "/"
 atlas = json.load(open(W + "src/main/resources/data/stalkerzone/atlas/locations/cordon.json", encoding="utf-8"))
-M = np.load("C:/MineStalker/TheZone-work-survey/mosaic.npz")
+M = np.load("C:/MineStalker/world/survey/mosaic.npz")
 ox, oz = M["origin"]
 x0, z0, x1, z1 = -4780, 2830, -3740, 4440
 sl = (slice(z0 - oz, z1 - oz), slice(x0 - ox, x1 - ox))
@@ -40,9 +40,9 @@ F = ImageFont.truetype("C:/Windows/Fonts/arialbd.ttf", 14)
 f2 = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", 12)
 def P(x, z): return ((x - x0) * K, (z - z0) * K + TOP)
 # границы баз Э1-14
-for f in os.listdir("C:/MineStalker/PlayTest/Кордон/Базы"):
+for f in os.listdir("C:/MineStalker/playtest/Кордон/Базы"):
     if f.endswith(".json"):
-        b = json.load(open("C:/MineStalker/PlayTest/Кордон/Базы/" + f, encoding="utf-8"))
+        b = json.load(open("C:/MineStalker/playtest/Кордон/Базы/" + f, encoding="utf-8"))
         pts = [P(x, z) for x, z in b["area"]]
         if len(pts) >= 3:
             d.line(pts + [pts[0]], fill=(255, 230, 80), width=2)
@@ -97,5 +97,5 @@ for i, (oid, role, grp, c, sh) in enumerate(ROLE):
     d.text((im.width + 26, y + 18), role, font=f2, fill=(235, 235, 225))
     d.text((im.width + 26, y + 33), grp, font=f2, fill=(170, 170, 160))
     y += 54
-canvas.save("C:/MineStalker/PlayTest/Кордон/Роли-мест.png")
+canvas.save("C:/MineStalker/playtest/Кордон/Роли-мест.png")
 print(canvas.size)

@@ -1,6 +1,6 @@
 """Э1-05: разметка уровней оригинала (Anomaly 1.5.x / CoC) — смарт-террейны с типом и группировкой.
 
-Источник — файлы игры пользователя, распакованные tools/xray/xdb.py вне git (C:\\MineStalker\\stalker_dump\\anomaly):
+Источник — файлы игры пользователя, распакованные tools/xray/xdb.py вне git (C:\\MineStalker\\dumps\stalker_dump\\anomaly):
   spawns/all.spawn                          — объекты ALife: smart_terrain, level_changer, camp_zone, campfire,
                                               anomal_zone и аномалии zone_*, торговцы (имя с «trader»);
   levels/<level>/level.game                 — пути смарт-террейнов: kamp, sleep, guard/grd/sniper, comander,

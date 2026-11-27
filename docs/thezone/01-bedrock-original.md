@@ -1,6 +1,6 @@
 # TheZone: оригинал Bedrock и что потеряно при конверсии в Java (Э1-01, Э1-02)
 
-Дата: 15.11.2026. Исходник `C:\Users\vladi\Downloads\TheZone.mcworld` — Bedrock 1.19.22, 303 МБ LevelDB. Java-копия `C:\MineStalker\The Zone` — 1.20.1, после Chunker. Оба мира, архив и папка `The Zone` **только читались**.
+Дата: 15.11.2026. Исходник `C:\Users\vladi\Downloads\TheZone.mcworld` — Bedrock 1.19.22, 303 МБ LevelDB. Java-копия `C:\MineStalker\world\golden` — 1.20.1, после Chunker. Оба мира, архив и папка `The Zone` **только читались**.
 
 Инструменты в `tools/thezone/`: `port_pack.py` (пак), `compare_worlds.py` (сравнение миров; читает LevelDB из архива без сторонних библиотек), `survey_map.py` (карта и материалы). Карта мира — `img/overview.png`, локации — `places.json`, материалы — `02-materials.md`.
 
@@ -47,7 +47,7 @@
 - **Где лежит пак:**
   - `C:\MineStalker\modpack\resourcepacks\TheZone` и папка игры `…\Forge 1.20.1\resourcepacks\TheZone`;
   - включён в `options.txt` игры последним в списке `resourcePacks` (`file/TheZone`), копия до правки — `options.txt.bak-e1-01-2026-11-15`.
-- **Альфа полных блоков (исправлено 15.11):** у BDcraft нижняя половина `grass_block_side` с альфой 20–30. Bedrock рисует полные блоки непрозрачными, а Java рисует траву с вырезом, поэтому на гранях рельефа просвечивало небо. `port_pack.py` ставит альфу 255 у всех текстур блоков, кроме заведомо прозрачных и с вырезом (стекло, листва, растения, наложения, двери, рельсы…); цвет пикселей сохраняется, как в Bedrock. Таких текстур 41: `grass_block_side`, шерсть и терракота всех цветов, `end_stone`, `lapis_block`, `emerald_block`, `redstone_block`, `redstone_lamp(_on)`, `piston_side`, `furnace_front`, `smooth_stone`, `spruce_log(_top)`; у всех, кроме травы, альфа была 250–254, видимых дыр не давала. Пак до правки — `C:\MineStalker\08_BACKUPS\2026-11-15-pack-TheZone-before-alpha`.
+- **Альфа полных блоков (исправлено 15.11):** у BDcraft нижняя половина `grass_block_side` с альфой 20–30. Bedrock рисует полные блоки непрозрачными, а Java рисует траву с вырезом, поэтому на гранях рельефа просвечивало небо. `port_pack.py` ставит альфу 255 у всех текстур блоков, кроме заведомо прозрачных и с вырезом (стекло, листва, растения, наложения, двери, рельсы…); цвет пикселей сохраняется, как в Bedrock. Таких текстур 41: `grass_block_side`, шерсть и терракота всех цветов, `end_stone`, `lapis_block`, `emerald_block`, `redstone_block`, `redstone_lamp(_on)`, `piston_side`, `furnace_front`, `smooth_stone`, `spruce_log(_top)`; у всех, кроме травы, альфа была 250–254, видимых дыр не давала. Пак до правки — `C:\MineStalker\backups\2026-11-15-pack-TheZone-before-alpha`.
 - **В git только скрипт**, текстуры пака не кладутся: BDcraft — авторский пак, версия у нас локальная.
 - Пак переопределяет только ванильные текстуры. Блоки мода `stalkerzone:*` и TaCZ он не трогает.
 
