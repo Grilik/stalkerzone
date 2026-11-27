@@ -3,7 +3,7 @@
 Сгенерировано из docs/project-tasks.json. Руками не править:
 измените реестр и запустите python tools/registry/gen.py
 
-Состояние реестра: 2026-11-27T21:39:36+03:00
+Состояние реестра: 2026-11-27T21:51:40+03:00
 
 Вставлять в новый чат вместе с DECISIONS.md и RULES.md.
 При вопросах об ID — ещё docs/01-IDS.md.
@@ -25,7 +25,7 @@
 
 Сущностей 327: требований 132, задач 193.
 
-PLANNED 140 · TESTS_PASSED 104 · GAME_VERIFIED 32 · IN_PROGRESS 29 · DEFERRED 11 · REJECTED 6 · ACCEPTED 3 · NEW 2
+PLANNED 139 · TESTS_PASSED 104 · GAME_VERIFIED 32 · IN_PROGRESS 30 · DEFERRED 11 · REJECTED 6 · ACCEPTED 3 · NEW 2
 
 | Этап | Закрыто | Всего |
 |---|---|---|
@@ -99,9 +99,9 @@ PLANNED 140 · TESTS_PASSED 104 · GAME_VERIFIED 32 · IN_PROGRESS 29 · DEFERRE
 
 ### Ждут
 
-- А17 ← Э6-02(PLANNED), Э6-01(PLANNED)
+- А17 ← Э6-02(PLANNED), Э6-01(IN_PROGRESS)
 - Э2-22 ← Э2-21(PLANNED)
-- Э6-02 ← Э2-23(PLANNED), Э6-01(PLANNED)
+- Э6-02 ← Э2-23(PLANNED), Э6-01(IN_PROGRESS)
 - Э6-05 ← Э2-15(PLANNED)
 - Э6-07 ← Э2-23(PLANNED)
 - Э7-09 ← Э2-21(PLANNED)

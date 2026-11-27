@@ -2,7 +2,7 @@
  "meta": {
   "version": 2,
   "created": "2026-11-18T21:35:31.064074",
-  "updated": "2026-11-27T21:39:36+03:00",
+  "updated": "2026-11-27T21:51:40+03:00",
   "source_files": [
    "docs/requirements.json",
    "docs/roadmap.md",
@@ -3879,15 +3879,15 @@
    "id": "Э6-01",
    "type": "task",
    "title": "Единый реестр населения (`PersonId` у каждого)",
-   "assignee": "Claude Code + конвейер",
-   "status": "PLANNED",
+   "assignee": "Qwen Code",
+   "status": "IN_PROGRESS",
    "original_status": null,
    "linked_requirements": [
     "R-NPC-01"
    ],
    "pr_number": null,
    "merge_commit": null,
-   "updated": "2026-11-18T21:35:31.065336",
+   "updated": "2026-11-27T21:51:40+03:00",
    "migrated_from": "roadmap.md"
   },
   {

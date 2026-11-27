@@ -35,6 +35,8 @@ public final class People {
     public int nextId = 1;
     public int arrived, joined, diedOnRoad, zombified, deserted, leftZone, woundedSaved, woundedDied;
     private int[] lastDeaths;
+    /** Э6-01-К2: теневой реестр населения — параллельно счётчикам, ничего не решает, в сохранение не входит. */
+    public final PersonRegistry registry = new PersonRegistry();
 
     /** Э4-07 (К1): массивы по числу узлов атласа; вызывает конструктор Simulation до первого шага. */
     public void init(int nodeCount) {
@@ -80,6 +82,7 @@ public final class People {
         p.scouting = skill(r, 20 + (p.cls == Person.Cls.SCOUT ? 40 : 0));
         p.stress = f.stress;
         roster.add(p);
+        registry.birthPerson(s, p); // Э6-01-К2: рождение именного — запись реестра
         return p;
     }
 
@@ -220,6 +223,7 @@ public final class People {
 
     /** Именной сталкер выбыл: если это лидер, власть переходит к преемнику. */
     void personDied(Simulation s, Faction f, Person x, String how) {
+        registry.deathPerson(x.id); // Э6-01-К2: гибель именного — запись мертва
         if (x.role == Person.Role.LEADER || x.role == Person.Role.DEPUTY) {
             s.log("«" + f.name + "»: " + how + " " + x.role.ru + " " + x.name);
         }
@@ -277,6 +281,7 @@ public final class People {
         m.exp = (m.exp * m.members + 25.0 * add) / (m.members + add);
         m.members += add;
         reinforced += add;
+        registry.birthAnonymous(s, m, add); // Э6-01-К2: пополнение армии — анонимные записи
     }
 
     private void arrivals(Simulation s, Random r) {
@@ -336,6 +341,7 @@ public final class People {
                 s.ledger.moneyBurned += cashOut;
             }
             f.members -= leaving;
+            registry.leftFaction(f.id, leaving); // Э6-01-К2: отток из Зоны — записи пропадают без вести
             int foodOut = Math.min(f.stock.get(Good.FOOD), leaving * 2);
             if (foodOut > 0) {
                 f.stock.qty[Good.FOOD.ordinal()] -= foodOut;
@@ -445,13 +451,17 @@ public final class People {
         joined++;
         int named = 0;
         for (Person p : roster) if (p.faction == f.id) named++;
+        boolean namedCreated = false;
         if (named < rosterTarget(f) && r.nextDouble() < 0.25) {
             Person p = create(s, f, r, null);
             p.bravery = w.bravery;
             p.greed = w.greed;
             p.loyalty = w.loyalty;
             p.xp = w.deserter ? 60 : 0;
+            namedCreated = true;
         }
+        // Э6-01-К2: вступление — запись реестра (именной рождается в create, иначе анонимный)
+        if (!namedCreated) registry.birthAnonymous(s, f, 1);
     }
 
     private int rosterTarget(Faction f) {
@@ -477,6 +487,7 @@ public final class People {
                 d = Math.min(d, f.members - 8);
                 for (int i = 0; i < d; i++) {
                     f.members--;
+                    registry.leftFaction(f.id, 1); // Э6-01-К2: дезертир — запись пропала без вести
                     deserted++;
                     Walker w = new Walker();
                     w.deserter = true;
