@@ -213,8 +213,8 @@ def build(out_dir):
         border = [[min(xs) - 400, min(zs) - 400], [max(xs) + 400, min(zs) - 400],
                   [max(xs) + 400, max(zs) + 400], [min(xs) - 400, max(zs) + 400]]
     pts = [(p["x"], p["z"]) for p in places]
-    allx = [p[0] for p in border] + pts
-    allz = [p[1] for p in border] + pts
+    allx = [p[0] for p in border] + [p[0] for p in pts]
+    allz = [p[1] for p in border] + [p[1] for p in pts]
     bbox = [min(allx), min(allz), max(allx), max(allz)] if allx else [0, 0, 1000, 1000]
     terr, tnote = terrain(out)
     if terr:
