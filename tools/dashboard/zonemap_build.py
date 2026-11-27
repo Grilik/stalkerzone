@@ -203,7 +203,7 @@ def build(out_dir):
         note = w.get("note", "")
         p = None
         import re
-        mm = re.search(r"\((-?\d+),\s*(-?\d+)\)", note)
+        mm = re.search(r"\((-?\d+),\s*(-?\d+)\)", note.replace("\u2212", "-").replace("\u2013", "-"))
         if mm:
             p = (float(mm.group(1)), float(mm.group(2)))
         add(w.get("ru"), p, note=note, source="border.json wishes")
