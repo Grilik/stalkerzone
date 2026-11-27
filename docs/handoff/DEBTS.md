@@ -6,7 +6,7 @@
 ## Открытые
 | # | Долг | Карточка | Критерий готовности | Проверка |
 |---|------|----------|---------------------|----------|
-| 3 | Семантика папок: игра в dumps\anomaly, stalker_dump в корне, PlayTest не перенесён, games\ нет | А34 | paths.py совпадает с реальностью; игра в games\Anomaly; дамп в dumps\anomaly; PlayTest в playtest\ | python tools/paths.py; Get-ChildItem C:\MineStalker -Directory |
+| 3 | Семантика папок: игра в dumps\anomaly, stalker_dump в корне, PlayTest не перенесён, games\ нет | А34 | paths.py совпадает с реальностью; игра в games\Anomaly; дамп в dumps\stalker_dump; PlayTest в playtest\ | python tools/paths.py; Get-ChildItem C:\MineStalker -Directory |
 | 4 | Старые пути в скриптах и доках (прямые слэши, экранированные \\, пути без префикса) | А34 | grep по голым именам старых папок вне tools/paths.* пуст | Select-String -Path tools -Pattern 'TheZone-work|The Zone|stalker_dump|08_BACKUPS|TRASH|LivingZone_Documentation|PlayTest' -Recurse |
 | 5 | Smoke мира после переноса не запускался | А34 | tools/ci/e1_11_smoke.sh зелёный; результат записан | bash tools/ci/e1_11_smoke.sh |
 | 6 | Карта TheZone на дашборде не реализована | А44 | SVG из border/places/реестра; ворота зелёные | python tools/dashboard/build.py |
@@ -16,3 +16,4 @@
 ## Закрытые
 - 27.11 Git-санация: И-02 закоммичена; журнал А44 перенесён на main; ветка staff/a44-revert удалена.
 - 27.11 Карточки А34/А43 заведены в реестре.
+
