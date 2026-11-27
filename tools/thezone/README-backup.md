@@ -15,14 +15,14 @@ cd C:\MineStalker\stalkerzone-git\tools\thezone
 
 ### Список доступных резервов
 ```powershell
-Get-ChildItem C:\MineStalker\08_BACKUPS\thezone-backups\
+Get-ChildItem C:\MineStalker\backups\thezone-backups\
 ```
 
 ## Структура
 
-- **Оригинал:** `C:\MineStalker\The Zone\` (1.8 ГБ, не трогать)
-- **Рабочая копия:** `C:\MineStalker\TheZone-work-fresh\` (правим здесь)
-- **Резервы:** `C:\MineStalker\08_BACKUPS\thezone-backups\<метка>\`
+- **Оригинал:** `C:\MineStalker\world\golden\` (1.8 ГБ, не трогать)
+- **Рабочая копия:** `C:\MineStalker\world/work-fresh\` (правим здесь)
+- **Резервы:** `C:\MineStalker\backups\thezone-backups\<метка>\`
 
 ## Что создаёт резерв
 
@@ -51,7 +51,7 @@ Get-ChildItem C:\MineStalker\08_BACKUPS\thezone-backups\
 ```powershell
 # создать следующую версию из рабочей копии (только чтение; level.dat готовится как в Э1-08,
 # точка появления — из атласа world.json)
-python -I tools/thezone/golden_copy.py make C:\MineStalker\TheZone-work-fresh <папка игры>\stalkerzone\golden
+python -I tools/thezone/golden_copy.py make C:\MineStalker\world/work-fresh <папка игры>\stalkerzone\golden
 
 # целостность версий / список
 python -I tools/thezone/golden_copy.py verify <папка игры>\stalkerzone\golden
@@ -65,7 +65,7 @@ python -I tools/thezone/golden_copy.py list   <папка игры>\stalkerzone\
   при ошибке временный каталог удаляется). Обновления золотой копии созданные миры не затрагивают.
 - В новый мир не попадает `data/stalkerzone_sim.dat`: у каждого мира своя история симуляции
   и собственный сохраняемый `simSeed` (Э1-11В, `ZoneData`).
-- Оригинал `C:\MineStalker\The Zone` и рабочая копия при создании золотой копии только читаются.
+- Оригинал `C:\MineStalker\world\golden` и рабочая копия при создании золотой копии только читаются.
 
 ## Полная документация
 

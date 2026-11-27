@@ -1,7 +1,7 @@
-# Э1-17: превью-лист контейнеров мода (текстуры 64 px и изометрия) в C:/MineStalker/PlayTest/Сундуки/. Запуск: python -I tools/containers/preview.py
+# Э1-17: превью-лист контейнеров мода (текстуры 64 px и изометрия) в C:/MineStalker/playtest/Сундуки/. Запуск: python -I tools/containers/preview.py
 import os, random, numpy as np
 from PIL import Image, ImageDraw, ImageFont
-OUT = "C:/MineStalker/PlayTest/Сундуки"
+OUT = "C:/MineStalker/playtest/Сундуки"
 F = lambda s: ImageFont.truetype("C:/Windows/Fonts/arialbd.ttf", s)
 S = 64
 

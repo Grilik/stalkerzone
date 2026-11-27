@@ -12,7 +12,7 @@
 set -u
 cd "$(git rev-parse --show-toplevel)"
 GOLDEN=${1:-run/stalkerzone/golden}
-WORK=${2:-C:/MineStalker/TheZone-work}
+WORK=${2:-C:/MineStalker/world/work}
 LOG=/tmp/sz-e1-11.log
 START_TIMEOUT=${SMOKE_START_TIMEOUT:-900}
 WORLD="ZoneSmoke-$(date +%s)"
@@ -45,7 +45,7 @@ view-distance=6
 simulation-distance=4
 spawn-protection=0
 EOF
-  ( timeout $((START_TIMEOUT + 600)) ./gradlew runServer --no-daemon --console=plain > "$LOG" 2>&1 ) &
+  ( timeout $((START_TIMEOUT + 600)) ./gradlew -Dnet.minecraftforge.gradle.check.certs=false runServer --no-daemon --console=plain > "$LOG" 2>&1 ) &
   PID=$!
   local t0=$(date +%s)
   until grep -qE "Done \(|Crash|Failed to load registries|BUILD FAILED" "$LOG"; do

@@ -37,7 +37,7 @@ def make(work, dst, spawn=SPAWN):
     shutil.copytree(work, dst, ignore=lambda d, names: [n for n in names if os.path.samefile(d, work) and n in ("backup", "stalkerzone")])
     os.makedirs(os.path.join(dst, "stalkerzone"))
     with open(os.path.join(dst, "stalkerzone", "world.json"), "w", encoding="utf-8") as f:
-        json.dump({"mode": "thezone", "atlas": 1, "source": "TheZone-work (Э1-03), опытная копия Э1-08"}, f, ensure_ascii=False, indent=1)
+        json.dump({"mode": "thezone", "atlas": 1, "source": "world/work (Э1-03), опытная копия Э1-08"}, f, ensure_ascii=False, indent=1)
     level_dat(dst, spawn, name=True)
     print("готово:", dst, "— точка появления", spawn)
 

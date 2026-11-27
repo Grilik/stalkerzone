@@ -59,14 +59,14 @@
 `tools/atlas/zone_features.py <mosaic.npz> <папка атласа> [локация]` — только чтение, печатает JSON особенностей
 по каждой зоне. Классы поверхности и маска многоугольника берутся из `tools/thezone/survey_analyze.py`
 (лес — листва/стволы/sapling; постройки — ≥ 3 искусственных блоков над землёй; подземные объёмы — `art_down ≥ 3`),
-поэтому оценка совпадает со съёмкой Э1-04. Мозаика — вне git (`TheZone-work-survey/mosaic.npz`).
+поэтому оценка совпадает со съёмкой Э1-04. Мозаика — вне git (`world/survey/mosaic.npz`).
 Дороги, логова и поля считаются по атласу. Инструмент ничего не записывает: `features` переносятся в атлас
 вручную (правка атласа — по правилам Э1-07), `potential` пересчитывается `derive` и проверяется тестом.
 
 ```
-python -I tools/thezone/survey_raster.py C:/MineStalker/TheZone-work C:/MineStalker/TheZone-work-survey/raster
-python -I tools/thezone/survey_analyze.py C:/MineStalker/TheZone-work-survey/raster docs/thezone
-python -I tools/atlas/zone_features.py C:/MineStalker/TheZone-work-survey/mosaic.npz src/main/resources/data/stalkerzone/atlas cordon
+python -I tools/thezone/survey_raster.py C:/MineStalker/world/work C:/MineStalker/world/survey/raster
+python -I tools/thezone/survey_analyze.py C:/MineStalker/world/survey/raster docs/thezone
+python -I tools/atlas/zone_features.py C:/MineStalker/world/survey/mosaic.npz src/main/resources/data/stalkerzone/atlas cordon
 ```
 
 ## Территории Кордона

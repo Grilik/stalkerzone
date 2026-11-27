@@ -1,12 +1,12 @@
 # Разметка оригинала — смарт-террейны уровней Anomaly (Э1-05)
 
-Источник — Anomaly 1.5.x на ПК пользователя (`C:\MineStalker\Anomaly`, решение пользователя 15.11). Файлы игры распакованы вне git в `C:\MineStalker\stalker_dump\anomaly` новым `tools/xray/xdb.py` (чистый Python: оглавление LZHuf, файлы LZO1X; замена `xdb.cpp`, для которого на ПК нет компилятора). Разметку делает `tools/atlas/import_level.py`; выход — `src/main/resources/data/stalkerzone/atlas/original/<уровень>.json`, только ID объектов, типы, группировки и координаты (данных игры нет).
+Источник — Anomaly 1.5.x на ПК пользователя (`C:\MineStalker\games\Anomaly`, решение пользователя 15.11). Файлы игры распакованы вне git в `C:\MineStalker\dumps\stalker_dump\anomaly` новым `tools/xray/xdb.py` (чистый Python: оглавление LZHuf, файлы LZO1X; замена `xdb.cpp`, для которого на ПК нет компилятора). Разметку делает `tools/atlas/import_level.py`; выход — `src/main/resources/data/stalkerzone/atlas/original/<уровень>.json`, только ID объектов, типы, группировки и координаты (данных игры нет).
 
 ```
-python -I tools/xray/xdb.py C:/MineStalker/Anomaly/db/configs/spawns.db0 extract C:/MineStalker/stalker_dump/anomaly
-python -I tools/xray/xdb.py C:/MineStalker/Anomaly/db/configs/configs.db0 extract C:/MineStalker/stalker_dump/anomaly configs/misc/simulation
-python -I tools/xray/xdb.py C:/MineStalker/Anomaly/db/levels/level_<id>.db0 extract C:/MineStalker/stalker_dump/anomaly level.game
-python -I tools/atlas/import_level.py C:/MineStalker/stalker_dump/anomaly src/main/resources/data/stalkerzone/atlas/original
+python -I tools/xray/xdb.py C:/MineStalker/games/Anomaly/db/configs/spawns.db0 extract C:/MineStalker/dumps/stalker_dump/anomaly
+python -I tools/xray/xdb.py C:/MineStalker/games/Anomaly/db/configs/configs.db0 extract C:/MineStalker/dumps/stalker_dump/anomaly configs/misc/simulation
+python -I tools/xray/xdb.py C:/MineStalker/games/Anomaly/db/levels/level_<id>.db0 extract C:/MineStalker/dumps/stalker_dump/anomaly level.game
+python -I tools/atlas/import_level.py C:/MineStalker/dumps/stalker_dump/anomaly src/main/resources/data/stalkerzone/atlas/original
 ```
 
 ## Что в разметке

@@ -1,12 +1,12 @@
 # Съёмка мира TheZone (Э1-04)
 
-Что и где стоит в TheZone внутри контура границы (`border.json`). Это вход для атласа (Э1-05…Э1-07) и границы (Э2-10). Снято 15.11.2026 **только чтением** рабочей копии `C:\MineStalker\TheZone-work` (Э1-03): 359 регионов, 347 612 чанков.
+Что и где стоит в TheZone внутри контура границы (`border.json`). Это вход для атласа (Э1-05…Э1-07) и границы (Э2-10). Снято 15.11.2026 **только чтением** рабочей копии `C:\MineStalker\world/work` (Э1-03): 359 регионов, 347 612 чанков.
 
 ## Как получено
 | Шаг | Инструмент | Время |
 |---|---|---|
-| Растры 1 пиксель = 1 блок, по регионам | `tools/thezone/survey_raster.py` → `C:\MineStalker\TheZone-work-survey\raster\r.X.Z.npz` (29 МБ, вне git) | 1,5 мин (14 процессов) |
-| Мозаика, классы, постройки, локации, превью | `tools/thezone/survey_analyze.py` → `survey/*.json`, `img/survey/*.png`, мозаика `TheZone-work-survey\mosaic.npz` | 15 с |
+| Растры 1 пиксель = 1 блок, по регионам | `tools/thezone/survey_raster.py` → `C:\MineStalker\world/survey\raster\r.X.Z.npz` (29 МБ, вне git) | 1,5 мин (14 процессов) |
+| Мозаика, классы, постройки, локации, превью | `tools/thezone/survey_analyze.py` → `survey/*.json`, `img/survey/*.png`, мозаика `world/survey\mosaic.npz` | 15 с |
 
 Слои растра:
 - `top_y` и `top_id` — верхний видимый блок; трава, цветы, слой снега и факелы пропускаются;
@@ -161,7 +161,7 @@
 
 ## Повторить
 ```
-python -I tools/thezone/survey_raster.py C:/MineStalker/TheZone-work C:/MineStalker/TheZone-work-survey/raster
-python -I tools/thezone/survey_analyze.py C:/MineStalker/TheZone-work-survey/raster docs/thezone
+python -I tools/thezone/survey_raster.py C:/MineStalker/world/work C:/MineStalker/world/survey/raster
+python -I tools/thezone/survey_analyze.py C:/MineStalker/world/survey/raster docs/thezone
 ```
 Растры пересчитываются только для регионов без `.npz`. После правок мира удалить `raster\` и `mosaic.npz`.

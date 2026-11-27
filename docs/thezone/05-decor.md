@@ -1,6 +1,6 @@
 # Декор из Bedrock-оригинала (Э1-12)
 
-Chunker не перенёс сущности старого формата Bedrock (тег 0x32 LevelDB) и 24 предмета в сундуках. Скрипт `tools/thezone/restore_decor.py` разбирает `TheZone.mcworld` (копия в `08_BACKUPS\TheZone-original`) и пишет найденное в рабочую копию через журнал Э1-03 — правка **`e0004`** (откат: `world_edit_log.py undo C:/MineStalker/TheZone-work e0004`).
+Chunker не перенёс сущности старого формата Bedrock (тег 0x32 LevelDB) и 24 предмета в сундуках. Скрипт `tools/thezone/restore_decor.py` разбирает `TheZone.mcworld` (копия в `backups\TheZone-original`) и пишет найденное в рабочую копию через журнал Э1-03 — правка **`e0004`** (откат: `world_edit_log.py undo C:/MineStalker/world/work e0004`).
 
 ## Что было в Bedrock и что сделано
 | Что | Bedrock | Перенесено | Почему так |
