@@ -46,6 +46,9 @@ RORDER = ["DONE_TESTED", "DONE_UNVERIFIED", "PARTIAL", "BLOCKED", "DOCUMENTED_ON
 RORDER_REG = ["GAME_VERIFIED", "ACCEPTED", "TESTS_PASSED", "CODE_COMPLETE", "IN_PROGRESS", "PLANNED", "BLOCKED", "DEFERRED", "REJECTED"]
 
 
+import zonemap_svg
+
+
 def gh(path):
     try:
         out = subprocess.run(["gh", "api", path], capture_output=True, text=True, timeout=60)
@@ -422,7 +425,7 @@ def build(out_dir):
     a("<!DOCTYPE html><html lang='ru'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>"
       "<title>Stalker Zone — прогресс</title><style>" + CSS + "</style></head><body>")
     a("<nav class='top'><b>Stalker Zone</b><a href='#summary'>Сводка</a><a href='#now'>Сейчас</a><a href='#stages'>Этапы</a>"
-      "<a href='#reqs'>Требования</a><a href='#qwen'>Qwen</a><a href='#merged'>Слияния</a><span class='muted nav-r'>обновлено " + now + " МСК</span></nav><main>")
+      "<a href='#reqs'>Требования</a><a href='#map'>Карта</a><a href='#qwen'>Qwen</a><a href='#merged'>Слияния</a><span class='muted nav-r'>обновлено " + now + " МСК</span></nav><main>")
 
     # ---------- сводка
     a("<section id='summary'><div class='tiles'>")
@@ -577,6 +580,12 @@ def build(out_dir):
                   f"<td class='nowrap'><span class='rs {r['status']}'>{UNIFIED_STATUS_LABEL.get(r['status'], r['status'])}</span></td><td class='nowrap'>{tl}</td></tr>")
             a("</table></div></details>")
         a("</section>")
+
+    # ---------- карта зоны (А44)
+    a("<section id='map'><h2>Карта Зоны</h2>"
+      "<p class='muted'>Контур границы и локации из docs/thezone/border.json и places.json; владелец/статус/задача — из полей локации и реестра, когда привязаны. Клик по локации — карточка узла.</p>")
+    a(zonemap_svg.render_map())
+    a("</section>")
 
     # ---------- qwen
     qwen_rows = parse_qwen_progress()
